@@ -1,6 +1,6 @@
-Attaches a calendar to a ``widget``. Example:
+Attaches a calendar to a ``widget``.
 
-    lain.widgets.calendar:attach(mytextclock)
+    lain.widgets.calendar:attach(mywidget)
 
 - Left click: switch to previous month.
 - Right click: switch to next month.
