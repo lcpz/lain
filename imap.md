@@ -1,4 +1,4 @@
-Show mail status in a textbox over IMAP protocol.
+Shows mail status in a textbox over IMAP protocol.
 
 Dependencies:
 
