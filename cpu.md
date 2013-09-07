@@ -1,3 +1,5 @@
+[<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
+
 Shows in a textbox the average CPU usage percent for a given amount of time.
 
 	mycpuusage = lain.widgets.cpu()
