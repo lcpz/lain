@@ -1,3 +1,5 @@
+[<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
+
 Show the current core temperature in a textbox.
 
 Reads from `/sys/class/thermal`, so value is expressed in Celsius.
