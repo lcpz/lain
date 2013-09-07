@@ -1,3 +1,5 @@
+[<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
+
 Shows MPD status in a textbox.
 
 	mympd = lain.widgets.mpd()
