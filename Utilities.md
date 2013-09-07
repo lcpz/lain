@@ -40,7 +40,7 @@ then you can call its functions:
      |`-- normal()      Set both foreground and background normal colors.
       `-- urgent()      Set both foreground and background urgent colors.
 
-they all take one argument, which is the text to markup, except `fg.color()` and `bg.color()`:
+they all take one argument, which is the text to markup, except `fg.color` and `bg.color`:
 
     markup.fg.color(text, color)
     markup.bg.color(text, color)
