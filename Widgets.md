@@ -8,7 +8,7 @@ We say this because, for some widget, `function` return a table to be used for n
 - [alsabar](https://github.com/copycat-killer/lain/wiki/alsabar)
 - [bat](https://github.com/copycat-killer/lain/wiki/bat)
 - [borderbox](https://github.com/copycat-killer/lain/wiki/borderbox)
-- [calendar](https://github.com/copycat-killer/lain/wiki/caldendar)
+- [calendar](https://github.com/copycat-killer/lain/wiki/calendar)
 - [cpu](https://github.com/copycat-killer/lain/wiki/cpu)
 - [fs](https://github.com/copycat-killer/lain/wiki/fs)
 - [imap](https://github.com/copycat-killer/lain/wiki/imap)
