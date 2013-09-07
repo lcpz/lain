@@ -1,3 +1,5 @@
+[<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
+
 Creates a thin wibox at a position relative to another wibox.
 
 This allows to create "borders" for your wiboxes.
