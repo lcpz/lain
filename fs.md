@@ -20,10 +20,10 @@ Variable | Meaning | Type | Default
 
 `lain.widgets.fs` outputs the following table:
 
-Variable | Type
---- | ---
-`widget` | `wibox.widget.textbox`
-`show` | function
+Variable | Meaning | Type
+--- | --- | ---
+`widget` | The widget | `wibox.widget.textbox`
+`show` | The notification | function
 
 You can display a notification of current disk space usage with a key binding like this:
 
