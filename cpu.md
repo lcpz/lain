@@ -1,4 +1,4 @@
-Shows the average CPU usage percent for a given amount of time.
+Shows in a textbox the average CPU usage percent for a given amount of time.
 
 	mycpuusage = lain.widgets.cpu()
 
