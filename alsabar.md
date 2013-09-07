@@ -76,6 +76,6 @@ Finally, you can control the widget with key bindings like these:
     function ()
         awful.util.spawn("amixer set Master playback 100%", false )
         volume.notify()
-     end),
+    end),
 
 where `altkey = "Mod1"`.
