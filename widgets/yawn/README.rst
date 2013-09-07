@@ -1,0 +1,133 @@
+=========================================
+Yahoo's Awesome (WM) Weather Notification
+=========================================
+
+----------------
+Lain integration
+----------------
+
+:Author: Luke Bonham <dada [at] archlinux [dot] info>
+:License: WTFPLv2_
+:Version: 2.0-git
+
+Description
+-----------
+
+Yawn is a module for Awesome WM providing brief and compact
+weather notification via Naughty and Yahoo! Weather API.
+
+Originally a port of perceptive_, it became a completely new module after various improvements and style changes.
+
+-----
+Usage
+-----
+
+You can ``register`` Yawn to get a set of widgets, or ``attach`` it to
+an existent widget.
+
+register
+^^^^^^^^
+
+Call: ::
+
+    lain.widgets.yawn(id, args)
+
+Arguments:
+
+``id``
+    An integer that defines the WOEID code of your city.
+    To obtain it you can google 'yahoo weather %CITYNAME%' and follow the first link.
+    It will look like::
+
+        http://weather.yahoo.com/united-states/california/san-diego-2487889/
+
+    and the last number in that link will be the ID you need.
+``args``
+    An optional table which can contain the following settings:
+        ``u``
+            Units. Type: string. Possible values: "c" (Celsius), "f" (Fahrenheit). Default: "c".
+
+        ``toshow``
+            What to show. Type: string. Possible values: "units", "forecast", "both".
+            Default: "forecast".
+
+        ``units_color``
+            Color of units text. Type: string. Possible values: hexadecimal color
+            codes.
+
+        ``forecast_color``
+            Color of forecast text. Type: string. Possible values: hexadecimal color
+            codes.
+
+        ``notification_color``
+            Color of notification text. Type: string. Possible values: hexadecimal color
+            codes.
+
+        ``spr``
+            A separator. Type: string. You can define it when ``toshow`` is set to "both".
+
+        ``footer``
+            A footer. Type: string. You can define it when ``toshow`` is set to
+            "both".
+
+The function creates an imagebox icon and a textbox widget. Add them to you wibox like this: ::
+
+    right_layout:add(lain.widgets.yawn.icon)
+    right_layout:add(lain.widgets.yawn.widget)
+
+Hovering over ``yawn.icon`` will display the notification.
+
+attach
+^^^^^^
+
+Call: ::
+
+    lain.widgets.yawn.attach(widget, id, args)
+
+Arguments:
+
+``widget``
+    The widget which you want to attach yawn to.
+``id``
+    same as in ``register``
+``args``
+    same as in ``register``
+
+Hovering over ``widget`` will display the notification.
+
+--------------
+Popup shortcut
+--------------
+
+You can also create a keybinding for the weather popup like this: ::
+
+    globalkeys = awful.util.table.join(
+        ...
+        awful.key( { "Mod1" }, "w", function () lain.widgets.yawn.show(5) end )
+        ...
+
+where ``show`` argument is an integer defining timeout seconds.
+
+------------
+Localization
+------------
+
+Default language is English, but Yawn can be localized.
+Move to ``localizations`` subdirectory and fill ``localization_template``.
+
+Once you're done, rename it like your locale id. In my case: ::
+
+    $ lua
+    Lua 5.2.2  Copyright (C) 1994-2013 Lua.org, PUC-Rio
+    > print(os.getenv("LANG"):match("(%S*$*)[.]"))
+    it_IT
+    >
+
+hence I named my file "it_IT" (Italian localization).
+
+**NOTE:** If you create a localization, feel free to send me! I will add it.
+
+.. _WTFPLv2: http://www.wtfpl.net
+.. _perceptive: https://github.com/ioga/perceptive
+.. _Tamsyn: http://www.fial.com/~scott/tamsyn-font/
+.. _Rainbow: https://github.com/copycat-killer/awesome-copycats>
