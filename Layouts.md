@@ -1,3 +1,5 @@
+[<- home](https://github.com/copycat-killer/lain/wiki)
+
 Currently, there are **7** layouts.
 
     lain/layout
