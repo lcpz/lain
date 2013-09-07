@@ -17,10 +17,10 @@ Maildirs are structured as follows:
 	.
 
 therefore the widget checks whether there are files in the `new` directories.
-If there's new mail, the textbox will say something like "mail: bugs(3), system(1)", otherwise it says
+If there's new mails, the textbox will say something like "mail: bugs(3), system(1)", otherwise it says
 "no mail".
 
-	mymaildir= lain.widgets.maildir("/path/to/my/maildir")
+	mymaildir = lain.widgets.maildir("/path/to/my/maildir")
 
 The function takes a table as optional argument, which can contain:
 
