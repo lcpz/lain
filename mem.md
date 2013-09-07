@@ -1,3 +1,5 @@
+[<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
+
 Shows memory status (in MiB) in a textbox.
 
 	mymem = lain.widgets.mem()
