@@ -26,3 +26,5 @@ Something like this:
 	end
 
 	lain.widgets.terminal = footerm
+
+[<- home](https://github.com/copycat-killer/lain/wiki)
