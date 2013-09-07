@@ -18,12 +18,12 @@ Variable | Meaning | Type | Default
 
 and outputs the following table:
 
-Variable | Type
---- | ---
-`widget` | `awful.widget.textbox`
-`channel` | string
-`step` | string
-`notify` | function
+Variable | Meaning | Type
+--- | --- | --- 
+`widget` | The widget | `wibox.widget.textbox`
+`channel` | Alsa channel | string
+`step` | Increase/decrease step | string
+`notify` | The notification | function
 
 Finally, you can control the widget with key bindings like these:
 
