@@ -1,4 +1,4 @@
-Attaches a calendar to a ``widget``.
+Attaches a calendar to a widget.
 
     lain.widgets.calendar:attach(mywidget)
 
