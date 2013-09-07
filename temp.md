@@ -1,4 +1,6 @@
-Show the current core temperature in a textbox. Reads from `/sys/class/thermal`, so value is expressed in Celsius.
+Show the current core temperature in a textbox.
+
+Reads from `/sys/class/thermal`, so value is expressed in Celsius.
 
 	mytemp = lain.widgets.temp()
 
