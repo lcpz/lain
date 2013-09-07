@@ -5,7 +5,7 @@ markup
 
 This is a submodule which helps you markupping your text.
 
-First, call it like this:
+First, require it like this:
 
     local markup = require("lain.util.markup")
 
@@ -39,6 +39,11 @@ then you can call its functions:
      |`-- focus()       Set both foreground and background focus  colors.
      |`-- normal()      Set both foreground and background normal colors.
       `-- urgent()      Set both foreground and background urgent colors.
+
+they all take one argument, which is the text to markup, except `fg.color()` and `bg.color()`:
+
+    markup.fg.color(text, color)
+    markup.bg.color(text, color)
 
 menu\_clients\_current\_tags
 ----------------------------
