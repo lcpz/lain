@@ -1,6 +1,6 @@
 Show the current system load in a textbox.
 
-	mysysload = lain.widgets.systemload()
+	mysysload = lain.widgets.sysload()
 
 The function takes a table as optional argument, which can contain:
 
