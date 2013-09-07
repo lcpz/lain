@@ -1,3 +1,5 @@
+[<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
+
 Shows disk space usage for a set partition.
 
 Displays a notification when the partition is full or has low space.
