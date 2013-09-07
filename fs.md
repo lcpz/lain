@@ -25,7 +25,7 @@ Variable | Type
 `widget` | `wibox.widget.textbox`
 `show` | function
 
-You can display a notification of current disk space usage with the following key binding:
+You can display a notification of current disk space usage with a key binding like this:
 
     awful.key({ altkey }, "h", function () mypartition.show(7) end),
 
