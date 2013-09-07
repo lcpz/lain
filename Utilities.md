@@ -49,7 +49,8 @@ menu\_clients\_current\_tags
 Similar to `awful.menu.clients()`, but this menu only shows the clients
 of currently visible tags. Use it with a key binding like this:
 
-    awful.key({ "Mod1" }, "Tab", function()
+    awful.key({ "Mod1" }, "Tab",
+    function()
         awful.menu.menu_keys.down = { "Down", "Alt_L", "Tab", "j" }
         awful.menu.menu_keys.up = { "Up", "k" }
         lain.util.menu_clients_current_tags({ width = 350 }, { keygrabber = true })
