@@ -20,11 +20,7 @@ Variable | Meaning | Type | Default
 
 Possible value for `units` are stored in table `lain.widgets.net.units`, which contains:
 
-   {
-       ["b"] = 1,
-       ["kb"] = 1024,
-       ["mb"] = 1024^2,
-       ["gb"] = 1024^3
-   }
-
-
+   ["b"] = 1,
+   ["kb"] = 1024,
+   ["mb"] = 1024^2,
+   ["gb"] = 1024^3
