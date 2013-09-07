@@ -1,3 +1,5 @@
+[<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
+
 Attaches a calendar notification to a widget.
 
     lain.widgets.calendar:attach(widget)
