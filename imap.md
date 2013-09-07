@@ -61,4 +61,6 @@ and you'll have the same security provided by `~/.netrc`.
 
 When `is_plain == false`, it *executes* `password` before using it, so you can also use whatever password fetching solution you want.
 
-You can also define your custom icon for the naughty notification. Just set `lain_mail_notify` into `theme.lua`.
+You can also define your custom icon for the naughty notification. Just set `lain_mail_notify` into `theme.lua`:
+
+    theme.lain_mail_notify = "/path/to/my/icon"
