@@ -2,7 +2,7 @@ Check new mails over IMAP protocol.
 
 Dependencies:
 
-- Python3
+- python3
 
 New mails are notified through a notification like this:
 
