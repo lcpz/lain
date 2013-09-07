@@ -20,3 +20,4 @@ We say this because, for some widget, `function` return a table to be used for n
 - [net](https://github.com/copycat-killer/lain/wiki/net)
 - [sysload](https://github.com/copycat-killer/lain/wiki/sysload)
 - [temp](https://github.com/copycat-killer/lain/wiki/temp)
+- [yawn](https://github.com/copycat-killer/lain/wiki/yawn)
