@@ -54,7 +54,7 @@ Variable | Type
 `step` | string
 `notify` | function
 
-Finally, you can control the widget with the following key bindings:
+Finally, you can control the widget with key bindings like these:
 
         -- Volume control
         awful.key({ altkey }, "Up",
