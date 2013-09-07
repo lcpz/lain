@@ -1,3 +1,5 @@
+[<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
+
 Shows mail status in a textbox over IMAP protocol.
 
 Dependencies:
