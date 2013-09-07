@@ -1,4 +1,4 @@
-Shows mpd status in a textbox.
+Shows MPD status in a textbox.
 
 	mympd = lain.widgets.mpd()
 
@@ -20,9 +20,9 @@ The function takes a table as optional argument, which can contain:
 
 Variable | Meaning | Type | Default
 --- | --- | --- | ---
-`password` | Mpd password | string | ""
-`host` | Mpd server | string | "127.0.0.1"
-`port` | Mpd port | string | "6600"
+`password` | MPD password | string | ""
+`host` | MPD server | string | "127.0.0.1"
+`port` | MPD port | string | "6600"
 `music_dir` | Music directory | string | "~/Music"
 `refresh_timeout` | Refresh timeout seconds | int | 1
 `color_artist` | Artist value color | string | `beautiful.fg_normal` or "#FFFFFF"
