@@ -1,3 +1,5 @@
+[<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
+
 Shows in a textbox the remaining time and percentage capacity of your laptop battery, as well as
 the current wattage.
 
