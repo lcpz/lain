@@ -1,5 +1,45 @@
 [<- home](https://github.com/copycat-killer/lain/wiki)
 
+markup
+------
+
+This is a submodule which helps you markupping your text.
+
+First, call it like this:
+
+    local markup = require("lain.util.markup")
+
+then you can call its functions:
+
+     +-- markup
+     |
+     |`-- bold()        Set bold.
+     |`-- italic()      Set italicized text.
+     |`-- strike()      Set strikethrough text.
+     |`-- underline()   Set underlined text.
+     |`-- monospace()   Set monospaced text.
+     |`-- big()         Set bigger text.
+     |`-- small()       Set smaller text.
+     |`-- font()        Set the font of the text.
+     |
+     |`--+ bg
+     |   |
+     |   |`-- color()   Set background color.
+     |   |`-- focus()   Set focus  background color.
+     |   |`-- normal()  Set normal background color.
+     |    `-- urgent()  Set urgent background color.
+     |
+     |`--+ fg
+     |   |
+     |   |`-- color()   Set foreground color.
+     |   |`-- focus()   Set focus  foreground color.
+     |   |`-- normal()  Set normal foreground color.
+     |    `-- urgent()  Set urgent foreground color.
+     |
+     |`-- focus()       Set both foreground and background focus  colors.
+     |`-- normal()      Set both foreground and background normal colors.
+      `-- urgent()      Set both foreground and background urgent colors.
+
 menu\_clients\_current\_tags
 ----------------------------
 
