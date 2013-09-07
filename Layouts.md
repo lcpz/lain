@@ -63,8 +63,8 @@ Usage example:
 	lain.layout.cascadetile.cascade_offset_x = 2
 	lain.layout.cascadetile.cascade_offset_y = 32
 	lain.layout.cascadetile.extra_padding = 5
-        lain.layout.cascadetile.nmaster = 5
-        lain.layout.ncol = 1
+    lain.layout.cascadetile.nmaster = 5
+    lain.layout.ncol = 1
 
 `extra_padding` reduces the size of the master window if "overlapping
 slave column" is activated. This allows you to see if there are any
@@ -150,7 +150,7 @@ Thus, use of `awful.client.focus.bydirection()` is suggested.
 Here's an example:
 
 	globalkeys = awful.util.table.join(
-            ...
+        ...
 	    awful.key({ modkey }, "j",
 	        function()
 	            awful.client.focus.bydirection("down")
@@ -218,6 +218,7 @@ For example, this sets `termfair` to 3 columns and at least 1 row:
 uselessfair, uselesspiral & uselesstile
 ---------------------------------------
 These are duplicates of the stock `fair`, `spiral` and `tile` layouts.
+
 However, "useless gaps" (see below) have been added.
 
 Useless gaps
@@ -246,9 +247,7 @@ you have to add an item called `useless_gap_width` in your `theme.lua`.
 If it doesn't exist, the width will default to 0.
 Example:
 
-	...
 	theme.useless_gap_width = "5"
-	...
 
 What about layout icons?
 ========================
@@ -257,13 +256,11 @@ They are located in ``lain/icons/layout``.
 
 To use them, add lines to your ``theme.lua`` like this:
 
-    ...
 	theme.lain_icons         = os.getenv("HOME") .. "/.config/awesome/lain/icons/layout/default/"
 	theme.layout_termfair    = theme.lain_icons .. "termfairw.png"
 	theme.layout_cascade     = theme.lain_icons .. "cascadew.png"
 	theme.layout_cascadetile = theme.lain_icons .. "cascadetilew.png"
 	theme.layout_centerwork  = theme.lain_icons .. "centerworkw.png"
-    ...
 
 Credits goes to [Nicolas Estibals](https://github.com/nestibal) for creating
 layout icons for default theme.
