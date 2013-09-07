@@ -47,12 +47,12 @@ It's **crucial** to set `notifications.bar_size` to your `mywibox[s]` height,
 
 `lain.widgets.alsabar` outputs the following table:
 
-Variable | Type
---- | ---
-`widget` | `awful.widget.progressbar`
-`channel` | string
-`step` | string
-`notify` | function
+Variable | Meaning | Type
+--- | --- | ---
+`widget` | The widget | `awful.widget.progressbar`
+`channel` | Alsa channel | string
+`step` | Increase/decrease step | string
+`notify` | The notification | function
 
 Finally, you can control the widget with key bindings like these:
 
