@@ -1,4 +1,4 @@
-Check new mails over IMAP protocol.
+Show mail status in a textbox over IMAP protocol.
 
 Dependencies:
 
