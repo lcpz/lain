@@ -29,7 +29,7 @@ local net = {
     last_r = {}
 }
 
-local unit = {
+net.units = {
     ["b"] = 1,
     ["kb"] = 1024,
     ["mb"] = 1024^2,
@@ -52,12 +52,12 @@ function worker(args)
     local args = args or {}
     local iface = args.iface or net.get_device()
     local delta = args.refresh_timeout or 2
-    local unit = args.unit or unit["kb"]
+    local units = args.units or net.units["kb"]
     local spr = args.spr or " "
     local header = args.header or iface
     local header_color = args.header_color or beautiful.fg_normal or "#FFFFFF"
-    local color_up = args.color_up or beautiful.fg_focus or header_color
-    local color_down = args.color_down or beautiful.fg_focus or header_color
+    local color_up = args.color_up or beautiful.fg_focus or "#FFFFFF"
+    local color_down = args.color_down or beautiful.fg_focus or "#FFFFFF"
     local app = args.app or "sudo wifi-menu"
 
     helpers.set_map(iface, true)
@@ -113,8 +113,8 @@ function worker(args)
 
         if net.last_t[iface] and net.last_t[iface]
         then
-            net.send = tostring((now_t - net.last_t[iface]) / delta / unit)
-            net.recv = tostring((now_r - net.last_r[iface]) / delta / unit)
+            net.send = tostring((now_t - net.last_t[iface]) / delta / units)
+            net.recv = tostring((now_r - net.last_r[iface]) / delta / units)
 
             text = text
                    .. '<span color="' .. color_up .. '">'

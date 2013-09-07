@@ -30,7 +30,7 @@ function worker(args)
     local show_all = args.show_all or false
     local header = args.header or " Load "
     local header_color = args.header_color or beautiful.fg_normal or "#FFFFFF"
-    local color = args.color or beautiful.fg_focus or header_color
+    local color = args.color or beautiful.fg_focus or "#FFFFFF" 
     local app = args.app or "top"
 
     local mysysload = wibox.widget.textbox()
