@@ -1,10 +1,4 @@
-=========================================
-Yahoo's Awesome (WM) Weather Notification
-=========================================
-
-----------------
-Lain integration
-----------------
+*This is an integration of this* module_.
 
 :Author: Luke Bonham <dada [at] archlinux [dot] info>
 :License: WTFPLv2_
@@ -127,6 +121,7 @@ hence I named my file "it_IT" (Italian localization).
 
 **NOTE:** If you create a localization, feel free to send me! I will add it.
 
+.. _module: https://github.com/copycat-killer/yawn
 .. _WTFPLv2: http://www.wtfpl.net
 .. _perceptive: https://github.com/ioga/perceptive
 .. _Tamsyn: http://www.fial.com/~scott/tamsyn-font/
