@@ -1,5 +1,3 @@
-[<- home](https://github.com/copycat-killer/lain/wiki)
-
 Every widget is output by a `function`.
 
 Unless otherwise expressly noted, `function` returns a `wibox.widget.textbox`.
