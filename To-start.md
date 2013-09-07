@@ -1,6 +1,4 @@
-[<- home](https://github.com/copycat-killer/lain/wiki)
-
-All you have to do is to include the module:
+All you have to do to include the module:
 
 	local lain = require("lain")
 
