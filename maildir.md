@@ -1,4 +1,4 @@
-Checks your maildirs.
+Shows maildirs status in a textbox.
 
 Maildirs are structured as follows:
 
