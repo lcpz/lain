@@ -1,3 +1,5 @@
+[<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
+
 Shows and controls alsa volume with a textbox.
 
 	myvolume = lain.widgets.alsa()
