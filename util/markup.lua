@@ -19,39 +19,6 @@ local markup = {}
 local fg = {}
 local bg = {}
 
---[[ clean this as soon as you document it
-
-  +-- markup
-  |
-  |`-- bold()        Set bold.
-  |`-- italic()      Set italicized text.
-  |`-- strike()      Set strikethrough text.
-  |`-- underline()   Set underlined text.
-  |`-- monospace()   Set monospaced text.
-  |`-- big()         Set bigger text.
-  |`-- small()       Set smaller text.
-  |`-- font()        Set the font of the text.
-  |
-  |`--+ bg
-  |   |
-  |   |`-- color()   Set background color.
-  |   |`-- focus()   Set focus  background color.
-  |   |`-- normal()  Set normal background color.
-  |    `-- urgent()  Set urgent background color.
-  |
-  |`--+ fg
-  |   |
-  |   |`-- color()   Set foreground color.
-  |   |`-- focus()   Set focus  foreground color.
-  |   |`-- normal()  Set normal foreground color.
-  |    `-- urgent()  Set urgent foreground color.
-  |
-  |`-- focus()       Set both foreground and background focus  colors.
-  |`-- normal()      Set both foreground and background normal colors.
-   `-- urgent()      Set both foreground and background urgent colors.
-
-]]
-
 -- Convenience tags.
 function markup.bold(text)      return '<b>'     .. tostring(text) .. '</b>'     end
 function markup.italic(text)    return '<i>'     .. tostring(text) .. '</i>'     end

@@ -33,11 +33,10 @@ function worker(args)
     local port = args.port or "6600"
     local music_dir = args.music_dir or os.getenv("HOME") .. "/Music"
     local refresh_timeout = args.refresh_timeout or 1
-    local notify_timeout = args.notify_timeout or 5
     local color_artist = args.color_artist or beautiful.fg_normal or "#FFFFFF"
     local color_song = args.color_song or beautiful.fg_focus or "#FFFFFF"
-    local spr = args.spr or ""
-    local musicplr = args.musicplr or "ncmpcpp"
+    local spr = args.spr or " "
+    local app = args.app or "ncmpcpp"
     local shadow = args.shadow or false
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
@@ -100,18 +99,18 @@ function worker(args)
                     icon = "/tmp/mpdcover.png",
                     fg = beautiful.fg_focus or "#FFFFFF",
                     bg = beautiful.bg_normal or "#000000" ,
-                    timeout = notify_timeout,
+                    timeout = 6, 
                     replaces_id = mpd.id
                 }).id
             end
             mympd:set_markup(markup(color_artist, " " .. mpd_state["{Artist}"])
                              .. spr ..
-                             markup(color_song, " " .. mpd_state["{Title}"] .. " "))
+                             markup(color_song, mpd_state["{Title}"] .. " "))
         elseif mpd_state["{state}"] == "pause"
         then
             mympd:set_markup(markup(color_artist, " mpd")
                              .. spr ..
-                             markup(color_song, " paused "))
+                             markup(color_song, "paused "))
         else
             helpers.set_map("current mpd track", nil)
 		        set_nompd()
@@ -126,7 +125,7 @@ function worker(args)
     mympd:buttons(awful.util.table.join(
         awful.button({}, 0,
             function()
-                helpers.run_in_terminal(musicplr)
+                helpers.run_in_terminal(app)
             end)
     ))
 
