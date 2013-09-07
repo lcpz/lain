@@ -1,4 +1,4 @@
-Shows and controls alsa volume.
+Shows and controls alsa volume with a textbox.
 
 	myvolume = lain.widgets.alsa()
 
