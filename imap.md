@@ -53,7 +53,7 @@ You can just set your password like this:
     args.is_plain = false
     args.password = "mypassword"
 
-and you'll have the same security provided by `~/.netrc`
+and you'll have the same security provided by `~/.netrc`.
 
 **Or** you can use a keyring, like [python keyring](https://pypi.python.org/pypi/keyring):
 
