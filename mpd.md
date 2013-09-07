@@ -46,24 +46,24 @@ Finally, you can control the widget with key bindings like these:
 
     -- MPD control
     awful.key({ altkey, "Control" }, "Up",
-    function ()
-        awful.util.spawn_with_shell( "mpc toggle || ncmpcpp toggle || ncmpc toggle || pms toggle", false )
-        mympd.notify()
-     end),
+        function ()
+            awful.util.spawn_with_shell("mpc toggle || ncmpcpp toggle || ncmpc toggle || pms toggle")
+            mpdwidget.notify()
+        end),
     awful.key({ altkey, "Control" }, "Down",
-    function ()
-        awful.util.spawn_with_shell( "mpc stop || ncmpcpp stop || ncmpc stop || pms stop", false )
-        mympd.notify()
-    end),
+        function ()
+            awful.util.spawn_with_shell("mpc stop || ncmpcpp stop || ncmpc stop || pms stop")
+            mpdwidget.notify()
+        end),
     awful.key({ altkey, "Control" }, "Left",
-    function ()
-        awful.util.spawn_with_shell( "mpc prev || ncmpcpp prev || ncmpc prev || pms prev", false )
-        mympd.notify()
-    end),
+        function ()
+            awful.util.spawn_with_shell("mpc prev || ncmpcpp prev || ncmpc prev || pms prev")
+            mpdwidget.notify()
+        end),
     awful.key({ altkey, "Control" }, "Right",
-    function ()
-        awful.util.spawn_with_shell( "mpc next || ncmpcpp next || ncmpc next || pms next", false )
-        mympd.notify()
-    end),
+        function ()
+            awful.util.spawn_with_shell("mpc next || ncmpcpp next || ncmpc next || pms next")
+            mpdwidget.notify()
+        end),
 
 where `altkey = "Mod1"`.
