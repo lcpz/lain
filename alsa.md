@@ -23,7 +23,7 @@ Variable | Meaning | Type
 `widget` | The widget | `wibox.widget.textbox`
 `channel` | Alsa channel | string
 `step` | Increase/decrease step | string
-`notify` | The notification | function
+`notify` | Update `widget` | function
 
 Finally, you can control the widget with key bindings like these:
 
