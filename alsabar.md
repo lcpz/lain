@@ -2,7 +2,7 @@ Shows and controls alsa volume with a progressbar.
 
 Dependencies:
 
-- alsa-utils
+- alsa-utils (of course)
 
 Plus tooltips, notifications, and color changes at mute/unmute switch.
 
