@@ -27,26 +27,26 @@ Variable | Meaning | Type
 
 Finally, you can control the widget with key bindings like these:
 
-        -- Volume control
-        awful.key({ altkey }, "Up",
-        function ()
-            awful.util.spawn("amixer sset " .. volume.channel .. " " .. volume.step .. "+")
-            volume.notify()
-        end),
-        awful.key({ altkey }, "Down",
-        function ()
-            awful.util.spawn("amixer sset " .. volume.channel .. " " .. volume.step .. "-")
-            volume.notify()
-        end),
-        awful.key({ altkey }, "m",
-        function ()
-            awful.util.spawn("amixer set Master playback toggle")
-            volume.notify()
-        end),
-        awful.key({ altkey, "Control" }, "m", 
-        function ()
-            awful.util.spawn("amixer set Master playback 100%", false )
-            volume.notify()
-        end),
+    -- Volume control
+    awful.key({ altkey }, "Up",
+    function ()
+        awful.util.spawn("amixer sset " .. volume.channel .. " " .. volume.step .. "+")
+        volume.notify()
+    end),
+    awful.key({ altkey }, "Down",
+    function ()
+        awful.util.spawn("amixer sset " .. volume.channel .. " " .. volume.step .. "-")
+        volume.notify()
+    end),
+    awful.key({ altkey }, "m",
+    function ()
+        awful.util.spawn("amixer set Master playback toggle")
+        volume.notify()
+    end),
+    awful.key({ altkey, "Control" }, "m", 
+    function ()
+        awful.util.spawn("amixer set Master playback 100%", false )
+        volume.notify()
+    end),
 
 where `altkey = "Mod1"`.
