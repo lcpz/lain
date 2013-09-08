@@ -29,11 +29,12 @@ Variable | Meaning | Type | Default
 `refresh_timeout` | Refresh timeout seconds | int | 1
 `header_color` | Artist value color | string | `beautiful.fg_normal` or "#FFFFFF"
 `color` | Song value color | string | `beautiful.fg_focus` or "#FFFFFF"
+`footer` | Text to append to values | string | "" 
 `spr` | Separator text between artist and song values | string | " "
 `app` | Music program to spawn on click | string | "ncmpcpp"
 `shadow` | Hide widget when there are no songs playing | boolean | false 
 
-**Note**: `spr` can be a markup text.
+**Note**: `footer` and `spr` can be markup text.
 
 `lain.widgets.mpd` outputs the following table:
 
