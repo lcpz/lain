@@ -7,7 +7,7 @@ Attaches a calendar notification to a widget.
 - Left click: switch to previous month.
 - Right click: switch to next month.
 
-Optionally you can call the function with bg and fg colors arguments, both or just one:
+Optionally you can call the function with fg and bg colors arguments, both or just one:
 
     lain.widgets.calendar:attach(mytextclock, "#FFFFFF", "#000000")
     -- or
@@ -15,7 +15,7 @@ Optionally you can call the function with bg and fg colors arguments, both or ju
     -- or
     lain.widgets.calendar:attach(mytextclock, nil, "#000000")
 
-default bg and fg colors are `beautiful.bg_normal` and `beautiful.fg_focus`.
+default fg and fb colors are `beautiful.fg_focus` and `beautiful.bg_normal`.
 
 Notification will show an icon displaying current day, and formatted output
 from ``cal`` with current day highlighted.
