@@ -29,7 +29,7 @@ local function create(background, foreground)
     calendar.notify_icon = nil
     calendar.font_size = 12
     calendar.bg = background or beautiful.bg_normal or "#FFFFFF"
-    calendar.fg = foreground or beautiful.fg_normal or "#FFFFFF"
+    calendar.fg = foreground or beautiful.fg_focus or "#FFFFFF"
 end
 
 function calendar:hide()

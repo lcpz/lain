@@ -35,8 +35,7 @@ function worker(args)
     local refresh_timeout = args.refresh_timeout or 60
     local header = args.header or " Mail "
     local header_color = args.header_color or beautiful.fg_normal or "#FFFFFF"
-    local color_newmail = args.color_newmail or beautiful.fg_focus or "#FFFFFF"
-    local color_nomail = args.color_nomail or beautiful.fg_normal or "#FFFFFF"
+    local color = args.color or beautiful.fg_focus or "#FFFFFF"
     local mail_encoding = args.mail_encoding or nil
     local maxlen = args.maxlen or 200
     local app = args.app or "mutt"
@@ -63,7 +62,7 @@ function worker(args)
             then
                 myimapcheck:set_text('')
             else
-                myimapcheck:set_markup(markup(color_nomail, " no mail "))
+                myimapcheck:set_markup(markup(color, " no mail "))
             end
         end
 
@@ -97,8 +96,8 @@ function worker(args)
         elseif ws:find("CheckMailError: invalid credentials") ~= nil
         then
             helpers.set_map(mail, true)
-            myimapcheck.set_markup(markup(header_color, header) ..
-                                   markup(color_newmail, "invalid credentials "))
+            myimapcheck:set_markup(markup(header_color, header) ..
+                                   markup(color, "invalid credentials "))
         else
             mailcount = ws:match("%d") or "?"
 
@@ -109,7 +108,7 @@ function worker(args)
             end
 
             myimapcheck:set_markup(markup(header_color, header) ..
-                                   markup(color_newmail, mailcount) .. " ")
+                                   markup(color, mailcount) .. " ")
 
             if helpers.get_map(mail)
             then
@@ -137,7 +136,7 @@ function worker(args)
                 end
 
                 naughty.notify({ title = notify_title,
-                                 fg = color_newmail,
+                                 fg = color,
                                  text = ws,
                                  icon = beautiful.lain_mail_notify or
                                         helpers.icons_dir .. "mail.png",

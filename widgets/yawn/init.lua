@@ -1,11 +1,9 @@
 
 --[[
-                                               
-     Yahoo's Awesome (WM) Weather Notification 
-                                               
-     Licensed under WTFPL v2                   
-      * (c) 2013, Luke Bonham                  
-                                               
+                                                  
+     Licensed under GNU General Public License v2 
+      * (c) 2013, Luke Bonham                     
+                                                  
 --]]
 
 local markup       = require("lain.util.markup")
@@ -26,8 +24,7 @@ local tonumber     = tonumber
 
 local setmetatable = setmetatable
 
--- yawn integration
--- https://github.com/copycat-killer/yawn
+-- YAhoo! Weather Notification
 -- lain.widgets.yawn
 local yawn =
 {
@@ -52,20 +49,19 @@ local update_timer       = nil
 
 local function fetch_weather(args)
     local toshow = args.toshow or "forecast"
-    local spr = args.spr or " "
-    local footer = args.footer or ""
 
     local url = api_url .. units_set .. city_id
     local f = io.popen("curl --connect-timeout 1 -fsm 2 '"
                        .. url .. "'" )
     local text = f:read("*all")
-    io.close(f)
+    f:close()
 
     -- In case of no connection or invalid city ID
     -- widgets won't display
     if text == "" or text:match("City not found")
     then
         sky = icon_path .. "na.png"
+        yawn.icon:set_image(sky)
         if text == "" then
             weather_data = "Service not available at the moment."
             return "N/A"
@@ -119,14 +115,14 @@ local function fetch_weather(args)
     if f == nil then
         sky = icon_path .. "na.png"
     else
-        io.close(f)
+        f:close()
     end
 
     -- Localization
     local f = io.open(localizations_path .. language, "r")
     if language:find("en_") == nil and f ~= nil
     then
-        io.close(f)
+        f:close()
         for line in io.lines(localizations_path .. language)
         do
             word = string.sub(line, 1, line:find("|")-1)
@@ -136,18 +132,20 @@ local function fetch_weather(args)
     end
 
     -- Finally setting infos
-    forecast = weather_data:match(": %S+"):gsub(": ", ""):gsub(",", "")
-    yawn.forecast = markup(yawn.forecast_color, markup.font(beautiful.font, forecast))
-    yawn.units = markup(yawn.units_color, markup.font(beautiful.font, units))
+    both = weather_data:match(": %S+.-\n"):gsub(": ", "")
+    forecast = weather_data:match(": %S+.-,"):gsub(": ", ""):gsub(",", "\n")
+    units = units:gsub(" ", "")
+
+    yawn.forecast = markup(yawn.color, " " .. markup.font(beautiful.font, forecast) .. " ")
+    yawn.units = markup(yawn.color, " " .. markup.font(beautiful.font, units))
     yawn.icon:set_image(sky)
 
     if toshow == "forecast" then
         return yawn.forecast
     elseif toshow == "units" then
         return yawn.units
-    else -- "both"
-        return yawn.forecast .. spr
-               .. yawn.units .. footer
+    else
+        return both 
     end
 end
 
@@ -175,21 +173,16 @@ function yawn.show(t_out)
         text = weather_data,
         icon = sky,
         timeout = t_out,
-        fg = yawn.notification_color
+        fg = yawn.color
     })
 end
 
 function yawn.register(id, args)
     local args = args or {}
 
-    settings = { args.toshow, args.spr, args.footer }
+    settings = args 
 
-    yawn.units_color        = args.units_color or
-                              beautiful.fg_normal or "#FFFFFF"
-    yawn.forecast_color     = args.forecast_color or
-                              yawn.units_color
-    yawn.notification_color = args.notification_color or
-                              beautiful.fg_focus or "#FFFFFF"
+    yawn.color = args.color or beautiful.fg_normal or "#FFFFFF"
 
     if args.u == "f" then units_set = '?u=f&w=' end
 
@@ -208,6 +201,8 @@ function yawn.register(id, args)
     yawn.icon:connect_signal("mouse::leave", function()
         yawn.hide()
     end)
+
+    return yawn
 end
 
 function yawn.attach(widget, id, args)

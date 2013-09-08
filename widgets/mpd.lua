@@ -33,8 +33,8 @@ function worker(args)
     local port = args.port or "6600"
     local music_dir = args.music_dir or os.getenv("HOME") .. "/Music"
     local refresh_timeout = args.refresh_timeout or 1
-    local color_artist = args.color_artist or beautiful.fg_normal or "#FFFFFF"
-    local color_song = args.color_song or beautiful.fg_focus or "#FFFFFF"
+    local header_color = args.header_color or beautiful.fg_normal or "#FFFFFF"
+    local color = args.color or beautiful.fg_focus or "#FFFFFF"
     local spr = args.spr or " "
     local app = args.app or "ncmpcpp"
     local shadow = args.shadow or false
@@ -53,7 +53,7 @@ function worker(args)
             then
                 mympd:set_text('')
             else
-                mympd:set_markup(markup(color_artist, " mpd "), markup(color_song , "off "))
+                mympd:set_markup(markup(header_color, " mpd "), markup(color , "off "))
             end
         end
 
@@ -97,20 +97,19 @@ function worker(args)
                            mpd_state["{Date}"]   .. "\n"   ..
                            mpd_state["{Title}"],
                     icon = "/tmp/mpdcover.png",
-                    fg = beautiful.fg_focus or "#FFFFFF",
-                    bg = beautiful.bg_normal or "#000000" ,
+                    fg = color,
                     timeout = 6, 
                     replaces_id = mpd.id
                 }).id
             end
-            mympd:set_markup(markup(color_artist, " " .. mpd_state["{Artist}"])
+            mympd:set_markup(markup(header_color, " " .. mpd_state["{Artist}"])
                              .. spr ..
-                             markup(color_song, mpd_state["{Title}"] .. " "))
+                             markup(color, mpd_state["{Title}"] .. " "))
         elseif mpd_state["{state}"] == "pause"
         then
-            mympd:set_markup(markup(color_artist, " mpd")
+            mympd:set_markup(markup(header_color, " mpd")
                              .. spr ..
-                             markup(color_song, "paused "))
+                             markup(color, "paused "))
         else
             helpers.set_map("current mpd track", nil)
 		        set_nompd()
