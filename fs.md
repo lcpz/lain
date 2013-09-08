@@ -12,10 +12,10 @@ Variable | Meaning | Type | Default
 --- | --- | --- | ---
 `partition` | Partition to monitor | string | "/"
 `refresh_timeout` | Refresh timeout seconds | int | 600
-`header` | Text to show before value | string | "Hdd "
+`header` | Text to show before value | string | " Hdd "
 `header_color` | Header color | string | `beautiful.fg_normal` or "#FFFFFF"
 `color` | Value color | string | `beautiful.fg_focus` or "#FFFFFF"
-`footer` | Text to show after value | string | "%"
+`footer` | Text to show after value | string | " "
 `shadow` | Hide the widget if `partition` < 90 | boolean | false
 
 **Note**: `footer` color is `color`.
