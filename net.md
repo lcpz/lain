@@ -14,11 +14,12 @@ Variable | Meaning | Type | Default
 `spr` | Separator text between download and upload values | string | " "
 `header` | Text to show before value | string | `iface`
 `header_color` | Header color | string | `beautiful.fg_normal` or "#FFFFFF"
+`footer` | Text to append after value | string | ""
 `color_up` | Upload value color | string | `beautiful.fg_focus` or "#FFFFFF"
 `color_down` | Download value color | string | `beautiful.fg_focus` or "#FFFFFF"
 `app` | Net program to spawn on click | string | "sudo wifi-menu"
 
-**Note**: `spr` can be a markup text.
+**Note**: `spr` and `footer` can be a markup text.
 
 Possible value for `units` are stored in table `lain.widgets.net.units`, which contains:
 
