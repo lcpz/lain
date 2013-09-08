@@ -48,7 +48,7 @@ Arguments:
 
 - ``widget``
  
-    The widget which you want to attach yawn to.
+    The widget which you want to attach Yawn to.
 
 - ``id``
 
