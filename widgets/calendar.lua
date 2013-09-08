@@ -23,7 +23,7 @@ local setmetatable = setmetatable
 local calendar = {}
 local notification = nil
 
-local function create(background, foreground)
+local function create(foreground, background)
     calendar.offset = 0
     calendar.icons_dir = icons_dir .. "cal/white/" -- default
     calendar.notify_icon = nil
@@ -111,8 +111,8 @@ function calendar:show(t_out, inc_offset)
                                     timeout = tims })
 end
 
-function calendar:attach(widget, background, foreground)
-    create(background, foreground)
+function calendar:attach(widget, foreground, background)
+    create(foreground, background)
     widget:connect_signal("mouse::enter", function () calendar:show() end)
     widget:connect_signal("mouse::leave", function () calendar:hide() end)
     widget:buttons(awful.util.table.join( awful.button({ }, 1, function ()

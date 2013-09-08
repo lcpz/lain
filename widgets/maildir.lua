@@ -108,7 +108,7 @@ function worker(args)
                 myimapcheck:set_markup(markup(color_nomail, " no mail "))
             end
         else
-            myimapcheck:set_markup(markup(header_color, header) ..
+            myimapcheck:set_markup(" " .. markup(header_color, header) ..
                                    markup(color_newmail, newmail) .. " ")
         end
     end

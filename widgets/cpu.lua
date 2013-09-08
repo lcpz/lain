@@ -32,7 +32,7 @@ function worker(args)
     local header = args.header or " Cpu "
     local header_color = args.header or beautiful.fg_normal or "#FFFFFF"
     local color = args.color or beautiful.fg_focus or "#FFFFFF"
-    local footer = args.footer or "%"
+    local footer = args.footer or "% "
 
     local w = wibox.widget.textbox()
 
@@ -62,7 +62,7 @@ function worker(args)
         local dtotal = total - cpu.last_total
         local dta = math.ceil((dactive / dtotal) * 100)
 
-        w:set_markup(markup(header_color, header) .. markup(color, dta .. footer) .. " ")
+        w:set_markup(markup(header_color, header) .. markup(color, dta .. footer))
 
         -- Save current data for the next run.
         cpu.last_active = active

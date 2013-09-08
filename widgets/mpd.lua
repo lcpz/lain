@@ -36,6 +36,7 @@ function worker(args)
     local header_color = args.header_color or beautiful.fg_normal or "#FFFFFF"
     local color = args.color or beautiful.fg_focus or "#FFFFFF"
     local spr = args.spr or " "
+    local footer = args.footer or ""
     local app = args.app or "ncmpcpp"
     local shadow = args.shadow or false
 
@@ -53,7 +54,7 @@ function worker(args)
             then
                 mympd:set_text('')
             else
-                mympd:set_markup(markup(header_color, " mpd "), markup(color , "off "))
+                mympd:set_markup(markup(header_color, "mpd ") .. markup(color , "off") .. footer)
             end
         end
 
@@ -102,14 +103,14 @@ function worker(args)
                     replaces_id = mpd.id
                 }).id
             end
-            mympd:set_markup(markup(header_color, " " .. mpd_state["{Artist}"])
+            mympd:set_markup(markup(header_color, mpd_state["{Artist}"])
                              .. spr ..
-                             markup(color, mpd_state["{Title}"] .. " "))
+                             markup(color, mpd_state["{Title}"]) .. footer)
         elseif mpd_state["{state}"] == "pause"
         then
-            mympd:set_markup(markup(header_color, " mpd")
+            mympd:set_markup(markup(header_color, "mpd")
                              .. spr ..
-                             markup(color, "paused "))
+                             markup(color, "paused") .. footer)
         else
             helpers.set_map("current mpd track", nil)
 		        set_nompd()
