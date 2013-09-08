@@ -12,6 +12,6 @@ Variable | Meaning | Type | Default
 `header` | Text to show before value | string | " Cpu "
 `header_color` | Header color | string | `beautiful.fg_normal` or "#FFFFFF"
 `color` | Value color | string | `beautiful.fg_focus` or "#FFFFFF"
-`footer` | Text to add after value | string | "%"
+`footer` | Text to add after value | string | "% "
 
 **Note**: `footer` color is `color`.
