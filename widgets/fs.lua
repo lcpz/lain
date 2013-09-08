@@ -57,7 +57,7 @@ local function worker(args)
     local header = args.header or " Hdd "
     local header_color = args.header_color or beautiful.fg_normal or "#FFFFFF"
     fs.color = args.color or beautiful.fg_focus or "#FFFFFF"
-    local footer = args.footer or ""
+    local footer = args.footer or " "
     local shadow = args.shadow or false
 
     local myfs = wibox.widget.textbox()

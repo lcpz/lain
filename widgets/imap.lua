@@ -33,7 +33,7 @@ function worker(args)
 
     local port = args.port or "993"
     local refresh_timeout = args.refresh_timeout or 60
-    local header = args.header or " Mail "
+    local header = args.header or "Mail "
     local header_color = args.header_color or beautiful.fg_normal or "#FFFFFF"
     local color = args.color or beautiful.fg_focus or "#FFFFFF"
     local mail_encoding = args.mail_encoding or nil
@@ -96,7 +96,7 @@ function worker(args)
         elseif ws:find("CheckMailError: invalid credentials") ~= nil
         then
             helpers.set_map(mail, true)
-            myimapcheck:set_markup(markup(header_color, header) ..
+            myimapcheck:set_markup(" " .. markup(header_color, header) ..
                                    markup(color, "invalid credentials "))
         else
             mailcount = ws:match("%d") or "?"
@@ -107,7 +107,7 @@ function worker(args)
                 helpers.set_map(mail .. " count", mailcount)
             end
 
-            myimapcheck:set_markup(markup(header_color, header) ..
+            myimapcheck:set_markup(" " .. markup(header_color, header) ..
                                    markup(color, mailcount) .. " ")
 
             if helpers.get_map(mail)

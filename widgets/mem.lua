@@ -35,7 +35,7 @@ function worker(args)
     local header = args.header or " Mem "
     local header_color = args.header or beautiful.fg_normal or "#FFFFFF"
     local color = args.color or beautiful.fg_focus or "#FFFFFF"
-    local footer = args.footer or "MB"
+    local footer = args.footer or "MB "
 
     local widg = wibox.widget.textbox()
 
@@ -62,17 +62,17 @@ function worker(args)
         then
             local fmt = "%" .. string.len(mem.total) .. ".0f/%.0f"
             widg:set_markup(markup(header_color, header) ..
-                            markup(color, string.format(fmt, used, mem.total) .. footer .. " "))
+                            markup(color, string.format(fmt, used, mem.total) .. footer))
         else
             widg:set_markup(markup(header_color, header) ..
-                            markup(color, used .. footer .. " "))
+                            markup(color, used .. footer))
         end
 
         if show_swap
         then
             widg:set_markup(widg._layout.text .. ' ('
                             .. string.format('%.0f '.. footer, swapused)
-                            .. ') ')
+                            .. ')')
         end
     end
 
