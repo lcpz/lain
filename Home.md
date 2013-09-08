@@ -2,7 +2,9 @@ Welcome to the Lain wiki!
 
 ### Installation
 
-Simply clone this repository into your Awesome directory.
+Simply clone this repository into your Awesome directory:
+
+    git clone https://github.com/copycat-killer/lain.git ~/.config/awesome/lain
 
 ### Index
 
