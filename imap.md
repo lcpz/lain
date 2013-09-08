@@ -40,8 +40,7 @@ Variable | Meaning | Type | Default
 `refresh_timeout` | Refresh timeout seconds | int | 60
 `header` | Text to show before value | string | " Mail "
 `header_color` | Header color | string | `beautiful.fg_normal` or "#FFFFFF"
-`color_newmail` | New mail value color | string | `beautiful.fg_focus` or "#FFFFFF"
-`color_nomail` | No mail value color | string | `beautiful.fg_normal` or "#FFFFFF"
+`color` | Mail value color | string | `beautiful.fg_focus` or "#FFFFFF"
 `mail_encoding` | Mail character encoding | string | autodetected
 `maxlen` | Maximum chars to display in notification | int | 200
 `app` | Mail program to spawn on click | string | "mutt"
