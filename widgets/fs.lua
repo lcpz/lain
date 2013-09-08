@@ -43,7 +43,7 @@ function fs:show(t_out)
     notification = naughty.notify({
         text = ws,
       	timeout = t_out,
-        fg = beautiful.fg_focus,
+        fg = fs.color,
     })
 end
 
@@ -56,8 +56,8 @@ local function worker(args)
     local refresh_timeout = args.refresh_timeout or 600
     local header = args.header or " Hdd "
     local header_color = args.header_color or beautiful.fg_normal or "#FFFFFF"
-    local color = args.color or beautiful.fg_focus or "#FFFFFF"
-    local footer = args.header or ""
+    fs.color = args.color or beautiful.fg_focus or "#FFFFFF"
+    local footer = args.footer or ""
     local shadow = args.shadow or false
 
     local myfs = wibox.widget.textbox()
@@ -71,7 +71,7 @@ local function worker(args)
         local function set_text()
             local info = fs_info['{' .. partition .. ' used_p}']
             myfs:set_markup(markup(header_color, header)
-                            .. markup(color, info .. footer) .. " ")
+                            .. markup(fs.color, info .. footer))
         end
 
         for line in f:lines() do -- Match: (size) (used)(avail)(use%) (mount)
