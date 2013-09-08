@@ -1,7 +1,6 @@
-Yahoo's Awesome Weather notification
------------
+(YAhoo! Weather Notification)
 
-Yawn provides brief and compact weather notification via Naughty and Yahoo! Weather API.
+Yawn provides brief and compact Yahoo! Weather notification.
 
 Usage
 -----
@@ -63,7 +62,7 @@ Hovering over ``widget`` will display the notification.
 Popup shortcut
 --------------
 
-You can also create a keybinding for the weather popup like this: ::
+You can also create a keybinding for the weather popup like this:
 
     awful.key( { "Mod1" }, "w", function () yawn.show(5) end )
 
