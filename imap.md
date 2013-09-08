@@ -38,7 +38,7 @@ Variable | Meaning | Type | Default
 --- | --- | --- | ---
 `port` | IMAP port | int | 993
 `refresh_timeout` | Refresh timeout seconds | int | 60
-`header` | Text to show before value | string | " Mail "
+`header` | Text to show before value | string | "Mail "
 `header_color` | Header color | string | `beautiful.fg_normal` or "#FFFFFF"
 `color` | Mail value color | string | `beautiful.fg_focus` or "#FFFFFF"
 `mail_encoding` | Mail character encoding | string | autodetected
