@@ -41,11 +41,14 @@ Variable | Meaning | Type | Default
 `header` | Text to show before value | string | " Mail "
 `header_color` | Header color | string | `beautiful.fg_normal` or "#FFFFFF"
 `color` | Mail value color | string | `beautiful.fg_focus` or "#FFFFFF"
+`footer` | Text to append after value | string | " "
 `mail_encoding` | Mail character encoding | string | autodetected
 `maxlen` | Maximum chars to display in notification | int | 200
 `app` | Mail program to spawn on click | string | "mutt"
 `shadow` | Hide widget when there are no mails | boolean | false
 `is_plain` | Define whether `password` is a plain password (true) or a function that retrieves it (false) | boolean | false
+
+**Note**: `footer` can be markup text.
 
 Let's focus better on `is_plain`.
 
