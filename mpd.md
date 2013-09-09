@@ -27,9 +27,9 @@ Variable | Meaning | Type | Default
 `port` | MPD port | string | "6600"
 `music_dir` | Music directory | string | "~/Music"
 `refresh_timeout` | Refresh timeout seconds | int | 1
-`pre` | Text before values | string | "" 
-`header_color` | Artist value color | string | `beautiful.fg_normal` or "#FFFFFF"
-`color` | Song value color | string | `beautiful.fg_focus` or "#FFFFFF"
+`header` | Text before values | string | "" 
+`artist_color` | Artist value color | string | `beautiful.fg_normal` or "#FFFFFF"
+`song_color` | Song value color | string | `beautiful.fg_focus` or "#FFFFFF"
 `spr` | Separator text between artist and song values | string | " "
 `footer` | Text to append after values | string | "" 
 `app` | Music program to spawn on click | string | "ncmpcpp"
