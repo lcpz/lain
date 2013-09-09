@@ -33,5 +33,8 @@ Variable | Meaning | Type | Default
 `header_color` | Header color | string | `beautiful.fg_normal` or "#FFFFFF"
 `color_newmail` | New mail value color | string | `beautiful.fg_focus` or "#FFFFFF"
 `color_nomail` | No mail value color | string | `beautiful.fg_normal` or "#FFFFFF"
+`footer` | Text to append after value | string | " "
 `app` | Mail program to spawn on click | string | "mutt"| boolean | false
 `shadow` | Hide widget when there are no mails | boolean | false
+
+**Note**: `footer` can be markup text.
