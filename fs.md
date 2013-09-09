@@ -18,7 +18,7 @@ Variable | Meaning | Type | Default
 `footer` | Text to show after value | string | " "
 `shadow` | Hide the widget if `partition` < 90 | boolean | false
 
-**Note**: `footer` can be markup text.
+**Note**: `footer` color is `color`.
 
 `lain.widgets.fs` outputs the following table:
 
