@@ -19,3 +19,5 @@ Variable | Meaning | Type | Default
 `color` | Value color | string | `beautiful.fg_focus` or "#FFFFFF"
 `footer` | Text to append after value | string | " "
 `shadow` | Hide the widget when battery is not present | boolean | false
+
+**Note**: `footer` can be markup text.
