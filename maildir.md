@@ -1,3 +1,5 @@
+[<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
+
 Shows maildirs status in a textbox.
 
 Maildirs are structured as follows:
