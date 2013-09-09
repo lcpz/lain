@@ -17,4 +17,5 @@ Variable | Meaning | Type | Default
 `header` | Text to show before value | string | " Bat "
 `header_color` | Header color | string | `beautiful.fg_normal` or "#FFFFFF"
 `color` | Value color | string | `beautiful.fg_focus` or "#FFFFFF"
+`footer` | Text to append after value | string | " "
 `shadow` | Hide the widget when battery is not present | boolean | false
