@@ -6,21 +6,30 @@ Displays a notification when the partition is full or has low space.
 
     mypartition = lain.widgets.fs()
 
-The function takes a table as optional argument, which can contain:
+### input table
 
 Variable | Meaning | Type | Default
 --- | --- | --- | ---
+`timeout` | Refresh timeout seconds -| int | 600
 `partition` | Partition to monitor | string | "/"
-`refresh_timeout` | Refresh timeout seconds | int | 600
-`header` | Text to show before value | string | " Hdd "
-`header_color` | Header color | string | `beautiful.fg_normal` or "#FFFFFF"
-`color` | Value color | string | `beautiful.fg_focus` or "#FFFFFF"
-`footer` | Text to show after value | string | " "
-`shadow` | Hide the widget if `partition` < 90 | boolean | false
+`settings` | User settings | function | empty function
 
-**Note**: `footer` color is `color`.
+`settings` can use the following `partition` related value strings: `used`, `available`, `size_mb`, `size_gb`.
 
-`lain.widgets.fs` outputs the following table:
+It can also use value strings in these formats:
+
+    fs_info[p .. "used_p"]
+    fs_info[p .. "avail_p"]
+    fs_info[p .. "size_mb"]
+    fs_info[p .. "size_gb"]
+
+where `p` is the "mount" column of the output of `df` command (`/`, `/home`, `/boot`, ...).
+
+This means you can set the widget for a certain partition, but you can look up at others too.
+
+Finally, `settings` can modify `notification_preset` table too. This table will be the preset for the naughty notifications. Check [here](http://awesome.naquadah.org/doc/api/modules/naughty.html#notify) for the list of variables it can contain. 
+
+### output table
 
 Variable | Meaning | Type
 --- | --- | ---
