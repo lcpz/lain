@@ -11,6 +11,8 @@ Variable | Meaning | Type | Default
 `timeout` | Refresh timeout seconds | int | 10
 `settings` | User settings | function | empty function
 
+`settings` can be fed with `usage`, which is the cpu use percentage.
+
 ### output
 
 A textbox.
