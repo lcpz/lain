@@ -16,3 +16,7 @@ Variable | Meaning | Type | Default
 Possible other values for `units` are 1 (byte) or multiple of 1024: 1024^2 (mb), 1024^3 (gb), ... .
 
 `settings` can use the following `iface` strings: `carrier`, `state`, `sent`, `received`.
+
+### output
+
+A textbox.
