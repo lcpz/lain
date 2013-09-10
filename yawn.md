@@ -24,15 +24,18 @@ an existent widget.
 
 - ``args``
 
-    An optional table which can contain the following settings:
+    A required table which can contain:
 
     Variables | Meaning | Type | Possible values | Default value
     --- | --- | --- | --- | ---
     `u` | Units | string | "c" (Celsius), "f" (Fahrenheit) | "c"
-    `toshow` | What to show | string | "forecast", "units", "both" | "forecast"
-    `color` | ``yawn.widget`` color | string | hexadecimal colors | 
+    `timeout` | Refresh timeout seconds | int | integers | 600
+    `settings` | User settings | function | function | empty function
 
-The function creates an imagebox icon and a textbox widget. Add them to you wibox like this:
+    `settings` can use strings `forecast`, `units', and can modify `notification_preset` table, which
+     will be the preset for the naughty notifications. Check [here](http://awesome.naquadah.org/doc/api/modules/naughty.html#notify) for the list of variables it can contain.
+
+The function `register` creates an imagebox icon and a textbox widget. Add them to you wibox like this:
 
     right_layout:add(yawn.icon)
     right_layout:add(yawn.widget)
