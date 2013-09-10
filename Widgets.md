@@ -1,8 +1,6 @@
 Every widget is output by a `function`.
 
-Unless otherwise expressly noted, `function` returns a `wibox.widget.textbox`.
-
-This is said because, for some widgets, `function` returns a table to be used for notification and update purposes.
+For some widgets, `function` returns a `wibox.widget.textbox`, for others a table to be used for notification and update purposes.
 
 Every widget may take either a table or a list of variables as argument.
 
