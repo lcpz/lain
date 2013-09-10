@@ -15,7 +15,7 @@ Variable | Meaning | Type | Default
 `battery` | Identifier of the battery | string | "BAT0"
 `settings` | User settings | function | empty function
 
-`settings` can be fed with `bat_now` table, which contains the following strings: `status`, `perc`, `time`, `watt`.
+`settings` can use the `bat_now` table, which contains the following strings: `status`, `perc`, `time`, `watt`.
 
 ### output
 
