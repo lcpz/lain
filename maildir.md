@@ -24,19 +24,16 @@ If there's new mails, the textbox will say something like "mail: bugs(3), system
 
 	mymaildir = lain.widgets.maildir("/path/to/my/maildir")
 
-The function takes a table as optional argument, which can contain:
+### input table
 
 Variable | Meaning | Type | Default
 --- | --- | --- | ---
+`timeout` | Refresh timeout seconds | int | 60
 `mailpath` | Path to your maildir | string | "~/Mail"
-`ignore_boxes` | A list of boxes to ignore | table | empty table
-`refresh_timeout` | Refresh timeout seconds | int | 60
-`header` | Text to show before value | string | " Mail "
-`header_color` | Header color | string | `beautiful.fg_normal` or "#FFFFFF"
-`color_newmail` | New mail value color | string | `beautiful.fg_focus` or "#FFFFFF"
-`color_nomail` | No mail value color | string | `beautiful.fg_normal` or "#FFFFFF"
-`footer` | Text to append after value | string | " "
-`app` | Mail program to spawn on click | string | "mutt"| boolean | false
-`shadow` | Hide widget when there are no mails | boolean | false
+`settings` | User settings | function | empty function
 
-**Note**: `footer` can be markup text.
+`settings` can use the string `newmail`, which format will be something like defined above, or "no mail".
+
+### output
+
+A textbox.
