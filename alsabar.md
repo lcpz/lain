@@ -1,12 +1,6 @@
 [<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
 
-Shows and controls alsa volume with a progressbar.
-
-Dependencies:
-
-- alsa-utils (of course)
-
-Plus tooltips, notifications, and color changes at mute/unmute switch.
+Shows and controls alsa volume with a progressbar and provides tooltips, notifications, and color changes at mute/unmute switch.
 
 	myvolumebar = lain.widgets.alsabar()
 
@@ -48,7 +42,7 @@ Variable | Meaning | Type | Default
 It's **crucial** to set `notifications.bar_size` to your `mywibox[s]` height,
 **if** you have set it different than default (18). 
 
-`lain.widgets.alsabar` outputs the following table:
+### output table
 
 Variable | Meaning | Type
 --- | --- | ---
@@ -57,7 +51,7 @@ Variable | Meaning | Type
 `step` | Increase/decrease step | string
 `notify` | The notification | function
 
-Finally, you can control the widget with key bindings like these:
+You can control the widget with key bindings like these:
 
     -- Volume control
     awful.key({ altkey }, "Up",
