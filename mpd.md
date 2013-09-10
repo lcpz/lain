@@ -2,7 +2,7 @@
 
 Shows MPD status in a textbox.
 
-	mympd = lain.widgets.mpd()
+	mpdwidget = lain.widgets.mpd()
 
 Now playing songs are notified like this:
 
@@ -14,37 +14,47 @@ Now playing songs are notified like this:
 	| +-------+                                              |
 	+--------------------------------------------------------+
 
-Dependencies
-
-- imagemagick
-
 The function takes a table as optional argument, which can contain:
 
 Variable | Meaning | Type | Default
 --- | --- | --- | ---
+`timeout` | Refresh timeout seconds | int | 1
 `password` | MPD password | string | ""
 `host` | MPD server | string | "127.0.0.1"
 `port` | MPD port | string | "6600"
 `music_dir` | Music directory | string | "~/Music"
-`refresh_timeout` | Refresh timeout seconds | int | 1
-`header` | Text before values | string | "" 
-`artist_color` | Artist value color | string | `beautiful.fg_normal` or "#FFFFFF"
-`song_color` | Song value color | string | `beautiful.fg_focus` or "#FFFFFF"
-`spr` | Separator text between artist and song values | string | " "
-`footer` | Text to append after values | string | "" 
-`app` | Music program to spawn on click | string | "ncmpcpp"
-`shadow` | Hide widget when there are no songs playing | boolean | false 
+`settings` | User settings | function | empty function
 
-**Note**: `spr` and `footer` can be markup text.
+`settings` can use `mpd_now` table, which contains the following string values:
 
-`lain.widgets.mpd` outputs the following table:
+- state
+- file
+- artist
+- title
+- album
+- date
+
+and can modify `notification_preset` table, which will be the preset for the naughty notifications. Check [here](http://awesome.naquadah.org/doc/api/modules/naughty.html#notify) for the list of variables it can contain. Default definition:
+
+    notification _preset = {
+       title   = "Now playing",
+       text    = mpd_now.artist .. " ("   ..
+                 mpd_now.album  .. ") - " ..
+                 mpd_now.date   .. "\n"   ..
+                 mpd_now.title,
+       fg      = beautiful.fg_normal or "#FFFFFF",
+       bg      = beautiful.bg_normal or "#000000",
+       timeout = 6
+    }
+
+### output table
 
 Variable | Meaning | Type
 --- | --- | ---
 `widget` | The textbox | `wibox.widget.textbox`
 `notify` | The notification | function
 
-Finally, you can control the widget with key bindings like these:
+You can control the widget with key bindings like these:
 
     -- MPD control
     awful.key({ altkey, "Control" }, "Up",
