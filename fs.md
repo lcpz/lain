@@ -27,7 +27,9 @@ where `p` is the last column of `df` ("/", "/home", "/boot", ...).
 
 This means you can set the widget for a certain partition, but you can look up at others too.
 
-Finally, `settings` can modify `notification_preset` table too. This table will be the preset for the naughty notifications. Check [here](http://awesome.naquadah.org/doc/api/modules/naughty.html#notify) for the list of variables it can contain. 
+Finally, `settings` can modify `notification_preset` table too. This table will be the preset for the naughty notifications. Check [here](http://awesome.naquadah.org/doc/api/modules/naughty.html#notify) for the list of variables it can contain. Default definition:
+
+    notification_preset = { fg = beautiful.fg_normal }
 
 ### output table
 
