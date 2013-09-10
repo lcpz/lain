@@ -2,37 +2,27 @@
 
 Attaches a calendar notification to a widget.
 
-    lain.widgets.calendar:attach(widget)
+    lain.widgets.calendar:attach(widget, args)
 
 - Left click: switch to previous month.
 - Right click: switch to next month.
 
-Optionally you can call the function with fg and bg colors arguments, both or just one:
+`args` is an optional table which can contain:
 
-    lain.widgets.calendar:attach(mytextclock, "#FFFFFF", "#000000")
-    -- or
-    lain.widgets.calendar:attach(mytextclock, "#FFFFFF")
-    -- or
-    lain.widgets.calendar:attach(mytextclock, nil, "#000000")
+Variable | Meaning | Type | Default
+--- | --- | --- | ---
+`icons` | Path to calendar icons | string | [lain/icons/cal/white](https://github.com/copycat-killer/lain/tree/master/icons/cal/white)
+`font_size` | Calendar font size | int | 12
+`fg` | Calendar foreground color | string | `beautiful.fg_normal`
+`bg` | Calendar background color | string | `beautiful.bg_normal`
+`position` | Calendar position | string | "top_right"
 
-default fg and fb colors are `beautiful.fg_focus` and `beautiful.bg_normal`.
+`position` possible values are defined [here](http://awesome.naquadah.org/doc/api/modules/naughty.html#notify).
 
 Notification will show an icon displaying current day, and formatted output
 from ``cal`` with current day highlighted.
 
-Calendar icons are placed in [lain/icons/cal](https://github.com/copycat-killer/lain/tree/master/icons/cal), default set being ``white``.
-
-You can add your own set, and tell lain to use it like this:
-
-    lain.widgets.calendar.icons_dir = lain.widgets.icons_dir .. "cal/myicons"
-
-also, you can set notification font size:
-
-    lain.widgets.calendar.font_size = 14
-
-default is 12.
-
-Finally, you can call the notification with a key binding like this:
+You can call the notification with a key binding like this:
 
     awful.key({ altkey }, "c", function () lain.widgets.calendar:show(7) end),
 
