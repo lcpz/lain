@@ -23,7 +23,7 @@ It can also use value strings in these formats:
     fs_info[p .. "size_mb"]
     fs_info[p .. "size_gb"]
 
-where `p` is the "mount" column of the output of `df` command ("/", "/home", "/boot", ...).
+where `p` is the last column of the output of `df` ("/", "/home", "/boot", ...).
 
 This means you can set the widget for a certain partition, but you can look up at others too.
 
