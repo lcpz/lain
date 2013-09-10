@@ -14,7 +14,7 @@ Now playing songs are notified like this:
 	| +-------+                                              |
 	+--------------------------------------------------------+
 
-The function takes a table as optional argument, which can contain:
+### input table
 
 Variable | Meaning | Type | Default
 --- | --- | --- | ---
