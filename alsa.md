@@ -4,43 +4,39 @@ Shows and controls alsa volume with a textbox.
 
 	myvolume = lain.widgets.alsa()
 
-* Left click: Launch `alsamixer` in your `terminal`.
-* Right click: Mute/unmute.
-* Scroll wheel: Increase/decrase volume.
-
-The function takes a table as optional argument, which can contain:
+### input table
 
 Variable | Meaning | Type | Default
 --- | --- | --- | ---
+`timeout` | Refresh timeout seconds | int | 5
 `channel` | Mixer channel | string | "Master" 
-`step` | Step at which volume is increased/decreased | string | "1%"
-`header` | Text to show before value | string | " Vol "
-`header_color` | Header color | string | `beautiful.fg_normal` or "#FFFFFF"
-`color` | Value color | string | `beautiful.fg_focus` or "#FFFFFF"
-`footer` | Text to append after value | string | " "
+`settings` | User settings | function | empty function
 
-*Note*: `footer` can be markup text.
+`settings` can be fed with the following variables:
 
-`lain.widgets.alsa` outputs the following table:
+Variable | Meaning | Type | Values
+--- | --- | --- | ---
+volume.level | Self explained | int | 0-100
+volume.status | Device status | string | "on", "off"
+
+### output table
 
 Variable | Meaning | Type
 --- | --- | --- 
 `widget` | The widget | `wibox.widget.textbox`
-`channel` | Alsa channel | string
-`step` | Increase/decrease step | string
-`notify` | Update `widget` | function
+`notify` | Force update `widget` | function
 
 Finally, you can control the widget with key bindings like these:
 
     -- Volume control
     awful.key({ altkey }, "Up",
     function ()
-        awful.util.spawn("amixer sset " .. volume.channel .. " " .. volume.step .. "+")
+        awful.util.spawn("amixer sset Master 1%+")
         volume.notify()
     end),
     awful.key({ altkey }, "Down",
     function ()
-        awful.util.spawn("amixer sset " .. volume.channel .. " " .. volume.step .. "-")
+        awful.util.spawn("amixer sset Master 1%-")
         volume.notify()
     end),
     awful.key({ altkey }, "m",
