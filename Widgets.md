@@ -8,7 +8,7 @@ Every widget may take either a table or a list of variables as argument.
 
 If it takes a table, you have to define a function variable called `settings` in it: with this you can markup textboxes using predefined variables and do whatever customization you want.
 
-I'll give an example just to take a grasp, see the sections for all the details: 
+Here follows a simple example, see the sections for all the details: 
 
     mycpu = lain.widgets.cpu({
         timeout = 4,
