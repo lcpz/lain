@@ -10,7 +10,7 @@ contain:
 
 Variable | Meaning | Type | Default
 --- | --- | --- | ---
-`timeout` | Refresh timeout seconds | int | 10
+`timeout` | Refresh timeout seconds | int | 3
 `settings` | User settings | function | empty function
 
 `settings` can use the strings `used` (memory used MB) and `swapused` (swap used MB).
