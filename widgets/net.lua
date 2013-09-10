@@ -41,9 +41,9 @@ end
 
 function worker(args)
     local args = args or {}
+    local timeout = args.timeout or 2
     local iface = args.iface or net.get_device()
     local units = args.units or 1024 --kb
-    local timeout = args.timeout or 2
     local settings = args.settings or function() end
 
     widget = wibox.widget.textbox('')

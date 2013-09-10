@@ -53,8 +53,8 @@ local unit = { ["mb"] = 1024, ["gb"] = 1024^2 }
 
 local function worker(args)
     local args      = args or {}
-    local partition = args.partition or "/"
     local timeout   = args.timeout or 600
+    local partition = args.partition or "/"
     local settings  = args.settings or function() end
 
     widget = wibox.widget.textbox('')
