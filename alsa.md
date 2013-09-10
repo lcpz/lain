@@ -26,7 +26,7 @@ Variable | Meaning | Type
 `widget` | The widget | `wibox.widget.textbox`
 `notify` | Force update `widget` | function
 
-Finally, you can control the widget with key bindings like these:
+You can control the widget with key bindings like these:
 
     -- Volume control
     awful.key({ altkey }, "Up",
