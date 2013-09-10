@@ -10,8 +10,7 @@ The function takes a table as optional argument, which can contain:
 
 Variable | Meaning | Type | Default
 --- | --- | --- | ---
-`refresh_timeout` | Refresh timeout seconds | int | 5
-`header` | Text to show before value | string | " Temp "
-`header_color` | Header color | string | `beautiful.fg_normal` or "#FFFFFF"
-`color` | Value color | string | `beautiful.fg_focus` or "#FFFFFF"
-`footer` | Text to show after value | string | "C "
+`timeout` | Refresh timeout seconds | int | 5
+`settings` | User settings | function | empty function
+
+`settings` can use the string `coretemp_now`, which means current core temperature, expressed in Celsius (linux standard).
