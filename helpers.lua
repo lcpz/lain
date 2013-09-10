@@ -4,14 +4,12 @@
      Licensed under GNU General Public License v2     
       * (c) 2013,      Luke Bonham                    
       * (c) 2010-2012, Peter Hofmann                  
-      * (c) 2010,      Adrian C. <anrxc@sysphere.org> 
                                                       
 --]]
 
-local awful  = require("awful")
 local debug  = require("debug")
-local pairs  = pairs
 local rawget = rawget
+local io     = { open = io.open }
 
 -- Lain helper functions for internal use
 -- lain.helpers
@@ -30,33 +28,6 @@ end
 
 -- }}}
 
--- {{{
--- If lain.terminal is a string, e.g. "xterm", then "xterm -e " .. cmd is
--- run. But if lain.terminal is a function, then terminal(cmd) is run.
-
-function helpers.run_in_terminal(cmd)
-    if type(terminal) == "function"
-    then
-        terminal(cmd)
-    elseif type(terminal) == "string"
-    then
-        awful.util.spawn(terminal .. ' -e ' .. cmd)
-    end
-end
-
--- }}}
-
--- {{{ Format units to one decimal point
-
-function helpers.uformat(array, key, value, unit)
-    for u, v in pairs(unit) do
-        array["{"..key.."_"..u.."}"] = string.format("%.1f", value/v)
-    end
-    return array
-end
-
--- }}}
-
 -- {{{ Read the first line of a file or return nil.
 
 function helpers.first_line(f)
@@ -69,6 +40,21 @@ function helpers.first_line(f)
     local content = fp:read("*l")
     fp:close()
     return content
+end
+
+-- }}}
+
+-- {{{ Timer maker 
+
+helpers.timer_table = {}
+
+function helpers.newtimer(name, timeout, fun, nostart)
+    helpers.timer_table[name] = timer({ timeout = timeout })
+    helpers.timer_table[name]:connect_signal("timeout", fun)
+    helpers.timer_table[name]:start()
+    if not nostart then
+        helpers.timer_table[name]:emit_signal("timeout")
+    end
 end
 
 -- }}}

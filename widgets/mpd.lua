@@ -7,10 +7,9 @@
                                                   
 --]]
 
-local markup       = require("lain.util.markup")
 local helpers      = require("lain.helpers")
 
-local awful        = require("awful")
+local util         = require("awful.util")
 local beautiful    = require("beautiful")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
@@ -27,111 +26,87 @@ local setmetatable = setmetatable
 local mpd = { id = nil }
 
 function worker(args)
-    local args = args or {}
-    local password = args.password or ""
-    local host = args.host or "127.0.0.1"
-    local port = args.port or "6600"
+    local args      = args or {}
+    local timeout   = args.timeout or 1
+    local password  = args.password or ""
+    local host      = args.host or "127.0.0.1"
+    local port      = args.port or "6600"
     local music_dir = args.music_dir or os.getenv("HOME") .. "/Music"
-    local refresh_timeout = args.refresh_timeout or 1
-    local header_color = args.header_color or beautiful.fg_normal or "#FFFFFF"
-    local color = args.color or beautiful.fg_focus or "#FFFFFF"
-    local spr = args.spr or " "
-    local footer = args.footer or ""
-    local app = args.app or "ncmpcpp"
-    local shadow = args.shadow or false
+    local settings  = args.settings or function() end
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
-    local mpdh = "telnet://"..host..":"..port
-    local echo = "echo 'password "..password.."\nstatus\ncurrentsong\nclose'"
+    local mpdh = "telnet://" .. host .. ":" .. port
+    local echo = "echo 'password " .. password .. "\nstatus\ncurrentsong\nclose'"
 
-    local mympd = wibox.widget.textbox()
+    widget = wibox.widget.textbox('')
 
     helpers.set_map("current mpd track", nil)
 
-    local mympdupdate = function()
-        local function set_nompd()
-            if shadow
-            then
-                mympd:set_text('')
-            else
-                mympd:set_markup(markup(header_color, "mpd ") .. markup(color , "off") .. footer)
-            end
-        end
-
-        local mpd_state  = {
-            ["{state}"]  = "N/A",
-            ["{file}"]   = "N/A",
-            ["{Artist}"] = "N/A",
-            ["{Title}"]  = "N/A",
-            ["{Album}"]  = "N/A",
-            ["{Date}"]   = "N/A"
+    function update()
+        mpd_now = {
+            state  = "N/A",
+            file   = "N/A",
+            artist = "N/A",
+            title  = "N/A",
+            album  = "N/A",
+            date   = "N/A"
         }
 
-        -- Get data from MPD server
         local f = io.popen(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh)
 
         for line in f:lines() do
             for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
-                if     k == "state"  then mpd_state["{"..k.."}"] = v
-                elseif k == "file"   then mpd_state["{"..k.."}"] = v
-                elseif k == "Artist" then mpd_state["{"..k.."}"] = awful.util.escape(v)
-                elseif k == "Title"  then mpd_state["{"..k.."}"] = awful.util.escape(v)
-                elseif k == "Album"  then mpd_state["{"..k.."}"] = awful.util.escape(v)
-                elseif k == "Date"   then mpd_state["{"..k.."}"] = awful.util.escape(v)
+                if     k == "state"  then mpd_now.state  = v
+                elseif k == "file"   then mpd_now.file   = v
+                elseif k == "Artist" then mpd_now.artist = util.escape(v)
+                elseif k == "Title"  then mpd_now.title  = util.escape(v)
+                elseif k == "Album"  then mpd_now.album  = util.escape(v)
+                elseif k == "Date"   then mpd_now.date   = util.escape(v)
                 end
             end
         end
 
         f:close()
 
-        if mpd_state["{state}"] == "play"
+        notification_preset = {
+            title   = "Now playing",
+            text    = mpd_now.artist .. " ("   ..
+                      mpd_now.album  .. ") - " ..
+                      mpd_now.date   .. "\n"   ..
+                      mpd_now.title,
+            fg      = beautiful.fg_normal or "#FFFFFF",
+            bg      = beautiful.bg_normal or "#000000",
+            timeout = 6
+        }
+
+        settings()
+
+        if mpd_now.state == "play"
         then
-            if mpd_state["{Title}"] ~= helpers.get_map("current mpd track")
+            if mpd_now.title ~= helpers.get_map("current mpd track")
             then
-                helpers.set_map("current mpd track", mpd_state["{Title}"])
+                helpers.set_map("current mpd track", mpd_now.title)
+
                 os.execute(mpdcover .. " '" .. music_dir .. "' '"
-                           .. mpd_state["{file}"] .. "'")
+                           .. mpd_now.file .. "'")
+
                 mpd.id = naughty.notify({
-                    title = "Now playing",
-                    text = mpd_state["{Artist}"] .. " ("   ..
-                           mpd_state["{Album}"]  .. ") - " ..
-                           mpd_state["{Date}"]   .. "\n"   ..
-                           mpd_state["{Title}"],
+                    preset = notification_preset,
                     icon = "/tmp/mpdcover.png",
-                    fg = color,
-                    timeout = 6, 
                     replaces_id = mpd.id
                 }).id
             end
-            mympd:set_markup(markup(header_color, mpd_state["{Artist}"])
-                             .. spr ..
-                             markup(color, mpd_state["{Title}"]) .. footer)
-        elseif mpd_state["{state}"] == "pause"
+        elseif mpd_now.state ~= "pause"
         then
-            mympd:set_markup(markup(header_color, "mpd")
-                             .. spr ..
-                             markup(color, "paused") .. footer)
-        else
             helpers.set_map("current mpd track", nil)
-		        set_nompd()
 	      end
     end
 
-    local mympdtimer = timer({ timeout = refresh_timeout })
-    mympdtimer:connect_signal("timeout", mympdupdate)
-    mympdtimer:start()
-    mympdtimer:emit_signal("timeout")
+    helpers.newtimer("mpd", timeout, update)
 
-    mympd:buttons(awful.util.table.join(
-        awful.button({}, 0,
-            function()
-                helpers.run_in_terminal(app)
-            end)
-    ))
+    output = { widget = widget, notify = update }
 
-    local mpd_out = { widget = mympd, notify = mympdupdate }
-
-    return setmetatable(mpd_out, { __index = mpd_out.widget })
+    return setmetatable(output, { __index = output.widget })
 end
 
 return setmetatable(mpd, { __call = function(_, ...) return worker(...) end })

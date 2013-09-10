@@ -7,15 +7,15 @@
                                                   
 --]]
 
-local markup       = require("lain.util.markup")
 local first_line   = require("lain.helpers").first_line
+local newtimer     = require("lain.helpers").newtimer
 
-local beautiful    = require("beautiful")
 local wibox        = require("wibox")
 
 local math         = { ceil   = math.ceil }
 local string       = { format = string.format,
                        gmatch = string.gmatch }
+local tostring     = tostring
 
 local setmetatable = setmetatable
 
@@ -26,17 +26,14 @@ local cpu = {
     last_active = 0
 }
 
-function worker(args)
-    local args = args or {}
-    local refresh_timeout = args.refresh_timeout or 5
-    local header = args.header or " Cpu "
-    local header_color = args.header or beautiful.fg_normal or "#FFFFFF"
-    local color = args.color or beautiful.fg_focus or "#FFFFFF"
-    local footer = args.footer or "% "
+local function worker(args)
+    local args     = args or {}
+    local timeout  = args.timeout or 5
+    local settings = args.settings or function() end
 
-    local w = wibox.widget.textbox()
+    widget = wibox.widget.textbox('')
 
-    local cpuusageupdate = function()
+    function update()
         -- Read the amount of time the CPUs have spent performing
         -- different kinds of work. Read the first line of /proc/stat
         -- which is the sum of all CPUs.
@@ -60,21 +57,19 @@ function worker(args)
         -- Read current data and calculate relative values.
         local dactive = active - cpu.last_active
         local dtotal = total - cpu.last_total
-        local dta = math.ceil((dactive / dtotal) * 100)
 
-        w:set_markup(markup(header_color, header) .. markup(color, dta .. footer))
+        usage = tostring(math.ceil((dactive / dtotal) * 100))
+
+        settings()
 
         -- Save current data for the next run.
         cpu.last_active = active
         cpu.last_total = total
     end
 
-    local cpuusagetimer = timer({ timeout = refresh_timeout })
-    cpuusagetimer:connect_signal("timeout", cpuusageupdate)
-    cpuusagetimer:start()
-    cpuusagetimer:emit_signal("timeout")
+    newtimer("cpu", timeout, update)
 
-    return w
+    return widget
 end
 
 return setmetatable(cpu, { __call = function(_, ...) return worker(...) end })

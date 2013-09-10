@@ -6,6 +6,8 @@
       * (c) 2013, Rman                            
 --]]
 
+local newtimer     = require("lain.helpers").newtimer
+
 local awful        = require("awful")
 local beautiful    = require("beautiful")
 local naughty      = require("naughty")
@@ -32,12 +34,14 @@ local alsabar =
      unmute = "#A4CE8A"
   },
 
+  terminal = terminal or "xterm",
   mixer = terminal .. " -e alsamixer",
 
   notifications =
   {
      font = beautiful.font:sub(beautiful.font:find(""), beautiful.font:find(" ")),
      font_size = "11",
+     color = beautiful.fg_focus,
      bar_size = 18 -- Awesome default
   },
 
@@ -49,9 +53,9 @@ function alsabar:notify()
 	local preset =
 	{
       title = "", text = "",
-      timeout = 3,
+      timeout = 15,
       font = alsabar.notifications.font .. " " .. alsabar.notifications.font_size,
-      fg = beautiful.fg_focus
+      fg = alsabar.notifications.color
 	}
 
 	if alsabar._muted then
@@ -72,7 +76,7 @@ function alsabar:notify()
 	end
 end
 
-function worker(args)
+local function worker(args)
     local args = args or {}
     local width = args.width or 63
     local height = args.heigth or 1
@@ -85,6 +89,7 @@ function worker(args)
     alsabar.notifications = args.notifications or alsabar.notifications
 
     alsabar.bar = awful.widget.progressbar()
+
     alsabar.bar:set_background_color(alsabar.colors.background)
     alsabar.bar:set_color(alsabar.colors.unmute)
     alsabar.tooltip = awful.tooltip({ objects = { alsabar.bar } })
@@ -97,18 +102,18 @@ function worker(args)
         alsabar.bar:set_vertical(true)
     end
 
-    local myvolumebarupdate = function()
+    function update()
         -- Get mixer control contents
         local f = io.popen("amixer get " .. alsabar.channel)
         local mixer = f:read("*all")
         f:close()
 
         -- Capture mixer control state:          [5%] ... ... [on]
-        local volu, mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
-        -- Handle mixers without data
+        local volu, mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)") 
+
         if volu == nil then
-           volu = 0
-           mute = "off"
+            volu = 0
+            mute = "off"
         end
 
         alsabar._current_level = tonumber(volu) / 100
@@ -126,10 +131,7 @@ function worker(args)
         end
     end
 
-    local myvolumebartimer = timer({ timeout = 5 })
-    myvolumebartimer:connect_signal("timeout", myvolumebarupdate)
-    myvolumebartimer:start()
-    myvolumebartimer:emit_signal("timeout")
+    newtimer("alsabar", 5, update)
 
     alsabar.bar:buttons (awful.util.table.join (
           awful.button ({}, 1, function()
@@ -151,14 +153,15 @@ function worker(args)
           end)
     ))
 
-    return { widget = alsabar.bar,
-             channel = alsabar.channel, 
-             step = alsabar.step,
-             notify = function() 
-                         myvolumebarupdate()
-                         alsabar.notify()
-                       end
-           }
+    return { 
+        widget  = alsabar.bar,
+        channel = alsabar.channel, 
+        step    = alsabar.step,
+        notify  = function() 
+                    update()
+                    alsabar.notify()
+                  end
+    }
 end
 
 return setmetatable(alsabar, { __call = function(_, ...) return worker(...) end })

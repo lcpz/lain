@@ -2,102 +2,65 @@
 --[[
                                                       
      Licensed under GNU General Public License v2     
-      * (c) 2013,      Luke Bonham                    
-      * (c) 2010-2012, Peter Hofmann                  
-      * (c) 2010,      Adrian C. <anrxc@sysphere.org> 
+      * (c) 2013, Luke Bonham                         
+      * (c) 2010, Adrian C. <anrxc@sysphere.org>      
                                                       
 --]]
 
-local markup          = require("lain.util.markup")
-local run_in_terminal = require("lain.helpers").run_in_terminal
+local newtimer        = require("lain.helpers").newtimer
 
-local awful           = require("awful")
-local beautiful       = require("beautiful")
 local wibox           = require("wibox")
 
-local io              = io
-local string          = { format = string.format,
-                          match  = string.match }
+local io              = { popen  = io.popen }
+local string          = { match  = string.match }
 
 local setmetatable    = setmetatable
 
--- ALSA volume infos
--- nain.widgets.alsa
-local alsa = {
-    volume = 0,
-    mute = false,
-}
+-- ALSA volume
+-- lain.widgets.alsa
+local alsa = {}
 
-function worker(args)
-    local args = args or {}
-    local channel = args.channel or "Master"
-    local step = args.step or "1%"
-    local header = args.header or " Vol "
-    local header_color = args.header_color or beautiful.fg_normal or "#FFFFFF"
-    local color = args.color or beautiful.fg_focus or "#FFFFFF"
+local function worker(args)
+    local args     = args or {}
+    local timeout  = args.timeout or 5
+    local channel  = args.channel or "Master"
+    local settings = args.settings or function() end
 
-    local myvolume = wibox.widget.textbox()
-    local myvolumeupdate = function()
+    widget = wibox.widget.textbox('')
+
+    function update()
         local f = io.popen('amixer get ' .. channel)
         local mixer = f:read("*all")
         f:close()
 
-        local volume, mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
+        volume = {}
 
-        if volume == nil
+        volume.level, volume.status = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
+
+        if volume.level == nil
         then
-            alsa.volume = 0
-        else
-            alsa.volume = volume
+            volume.level  = 0
+            volume.status = "off"
         end
 
-        if mute == nil or mute == 'on'
+        if volume.status == ""
         then
-            alsa.mute = true
-            mute = ''
-        else
-            alsa.mute = false
-            mute = 'M'
+            if volume.level == 0
+            then
+                volume.status = "off"
+            else
+                volume.status = "on"
+            end
         end
 
-        local ret = markup(color, string.format("%d%s", volume, mute))
-        myvolume:set_markup(markup(header_color, header) .. ret .. " ")
+        settings()
     end
 
-    local myvolumetimer = timer({ timeout = 5 })
-    myvolumetimer:connect_signal("timeout", myvolumeupdate)
-    myvolumetimer:start()
-    myvolumetimer:emit_signal("timeout")
+    newtimer("alsa", timeout, update)
 
-    myvolume:buttons(awful.util.table.join(
-        awful.button({}, 1,
-            function()
-                run_in_terminal('alsamixer')
-             end),
-        awful.button({}, 3,
-            function()
-                awful.util.spawn('amixer sset ' .. channel ' toggle')
-            end),
+    output = { widget = widget, notify = update }
 
-        awful.button({}, 4,
-            function()
-                awful.util.spawn('amixer sset ' .. channel .. ' ' .. step '+')
-                myvolumeupdate()
-            end),
-
-        awful.button({}, 5,
-            function()
-                awful.util.spawn('amixer sset ' .. channel .. ' ' .. step '-')
-                myvolumeupdate()
-            end)
-    ))
-
-    alsa.widget = myvolume
-    alsa.channel = channel
-    alsa.step = step
-    alsa.notify = myvolumeupdate
-
-    return setmetatable(alsa, { __index = alsa.widget })
+    return setmetatable(output, { __index = output.widget })
 end
 
 return setmetatable(alsa, { __call = function(_, ...) return worker(...) end })

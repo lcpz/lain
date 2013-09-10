@@ -6,160 +6,126 @@
                                                   
 --]]
 
-local markup       = require("lain.util.markup")
 local helpers      = require("lain.helpers")
 
-local awful        = require("awful")
-local beautiful    = require("beautiful")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
-local io           = io
+local io           = { popen = io.popen }
 local tonumber     = tonumber
-local string       = string
+local string       = { len    = string.len,
+                       format = string.format }
 
 local setmetatable = setmetatable
 
--- Mail imap check
+-- Mail IMAP check
 -- lain.widgets.imap
-local imap = {} 
+local imap = { stored = nil }
 
 function worker(args)
-    local args = args or {}
+    local args     = args or {}
 
-    local server = args.server
-    local mail = args.mail
+    local server   = args.server
+    local mail     = args.mail
     local password = args.password
 
-    local port = args.port or "993"
-    local refresh_timeout = args.refresh_timeout or 60
-    local header = args.header or "Mail "
-    local header_color = args.header_color or beautiful.fg_normal or "#FFFFFF"
-    local color = args.color or beautiful.fg_focus or "#FFFFFF"
-    local mail_encoding = args.mail_encoding or nil
-    local maxlen = args.maxlen or 200
-    local app = args.app or "mutt"
+    local port     = args.port or "993"
+    local timeout  = args.timeout or 60
+    local encoding = args.encoding or nil
+    local maxlen   = args.maxlen or 200
     local is_plain = args.is_plain or false
-    local shadow = args.shadow or false
+    local settings = args.settings or function() end
+
+    local checkmail = helpers.scripts_dir .. "checkmail"
 
     helpers.set_map(mail, true)
     helpers.set_map(mail .. " count", "0")
 
-    local checkmail = helpers.scripts_dir .. "checkmail"
-
     if not is_plain
     then
-        local f = io.popen(password)
-        password = f:read("*all"):gsub("\n", ""):gsub("\r", "")
-        f:close()
+        if not imap.stored
+        then
+            local f = io.popen(password)
+            password = f:read("*all"):gsub("\n", ""):gsub("\r", "")
+            f:close()
+            imap.stored = password
+        else
+            password = imap.stored
+        end
     end
 
-    local myimapcheck = wibox.widget.textbox()
+    widget = wibox.widget.textbox('')
 
-    local myimapcheckupdate = function()
-        function set_nomail()
-            if shadow
-            then
-                myimapcheck:set_text('')
-            else
-                myimapcheck:set_markup(markup(color, " no mail "))
-            end
-        end
+    function update()
+        to_execute = string.format("%s -s %s -u %s -p %s --port %s",
+                     checkmail, server, mail, password, port) 
 
-        conn = io.popen("ip link show")
-        check_conn = conn:read("*all") 
-        conn:close()
-
-        if not check_conn:find("state UP") then
-               set_nomail()
-               return
-        end
-
-        to_execute = checkmail .. ' -s ' .. server ..
-                     ' -u ' .. mail .. ' -p ' .. password
-                     .. ' --port ' .. port
-
-        if mail_encoding ~= nil
+        if encoding ~= nil
         then
-            to_execute = to_execute .. ' --encoding '
-                         .. mail_encoding
+            to_execute = string.format("%s --encoding %s",
+                         to_execute, encoding)
         end
 
         f = io.popen(to_execute)
         ws = f:read("*all")
         f:close()
 
+        mailcount = "0"
+
         if ws:find("No new messages") ~= nil
         then
             helpers.set_map(mail, true)
-            set_nomail()
         elseif ws:find("CheckMailError: invalid credentials") ~= nil
         then
             helpers.set_map(mail, true)
-            myimapcheck:set_markup(" " .. markup(header_color, header) ..
-                                   markup(color, "invalid credentials "))
+            mailcount = "invalid credentials"
         else
-            mailcount = ws:match("%d") or "?"
-
-            if helpers.get_map(mail .. " count") ~= mailcount and mailcount ~= "?"
+            mailcount = ws:match("%d") or "0"
+            if helpers.get_map(mail .. " count") ~= mailcount and mailcount ~= "0"
             then
                 helpers.set_map(mail, true)
                 helpers.set_map(mail .. " count", mailcount)
             end
+        end
 
-            myimapcheck:set_markup(" " .. markup(header_color, header) ..
-                                   markup(color, mailcount) .. " ")
+        notification_preset = {
+            icon     = helpers.icons_dir .. "mail.png",
+            timeout  = 8,
+            position = "top_left"
+        }
 
-            if helpers.get_map(mail)
+        settings()
+
+
+        if helpers.get_map(mail) and tonumber(mailcount) >= 1
+        then
+            notify_title = ws:match(mail .. " has %d new message.?")
+            ws = ws:gsub(notify_title, "", 1):gsub("\n", "", 2)
+
+            -- trying to remove useless infos
+            ws = ws:gsub("--Content.%S+.-\n", "")
+            ws = ws:gsub("--%d+.-\n", "")
+
+            if string.len(ws) > maxlen
             then
-                if mailcount == "?"
-                -- May happens sometimes using keyrings or other password fetchers.
-                -- Since this should be automatically fixed in short times, we threat
-                -- this exception delaying the update to the next timeout.
-                then
-                    set_nomail()
-                    return
-                elseif tonumber(mailcount) >= 1
-                then
-                    notify_title = ws:match(mail .. " has %d new message.?")
-                    ws = ws:gsub(notify_title, "", 1):gsub("\n", "", 2)
-
-                    ws = ws:gsub("--Content.%S+.-\n", "")
-                    ws = ws:gsub("--%d+.-\n", "")
-
-                    if string.len(ws) > maxlen
-                    then
-                        ws = ws:sub(1, maxlen) .. "[...]"
-                    end
-
-                    notify_title = notify_title:gsub("\n", "")
-                end
-
-                naughty.notify({ title = notify_title,
-                                 fg = color,
-                                 text = ws,
-                                 icon = beautiful.lain_mail_notify or
-                                        helpers.icons_dir .. "mail.png",
-                                 timeout = 8,
-                                 position = "top_left" })
-
-                helpers.set_map(mail, false)
+                ws = ws:sub(1, maxlen) .. "[...]"
             end
+
+            notify_title = notify_title:gsub("\n", "")
+
+            naughty.notify({
+                preset = notification_preset,
+                title = notify_title,
+                text = ws
+            })
+
+            helpers.set_map(mail, false)
         end
     end
 
-    local myimapchecktimer = timer({ timeout = refresh_timeout })
-    myimapchecktimer:connect_signal("timeout", myimapcheckupdate)
-    myimapchecktimer:start()
-    myimapcheck:buttons(awful.util.table.join(
-        awful.button({}, 0,
+    helpers.newtimer(mail, timeout, update, true)
 
-            function()
-                helpers.run_in_terminal(app)
-            end)
-    ))
-
-    return myimapcheck
+    return widget
 end
 
 return setmetatable(imap, { __call = function(_, ...) return worker(...) end })

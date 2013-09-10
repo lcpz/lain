@@ -6,9 +6,8 @@
                                                   
 --]]
 
-local markup       = require("lain.util.markup")
+local newtimer     = require("lain.helpers").newtimer
 
-local beautiful    = require("beautiful")
 local wibox        = require("wibox")
 
 local io           = io
@@ -21,32 +20,22 @@ local setmetatable = setmetatable
 local temp = {}
 
 function worker(args)
-    local args = args or {}
-    local refresh_timeout = args.refresh_timeout or 5
-    local header = args.header or " Temp "
-    local header_color = args.header_color or beautiful.fg_normal or "#FFFFFF"
-    local color = args.color or beautiful.fg_focus or header_color
-    local footer = args.footer or "C "
+    local args     = args or {}
+    local timeout  = args.timeout or 5
+    local settings = args.settings or function() end
 
-    local mytemp = wibox.widget.textbox()
+    widget = wibox.widget.textbox('')
 
-    local mytempupdate = function()
+    function update()
         local f = io.open("/sys/class/thermal/thermal_zone0/temp")
-        local ret = f:read("*all")
+        coretemp_now = tonumber(f:read("*all")) / 1000
         f:close()
-
-        ret = tonumber(ret) / 1000
-
-        mytemp:set_markup(markup(header_color, header) ..
-                          markup(color, ret .. footer))
+        settings()
     end
 
-    local mytemptimer = timer({ timeout = refresh_timeout })
-    mytemptimer:connect_signal("timeout", mytempupdate)
-    mytemptimer:start()
-    mytemptimer:emit_signal("timeout")
+    newtimer("coretemp", timeout, update)
 
-    return mytemp
+    return widget
 end
 
 return setmetatable(temp, { __call = function(_, ...) return worker(...) end })
