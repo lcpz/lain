@@ -12,7 +12,7 @@ Variable | Meaning | Type | Default
 `channel` | Mixer channel | string | "Master" 
 `settings` | User settings | function | empty function
 
-`settings` can be fed with the following variables:
+`settings` can use the following variables:
 
 Variable | Meaning | Type | Values
 --- | --- | --- | ---
