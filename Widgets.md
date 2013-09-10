@@ -6,9 +6,15 @@ This is said because, for some widgets, `function` returns a table to be used fo
 
 Every widget may take either a table or a list of variables as argument.
 
-If it takes a table, you have to define a function variable called `settings` in it: with this you can markup textboxes using predefined variables and do whatever customization you want.
+If it takes a table, you have to define a function variable called `settings` in it, in order to make your customizations.
 
-Here follows a simple example, see the sections for all the details: 
+To markup the textbox, call `widget:set_markup(...)` within `settings`.
+
+You can feed `set_markup` with predefined arguments, see the sections for all the details.
+
+`widget` is a textbox, so you can also threat it like any other `wibox.widget.textbox`.
+
+Here follows an example: 
 
     mycpu = lain.widgets.cpu({
         timeout = 4,
@@ -16,6 +22,8 @@ Here follows a simple example, see the sections for all the details:
             widget:set_markup("Cpu " .. usage)
         end
     })
+
+---
 
 - [alsa](https://github.com/copycat-killer/lain/wiki/alsa)
 - [alsabar](https://github.com/copycat-killer/lain/wiki/alsabar)
