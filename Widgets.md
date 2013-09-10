@@ -2,7 +2,7 @@ Every widget is output by a `function`.
 
 Unless otherwise expressly noted, `function` returns a `wibox.widget.textbox`.
 
-We say this because, for some widget, `function` return a table to be used for notification and update purposes.
+We say this because, for some widget, `function` returns a table to be used for notification and update purposes.
 
 Almost all widgets can be set by an input function called `settings`: you can markup textboxes and do whatever customization within it. 
 
