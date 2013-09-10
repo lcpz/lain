@@ -6,9 +6,8 @@
                                                   
 --]]
 
-local markup       = require("lain.util.markup")
+local newtimer     = require("lain.helpers").newtimer
 
-local beautiful    = require("beautiful")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
@@ -28,10 +27,9 @@ local setmetatable = setmetatable
 -- lain.widgets.yawn
 local yawn =
 {
-    units    = "",
-    forecast = "",
-    icon     = wibox.widget.imagebox(),
-    widget   = wibox.widget.textbox()
+    icon                = wibox.widget.imagebox(),
+    widget              = wibox.widget.textbox(''),
+    notification_preset = {}
 }
 
 local project_path       = debug.getinfo(1, 'S').source:match[[^@(.*/).*$]]
@@ -44,33 +42,32 @@ local weather_data       = nil
 local notification       = nil
 local city_id            = nil
 local sky                = nil
-local settings           = {}
-local update_timer       = nil
+local settings           = function() end
 
-local function fetch_weather(args)
-    local toshow = args.toshow or "forecast"
-
+local function fetch_weather()
     local url = api_url .. units_set .. city_id
     local f = io.popen("curl --connect-timeout 1 -fsm 2 '"
                        .. url .. "'" )
     local text = f:read("*all")
     f:close()
 
+    -- handle no suitable icon found
+    yawn.icon:set_image(icon_path .. "na.png")
+
     -- In case of no connection or invalid city ID
     -- widgets won't display
     if text == "" or text:match("City not found")
     then
-        sky = icon_path .. "na.png"
-        yawn.icon:set_image(sky)
         if text == "" then
             weather_data = "Service not available at the moment."
-            return "N/A"
+            yawn.widget:set_text("N/A")
         else
             weather_data = "City not found!\n" ..
                            "Are you sure " .. city_id ..
                            " is your Yahoo city ID?"
-            return "?"
+            yawn.widget:set_text("?")
         end
+        return
     end
 
     -- Processing raw data
@@ -88,8 +85,8 @@ local function fetch_weather(args)
     -- Getting info for text widget
     local now      = weather_data:sub(weather_data:find("Now:")+5,
                      weather_data:find("\n")-1)
-    local forecast = now:sub(1, now:find(",")-1)
-    local units    = now:sub(now:find(",")+2, -2)
+    forecast       = now:sub(1, now:find(",")-1)
+    units          = now:sub(now:find(",")+2, -2)
 
     -- Day/Night icon change
     local hour = tonumber(os.date("%H"))
@@ -110,14 +107,6 @@ local function fetch_weather(args)
 
     sky = sky  .. forecast:gsub(" ", ""):gsub("/", "") .. ".png"
 
-    -- In case there's no defined icon for current forecast
-    f = io.popen(sky)
-    if f == nil then
-        sky = icon_path .. "na.png"
-    else
-        f:close()
-    end
-
     -- Localization
     local f = io.open(localizations_path .. language, "r")
     if language:find("en_") == nil and f ~= nil
@@ -132,21 +121,18 @@ local function fetch_weather(args)
     end
 
     -- Finally setting infos
-    both = weather_data:match(": %S+.-\n"):gsub(": ", "")
+    yawn.icon:set_image(sky)
+    widget = wibox.widget.textbox()
+
     forecast = weather_data:match(": %S+.-,"):gsub(": ", ""):gsub(",", "\n")
     units = units:gsub(" ", "")
+    notification_preset = {}
+    -- anche notification preset, con fg, bg e position
 
-    yawn.forecast = markup(yawn.color, " " .. markup.font(beautiful.font, forecast) .. " ")
-    yawn.units = markup(yawn.color, " " .. markup.font(beautiful.font, units))
-    yawn.icon:set_image(sky)
+    settings()
 
-    if toshow == "forecast" then
-        return yawn.forecast
-    elseif toshow == "units" then
-        return yawn.units
-    else
-        return both 
-    end
+    yawn.widget = widget
+    yawn.notification_preset = notification_preset 
 end
 
 function yawn.hide()
@@ -159,41 +145,29 @@ end
 function yawn.show(t_out)
     if yawn.widget._layout.text == "?"
     then
-        if update_timer ~= nil
-        then
-            update_timer:emit_signal("timeout")
-        else
-            fetch_weather(settings)
-        end
+        fetch_weather(settings)
     end
 
     yawn.hide()
 
     notification = naughty.notify({
+        preset = yawn.notification_preset,
         text = weather_data,
         icon = sky,
-        timeout = t_out,
-        fg = yawn.color
+        timeout = t_out
     })
 end
 
 function yawn.register(id, args)
-    local args = args or {}
-
-    settings = args 
-
-    yawn.color = args.color or beautiful.fg_normal or "#FFFFFF"
+    local args     = args or {}
+    local timeout  = args.timeout or 600
+    settings       = args.settings or function() end
 
     if args.u == "f" then units_set = '?u=f&w=' end
 
     city_id = id
 
-    update_timer = timer({ timeout = 600 }) -- 10 mins
-    update_timer:connect_signal("timeout", function()
-        yawn.widget:set_markup(fetch_weather(settings))
-    end)
-    update_timer:start()
-    update_timer:emit_signal("timeout")
+    newtimer("yawn", timeout, fetch_weather)
 
     yawn.icon:connect_signal("mouse::enter", function()
         yawn.show(0)
@@ -202,7 +176,7 @@ function yawn.register(id, args)
         yawn.hide()
     end)
 
-    return yawn
+    return { icon = yawn.icon, widget = yawn.widget }
 end
 
 function yawn.attach(widget, id, args)
@@ -216,7 +190,5 @@ function yawn.attach(widget, id, args)
         yawn.hide()
     end)
 end
-
--- }}}
 
 return setmetatable(yawn, { __call = function(_, ...) return yawn.register(...) end })

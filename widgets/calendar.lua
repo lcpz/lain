@@ -13,7 +13,7 @@ local beautiful    = require("beautiful")
 local naughty      = require("naughty")
 
 local io           = io
-local os           = { date  = os.date }
+local os           = { date = os.date }
 local tonumber     = tonumber
 
 local setmetatable = setmetatable
@@ -22,15 +22,6 @@ local setmetatable = setmetatable
 -- lain.widgets.calendar
 local calendar = {}
 local notification = nil
-
-local function create(foreground, background)
-    calendar.offset = 0
-    calendar.icons_dir = icons_dir .. "cal/white/" -- default
-    calendar.notify_icon = nil
-    calendar.font_size = 12
-    calendar.bg = background or beautiful.bg_normal or "#FFFFFF"
-    calendar.fg = foreground or beautiful.fg_focus or "#FFFFFF"
-end
 
 function calendar:hide()
     if notification ~= nil then
@@ -59,7 +50,7 @@ function calendar:show(t_out, inc_offset)
         end
 
         calendar.offset = 0
-        calendar.notify_icon = calendar.icons_dir .. today .. ".png"
+        calendar.notify_icon = calendar.icons .. today .. ".png"
 
         -- bg and fg inverted to highlight today
         f = io.popen( init_t .. today ..
@@ -106,13 +97,23 @@ function calendar:show(t_out, inc_offset)
 
     notification = naughty.notify({ text = c_text,
                                     icon = calendar.notify_icon,
+                                    position = calendar.position,
                                     fg = calendar.fg,
                                     bg = calendar.bg,
                                     timeout = tims })
 end
 
-function calendar:attach(widget, foreground, background)
-    create(foreground, background)
+function calendar:attach(widget, args)
+    local args = args or {}
+    calendar.icons = args.icons or icons_dir .. "cal/white/"
+    calendar.font_size = tonumber(args.font_size) or 12
+    calendar.fg = args.fg or beautiful.fg_normal or "#FFFFFF"
+    calendar.bg = args.bg or beautiful.bg_normal or "#FFFFFF"
+    calendar.position = args.position or "top_right"
+
+    calendar.offset = 0
+    calendar.notify_icon = nil
+
     widget:connect_signal("mouse::enter", function () calendar:show() end)
     widget:connect_signal("mouse::leave", function () calendar:hide() end)
     widget:buttons(awful.util.table.join( awful.button({ }, 1, function ()

@@ -7,11 +7,8 @@
                                                   
 --]]
 
-local markup          = require("lain.util.markup")
-local run_in_terminal = require("lain.helpers").run_in_terminal
+local newtimer        = require("lain.helpers").newtimer
 
-local awful           = require("awful")
-local beautiful       = require("beautiful")
 local wibox           = require("wibox")
 
 local io              = io
@@ -28,25 +25,20 @@ local setmetatable    = setmetatable
 local maildir = {}
 
 function worker(args)
-    local args = args or {}
-    local mailpath = args.mailpath or os.getenv("HOME") .. "/Mail"
+    local args         = args or {}
+    local timeout      = args.timeout or 60
+    local mailpath     = args.mailpath or os.getenv("HOME") .. "/Mail"
     local ignore_boxes = args.ignore_boxes or {}
-    local refresh_timeout = args.refresh_timeout or 60
-    local header = args.header or " Mail "
-    local header_color = args.header_color or beautiful.fg_normal or "#FFFFFF"
-    local color_newmail = args.color_newmail or beautiful.fg_focus or "#FFFFFF"
-    local color_nomail = args.color_nomail or beautiful.fg_normal or "#FFFFFF"
-    local app = args.app or "mutt"
-    local shadow = args.shadow or false
+    local settings     = args.settings or function() end
 
-    local mymailcheck = wibox.widget.textbox()
-    local mymailcheckupdate = function()
+    widget = wibox.widget.textbox('')
+
+    function update()
         -- Find pathes to mailboxes.
         local p = io.popen("find " .. mailpath ..
                            " -mindepth 1 -maxdepth 1 -type d" ..
                            " -not -name .git")
         local boxes = {}
-        local line = ""
         repeat
             line = p:read("*l")
             if line ~= nil
@@ -73,7 +65,8 @@ function worker(args)
 
         table.sort(boxes)
 
-        local newmail = ""
+        newmail = "no mail"
+
         local count = 0
         for box, number in pairs(boxes)
         do
@@ -91,39 +84,12 @@ function worker(args)
             end
         end
 
-        if count == 1 then
-            -- it will be only executed once
-            for box, number in pairs(boxes)
-            do  -- it's useless to show only INBOX(x)
-                if box == "INBOX" then newmail = number end
-            end
-        end
-
-        if newmail == ""
-        then
-            if shadow
-            then
-                mymailcheck:set_text('')
-            else
-                myimapcheck:set_markup(markup(color_nomail, " no mail "))
-            end
-        else
-            myimapcheck:set_markup(" " .. markup(header_color, header) ..
-                                   markup(color_newmail, newmail) .. " ")
-        end
+        settings()
     end
 
-    local mymailchecktimer = timer({ timeout = refresh_timeout })
-    mymailchecktimer:connect_signal("timeout", mymailcheckupdate)
-    mymailchecktimer:start()
-    mymailcheck:buttons(awful.util.table.join(
-        awful.button({}, 0,
-            function()
-                run_in_terminal(app)
-            end)
-    ))
+    newtimer(mailpath, timeout, update, true)
 
-    return mymailcheck
+    return widget
 end
 
 return setmetatable(maildir, { __call = function(_, ...) return worker(...) end })

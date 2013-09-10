@@ -9,10 +9,8 @@
                                                            
 --]]
 
-local markup          = require("lain.util.markup")
-local run_in_terminal = require("lain.helpers").run_in_terminal
+local newtimer        = require("lain.helpers").newtimer
 
-local beautiful       = require("beautiful")
 local wibox           = require("wibox")
 
 local io              = { lines  = io.lines }
@@ -28,19 +26,14 @@ local setmetatable    = setmetatable
 local mem = {}
 
 function worker(args)
-    local args = args or {}
-    local refresh_timeout = args.refresh_timeout or 10
-    local show_swap = args.show_swap or false
-    local show_total = args.show_total or false
-    local header = args.header or " Mem "
-    local header_color = args.header or beautiful.fg_normal or "#FFFFFF"
-    local color = args.color or beautiful.fg_focus or "#FFFFFF"
-    local footer = args.footer or "MB "
+    local args     = args or {}
+    local timeout  = args.timeout or 3
+    local settings = args.settings or function() end
 
-    local widg = wibox.widget.textbox()
+    widget = wibox.widget.textbox('')
 
-    local upd = function()
-        local mem = {}
+    function update()
+        mem = {}
         for line in io.lines("/proc/meminfo")
         do
             for k, v in string.gmatch(line, "([%a]+):[%s]+([%d]+).+")
@@ -58,30 +51,12 @@ function worker(args)
         used = mem.total - (mem.free + mem.buf + mem.cache)
         swapused = mem.swap - mem.swapf
 
-        if show_total
-        then
-            local fmt = "%" .. string.len(mem.total) .. ".0f/%.0f"
-            widg:set_markup(markup(header_color, header) ..
-                            markup(color, string.format(fmt, used, mem.total) .. footer))
-        else
-            widg:set_markup(markup(header_color, header) ..
-                            markup(color, used .. footer))
-        end
-
-        if show_swap
-        then
-            widg:set_markup(widg._layout.text .. ' ('
-                            .. string.format('%.0f '.. footer, swapused)
-                            .. ')')
-        end
+        settings()
     end
 
-    local tmr = timer({ timeout = refresh_timeout })
-    tmr:connect_signal("timeout", upd)
-    tmr:start()
-    tmr:emit_signal("timeout")
+    newtimer("mem", timeout, update)
 
-    return widg
+    return widget
 end
 
 return setmetatable(mem, { __call = function(_, ...) return worker(...) end })
