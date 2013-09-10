@@ -4,7 +4,7 @@ Unless otherwise expressly noted, `function` returns a `wibox.widget.textbox`.
 
 We say this because, for some widget, `function` return a table to be used for notification and update purposes.
 
-Almost all widgets can be set by an input function called `settings`: you can markup textboxes and do other customizations within it. 
+Almost all widgets can be set by an input function called `settings`: you can markup textboxes and do whatever customization within it. 
 
 - [alsa](https://github.com/copycat-killer/lain/wiki/alsa)
 - [alsabar](https://github.com/copycat-killer/lain/wiki/alsabar)
