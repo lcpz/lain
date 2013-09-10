@@ -13,7 +13,7 @@ Here follows a simple example, see the sections for all the details:
     mycpu = lain.widgets.cpu({
         timeout = 4,
         settings = function()
-            widgets:set_markup("Cpu " .. usage)
+            widget:set_markup("Cpu " .. usage)
         end
     })
 
