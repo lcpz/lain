@@ -15,9 +15,12 @@ Simply clone this repository into your Awesome directory:
 
     git clone https://github.com/copycat-killer/lain.git ~/.config/awesome/lain
 
-### Index
+then include it in your `rc.lua`:
 
-- [To start](https://github.com/copycat-killer/lain/wiki/To-start)
+    local lain = require("lain")
+
+### Submodules
+
 - [Layouts](https://github.com/copycat-killer/lain/wiki/Layouts)
 - [Widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
 - [Utilities](https://github.com/copycat-killer/lain/wiki/Utilities)
