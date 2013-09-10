@@ -2,10 +2,6 @@
 
 Shows mail status in a textbox over IMAP protocol.
 
-Dependencies:
-
-- python3
-
 New mails are notified through a notification like this:
 
 	+---------------------------------------------------+
@@ -26,29 +22,22 @@ Text will be cut if the mail is too long.
 
 The function takes a table as argument. Required table parameters are:
 
-Variable | Type
---- | --- 
-`server` | string
-`mail` | string
-`password` | string
+Variable | Meaning | Type
+--- | --- | ---
+`server` | Mail server | string
+`mail` | User mail | string
+`password` | User password | string
 
 while the optional are:
 
 Variable | Meaning | Type | Default
 --- | --- | --- | ---
 `port` | IMAP port | int | 993
-`refresh_timeout` | Refresh timeout seconds | int | 60
-`header` | Text to show before value | string | " Mail "
-`header_color` | Header color | string | `beautiful.fg_normal` or "#FFFFFF"
-`color` | Mail value color | string | `beautiful.fg_focus` or "#FFFFFF"
-`footer` | Text to append after value | string | " "
-`mail_encoding` | Mail character encoding | string | autodetected
+`timeout` | Refresh timeout seconds | int | 60
+`encoding` | Mail character encoding | string | autodetected
 `maxlen` | Maximum chars to display in notification | int | 200
-`app` | Mail program to spawn on click | string | "mutt"
-`shadow` | Hide widget when there are no mails | boolean | false
 `is_plain` | Define whether `password` is a plain password (true) or a function that retrieves it (false) | boolean | false
-
-**Note**: `footer` can be markup text.
+`settings` | User settings | function
 
 Let's focus better on `is_plain`.
 
@@ -65,6 +54,20 @@ and you'll have the same security provided by `~/.netrc`.
 
 When `is_plain == false`, it *executes* `password` before using it, so you can also use whatever password fetching solution you want.
 
-You can also define your custom icon for the naughty notification. Just set `lain_mail_notify` into `theme.lua`:
+`settings` can use the string `mailcount`, whose possible values are:
 
-    theme.lain_mail_notify = "/path/to/my/icon"
+- "0"
+- "invalid credentials"
+- string number
+
+and can modify `notification_preset` table, which will be the preset for the naughty notifications. Check [here](http://awesome.naquadah.org/doc/api/modules/naughty.html#notify) for the list of variables it can contain. Default definition:
+
+    notification _preset = {
+       icon = lain/icons/mail.png,
+       timeout = 8,
+       position = "top_left"
+    }
+
+### output 
+
+A textbox.
