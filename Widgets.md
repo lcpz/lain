@@ -2,9 +2,22 @@ Every widget is output by a `function`.
 
 Unless otherwise expressly noted, `function` returns a `wibox.widget.textbox`.
 
-We say this because, for some widget, `function` returns a table to be used for notification and update purposes.
+This is said because, for some widgets, `function` returns a table to be used for notification and update purposes.
 
-Almost all widgets can be set by an input function called `settings`: you can markup textboxes and do whatever customization within it. 
+Every widget may take either a table or a list of variables as argument.
+
+If it takes a table, you have to define a function variable called `settings` in it: with this you can markup textboxes using predefined variables and do whatever customization you want.
+
+I'll give an example: 
+
+    mycpu = lain.widgets.cpu({
+        timeout = 4,
+        settings = function()
+            widgets:set_markup("Cpu " .. usage)
+        end
+    })
+
+check the sections for all the details.
 
 - [alsa](https://github.com/copycat-killer/lain/wiki/alsa)
 - [alsabar](https://github.com/copycat-killer/lain/wiki/alsabar)
