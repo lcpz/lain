@@ -1,6 +1,8 @@
 [<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
 
-**Please be warned**: as for now, this works fine in normal link situations, but is discouraged to use it if your connection is sobbing, since it may cause some short freezes. I am at work to solve this.
+**Please be warned**: as for now, this works fine in normal link situations, but is discouraged to use it if your connection is sobbing, since it may cause some short freezes. I am working on socket libraries to solve this. If you're a Python programmer, feel free to lend a hand.
+
+---
 
 Shows mail status in a textbox over IMAP protocol.
 
