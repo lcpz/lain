@@ -46,7 +46,7 @@ they all take one argument, which is the text to markup, except `fg.color` and `
 menu\_clients\_current\_tags
 ----------------------------
 
-Similar to `awful.menu.clients()`, but this menu only shows the clients
+Similar to `awful.menu.clients`, but this menu only shows the clients
 of currently visible tags. Use it with a key binding like this:
 
     awful.key({ "Mod1" }, "Tab",
