@@ -1,11 +1,11 @@
 markup
 ------
 
-This is a submodule which helps you markupping your text.
+Made markup easier!
 
 First, require it like this:
 
-    local markup = require("lain.util.markup")
+    local markup = lain.util.markup
 
 then you can call its functions:
 
