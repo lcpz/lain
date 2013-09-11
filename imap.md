@@ -1,6 +1,6 @@
 [<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
 
-**Please be warned**: this is a temporary solution, since it works fine in normal situations but causes little freezes if connection is sobbing. I am working on something much more solid.
+**Please be warned**: this is a temporary solution, since it works fine in normal situations but may causes little freezes if connection is sobbing. I am working on something much more solid.
 
 ---
 
