@@ -1,8 +1,6 @@
 [<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
 
-**Please be warned**: as for now, this works fine in normal link situations, but is discouraged to use it if your connection is sobbing, since it may cause some short freezes due to timeout issues. I am working on socket libraries to solve this.
-
-If you're a Python programmer, feel free to lend a hand.
+**Please be warned**: this is a temporary solution, since it works fine in normal situations but causes little freezes if connection is sobbing. I am working on something much more solid.
 
 ---
 
