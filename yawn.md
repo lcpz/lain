@@ -32,7 +32,7 @@ an existent widget.
     `timeout` | Refresh timeout seconds | int | integers | 600
     `settings` | User settings | function | function | empty function
 
-    `settings` can use strings `forecast`, `units', and can modify `notification_preset` table, which
+    `settings` can use strings `forecast`, `units`, and can modify `notification_preset` table, which
      will be the preset for the naughty notifications. Check [here](http://awesome.naquadah.org/doc/api/modules/naughty.html#notify) for the list of variables it can contain.
 
 The function `register` creates an imagebox icon and a textbox widget. Add them to you wibox like this:
