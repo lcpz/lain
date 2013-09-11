@@ -31,12 +31,12 @@ You can control the widget with key bindings like these:
     -- Volume control
     awful.key({ altkey }, "Up",
     function ()
-        awful.util.spawn("amixer sset Master 1%+")
+        awful.util.spawn("amixer set Master 1%+")
         volume.update()
     end),
     awful.key({ altkey }, "Down",
     function ()
-        awful.util.spawn("amixer sset Master 1%-")
+        awful.util.spawn("amixer set Master 1%-")
         volume.update()
     end),
     awful.key({ altkey }, "m",
