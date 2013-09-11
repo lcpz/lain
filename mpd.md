@@ -38,13 +38,9 @@ and can modify `notification_preset` table, which will be the preset for the nau
 
     notification _preset = {
        title   = "Now playing",
-       text    = mpd_now.artist .. " ("   ..
-                 mpd_now.album  .. ") - " ..
-                 mpd_now.date   .. "\n"   ..
-                 mpd_now.title,
-       fg      = beautiful.fg_normal or "#FFFFFF",
-       bg      = beautiful.bg_normal or "#000000",
-       timeout = 6
+       timeout = 6,
+       text    = string.format("%s (%s) - %s\n%s", mpd_now.artist,
+                 mpd_now.album, mpd_now.date, mpd_now.title)
     }
 
 ### output table
