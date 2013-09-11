@@ -24,7 +24,7 @@ volume.status | Device status | string | "on", "off"
 Variable | Meaning | Type
 --- | --- | --- 
 `widget` | The widget | `wibox.widget.textbox`
-`notify` | Force update `widget` | function
+`update` | Update `widget` | function
 
 You can control the widget with key bindings like these:
 
@@ -32,22 +32,22 @@ You can control the widget with key bindings like these:
     awful.key({ altkey }, "Up",
     function ()
         awful.util.spawn("amixer sset Master 1%+")
-        volume.notify()
+        volume.update()
     end),
     awful.key({ altkey }, "Down",
     function ()
         awful.util.spawn("amixer sset Master 1%-")
-        volume.notify()
+        volume.update()
     end),
     awful.key({ altkey }, "m",
     function ()
         awful.util.spawn("amixer set Master playback toggle")
-        volume.notify()
+        volume.update()
     end),
     awful.key({ altkey, "Control" }, "m", 
     function ()
         awful.util.spawn("amixer set Master playback 100%", false )
-        volume.notify()
+        volume.update()
     end),
 
 where `altkey = "Mod1"`.
