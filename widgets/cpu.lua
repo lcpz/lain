@@ -31,9 +31,9 @@ local function worker(args)
     local timeout  = args.timeout or 5
     local settings = args.settings or function() end
 
-    widget = wibox.widget.textbox('')
+    cpu.widget = wibox.widget.textbox('')
 
-    function update()
+    function cpu.update()
         -- Read the amount of time the CPUs have spent performing
         -- different kinds of work. Read the first line of /proc/stat
         -- which is the sum of all CPUs.
@@ -60,6 +60,7 @@ local function worker(args)
 
         usage = tostring(math.ceil((dactive / dtotal) * 100))
 
+        widget = cpu.widget
         settings()
 
         -- Save current data for the next run.
@@ -67,9 +68,9 @@ local function worker(args)
         cpu.last_total = total
     end
 
-    newtimer("cpu", timeout, update)
+    newtimer("cpu", timeout, cpu.update)
 
-    return widget
+    return cpu.widget
 end
 
 return setmetatable(cpu, { __call = function(_, ...) return worker(...) end })

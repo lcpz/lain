@@ -25,14 +25,14 @@ local setmetatable    = setmetatable
 -- lain.widgets.mem
 local mem = {}
 
-function worker(args)
+local function worker(args)
     local args     = args or {}
     local timeout  = args.timeout or 3
     local settings = args.settings or function() end
 
-    widget = wibox.widget.textbox('')
+    mem.widget = wibox.widget.textbox('')
 
-    function update()
+    function mem.update()
         mem = {}
         for line in io.lines("/proc/meminfo")
         do
@@ -51,12 +51,13 @@ function worker(args)
         used = mem.total - (mem.free + mem.buf + mem.cache)
         swapused = mem.swap - mem.swapf
 
+        widget = mem.widget
         settings()
     end
 
-    newtimer("mem", timeout, update)
+    newtimer("mem", timeout, mem.update)
 
-    return widget
+    return mem.widget
 end
 
 return setmetatable(mem, { __call = function(_, ...) return worker(...) end })

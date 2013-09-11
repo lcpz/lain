@@ -26,9 +26,9 @@ local function worker(args)
     local channel  = args.channel or "Master"
     local settings = args.settings or function() end
 
-    widget = wibox.widget.textbox('')
+    alsa.widget = wibox.widget.textbox('')
 
-    function update()
+    function alsa.update()
         local f = io.popen('amixer get ' .. channel)
         local mixer = f:read("*all")
         f:close()
@@ -56,11 +56,9 @@ local function worker(args)
         settings()
     end
 
-    newtimer("alsa", timeout, update)
+    newtimer("alsa", timeout, alsa.update)
 
-    output = { widget = widget, notify = update }
-
-    return setmetatable(output, { __index = output.widget })
+    return setmetatable(alsa, { __index = alsa.widget })
 end
 
 return setmetatable(alsa, { __call = function(_, ...) return worker(...) end })

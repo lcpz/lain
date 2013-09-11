@@ -20,13 +20,15 @@ local setmetatable = setmetatable
 
 -- Battery infos
 -- lain.widgets.bat
-local bat = { id = nil }
+local bat = {}
 
 local function worker(args)
     local args = args or {}
     local timeout = args.timeout or 30
     local battery = args.battery or "BAT0"
     local settings = args.settings or function() end
+
+    bat.widget = wibox.widget.textbox('')
 
     bat_now = {
         status = "not present",
@@ -35,9 +37,7 @@ local function worker(args)
         watt   = "N/A"
     }
 
-    widget = wibox.widget.textbox('')
-
-    function update()
+    function bat.update()
         local present = first_line("/sys/class/power_supply/"
                                    .. battery
                                    .. "/present")
@@ -106,12 +106,13 @@ local function worker(args)
             bat_now.perc = string.format("%d", bat_now.perc)
         end
 
+        widget = bat.widget
         settings()
     end
 
-    newtimer("bat", timeout, update)
+    newtimer("bat", timeout, bat.update)
 
-    return widget
+    return bat.widget
 end
 
 return setmetatable(bat, { __call = function(_, ...) return worker(...) end })
