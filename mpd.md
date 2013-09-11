@@ -27,7 +27,7 @@ Variable | Meaning | Type | Default
 
 `settings` can use `mpd_now` table, which contains the following string values:
 
-- state
+- state (possible values: "play", "pause", "stop")
 - file
 - artist
 - title
