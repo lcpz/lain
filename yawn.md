@@ -1,3 +1,5 @@
+[<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
+
 (YAhoo! Weather Notification)
 
 Yawn provides brief and compact Yahoo! Weather notification.
