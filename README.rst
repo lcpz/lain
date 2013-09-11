@@ -15,8 +15,7 @@ Description
 
 Successor of awesome-vain_, this costantly evolving module
 provides new layouts, a set of widgets and utility functions
-in order to improve [Awesome](http://awesome.naquadah.org/)
-usability and configurability.
+in order to improve Awesome_ usability and configurability.
 
 Read the wiki_ for all the info.
 
@@ -29,4 +28,5 @@ Screenshots
 
 .. _GNU-GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
 .. _awesome-vain: https://github.com/vain/awesome-vain
+.. _Awesome: http://awesome.naquadah.org/
 .. _wiki: https://github.com/copycat-killer/lain/wiki
