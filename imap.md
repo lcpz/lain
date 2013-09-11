@@ -1,28 +1,16 @@
 [<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
 
-**Please be warned**: this is a temporary solution, I am working on something much more solid.
-
----
-
 Shows mail status in a textbox over IMAP protocol.
+
+	myimapcheck = lain.widgets.imap(args)
 
 New mails are notified through a notification like this:
 
-	+---------------------------------------------------+
-	| +---+                                             |
-	| |\ /| donald@disney.org has 3 new messages        |
-	| +---+                                             |
-	|       Latest From: Mickey Mouse <boss@disney.org> |
-    |       Subject: Re: pay raise                      |
-    |                                                   |
-    |       Not after what you did yesterday.           |
-    |       Daisy told me everything [...]              |
-	|                                                   |
-	+---------------------------------------------------+
-
-Text will be cut if the mail is too long.
-
-	myimapcheck = lain.widgets.imap(args)
+	+--------------------------------------------+
+	| +---+                                      |
+	| |\ /| donald@disney.org has 3 new messages |
+	| +---+                                      |
+	+--------------------------------------------+
 
 The function takes a table as argument. Required table parameters are:
 
@@ -38,8 +26,6 @@ Variable | Meaning | Type | Default
 --- | --- | --- | ---
 `port` | IMAP port | int | 993
 `timeout` | Refresh timeout seconds | int | 60
-`encoding` | Mail character encoding | string | autodetected
-`maxlen` | Maximum chars to display in notification | int | 200
 `is_plain` | Define whether `password` is a plain password (true) or a function that retrieves it (false) | boolean | false
 `settings` | User settings | function
 
@@ -58,19 +44,16 @@ and you'll have the same security provided by `~/.netrc`.
 
 When `is_plain == false`, it *executes* `password` before using it, so you can also use whatever password fetching solution you want.
 
-`settings` can use the string `mailcount`, whose possible values are:
+`settings` can use the value `mailcount`, an integer greater or equal to zero, and can modify `notification_preset` table, which will be the preset for the naughty notifications. Check [here](http://awesome.naquadah.org/doc/api/modules/naughty.html#notify) for the list of variables it can contain. 
 
-- "0"
-- "invalid credentials"
-- string number
-
-and can modify `notification_preset` table, which will be the preset for the naughty notifications. Check [here](http://awesome.naquadah.org/doc/api/modules/naughty.html#notify) for the list of variables it can contain. Default definition:
+Default definition:
 
     notification _preset = {
        icon = lain/icons/mail.png,
-       timeout = 8,
        position = "top_left"
     }
+
+Note that `mailcount` is 0 either if there are no new mails or credentials are invalid, so make sure you get the right settings.
 
 ### output 
 
