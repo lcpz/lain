@@ -24,8 +24,10 @@ local setmetatable = setmetatable
 
 -- File system disk space usage
 -- lain.widgets.fs
-local fs = { notification_preset = {} }
-local notification = nil
+local fs = {}
+
+local notification  = nil
+notification_preset = { fg = beautiful.fg_normal }
 
 function fs:hide()
     if notification ~= nil then
@@ -42,7 +44,7 @@ function fs:show(t_out)
     f:close()
 
     notification = naughty.notify({
-        preset = fs.notification_preset,
+        preset = notification_preset,
         text = ws,
       	timeout = t_out
     })
@@ -57,11 +59,11 @@ local function worker(args)
     local partition = args.partition or "/"
     local settings  = args.settings or function() end
 
-    widget = wibox.widget.textbox('')
+    fs.widget = wibox.widget.textbox('')
 
     helpers.set_map("fs", false)
 
-    function update()
+    function fs.update()
         fs_info = {} 
 
         local f = io.popen("LC_ALL=C df -kP")
@@ -83,16 +85,13 @@ local function worker(args)
 
         -- chosen partition easy stuff
         -- you can however check whatever partition else
-        used = fs_info[partition .. " used_p"]
-        available = fs_info[partition .. " avail_p"]
-        size_mb = fs_info[partition .. " size_mb"]
-        size_gb = fs_info[partition .. " size_gb"]
+        used      = tonumber(fs_info[partition .. " used_p"])
+        available = tonumber(fs_info[partition .. " avail_p"])
+        size_mb   = tonumber(fs_info[partition .. " size_mb"])
+        size_gb   = tonumber(fs_info[partition .. " size_gb"])
 
-        notification_preset = { fg = beautiful.fg_normal }
-
+        widget = fs.widget
         settings()
-
-        fs.notification_preset = notification_preset
 
         if used >= 99 and not helpers.get_map("fs")
         then
@@ -109,16 +108,16 @@ local function worker(args)
         end
     end
 
-    helpers.newtimer("fs " .. partition, timeout, update)
+    helpers.newtimer(partition, timeout, fs.update)
 
     widget:connect_signal('mouse::enter', function () fs:show(0) end)
     widget:connect_signal('mouse::leave', function () fs:hide() end)
 
     output = {
-        widget = widget,
+        widget = fs.widget,
         show = function(t_out)
-                   update()
-                   fs:show(t_out)
+                  fs.update()
+                  fs:show(t_out)
                end
     }
 

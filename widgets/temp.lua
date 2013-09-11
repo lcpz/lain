@@ -19,23 +19,24 @@ local setmetatable = setmetatable
 -- lain.widgets.temp
 local temp = {}
 
-function worker(args)
+local function worker(args)
     local args     = args or {}
     local timeout  = args.timeout or 5
     local settings = args.settings or function() end
 
-    widget = wibox.widget.textbox('')
+    temp.widget = wibox.widget.textbox('')
 
-    function update()
+    function temp.update()
         local f = io.open("/sys/class/thermal/thermal_zone0/temp")
         coretemp_now = tonumber(f:read("*all")) / 1000
         f:close()
+        widget = temp.widget
         settings()
     end
 
-    newtimer("coretemp", timeout, update)
+    newtimer("coretemp", timeout, temp.update)
 
-    return widget
+    return temp.widget
 end
 
 return setmetatable(temp, { __call = function(_, ...) return worker(...) end })

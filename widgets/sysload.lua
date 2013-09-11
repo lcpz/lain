@@ -21,26 +21,27 @@ local setmetatable = setmetatable
 -- lain.widgets.sysload
 local sysload = {}
 
-function worker(args)
+local function worker(args)
     local args = args or {}
     local timeout = args.timeout or 5
     local settings = args.settings or function() end
 
-    widget = wibox.widget.textbox('')
+    sysload.widget = wibox.widget.textbox('')
 
-    function update()
+    function sysload.update()
         local f = io.open("/proc/loadavg")
         local ret = f:read("*all")
         f:close()
         
         a, b, c = string.match(ret, "([^%s]+) ([^%s]+) ([^%s]+)")
 
+        widget = sysload.widget
         settings()
     end
 
-    newtimer("sysload", timeout, update)
+    newtimer("sysload", timeout, sysload.update)
 
-    return widget
+    return sysload.widget
 end
 
 return setmetatable(sysload, { __call = function(_, ...) return worker(...) end })

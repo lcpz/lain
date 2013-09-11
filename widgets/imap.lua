@@ -20,9 +20,9 @@ local setmetatable = setmetatable
 
 -- Mail IMAP check
 -- lain.widgets.imap
-local imap = { stored = nil }
+local imap = {}
 
-function worker(args)
+local function worker(args)
     local args     = args or {}
 
     local server   = args.server
@@ -54,9 +54,15 @@ function worker(args)
         end
     end
 
-    widget = wibox.widget.textbox('')
+    imap.widget = wibox.widget.textbox('')
 
-    function update()
+    notification_preset = {
+        icon     = helpers.icons_dir .. "mail.png",
+        timeout  = 8,
+        position = "top_left"
+    }
+
+    function imap.update()
         to_execute = string.format("%s -s %s -u %s -p %s --port %s",
                      checkmail, server, mail, password, port) 
 
@@ -88,14 +94,8 @@ function worker(args)
             end
         end
 
-        notification_preset = {
-            icon     = helpers.icons_dir .. "mail.png",
-            timeout  = 8,
-            position = "top_left"
-        }
-
+        widget = imap.widget
         settings()
-
 
         if helpers.get_map(mail) and tonumber(mailcount) >= 1
         then
@@ -123,9 +123,9 @@ function worker(args)
         end
     end
 
-    helpers.newtimer(mail, timeout, update, true)
+    helpers.newtimer(mail, timeout, imap.update, true)
 
-    return widget
+    return imap.widget
 end
 
 return setmetatable(imap, { __call = function(_, ...) return worker(...) end })

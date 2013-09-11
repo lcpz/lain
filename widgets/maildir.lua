@@ -24,16 +24,16 @@ local setmetatable    = setmetatable
 -- lain.widgets.maildir
 local maildir = {}
 
-function worker(args)
+local function worker(args)
     local args         = args or {}
     local timeout      = args.timeout or 60
     local mailpath     = args.mailpath or os.getenv("HOME") .. "/Mail"
     local ignore_boxes = args.ignore_boxes or {}
     local settings     = args.settings or function() end
 
-    widget = wibox.widget.textbox('')
+    maildir.widget = wibox.widget.textbox('')
 
-    function update()
+    function maildir.update()
         -- Find pathes to mailboxes.
         local p = io.popen("find " .. mailpath ..
                            " -mindepth 1 -maxdepth 1 -type d" ..
@@ -84,12 +84,13 @@ function worker(args)
             end
         end
 
+        widget = maildir.widget
         settings()
     end
 
-    newtimer(mailpath, timeout, update, true)
+    newtimer(mailpath, timeout, maildir.update, true)
 
-    return widget
+    return maildir.widget
 end
 
 return setmetatable(maildir, { __call = function(_, ...) return worker(...) end })

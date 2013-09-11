@@ -27,32 +27,30 @@ local setmetatable = setmetatable
 -- lain.widgets.yawn
 local yawn =
 {
-    icon                = wibox.widget.imagebox(),
-    widget              = wibox.widget.textbox(''),
-    notification_preset = {}
+    icon   = wibox.widget.imagebox(),
+    widget = wibox.widget.textbox('')
 }
 
-local project_path       = debug.getinfo(1, 'S').source:match[[^@(.*/).*$]]
-local localizations_path = project_path .. 'localizations/'
-local icon_path          = project_path .. 'icons/'
-local api_url            = 'http://weather.yahooapis.com/forecastrss'
-local units_set          = '?u=c&w=' -- Default is Celsius
-local language           = string.match(os.getenv("LANG"), "(%S*$*)[.]")
-local weather_data       = nil
-local notification       = nil
-local city_id            = nil
-local sky                = nil
-local settings           = function() end
+local project_path        = debug.getinfo(1, 'S').source:match[[^@(.*/).*$]]
+local localizations_path  = project_path .. 'localizations/'
+local icon_path           = project_path .. 'icons/'
+local api_url             = 'http://weather.yahooapis.com/forecastrss'
+local units_set           = '?u=c&w=' -- Default is Celsius
+local language            = string.match(os.getenv("LANG"), "(%S*$*)[.]")
+local weather_data        = nil
+local notification        = nil
+local city_id             = nil
+local sky                 = nil
+local settings            = function() end
+
+notification_preset = {}
 
 local function fetch_weather()
     local url = api_url .. units_set .. city_id
-    local f = io.popen("curl --connect-timeout 1 -fsm 2 '"
+    local f = io.popen("curl --connect-timeout 1 -fsm 1 '"
                        .. url .. "'" )
     local text = f:read("*all")
     f:close()
-
-    -- handle no suitable icon found
-    yawn.icon:set_image(icon_path .. "na.png")
 
     -- In case of no connection or invalid city ID
     -- widgets won't display
@@ -107,6 +105,14 @@ local function fetch_weather()
 
     sky = sky  .. forecast:gsub(" ", ""):gsub("/", "") .. ".png"
 
+    -- In case there's no defined icon for current forecast
+    f = io.popen(sky)
+    if f == nil then
+        sky = icon_path .. "na.png"
+    else
+        io.close(f)
+    end
+
     -- Localization
     local f = io.open(localizations_path .. language, "r")
     if language:find("en_") == nil and f ~= nil
@@ -122,17 +128,13 @@ local function fetch_weather()
 
     -- Finally setting infos
     yawn.icon:set_image(sky)
-    widget = wibox.widget.textbox()
+    widget = yawn.widget
 
     forecast = weather_data:match(": %S+.-,"):gsub(": ", ""):gsub(",", "\n")
     units = units:gsub(" ", "")
-    notification_preset = {}
-    -- anche notification preset, con fg, bg e position
+   -- notification_preset = {}
 
     settings()
-
-    yawn.widget = widget
-    yawn.notification_preset = notification_preset 
 end
 
 function yawn.hide()
@@ -151,7 +153,7 @@ function yawn.show(t_out)
     yawn.hide()
 
     notification = naughty.notify({
-        preset = yawn.notification_preset,
+        preset = notification_preset,
         text = weather_data,
         icon = sky,
         timeout = t_out
@@ -176,7 +178,7 @@ function yawn.register(id, args)
         yawn.hide()
     end)
 
-    return { icon = yawn.icon, widget = yawn.widget }
+    return yawn
 end
 
 function yawn.attach(widget, id, args)
