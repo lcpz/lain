@@ -132,7 +132,6 @@ local function fetch_weather()
 
     forecast = weather_data:match(": %S+.-,"):gsub(": ", ""):gsub(",", "\n")
     units = units:gsub(" ", "")
-   -- notification_preset = {}
 
     settings()
 end

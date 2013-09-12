@@ -30,14 +30,14 @@ local function worker(args)
 
     bat.widget = wibox.widget.textbox('')
 
-    bat_now = {
-        status = "not present",
-        perc   = "N/A",
-        time   = "N/A",
-        watt   = "N/A"
-    }
-
     function bat.update()
+        bat_now = {
+            status = "not present",
+            perc   = "N/A",
+            time   = "N/A",
+            watt   = "N/A"
+        }
+
         local present = first_line("/sys/class/power_supply/"
                                    .. battery
                                    .. "/present")
