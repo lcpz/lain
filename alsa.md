@@ -16,8 +16,8 @@ Variable | Meaning | Type | Default
 
 Variable | Meaning | Type | Values
 --- | --- | --- | ---
-volume.level | Self explained | int | 0-100
-volume.status | Device status | string | "on", "off"
+volume_now.level | Self explained | int | 0-100
+volume_now.status | Device status | string | "on", "off"
 
 ### output table
 
@@ -32,22 +32,22 @@ You can control the widget with key bindings like these:
     awful.key({ altkey }, "Up",
     function ()
         awful.util.spawn("amixer set Master 1%+")
-        volume.update()
+        volumewidget.update()
     end),
     awful.key({ altkey }, "Down",
     function ()
         awful.util.spawn("amixer set Master 1%-")
-        volume.update()
+        volumewidget.update()
     end),
     awful.key({ altkey }, "m",
     function ()
         awful.util.spawn("amixer set Master playback toggle")
-        volume.update()
+        volumewidget.update()
     end),
     awful.key({ altkey, "Control" }, "m", 
     function ()
         awful.util.spawn("amixer set Master playback 100%", false )
-        volume.update()
+        volumewidget.update()
     end),
 
 where `altkey = "Mod1"`.
