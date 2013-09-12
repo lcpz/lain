@@ -67,12 +67,12 @@ You can control the widget with key bindings like these:
     end),
     awful.key({ altkey }, "m",
     function ()
-        awful.util.spawn("amixer set Master playback toggle")
+        awful.util.spawn("amixer set " .. volume.channel .. " playback toggle")
         volume.notify()
     end),
     awful.key({ altkey, "Control" }, "m", 
     function ()
-        awful.util.spawn("amixer set Master playback 100%", false )
+        awful.util.spawn("amixer set " .. volume.channel .. " playback 100%", false )
         volume.notify()
     end),
 
