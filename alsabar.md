@@ -47,7 +47,7 @@ It's **crucial** to set `notifications.bar_size` to your `mywibox[s]` height,
 
 Variable | Meaning | Type
 --- | --- | ---
-`widget` | The widget | `awful.widget.progressbar`
+`bar` | The widget | `awful.widget.progressbar`
 `channel` | Alsa channel | string
 `step` | Increase/decrease step | string
 `notify` | The notification | function
