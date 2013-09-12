@@ -15,7 +15,11 @@ Variable | Meaning | Type | Default
 
 Possible other values for `units` are 1 (byte) or multiple of 1024: 1024^2 (mb), 1024^3 (gb), and so on.
 
-`settings` can use the following `iface` strings: `carrier` ("0", "1"), `state` ("up", "down"), `sent`, `received` (numbers).
+`settings` can use the following `iface` strings:
+
+- `carrier` ("0", "1");
+- `state` ("up", "down");
+- `sent` and `received` (numbers).
 
 ### output
 
