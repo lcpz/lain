@@ -16,8 +16,8 @@ Variable | Meaning | Type | Default
 
 Variable | Meaning | Type | Values
 --- | --- | --- | ---
-volume_now.level | Self explained | int | 0-100
-volume_now.status | Device status | string | "on", "off"
+`volume_now.level` | Self explained | int | 0-100
+`volume_now.status` | Device status | string | "on", "off"
 
 ### output table
 
