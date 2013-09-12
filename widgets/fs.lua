@@ -27,7 +27,7 @@ local setmetatable = setmetatable
 local fs = {}
 
 local notification  = nil
-notification_preset = { fg = beautiful.fg_normal }
+fs_notification_preset = { fg = beautiful.fg_normal }
 
 function fs:hide()
     if notification ~= nil then
@@ -44,7 +44,7 @@ function fs:show(t_out)
     f:close()
 
     notification = naughty.notify({
-        preset = notification_preset,
+        preset = fs_notification_preset,
         text = ws,
       	timeout = t_out
     })
@@ -63,7 +63,7 @@ local function worker(args)
 
     helpers.set_map("fs", false)
 
-    function fs.update()
+    function update()
         fs_info = {} 
 
         local f = io.popen("LC_ALL=C df -kP")
@@ -108,20 +108,12 @@ local function worker(args)
         end
     end
 
-    helpers.newtimer(partition, timeout, fs.update)
+    helpers.newtimer(partition, timeout, update)
 
     widget:connect_signal('mouse::enter', function () fs:show(0) end)
     widget:connect_signal('mouse::leave', function () fs:hide() end)
 
-    output = {
-        widget = fs.widget,
-        show = function(t_out)
-                  fs.update()
-                  fs:show(t_out)
-               end
-    }
-
-    return setmetatable(output, { __index = output.widget })
+    return setmetatable(fs, { __index = fs.widget })
 end
 
 return setmetatable(fs, { __call = function(_, ...) return worker(...) end })

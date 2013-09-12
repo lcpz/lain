@@ -40,7 +40,7 @@ local function worker(args)
 
     mpd.widget = wibox.widget.textbox('')
 
-    notification_preset = {
+    mpd_notification_preset = {
         title   = "Now playing",
         timeout = 6
     }
@@ -73,8 +73,8 @@ local function worker(args)
 
         f:close()
 
-        notification_preset.text = string.format("%s (%s) - %s\n%s", mpd_now.artist,
-                                   mpd_now.album, mpd_now.date, mpd_now.title)
+        mpd_notification_preset.text = string.format("%s (%s) - %s\n%s", mpd_now.artist,
+                                       mpd_now.album, mpd_now.date, mpd_now.title)
         widget = mpd.widget
         settings()
 
@@ -87,7 +87,7 @@ local function worker(args)
                 os.execute(string.format("%s %q %q", mpdcover, music_dir, mpd_now.file))
 
                 mpd.id = naughty.notify({
-                    preset = notification_preset,
+                    preset = mpd_notification_preset,
                     icon = "/tmp/mpdcover.png",
                     replaces_id = mpd.id
                 }).id

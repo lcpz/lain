@@ -21,12 +21,12 @@ local setmetatable = setmetatable
 -- Calendar notification
 -- lain.widgets.calendar
 local calendar = {}
-local notification = nil
+local cal_notification = nil
 
 function calendar:hide()
-    if notification ~= nil then
-        naughty.destroy(notification)
-        notification = nil
+    if cal_notification ~= nil then
+        naughty.destroy(cal_notification)
+        cal_notification = nil
     end
 end
 
@@ -95,12 +95,12 @@ function calendar:show(t_out, inc_offset)
              .. "</span></tt>"
     f:close()
 
-    notification = naughty.notify({ text = c_text,
-                                    icon = calendar.notify_icon,
-                                    position = calendar.position,
-                                    fg = calendar.fg,
-                                    bg = calendar.bg,
-                                    timeout = tims })
+    cal_notification = naughty.notify({ text = c_text,
+                                        icon = calendar.notify_icon,
+                                        position = calendar.position,
+                                        fg = calendar.fg,
+                                        bg = calendar.bg,
+                                        timeout = tims })
 end
 
 function calendar:attach(widget, args)

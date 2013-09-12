@@ -30,9 +30,9 @@ local function worker(args)
 
     bat.widget = wibox.widget.textbox('')
 
-    function bat.update()
+    function update()
         bat_now = {
-            status = "not present",
+            status = "Not present",
             perc   = "N/A",
             time   = "N/A",
             watt   = "N/A"
@@ -110,7 +110,7 @@ local function worker(args)
         settings()
     end
 
-    newtimer("bat", timeout, bat.update)
+    newtimer("bat", timeout, update)
 
     return bat.widget
 end

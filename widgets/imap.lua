@@ -47,8 +47,8 @@ local function worker(args)
 
     imap.widget = wibox.widget.textbox('')
 
-    function imap.update()
-        notification_preset = {
+    function update()
+        mail_notification_preset = {
             icon     = helpers.icons_dir .. "mail.png",
             position = "top_left"
         }
@@ -73,13 +73,13 @@ local function worker(args)
             else
                 nt = mail .. " has <b>" .. mailcount .. "</b> new messages"
             end
-            naughty.notify({ preset = notification_preset, text = nt })
+            naughty.notify({ preset = mail_notification_preset, text = nt })
         end
 
         helpers.set_map(mail, mailcount)
     end
 
-    helpers.newtimer(mail, timeout, imap.update, true)
+    helpers.newtimer(mail, timeout, update, true)
     return imap.widget
 end
 
