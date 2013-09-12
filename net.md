@@ -13,9 +13,9 @@ Variable | Meaning | Type | Default
 `units` | Units | int | 1024 (kilobytes) 
 `settings` | User settings | function | empty function
 
-Possible other values for `units` are 1 (byte) or multiple of 1024: 1024^2 (mb), 1024^3 (gb), ... .
+Possible other values for `units` are 1 (byte) or multiple of 1024: 1024^2 (mb), 1024^3 (gb), and so on.
 
-`settings` can use the following `iface` strings: `carrier`, `state`, `sent`, `received`.
+`settings` can use the following `iface` strings: `carrier` ("0", "1"), `state` ("up", "down"), `sent`, `received` (numbers).
 
 ### output
 
