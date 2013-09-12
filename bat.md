@@ -15,7 +15,12 @@ Variable | Meaning | Type | Default
 `battery` | Identifier of the battery | string | "BAT0"
 `settings` | User settings | function | empty function
 
-`settings` can use the `bat_now` table, which contains the following strings: `status`, `perc`, `time`, `watt`.
+`settings` can use the `bat_now` table, which contains the following strings:
+
+- `status` ("Not present", "Charging", "Discharging");
+-`perc`;
+- `time`;
+- `watt`.
 
 ### output
 
