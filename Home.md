@@ -7,7 +7,6 @@ Package | Requested by
 alsa-utils | [alsa](https://github.com/copycat-killer/lain/wiki/alsa), [alsabar](https://github.com/copycat-killer/lain/wiki/alsabar)
 curl | widget types accessing network resources 
 imagemagick | [mpd](https://github.com/copycat-killer/lain/wiki/mpd)
-python3 | [imap](https://github.com/copycat-killer/lain/wiki/imap)
 
 ### Installation
 
