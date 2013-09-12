@@ -1,6 +1,6 @@
 [<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
 
-Shows and controls alsa volume with a progressbar and provides tooltips, notifications, and color changes at mute/unmute switch.
+Shows and controls alsa volume with a progressbar; provides tooltips, notifications, and color changes at mute/unmute switch.
 
 	myvolumebar = lain.widgets.alsabar()
 
@@ -12,6 +12,7 @@ The function takes a table as optional argument, which can contain:
 
 Variable | Meaning | Type | Default
 --- | --- | --- | ---
+`timeout` | Refresh timeout seconds | int | 4
 `width` | Bar width | int | 63
 `height` | Bar height | int | 1
 `ticks` | Set bar ticks on | boolean | true
