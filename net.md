@@ -17,9 +17,9 @@ Possible other values for `units` are 1 (byte) or multiple of 1024: 1024^2 (mb),
 
 `settings` can use the following `iface` strings:
 
-- `carrier` ("0", "1");
-- `state` ("up", "down");
-- `sent` and `received` (numbers).
+- `net_now.carrier` ("0", "1");
+- `net_now.state` ("up", "down");
+- `net_now.sent` and `net_now.received` (numbers).
 
 ### output
 
