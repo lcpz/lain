@@ -56,22 +56,22 @@ You can control the widget with key bindings like these:
     awful.key({ altkey, "Control" }, "Up",
         function ()
             awful.util.spawn_with_shell("mpc toggle || ncmpcpp toggle || ncmpc toggle || pms toggle")
-            mpdwidget.notify()
+            mpdwidget.update()
         end),
     awful.key({ altkey, "Control" }, "Down",
         function ()
             awful.util.spawn_with_shell("mpc stop || ncmpcpp stop || ncmpc stop || pms stop")
-            mpdwidget.notify()
+            mpdwidget.update()
         end),
     awful.key({ altkey, "Control" }, "Left",
         function ()
             awful.util.spawn_with_shell("mpc prev || ncmpcpp prev || ncmpc prev || pms prev")
-            mpdwidget.notify()
+            mpdwidget.update()
         end),
     awful.key({ altkey, "Control" }, "Right",
         function ()
             awful.util.spawn_with_shell("mpc next || ncmpcpp next || ncmpc next || pms next")
-            mpdwidget.notify()
+            mpdwidget.update()
         end),
 
 where `altkey = "Mod1"`.
