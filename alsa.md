@@ -2,7 +2,7 @@
 
 Shows and controls alsa volume with a textbox.
 
-	volume = lain.widgets.alsa()
+	volumewidget = lain.widgets.alsa()
 
 ### input table
 
