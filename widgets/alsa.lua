@@ -29,30 +29,31 @@ local function worker(args)
     alsa.widget = wibox.widget.textbox('')
 
     function alsa.update()
-        local f = io.popen('amixer get ' .. channel)
+        local f = assert(io.popen('amixer get ' .. channel))
         local mixer = f:read("*all")
         f:close()
 
-        volume = {}
+        volume_now = {}
 
-        volume.level, volume.status = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
+        volume_now.level, volume_now.status = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
 
-        if volume.level == nil
+        if volume_now.level == nil
         then
-            volume.level  = 0
-            volume.status = "off"
+            volume_now.level  = "0"
+            volume_now.status = "off"
         end
 
-        if volume.status == ""
+        if volume_now.status == ""
         then
-            if volume.level == 0
+            if volume_now.level == "0"
             then
-                volume.status = "off"
+                volume_now.status = "off"
             else
-                volume.status = "on"
+                volume_now.status = "on"
             end
         end
 
+        widget = alsa.widget
         settings()
     end
 

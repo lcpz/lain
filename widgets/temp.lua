@@ -26,7 +26,7 @@ local function worker(args)
 
     temp.widget = wibox.widget.textbox('')
 
-    function temp.update()
+    function update()
         local f = io.open("/sys/class/thermal/thermal_zone0/temp")
         coretemp_now = tonumber(f:read("*all")) / 1000
         f:close()
@@ -34,8 +34,7 @@ local function worker(args)
         settings()
     end
 
-    newtimer("coretemp", timeout, temp.update)
-
+    newtimer("coretemp", timeout, update)
     return temp.widget
 end
 

@@ -28,19 +28,18 @@ local function worker(args)
 
     sysload.widget = wibox.widget.textbox('')
 
-    function sysload.update()
+    function update()
         local f = io.open("/proc/loadavg")
         local ret = f:read("*all")
         f:close()
         
-        a, b, c = string.match(ret, "([^%s]+) ([^%s]+) ([^%s]+)")
+        load_1, load_5, load_15 = string.match(ret, "([^%s]+) ([^%s]+) ([^%s]+)")
 
         widget = sysload.widget
         settings()
     end
 
-    newtimer("sysload", timeout, sysload.update)
-
+    newtimer("sysload", timeout, update)
     return sysload.widget
 end
 

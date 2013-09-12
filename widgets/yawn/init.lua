@@ -43,7 +43,7 @@ local city_id             = nil
 local sky                 = nil
 local settings            = function() end
 
-notification_preset = {}
+yawn_notification_preset = {}
 
 local function fetch_weather()
     local url = api_url .. units_set .. city_id
@@ -56,6 +56,7 @@ local function fetch_weather()
     -- widgets won't display
     if text == "" or text:match("City not found")
     then
+        yawn.icon:set_image(icon_path .. "na.png")
         if text == "" then
             weather_data = "Service not available at the moment."
             yawn.widget:set_text("N/A")
@@ -152,7 +153,7 @@ function yawn.show(t_out)
     yawn.hide()
 
     notification = naughty.notify({
-        preset = notification_preset,
+        preset = yawn_notification_preset,
         text = weather_data,
         icon = sky,
         timeout = t_out

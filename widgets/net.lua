@@ -50,23 +50,25 @@ local function worker(args)
 
     helpers.set_map(iface, true)
 
-    function net.update() 
+    function update() 
+        net_now = {}
+
         if iface == "" then iface = net.get_device() end
 
-        carrier = helpers.first_line('/sys/class/net/' .. iface ..
+        net_now.carrier = helpers.first_line('/sys/class/net/' .. iface ..
                                            '/carrier') or "0"
-        state = helpers.first_line('/sys/class/net/' .. iface ..
+        net_now.state = helpers.first_line('/sys/class/net/' .. iface ..
                                            '/operstate') or "down"
         local now_t = helpers.first_line('/sys/class/net/' .. iface ..
                                            '/statistics/tx_bytes') or 0
         local now_r = helpers.first_line('/sys/class/net/' .. iface ..
                                            '/statistics/rx_bytes') or 0
 
-        sent = tostring((now_t - net.last_t) / timeout / units)
-        sent = string.gsub(string.format('%.1f', sent), ",", ".")
+        net_now.sent = tostring((now_t - net.last_t) / timeout / units)
+        net_now.sent = string.gsub(string.format('%.1f', net_now.sent), ",", ".")
 
-        received = tostring((now_r - net.last_r) / timeout / units)
-        received = string.gsub(string.format('%.1f', received), ",", ".")
+        net_now.received = tostring((now_r - net.last_r) / timeout / units)
+        net_now.received = string.gsub(string.format('%.1f', net_now.received), ",", ".")
 
         widget = net.widget
         settings()
@@ -74,7 +76,7 @@ local function worker(args)
         net.last_t = now_t
         net.last_r = now_r
 
-        if carrier ~= "1"
+        if net_now.carrier ~= "1"
         then
             if helpers.get_map(iface)
             then
@@ -95,8 +97,7 @@ local function worker(args)
         end
     end
 
-    helpers.newtimer(iface, timeout, net.update)
-
+    helpers.newtimer(iface, timeout, update)
     return net.widget
 end
 

@@ -8,8 +8,10 @@
 --]]
 
 local debug  = require("debug")
-local rawget = rawget
+
+local capi   = { timer = timer }
 local io     = { open = io.open }
+local rawget = rawget
 
 -- Lain helper functions for internal use
 -- lain.helpers
@@ -49,7 +51,7 @@ end
 helpers.timer_table = {}
 
 function helpers.newtimer(name, timeout, fun, nostart)
-    helpers.timer_table[name] = timer({ timeout = timeout })
+    helpers.timer_table[name] = capi.timer({ timeout = timeout })
     helpers.timer_table[name]:connect_signal("timeout", fun)
     helpers.timer_table[name]:start()
     if not nostart then

@@ -33,7 +33,7 @@ local function worker(args)
 
     maildir.widget = wibox.widget.textbox('')
 
-    function maildir.update()
+    function update()
         -- Find pathes to mailboxes.
         local p = io.popen("find " .. mailpath ..
                            " -mindepth 1 -maxdepth 1 -type d" ..
@@ -88,8 +88,7 @@ local function worker(args)
         settings()
     end
 
-    newtimer(mailpath, timeout, maildir.update, true)
-
+    newtimer(mailpath, timeout, update, true)
     return maildir.widget
 end
 
