@@ -18,7 +18,7 @@ Variable | Meaning | Type | Default
 `settings` can use the `bat_now` table, which contains the following strings:
 
 - `status` ("Not present", "Charging", "Discharging");
--`perc`;
+- `perc`;
 - `time`;
 - `watt`.
 
