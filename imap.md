@@ -1,10 +1,10 @@
 [<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
 
-Shows mail status in a textbox over IMAP protocol.
+Shows mail count in a textbox fetching over IMAP.
 
 	myimapcheck = lain.widgets.imap(args)
 
-New mails are notified through a notification like this:
+New mails are notified like this:
 
 	+--------------------------------------------+
 	| +---+                                      |
