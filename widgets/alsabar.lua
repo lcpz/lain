@@ -15,7 +15,7 @@ local naughty      = require("naughty")
 
 local io           = { popen  = io.popen }
 local math         = { modf   = math.modf }
-local string       = { format = string.format, 
+local string       = { format = string.format,
                        match  = string.match,
                        rep    = string.rep }
 local tonumber     = tonumber
@@ -44,7 +44,7 @@ local alsabar =
      font      = beautiful.font:sub(beautiful.font:find(""), beautiful.font:find(" ")),
      font_size = "11",
      color     = beautiful.fg_focus,
-     bar_size  = 18 
+     bar_size  = 18
   },
 
   _current_level = 0,
@@ -122,7 +122,7 @@ local function worker(args)
         f:close()
 
         -- Capture mixer control state:          [5%] ... ... [on]
-        local volu, mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)") 
+        local volu, mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
 
         if volu == nil then
             volu = 0

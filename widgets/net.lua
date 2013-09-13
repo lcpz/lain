@@ -50,7 +50,7 @@ local function worker(args)
 
     helpers.set_map(iface, true)
 
-    function update() 
+    function update()
         net_now = {}
 
         if iface == "" then iface = net.get_device() end

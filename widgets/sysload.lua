@@ -32,7 +32,7 @@ local function worker(args)
         local f = io.open("/proc/loadavg")
         local ret = f:read("*all")
         f:close()
-        
+
         load_1, load_5, load_15 = string.match(ret, "([^%s]+) ([^%s]+) ([^%s]+)")
 
         widget = sysload.widget

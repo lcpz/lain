@@ -1,10 +1,10 @@
 
 --[[
-                                                      
-     Licensed under GNU General Public License v2     
-      * (c) 2013, Luke Bonham                         
-      * (c) 2010, Adrian C. <anrxc@sysphere.org>      
-                                                      
+                                                  
+     Licensed under GNU General Public License v2 
+      * (c) 2013, Luke Bonham                     
+      * (c) 2010, Adrian C. <anrxc@sysphere.org>  
+                                                  
 --]]
 
 local newtimer        = require("lain.helpers").newtimer

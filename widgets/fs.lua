@@ -64,7 +64,7 @@ local function worker(args)
     helpers.set_map("fs", false)
 
     function update()
-        fs_info = {} 
+        fs_info = {}
 
         local f = io.popen("LC_ALL=C df -kP")
 
@@ -95,7 +95,7 @@ local function worker(args)
 
         if used >= 99 and not helpers.get_map("fs")
         then
-            naughty.notify({ 
+            naughty.notify({
                 title = "warning",
                 text = partition .. " ran out!\nmake some room",
                 timeout = 8,
