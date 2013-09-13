@@ -48,7 +48,7 @@ and can modify `mpd_notification_preset` table, which will be the preset for the
 Variable | Meaning | Type
 --- | --- | ---
 `widget` | The textbox | `wibox.widget.textbox`
-`notify` | The notification | function
+`update` | The notification | function
 
 You can control the widget with key bindings like these:
 
