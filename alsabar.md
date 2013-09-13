@@ -40,8 +40,7 @@ Variable | Meaning | Type | Default
 `color` | Notifications color | string | `beautiful.fg_focus`
 `bar_size` | Wibox height | int | 18
 
-It's **crucial** to set `notifications.bar_size` to your `mywibox[s]` height,
-**if** you have set it different than default (18). 
+It's **crucial** to set `notifications.bar_size` to your `mywibox[s]` height.
 
 ### output table
 
