@@ -18,7 +18,7 @@ You need a file like this
 
      (front|cover|art|Folder|folder)\.(jpg|jpeg|png|gif)$
 
-in the album folder in order to show album art in the notification too.
+in the album folder in order to show album art too.
 
 ### input table
 
