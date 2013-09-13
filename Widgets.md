@@ -21,6 +21,8 @@ Here follows an example:
         end
     })
 
+If you want to see more complex applications, check [awesome-copycats](https://github.com/copycat-killer/awesome-copycats).
+
 ---
 
 - [alsa](https://github.com/copycat-killer/lain/wiki/alsa)
