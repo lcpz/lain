@@ -14,6 +14,12 @@ Now playing songs are notified like this:
 	| +-------+                                              |
 	+--------------------------------------------------------+
 
+You need a file like this
+
+   "(front|cover|art|Folder|folder)\.(jpg|jpeg|png|gif)$"
+
+in the album folder in order to show album art in the notification too.
+
 ### input table
 
 Variable | Meaning | Type | Default
@@ -23,6 +29,7 @@ Variable | Meaning | Type | Default
 `host` | MPD server | string | "127.0.0.1"
 `port` | MPD port | string | "6600"
 `music_dir` | Music directory | string | "~/Music"
+`cover_size` | Album art notification size | int | 100
 `settings` | User settings | function | empty function
 
 `settings` can use `mpd_now` table, which contains the following string values:
