@@ -1,15 +1,15 @@
 
 --[[
-                                                  
-     Lain                                         
-     Layouts, widgets and utilities for Awesome WM
-                                                  
-     Utilities section                            
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013,      Luke Bonham                
-      * (c) 2010-2012, Peter Hofmann              
-                                                  
+                                                   
+     Lain                                          
+     Layouts, widgets and utilities for Awesome WM 
+                                                   
+     Utilities section                             
+                                                   
+     Licensed under GNU General Public License v2  
+      * (c) 2013,      Luke Bonham                 
+      * (c) 2010-2012, Peter Hofmann               
+                                                   
 --]]
 
 local awful        = require("awful")
@@ -17,7 +17,7 @@ local beautiful    = require("beautiful")
 local math         = { sqrt = math.sqrt }
 local mouse        = mouse
 local pairs        = pairs
-local string       = string
+local string       = { gsub = string.gsub }
 local client       = client
 local screen       = screen
 local tonumber     = tonumber

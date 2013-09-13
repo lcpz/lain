@@ -14,6 +14,7 @@ local wibox        = require("wibox")
 local io           = { popen  = io.popen }
 local string       = { format = string.format,
                        gsub   = string.gsub }
+local tonumber     = tonumber
 
 local setmetatable = setmetatable
 
@@ -52,7 +53,7 @@ local function worker(args)
             icon     = helpers.icons_dir .. "mail.png",
             position = "top_left"
         }
-        
+
         curl = string.format("%s --url imaps://%s:%s/INBOX -u %s:%s %s -k",
                head_command, server, port, mail, password, request)
 
@@ -62,6 +63,7 @@ local function worker(args)
 
         t, mailcount = string.gsub(ws, "%d", "")
         t = nil -- because it's useless
+        mailcount = tonumber(mailcount)
 
         widget = imap.widget
         settings()

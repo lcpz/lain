@@ -11,7 +11,7 @@
 local tag       = require("awful.tag")
 local beautiful = require("beautiful")
 local ipairs    = ipairs
-local math      = { floor = math.floor, 
+local math      = { floor = math.floor,
                     max   = math.max,
                     min   = math.min }
 local tonumber  = tonumber

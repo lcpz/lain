@@ -58,7 +58,8 @@ local function worker(args)
         local dactive = active - cpu.last_active
         local dtotal = total - cpu.last_total
 
-        usage = tostring(math.ceil((dactive / dtotal) * 100))
+        cpu_now = {}
+        cpu_now.usage = tostring(math.ceil((dactive / dtotal) * 100))
 
         widget = cpu.widget
         settings()
