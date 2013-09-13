@@ -1,12 +1,12 @@
 [<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
 
-Show the current core temperature in a textbox.
+Shows the current core temperature in a textbox.
 
 Reads from `/sys/class/thermal`, so value is expressed in Celsius.
 
 	mytemp = lain.widgets.temp()
 
-The function takes a table as optional argument, which can contain:
+### input table
 
 Variable | Meaning | Type | Default
 --- | --- | --- | ---
@@ -14,3 +14,7 @@ Variable | Meaning | Type | Default
 `settings` | User settings | function | empty function
 
 `settings` can use the string `coretemp_now`, which means current core temperature, expressed in Celsius (linux standard).
+
+### output 
+
+A textbox.
