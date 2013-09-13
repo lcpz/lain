@@ -134,8 +134,6 @@ local function fetch_weather()
     forecast = weather_data:match(": %S.-,"):gsub(": ", ""):gsub(",", "")
     units = units:gsub(" ", "")
 
-    naughty.notify({text=forecast, timeout=10})
-    naughty.notify({text=units, timeout=10})
     settings()
 end
 
