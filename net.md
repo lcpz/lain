@@ -15,7 +15,7 @@ Variable | Meaning | Type | Default
 
 Possible other values for `units` are 1 (byte) or multiple of 1024: 1024^2 (mb), 1024^3 (gb), and so on.
 
-`settings` can use the following `iface` strings:
+`settings` can use the following `iface` related strings:
 
 - `net_now.carrier` ("0", "1");
 - `net_now.state` ("up", "down");
