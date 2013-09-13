@@ -131,9 +131,11 @@ local function fetch_weather()
     yawn.icon:set_image(sky)
     widget = yawn.widget
 
-    forecast = weather_data:match(": %S+.-,"):gsub(": ", ""):gsub(",", "\n")
+    forecast = weather_data:match(": %S.-,"):gsub(": ", ""):gsub(",", "")
     units = units:gsub(" ", "")
 
+    naughty.notify({text=forecast, timeout=10})
+    naughty.notify({text=units, timeout=10})
     settings()
 end
 
