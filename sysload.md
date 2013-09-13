@@ -1,6 +1,6 @@
 [<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
 
-Show the current system load in a textbox.
+Shows the current system load.
 
 	mysysload = lain.widgets.sysload()
 
