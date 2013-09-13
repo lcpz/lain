@@ -4,7 +4,7 @@ Shows memory status (in MiB) in a textbox.
 
 	mymem = lain.widgets.mem()
 
-# input table
+### input table
 
 Variable | Meaning | Type | Default
 --- | --- | --- | ---
