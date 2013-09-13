@@ -2,7 +2,7 @@
 
 Shows and controls alsa volume with a progressbar; provides tooltips, notifications, and color changes at mute/unmute switch.
 
-	myvolumebar = lain.widgets.alsabar()
+	volume = lain.widgets.alsabar()
 
 * Left click: Launch `alsamixer` in your `terminal`.
 * Right click: Mute/unmute.
@@ -53,26 +53,26 @@ Variable | Meaning | Type
 
 You can control the widget with key bindings like these:
 
-    -- Volume control
+    -- ALSA volume control
     awful.key({ altkey }, "Up",
-    function ()
-        awful.util.spawn("amixer set " .. volume.channel .. " " .. volume.step .. "+")
-        myvolumebar.notify()
-    end),
+        function ()
+            awful.util.spawn("amixer -q set " .. volume.channel .. " " .. volume.step .. "+")
+            volume.notify()
+        end),
     awful.key({ altkey }, "Down",
-    function ()
-        awful.util.spawn("amixer set " .. volume.channel .. " " .. volume.step .. "-")
-        myvolumeba.notify()
-    end),
+        function ()
+            awful.util.spawn("amixer -q set " .. volume.channel .. " " .. volume.step .. "-")
+            volume.notify()
+        end),
     awful.key({ altkey }, "m",
-    function ()
-        awful.util.spawn("amixer set " .. volume.channel .. " playback toggle")
-        myvolumebar.notify()
-    end),
-    awful.key({ altkey, "Control" }, "m", 
-    function ()
-        awful.util.spawn("amixer set " .. volume.channel .. " playback 100%", false )
-        myvolumebar.notify()
-    end),
+        function ()
+            awful.util.spawn("amixer -q set " .. volume.channel .. " playback toggle")
+            volume.notify()
+        end),
+    awful.key({ altkey, "Control" }, "m",
+        function ()
+            awful.util.spawn("amixer -q set " .. volume.channel .. " playback 100%")
+            volume.notify()
+        end),
 
 where `altkey = "Mod1"`.
