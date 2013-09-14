@@ -247,7 +247,7 @@ you have to add an item called `useless_gap_width` in your `theme.lua`.
 If it doesn't exist, the width will default to 0.
 Example:
 
-	theme.useless_gap_width = "5"
+	theme.useless_gap_width = 5
 
 What about layout icons?
 ========================
