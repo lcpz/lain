@@ -24,11 +24,7 @@ local centerwork =
 function centerwork.arrange(p)
     -- A useless gap (like the dwm patch) can be defined with
     -- beautiful.useless_gap_width .
-    local useless_gap = tonumber(beautiful.useless_gap_width)
-    if useless_gap == nil
-    then
-        useless_gap = 0
-    end
+    local useless_gap = tonumber(beautiful.useless_gap_width) or 0
 
     -- Screen.
     local wa = p.workarea

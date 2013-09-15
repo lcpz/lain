@@ -17,11 +17,7 @@ local uselesspiral = {}
 local function spiral(p, spiral)
     -- A useless gap (like the dwm patch) can be defined with
     -- beautiful.useless_gap_width.
-    local useless_gap = tonumber(beautiful.useless_gap_width)
-    if useless_gap == nil
-    then
-        useless_gap = 0
-    end
+    local useless_gap = tonumber(beautiful.useless_gap_width) or 0
 
     local wa = p.workarea
     local cls = p.clients
@@ -69,26 +65,26 @@ local function spiral(p, spiral)
             left = false
 
             if wa2.y == static_wa.y then
-                 top = true
+               top = true
             end
 
             if wa2.x == static_wa.x then
-                 left = true
+               left = true
             end
 
-	    if top then
-	          wa2.height = wa2.height - 2 * useless_gap
-                  wa2.y = wa2.y + useless_gap
+            if top then
+                wa2.height = wa2.height - 2 * useless_gap
+                wa2.y = wa2.y + useless_gap
             else
-	          wa2.height = wa2.height - useless_gap
-	    end
+                wa2.height = wa2.height - useless_gap
+            end
 
-	    if left then
-               	  wa2.width = wa2.width - 2 * useless_gap
-                  wa2.x = wa2.x + useless_gap
-	    else
-	          wa2.width = wa2.width - useless_gap
-	    end
+            if left then
+                wa2.width = wa2.width - 2 * useless_gap
+                wa2.x = wa2.x + useless_gap
+            else
+                wa2.width = wa2.width - useless_gap
+            end
         end
         -- End of useless gap.
 

@@ -18,11 +18,7 @@ local uselessfair = {}
 local function fair(p, orientation)
     -- A useless gap (like the dwm patch) can be defined with
     -- beautiful.useless_gap_width.
-    local useless_gap = tonumber(beautiful.useless_gap_width)
-    if useless_gap == nil
-    then
-        useless_gap = 0
-    end
+    local useless_gap = tonumber(beautiful.useless_gap_width) or 0
 
     local wa = p.workarea
     local cls = p.clients
@@ -88,7 +84,7 @@ local function fair(p, orientation)
                     g.height = g.height - 2 * useless_gap
                     g.y = g.y + useless_gap
                 else
-                    g.height = g.height - useless_gap
+                    g.height = g.height - useless_gap 
                 end
             end
             -- End of useless gap.
