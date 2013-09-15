@@ -21,11 +21,7 @@ local uselesstile = {}
 local function tile_group(cls, wa, orientation, fact, group)
     -- A useless gap (like the dwm patch) can be defined with
     -- beautiful.useless_gap_width .
-    local useless_gap = tonumber(beautiful.useless_gap_width)
-    if useless_gap == nil
-    then
-        useless_gap = 0
-    end
+    local useless_gap = tonumber(beautiful.useless_gap_width) or 0
 
     -- get our orientation right
     local height = "height"

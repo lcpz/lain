@@ -14,15 +14,7 @@ local math      = { ceil  = math.ceil,
                     max   = math.max }
 local tonumber  = tonumber
 
-local termfair =
-{
-    name    = "termfair",
-
-    -- You can set the number of columns and rows,
-    -- -- otherwise they are read from awful.tag
-    nmaster = 0, -- columns
-    ncol    = 0  -- rows
-}
+local termfair  = { name = "termfair" }
 
 function termfair.arrange(p)
     -- Layout with fixed number of vertical columns (read from nmaster).
@@ -45,11 +37,7 @@ function termfair.arrange(p)
 
     -- A useless gap (like the dwm patch) can be defined with
     -- beautiful.useless_gap_width.
-    local useless_gap = tonumber(beautiful.useless_gap_width)
-    if useless_gap == nil
-    then
-        useless_gap = 0
-    end
+    local useless_gap = tonumber(beautiful.useless_gap_width) or 0
 
     -- Screen.
     local wa = p.workarea
@@ -57,22 +45,10 @@ function termfair.arrange(p)
 
     -- How many vertical columns?
     local t = tag.selected(p.screen)
-    local num_x
-    if termfair.nmaster ~= 0
-    then
-        num_x = termfair.nmaster
-    else
-        num_x = tag.getnmaster(t)
-    end
+    local num_x = termfair.nmaster or tag.getnmaster(t)
 
     -- Do at least "desired_y" rows.
-    local desired_y
-    if termfair.ncol ~= 0
-    then
-        desired_y = termfair.ncol
-    else
-        desired_y = tag.getncol(t)
-    end
+    local desired_y = termfair.ncol or tag.getncol(t)
 
     if #cls > 0
     then
