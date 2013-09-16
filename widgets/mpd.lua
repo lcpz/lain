@@ -9,7 +9,7 @@
 
 local helpers      = require("lain.helpers")
 
-local util         = require("awful.util")
+local escape_f     = require("awful.util").escape
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
@@ -64,10 +64,10 @@ local function worker(args)
             for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
                 if     k == "state"  then mpd_now.state  = v
                 elseif k == "file"   then mpd_now.file   = v
-                elseif k == "Artist" then mpd_now.artist = util.escape(v)
-                elseif k == "Title"  then mpd_now.title  = util.escape(v)
-                elseif k == "Album"  then mpd_now.album  = util.escape(v)
-                elseif k == "Date"   then mpd_now.date   = util.escape(v)
+                elseif k == "Artist" then mpd_now.artist = escape_f(v)
+                elseif k == "Title"  then mpd_now.title  = escape_f(v)
+                elseif k == "Album"  then mpd_now.album  = escape_f(v)
+                elseif k == "Date"   then mpd_now.date   = escape_f(v)
                 end
             end
         end
