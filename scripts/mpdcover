@@ -11,7 +11,7 @@
 #
 # Dependencies: imagemagick.
 #
-# Usage: mpdcover <music_directory> <song_file> <default_art>
+# Usage: mpdcover <music_directory> <song_file> <cover_resize> <default_art>
 
 # Configuration-------------------------------------------------------
 
@@ -22,7 +22,7 @@ MUSIC_DIR=$1
 file=$2
 
 # Regex expression used for image search
-IMG_REG="(front|cover|art|Folder|folder)\.(jpg|jpeg|png|gif)$"
+IMG_REG="(Front|front|Cover|cover|Art|art|Folder|folder)\.(jpg|jpeg|png|gif)$"
 
 # Path of temporary resized cover
 TEMP_PATH="/tmp/mpdcover.png"
@@ -33,6 +33,9 @@ COVER_RESIZE="$3x$3"
 if [ $COVER_RESIZE == "x" ]; then
     COVER_RESIZE="100x100"
 fi
+
+# The default cover to use (optional)
+DEFAULT_ART=$4
 
 # Thumbnail background (transparent)
 COVER_BACKGROUND="none"
@@ -48,6 +51,9 @@ art="$MUSIC_DIR/${file%/*}"
 # find every file that matches IMG_REG set the first matching file to be the
 # cover.
 cover="$(find "$art/" -maxdepth 1 -type f | egrep -i -m1 "$IMG_REG")"
+
+# when no cover is found, use DEFAULT_ART as cover
+cover="${cover:=$DEFAULT_ART}"
 
 # check if art is available
 if [[ -n $cover ]]; then
