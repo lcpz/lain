@@ -26,14 +26,15 @@ local setmetatable = setmetatable
 local mpd = {}
 
 local function worker(args)
-    local args       = args or {}
-    local timeout    = args.timeout or 2
-    local password   = args.password or ""
-    local host       = args.host or "127.0.0.1"
-    local port       = args.port or "6600"
-    local music_dir  = args.music_dir or os.getenv("HOME") .. "/Music"
-    local cover_size = args.cover_size or 100
-    local settings   = args.settings or function() end
+    local args        = args or {}
+    local timeout     = args.timeout or 2
+    local password    = args.password or ""
+    local host        = args.host or "127.0.0.1"
+    local port        = args.port or "6600"
+    local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
+    local cover_size  = args.cover_size or 100
+    local default_art = args.default_art or ""
+    local settings    = args.settings or function() end
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
     local mpdh = "telnet://" .. host .. ":" .. port
@@ -85,8 +86,8 @@ local function worker(args)
             then
                 helpers.set_map("current mpd track", mpd_now.title)
 
-                os.execute(string.format("%s %q %q %d", mpdcover, music_dir,
-                           mpd_now.file, cover_size))
+                os.execute(string.format("%s %q %q %d %q", mpdcover, music_dir,
+                           mpd_now.file, cover_size, default_art))
 
                 mpd.id = naughty.notify({
                     preset = mpd_notification_preset,
