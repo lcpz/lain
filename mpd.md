@@ -16,7 +16,7 @@ Now playing songs are notified like this:
 
 You need a file like this
 
-     (front|cover|art|Folder|folder)\.(jpg|jpeg|png|gif)
+     (Front|front|Cover|cover|Art|art|Folder|folder)\.(jpg|jpeg|png|gif)
 
 in the album folder in order to show album art too.
 
@@ -30,6 +30,7 @@ Variable | Meaning | Type | Default
 `port` | MPD port | string | "6600"
 `music_dir` | Music directory | string | "~/Music"
 `cover_size` | Album art notification size | int | 100
+`default_art` | Default art | string | ""
 `settings` | User settings | function | empty function
 
 `settings` can use `mpd_now` table, which contains the following string values:
