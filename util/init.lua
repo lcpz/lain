@@ -84,17 +84,21 @@ end
 
 -- Magnify a client: Set it to "float" and resize it.
 function util.magnify_client(c)
-    awful.client.floating.set(c, true)
+    if not awful.client.floating.get(c) then
+        awful.client.floating.set(c, true)
 
-    local mg = screen[mouse.screen].geometry
-    local tag = awful.tag.selected(mouse.screen)
-    local mwfact = awful.tag.getmwfact(tag)
-    local g = {}
-    g.width = math.sqrt(mwfact) * mg.width
-    g.height = math.sqrt(mwfact) * mg.height
-    g.x = mg.x + (mg.width - g.width) / 2
-    g.y = mg.y + (mg.height - g.height) / 2
-    c:geometry(g)
+        local mg = screen[mouse.screen].geometry
+        local tag = awful.tag.selected(mouse.screen)
+        local mwfact = awful.tag.getmwfact(tag)
+        local g = {}
+        g.width = math.sqrt(mwfact) * mg.width
+        g.height = math.sqrt(mwfact) * mg.height
+        g.x = mg.x + (mg.width - g.width) / 2
+        g.y = mg.y + (mg.height - g.height) / 2
+        c:geometry(g)
+    else
+        awful.client.floating.set(c, false)
+    end
 end
 
 -- Read the nice value of pid from /proc.
