@@ -132,7 +132,7 @@ Credits goes to [minism](https://bbs.archlinux.org/viewtopic.php?pid=1315135#p13
 useless\_gaps\_resize
 ---------------------
 
-Changes `beautiful.useless_gaps_width` on the fly, if present.
+Changes `beautiful.useless_gaps_width` on the fly.
 
 The function takes an integer argument, being the amount of pixel to add/remove to gaps.
 
