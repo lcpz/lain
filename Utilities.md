@@ -128,3 +128,26 @@ You can use it with a key binding like this:
     awful.key({ modkey, "Shift" }, "r", function () lain.util.prompt_rename_tag(mypromptbox) end)
 
 Credits goes to [minism](https://bbs.archlinux.org/viewtopic.php?pid=1315135#p1315135).
+
+useless\_gaps\_resize
+---------------------
+
+Changes `beautiful.useless_gaps_width` on the fly, if present.
+
+The function takes an integer argument, being the amount of pixel to add/remove to gaps.
+
+You could use it with these keybindings:
+
+    -- On the fly useless gaps change
+    awful.key({ altkey, "Control" }, "+", function () lain.util.useless_gaps_resize(1) end),
+    awful.key({ altkey, "Control" }, "-", function () lain.util.useless_gaps_resize(-1) end),
+
+where `altkey=Mod1`, or you could use it as a button like this:
+
+    mywidget:buttons(awful.util.table.join (
+          awful.button({}, 4, function() lain.util.useless_gaps_resize(-1) end),
+          awful.button({}, 5, function() lain.util.useless_gaps_resize(1) end)
+          end)
+    ))
+
+so when hovering the mouse over `mywidget`, you can adjust useless gaps size by scrolling with the mouse wheel.
