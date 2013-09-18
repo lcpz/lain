@@ -70,8 +70,7 @@ the currently used layout. Use it with a client keybinding like this:
 		...
 	)
 
-If you want to "de-magnify" it, just reset the clients floating state to
-`false` (hit `Mod4`+`CTRL`+`Space`, for example).
+If you want to "de-magnify" it, just retype the keybinding.
 
 niceborder\_{focus, unfocus}
 ----------------------------
