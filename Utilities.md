@@ -142,7 +142,7 @@ You could use it with these keybindings:
     awful.key({ altkey, "Control" }, "+", function () lain.util.useless_gaps_resize(1) end),
     awful.key({ altkey, "Control" }, "-", function () lain.util.useless_gaps_resize(-1) end),
 
-where `altkey=Mod1`, or you could use it as a button like this:
+where `altkey=Mod1`, or you could use it like this:
 
     mywidget:buttons(awful.util.table.join (
           awful.button({}, 4, function() lain.util.useless_gaps_resize(-1) end),
