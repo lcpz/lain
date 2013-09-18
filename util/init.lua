@@ -171,4 +171,12 @@ function util.prompt_rename_tag(mypromptbox)
     end)
 end
 
+-- On the fly useless gaps change
+function util.useless_gaps_resize(thatmuch)
+    if beautiful.useless_gap_width then
+        beautiful.useless_gap_width = tonumber(beautiful.useless_gap_width) + thatmuch
+        awful.layout.arrange(mouse.screen)
+    end
+end
+
 return setmetatable(util, { __index = wrequire })
