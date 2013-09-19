@@ -163,7 +163,22 @@ function util.tag_view_nonempty(direction, sc)
    end
 end
 
--- Dynamically rename the current tag you have focused.
+-- {{{ Dynamic tagging
+--
+-- Add a new tag
+function util.prompt_add_tag(mypromptbox)
+    awful.prompt.run({prompt="New tag name: "}, mypromptbox[mouse.screen].widget,
+    function(text)
+        if text:len() > 0 then
+            props = { selected = true }
+            tag = awful.tag.add(new_name, props)
+            tag.name = text
+            tag:emit_signal("property::name")
+        end
+    end)
+end
+
+-- Rename current tag
 function util.prompt_rename_tag(mypromptbox)
     local tag = awful.tag.selected(mouse.screen)
     awful.prompt.run({prompt="Rename tag: "}, mypromptbox[mouse.screen].widget,
@@ -175,12 +190,20 @@ function util.prompt_rename_tag(mypromptbox)
     end)
 end
 
+-- Delete current tag (if empty)
+-- Any rule set on the tag shall be broken
+function util.remove_tag()
+    local tag = awful.tag.selected(mouse.screen)
+    local prevtag = awful.tag.gettags(mouse.screen)[awful.tag.getidx(tag) - 1]
+    awful.tag.delete(tag, prevtag)
+end
+--
+-- }}}
+
 -- On the fly useless gaps change
 function util.useless_gaps_resize(thatmuch)
-    if beautiful.useless_gap_width then
-        beautiful.useless_gap_width = tonumber(beautiful.useless_gap_width) + thatmuch
-        awful.layout.arrange(mouse.screen)
-    end
+    beautiful.useless_gap_width = tonumber(beautiful.useless_gap_width) + thatmuch
+    awful.layout.arrange(mouse.screen)
 end
 
 return setmetatable(util, { __index = wrequire })
