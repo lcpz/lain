@@ -40,7 +40,7 @@ adds a borderbox on top of them:
         ...
 
 	    -- Most likely, you'll want to do this as well:
-	    awful.screen.padding(screen[s], { bottom = 1 })
+	    awful.screen.padding(screen[s], "bottom")
 
 	    -- Create the box and place it above the existing box.
 	    lain.widgets.borderbox(mywibox[s], s, { position = "above" } )
