@@ -166,7 +166,7 @@ end
 -- {{{ Dynamic tagging
 --
 -- Add a new tag
-function util.prompt_add_tag(mypromptbox)
+function util.add_tag(mypromptbox)
     awful.prompt.run({prompt="New tag name: "}, mypromptbox[mouse.screen].widget,
     function(text)
         if text:len() > 0 then
@@ -179,7 +179,8 @@ function util.prompt_add_tag(mypromptbox)
 end
 
 -- Rename current tag
-function util.prompt_rename_tag(mypromptbox)
+-- @author: minism
+function util.rename_tag(mypromptbox)
     local tag = awful.tag.selected(mouse.screen)
     awful.prompt.run({prompt="Rename tag: "}, mypromptbox[mouse.screen].widget,
     function(text)
