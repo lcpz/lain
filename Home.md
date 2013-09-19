@@ -8,8 +8,6 @@ alsa-utils | [alsa](https://github.com/copycat-killer/lain/wiki/alsa), [alsabar]
 curl | widgets accessing network resources | LuaSocket is not a core library. LuaSSL is out of date. 
 imagemagick | [mpd](https://github.com/copycat-killer/lain/wiki/mpd) | Cairo doesn't do high quality filtering.
 
-*(Why ImageMagick? Because Cairo doesn't do high quality filtering at the moment.)*
-
 ### Installation
 
 Simply clone this repository into your Awesome directory:
