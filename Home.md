@@ -2,11 +2,11 @@ Welcome to the Lain wiki!
 
 ### Dependencies
 
-Package | Requested by
---- | ---
-alsa-utils | [alsa](https://github.com/copycat-killer/lain/wiki/alsa), [alsabar](https://github.com/copycat-killer/lain/wiki/alsabar)
-curl | widget types accessing network resources 
-imagemagick | [mpd](https://github.com/copycat-killer/lain/wiki/mpd)
+Package | Requested by | Reason
+--- | --- | ---
+alsa-utils | [alsa](https://github.com/copycat-killer/lain/wiki/alsa), [alsabar](https://github.com/copycat-killer/lain/wiki/alsabar) | / 
+curl | widgets accessing network resources | Lua socket is not a core library.
+imagemagick | [mpd](https://github.com/copycat-killer/lain/wiki/mpd) | Cairo doesn't do high quality filtering.
 
 *(Why ImageMagick? Because Cairo doesn't do high quality filtering at the moment.)*
 
