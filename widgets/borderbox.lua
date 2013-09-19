@@ -15,7 +15,7 @@ local setmetatable = setmetatable
 local borderbox = {}
 
 local function worker(relbox, s, args)
-    local where = args.position or 'above'
+    local where = args.position or 'top'
     local color = args.color or '#FFFFFF'
     local size = args.size or 1
     local box = nil
@@ -24,14 +24,14 @@ local function worker(relbox, s, args)
         bg = color
     }
 
-    if where == 'above'
+    if where == 'top'
     then
         wiboxarg.width = relbox.width
         wiboxarg.height = size
         box = wibox(wiboxarg)
         box.x = relbox.x
         box.y = relbox.y - size
-    elseif where == 'below'
+    elseif where == 'bottom'
     then
         wiboxarg.width = relbox.width
         wiboxarg.height = size
