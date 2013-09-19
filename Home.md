@@ -5,7 +5,7 @@ Welcome to the Lain wiki!
 Package | Requested by | Reason of choice
 --- | --- | ---
 alsa-utils | [alsa](https://github.com/copycat-killer/lain/wiki/alsa), [alsabar](https://github.com/copycat-killer/lain/wiki/alsabar) | /
-curl | widgets accessing network resources | Lua socket is not a core library.
+curl | widgets accessing network resources | LuaSocket is not a core library. LuaSSL is out of date. 
 imagemagick | [mpd](https://github.com/copycat-killer/lain/wiki/mpd) | Cairo doesn't do high quality filtering.
 
 *(Why ImageMagick? Because Cairo doesn't do high quality filtering at the moment.)*
