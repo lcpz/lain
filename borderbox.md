@@ -15,7 +15,7 @@ Variable | Meaning | Type | Default
 `color` | Color of the additional box | string | `#FFFFFF`
 `size` | Size in pixels of the additional box | int | 1
 
-Possible values for `.position`: `above`, `below`, `left` and `right`.
+Possible values for `.position`: `top`, `bottom`, `left` and `right`.
 
 ### Example usage
 
