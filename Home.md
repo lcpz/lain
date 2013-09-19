@@ -2,9 +2,9 @@ Welcome to the Lain wiki!
 
 ### Dependencies
 
-Package | Requested by | Reason
+Package | Requested by | Reason of choice
 --- | --- | ---
-alsa-utils | [alsa](https://github.com/copycat-killer/lain/wiki/alsa), [alsabar](https://github.com/copycat-killer/lain/wiki/alsabar) | / 
+alsa-utils | [alsa](https://github.com/copycat-killer/lain/wiki/alsa), [alsabar](https://github.com/copycat-killer/lain/wiki/alsabar) | /
 curl | widgets accessing network resources | Lua socket is not a core library.
 imagemagick | [mpd](https://github.com/copycat-killer/lain/wiki/mpd) | Cairo doesn't do high quality filtering.
 
