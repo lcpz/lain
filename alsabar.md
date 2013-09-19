@@ -43,8 +43,12 @@ Variable | Meaning | Type | Default
 
 It's **crucial** to set `notifications.bar_size` to your `mywibox[s]` height.
 
-`settings` can use the integer `alsa_level` and `alsa_status`.
+`settings` can use the following variables:
 
+Variable | Meaning | Type | Values
+--- | --- | --- | ---
+`volume_now.level` | Self explained | int | 0-100
+`volume_now.status` | Device status | string | "on", "off"
 ### output table
 
 Variable | Meaning | Type
