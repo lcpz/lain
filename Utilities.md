@@ -43,6 +43,64 @@ they all take one argument, which is the text to markup, except `fg.color` and `
     markup.fg.color(text, color)
     markup.bg.color(text, color)
 
+dynamic tagging
+---------------
+
+That is:
+
+- create a new tag;
+- rename current tag;
+- delete current tag.
+
+If you delete a tag, any rule set on it shall be broken, so be careful.
+
+Use it with key bindings like these:
+
+    awful.key({ modkey, "Shift" }, "n", function () lain.util.create_tag(mypromptbox) end),
+    awful.key({ modkey, "Shift" }, "r", function () lain.util.rename_tag(mypromptbox) end),
+    awful.key({ modkey, "Shift" }, "d", function () lain.util.delete_tag() end),
+
+useless\_gaps\_resize
+---------------------
+
+Changes `beautiful.useless_gaps_width` on the fly.
+
+The function takes an integer argument, being the amount of pixel to add/remove to gaps.
+
+You could use it with these keybindings:
+
+    -- On the fly useless gaps change
+    awful.key({ altkey, "Control" }, "+", function () lain.util.useless_gaps_resize(1) end),
+    awful.key({ altkey, "Control" }, "-", function () lain.util.useless_gaps_resize(-1) end),
+
+where `altkey=Mod1`, or you could use it like this:
+
+    mywidget:buttons(awful.util.table.join (
+          awful.button({}, 4, function() lain.util.useless_gaps_resize(-1) end),
+          awful.button({}, 5, function() lain.util.useless_gaps_resize(1) end)
+          end)
+    ))
+
+so when hovering the mouse over `mywidget`, you can adjust useless gaps size by scrolling with the mouse wheel.
+
+tag\_view\_nonempty
+-------------------
+
+This function lets you jump to the next/previous non-empty tag.
+It takes two arguments:
+
+* `direction`: `1` for next non-empty tag, `-1` for previous.
+* `sc`: Screen which the taglist is in. Default is `mouse.screen` or `1`. This
+  argument is optional.
+
+You can use it with key bindings like these:
+
+    -- Non-empty tag browsing
+    awful.key({ altkey }, "Left", function () lain.util.tag_view_nonempty(-1) end),
+    awful.key({ altkey }, "Right", function () lain.util.tag_view_nonempty(1) end),
+
+where `altkey = "Mod1"`.
+
 menu\_clients\_current\_tags
 ----------------------------
 
@@ -98,55 +156,3 @@ This requires to define additional colors in your `theme.lua`. For example:
 
 	theme.border_focus_lowprio   = "#3333FF"
 	theme.border_normal_lowprio  = "#333366"
-
-tag\_view\_nonempty
--------------------
-
-This function lets you jump to the next/previous non-empty tag.
-It takes two arguments:
-
-* `direction`: `1` for next non-empty tag, `-1` for previous.
-* `sc`: Screen which the taglist is in. Default is `mouse.screen` or `1`. This
-  argument is optional.
-
-You can use it with key bindings like these:
-
-    -- Non-empty tag browsing
-    awful.key({ altkey }, "Left", function () lain.util.tag_view_nonempty(-1) end),
-    awful.key({ altkey }, "Right", function () lain.util.tag_view_nonempty(1) end),
-
-where `altkey = "Mod1"`.
-
-prompt\_rename\_tag
--------------------
-
-This function enables you to dynamically rename the current tag you have focused.
-
-You can use it with a key binding like this:
-
-    awful.key({ modkey, "Shift" }, "r", function () lain.util.prompt_rename_tag(mypromptbox) end)
-
-Credits goes to [minism](https://bbs.archlinux.org/viewtopic.php?pid=1315135#p1315135).
-
-useless\_gaps\_resize
----------------------
-
-Changes `beautiful.useless_gaps_width` on the fly.
-
-The function takes an integer argument, being the amount of pixel to add/remove to gaps.
-
-You could use it with these keybindings:
-
-    -- On the fly useless gaps change
-    awful.key({ altkey, "Control" }, "+", function () lain.util.useless_gaps_resize(1) end),
-    awful.key({ altkey, "Control" }, "-", function () lain.util.useless_gaps_resize(-1) end),
-
-where `altkey=Mod1`, or you could use it like this:
-
-    mywidget:buttons(awful.util.table.join (
-          awful.button({}, 4, function() lain.util.useless_gaps_resize(-1) end),
-          awful.button({}, 5, function() lain.util.useless_gaps_resize(1) end)
-          end)
-    ))
-
-so when hovering the mouse over `mywidget`, you can adjust useless gaps size by scrolling with the mouse wheel.
