@@ -13,6 +13,7 @@ The function takes a table as optional argument, which can contain:
 Variable | Meaning | Type | Default
 --- | --- | --- | ---
 `timeout` | Refresh timeout seconds | int | 4
+`settings` | User settings | function | empty function
 `width` | Bar width | int | 63
 `height` | Bar height | int | 1
 `ticks` | Set bar ticks on | boolean | true
@@ -41,6 +42,8 @@ Variable | Meaning | Type | Default
 `bar_size` | Wibox height | int | 18
 
 It's **crucial** to set `notifications.bar_size` to your `mywibox[s]` height.
+
+`settings` can use the integer `alsa_level` and `alsa_status`.
 
 ### output table
 
