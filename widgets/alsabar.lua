@@ -43,7 +43,7 @@ local alsabar =
   {
      font      = beautiful.font:sub(beautiful.font:find(""), beautiful.font:find(" ")),
      font_size = "11",
-     color     = beautiful.fg_focus,
+     color     = beautiful.fg_normal,
      bar_size  = 18
   },
 
