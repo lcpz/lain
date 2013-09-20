@@ -38,7 +38,7 @@ Variable | Meaning | Type | Default
 --- | --- | --- | ---
 `font` | Notifications font | string | The one defined in `beautiful.font`
 `font_size` | Notifications font size | string | "11"
-`color` | Notifications color | string | `beautiful.fg_focus`
+`color` | Notifications color | string | `beautiful.fg_normal`
 `bar_size` | Wibox height | int | 18
 
 It's **crucial** to set `notifications.bar_size` to your `mywibox[s]` height.
