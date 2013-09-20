@@ -92,6 +92,7 @@ end
 local function worker(args)
     local args = args or {}
     local timeout = args.timeout or 4
+    local settings = args.settings or function() end
     local width = args.width or 63
     local height = args.heigth or 1
     local ticks = args.ticks or true
@@ -142,6 +143,11 @@ local function worker(args)
             alsabar.tooltip:set_text(string.format(" %s:%s ", alsabar.channel, volu))
             alsabar.bar:set_color(alsabar.colors.unmute)
         end
+
+        volume_now = {}
+        volume_now.level = tonumber(volu)
+        volume_now.status = mute
+        settings()
     end
 
     newtimer("alsabar", timeout, alsabar.update)
