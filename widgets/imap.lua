@@ -62,7 +62,7 @@ local function worker(args)
         f:close()
 
         t, mailcount = string.gsub(ws, "%d", "")
-        t = nil -- because it's useless
+        t = nil 
         mailcount = tonumber(mailcount)
 
         widget = imap.widget
