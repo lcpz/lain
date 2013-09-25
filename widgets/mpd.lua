@@ -28,7 +28,7 @@ local mpd = {}
 local function worker(args)
     local args        = args or {}
     local timeout     = args.timeout or 2
-    local password    = args.password or ""
+    local password    = args.password or "\"\""
     local host        = args.host or "127.0.0.1"
     local port        = args.port or "6600"
     local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
