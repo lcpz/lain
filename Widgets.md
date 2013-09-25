@@ -45,7 +45,7 @@ Index
 - [temp](https://github.com/copycat-killer/lain/wiki/temp)
 - [yawn](https://github.com/copycat-killer/lain/wiki/yawn)
 
-User contributed widgets
-------------------------
+User contributed
+----------------
 
 - [task](https://github.com/copycat-killer/lain/wiki/task)
