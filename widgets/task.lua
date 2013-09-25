@@ -38,34 +38,32 @@ function task:show(t_out)
     local font = beautiful.font:sub(beautiful.font:find(""),
                  beautiful.font:find(" "))
 
-    task.offset = 0
-    --task.notify_icon = task.icons .. today .. ".png"
 
     f = io.popen('task')
     c_text = "<tt><span font='" .. font .. " "
-             .. task.font_size .. "'><b>[Next Tasks]</b>\n"
+             .. task.font_size+2 .. "'><b>Tasks next</b></span>\n"
+             .. "<span font='" .. font .. " "
+             .. task.font_size .. "'>"
              .. f:read("*all") .. "\n"
              .. "</span></tt>"
     f:close()
 
     task_notification = naughty.notify({ text = c_text,
-                                        --icon = task.notify_icon,
-                                        --position = task.position,
-                                        --fg = task.fg,
-                                        --bg = task.bg,
+                                        icon = task.notify_icon,
+                                        position = task.position,
+                                        fg = task.fg,
+                                        bg = task.bg,
                                         timeout = tims })
 end
 
 function task:attach(widget, args)
     local args = args or {}
-    task.icons = args.icons or icons_dir .. "cal/white/"
     task.font_size = tonumber(args.font_size) or 12
     task.fg = args.fg or beautiful.fg_normal or "#FFFFFF"
     task.bg = args.bg or beautiful.bg_normal or "#FFFFFF"
     task.position = args.position or "top_right"
 
-    task.offset = 0
-    task.notify_icon = nil
+    task.notify_icon = icons_dir .. "taskwarrior.png"
 
     widget:connect_signal("mouse::enter", function () task:show() end)
     widget:connect_signal("mouse::leave", function () task:hide() end)
