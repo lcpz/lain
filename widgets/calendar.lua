@@ -86,7 +86,6 @@ function calendar:show(t_out, inc_offset)
        f = io.popen('/usr/bin/cal ' .. month .. ' ' .. year)
     end
 
-
     c_text = "<tt><span font='" .. font .. " "
              .. calendar.font_size .. "'><b>"
              .. f:read() .. "</b>\n\n"
