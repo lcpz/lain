@@ -28,7 +28,7 @@ Just make sure that:
 
 - Your code fits with the general style of the module. In particular, you should use the same indentation pattern that the code uses, and also avoid adding space at the ends of lines.
 
-- Your code its easy to understand, maintainable, and modularized. You should also avoid code duplication wherever possible by adding functions or using `lain.helpers`. If something is unclear, and you can't write it in such a way that it will be clear, explain it with a comment.
+- Your code its easy to understand, maintainable, and modularized. You should also avoid code duplication wherever possible by adding functions or using ``lain.helpers``. If something is unclear, and you can't write it in such a way that it will be clear, explain it with a comment.
 
 - You test your changes before submitting to make sure that not only your code work, but have not broken other parts of the module too!
 
