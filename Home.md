@@ -23,7 +23,7 @@ Installation
 Usage
 --------
 
-First, include it in your `rc.lua`:
+First, include it into your `rc.lua`:
 
     local lain = require("lain")
 
