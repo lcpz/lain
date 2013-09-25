@@ -38,11 +38,11 @@ function task:show()
     local f, c_text
 
     f = io.popen('task')
-    c_text = "<tt><span font='"
+    c_text = "<span font='"
              .. task.font .. " "
              .. task.font_size .. "'>"
              .. f:read("*all"):gsub("\n*$", "")
-             .. "</span></tt>"
+             .. "</span>"
     f:close()
 
     task_notification = naughty.notify({ title = "[task next]",
@@ -59,19 +59,20 @@ function task:prompt_add()
       mypromptbox[mouse.screen].widget,
       function (...)
           local f = io.popen("task add " .. ...)
-          c_text = "\n<tt><span font='" 
+          c_text = "\n<span font='" 
                    .. task.font .. " "
                    .. task.font_size .. "'>"
                    .. f:read("*all")
-                   .. "</span></tt>"
+                   .. "</span>"
+          f:close()
 
           naughty.notify({
-              text = c_text,
-              icon = task.notify_icon,
+              text     = c_text,
+              icon     = task.notify_icon,
               position = task.position,
-              fg = task.fg,
-              bg = task.bg,
-              timeout = task.timeout
+              fg       = task.fg,
+              bg       = task.bg,
+              timeout  = task.timeout
           })
       end,
       nil,
@@ -83,27 +84,28 @@ function task:prompt_search()
       mypromptbox[mouse.screen].widget,
       function (...)
           local f = io.popen("task " .. ...)
-          c_text = f:read("*all")
+          c_text = f:read("*all"):gsub(" \n*$", "")
           f:close()
 
           if string.len(c_text) == 0
           then
               c_text = "No results found."
           else
-              c_text = "<tt><span font='"
+              c_text = "<span font='"
                        .. task.font .. " "
                        .. task.font_size .. "'>"
-                       .. c_text .. "\n"
-                       .. "</span></tt>"
+                       .. c_text 
+                       .. "</span>"
           end
 
           naughty.notify({
-              text = c_text,
-              icon = task.notify_icon,
+              title    = "[task next " .. ... .. "]",
+              text     = c_text,
+              icon     = task.notify_icon,
               position = task.position,
-              fg = task.fg,
-              bg = task.bg,
-              timeout = task.timeout
+              fg       = task.fg,
+              bg       = task.bg,
+              timeout  = task.timeout
           })
       end,
       nil,
