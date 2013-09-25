@@ -29,20 +29,15 @@ function task:hide()
     end
 end
 
-function task:show(t_out)
+function task:show()
     task:hide()
 
-    local tims = t_out or 0
     local f, c_text
-    -- let's take font only, font size is set in task table
-    local font = beautiful.font:sub(beautiful.font:find(""),
-                 beautiful.font:find(" "))
-
 
     f = io.popen('task')
-    c_text = "<tt><span font='" .. font .. " "
+    c_text = "<tt><span font='" .. task.font .. " "
              .. task.font_size+2 .. "'><b>Tasks next</b></span>\n"
-             .. "<span font='" .. font .. " "
+             .. "<span font='" .. task.font .. " "
              .. task.font_size .. "'>"
              .. f:read("*all") .. "\n"
              .. "</span></tt>"
@@ -53,15 +48,68 @@ function task:show(t_out)
                                         position = task.position,
                                         fg = task.fg,
                                         bg = task.bg,
-                                        timeout = tims })
+                                        timeout = task.timeout })
+end
+
+function task:add(...)
+  local f = io.popen("task add " .. ...)
+  c_text = "<tt><span font='" .. task.font .. " "
+           .. task.font_size .. "'>"
+           .. f:read("*all") .. "\n"
+           .. "</span></tt>"
+
+  naughty.notify({ text = c_text,
+                   icon = task.notify_icon,
+                   position = task.position,
+                   fg = task.fg,
+                   bg = task.bg,
+                   timeout = task.timeout})
+end
+
+function task:prompt_add()
+  awful.prompt.run( { prompt = "Add task: " },
+                    mypromptbox[mouse.screen].widget,
+                    function (...)
+                      task:add(...)
+                    end,
+                    nil,
+                    awful.util.getdir("cache") .. "/history_task_add")
+end
+
+function task:execute(...)
+  local f = io.popen("task " .. ...)
+  c_text = "<tt><span font='" .. task.font .. " "
+           .. task.font_size .. "'>"
+           .. f:read("*all") .. "\n"
+           .. "</span></tt>"
+
+  naughty.notify({ text = c_text,
+                   icon = task.notify_icon,
+                   position = task.position,
+                   fg = task.fg,
+                   bg = task.bg,
+                   timeout = task.timeout})
+end
+
+function task:prompt()
+  awful.prompt.run( { prompt = "Task: " },
+                    mypromptbox[mouse.screen].widget,
+                    function (...)
+                      task:execute(...)
+                    end,
+                    nil,
+                    awful.util.getdir("cache") .. "/history_task")
 end
 
 function task:attach(widget, args)
     local args = args or {}
     task.font_size = tonumber(args.font_size) or 12
+    task.font = beautiful.font:sub(beautiful.font:find(""),
+                beautiful.font:find(" "))
     task.fg = args.fg or beautiful.fg_normal or "#FFFFFF"
     task.bg = args.bg or beautiful.bg_normal or "#FFFFFF"
     task.position = args.position or "top_right"
+    task.timeout = args.timeout or 7
 
     task.notify_icon = icons_dir .. "taskwarrior.png"
 
