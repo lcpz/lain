@@ -13,7 +13,6 @@ local beautiful    = require("beautiful")
 local naughty      = require("naughty")
 
 local io           = io
-local os           = { date = os.date }
 local tonumber     = tonumber
 
 local setmetatable = setmetatable
@@ -35,38 +34,19 @@ function task:show(t_out)
 
     local tims = t_out or 0
     local f, c_text
-    local today = tonumber(os.date('%d'))
-    local init_t = '/usr/bin/cal | sed -r -e "s/(^| )( '
     -- let's take font only, font size is set in task table
     local font = beautiful.font:sub(beautiful.font:find(""),
                  beautiful.font:find(" "))
 
-    if today >= 10
-    then
-       init_t = '/usr/bin/cal | sed -r -e "s/(^| )('
-    end
-
     task.offset = 0
     --task.notify_icon = task.icons .. today .. ".png"
 
-    -- bg and fg inverted to highlight today
-    --f = io.popen( init_t .. today ..
-                  --')($| )/\\1<b><span foreground=\\"'
-                  --.. task.bg ..
-                  --'\\" background=\\"'
-                  --.. task.fg ..
-                  --'\\">\\2<\\/span><\\/b>\\3/"' )
-
-
-
-    --c_text = "<tt><span font='" .. font .. " "
-             --.. task.font_size .. "'><b>"
-             --.. f:read() .. "</b>\n\n"
-             --.. f:read() .. "\n"
-             --.. f:read("*all"):gsub("\n*$", "")
-             --.. "</span></tt>"
-    c_text = "hello tasks!"
-    --f:close()
+    f = io.popen('task')
+    c_text = "<tt><span font='" .. font .. " "
+             .. task.font_size .. "'><b>[Next Tasks]</b>\n"
+             .. f:read("*all") .. "\n"
+             .. "</span></tt>"
+    f:close()
 
     task_notification = naughty.notify({ text = c_text,
                                         --icon = task.notify_icon,
