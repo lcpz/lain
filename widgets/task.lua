@@ -30,10 +30,9 @@ function task:hide()
     end
 end
 
-function task:show(t_out, inc_offset)
+function task:show(t_out)
     task:hide()
 
-    local offs = inc_offset or 0
     local tims = t_out or 0
     local f, c_text
     local today = tonumber(os.date('%d'))
@@ -42,49 +41,22 @@ function task:show(t_out, inc_offset)
     local font = beautiful.font:sub(beautiful.font:find(""),
                  beautiful.font:find(" "))
 
-    if offs == 0
-    then -- current month showing, today highlighted
-        if today >= 10
-        then
-           init_t = '/usr/bin/cal | sed -r -e "s/(^| )('
-        end
-
-        task.offset = 0
-        task.notify_icon = task.icons .. today .. ".png"
-
-        -- bg and fg inverted to highlight today
-        f = io.popen( init_t .. today ..
-                      ')($| )/\\1<b><span foreground=\\"'
-                      .. task.bg ..
-                      '\\" background=\\"'
-                      .. task.fg ..
-                      '\\">\\2<\\/span><\\/b>\\3/"' )
-
-    else -- no current month showing, no day to highlight
-       local month = tonumber(os.date('%m'))
-       local year = tonumber(os.date('%Y'))
-
-       task.offset = task.offset + offs
-       month = month + task.offset
-
-       if month > 12 then
-           month = month % 12
-           year = year + 1
-           if month <= 0 then
-               month = 12
-           end
-       elseif month < 1 then
-           month = month + 12
-           year = year - 1
-           if month <= 0 then
-               month = 1
-           end
-       end
-
-       task.notify_icon = nil
-
-       f = io.popen('/usr/bin/cal ' .. month .. ' ' .. year)
+    if today >= 10
+    then
+       init_t = '/usr/bin/cal | sed -r -e "s/(^| )('
     end
+
+    task.offset = 0
+    --task.notify_icon = task.icons .. today .. ".png"
+
+    -- bg and fg inverted to highlight today
+    --f = io.popen( init_t .. today ..
+                  --')($| )/\\1<b><span foreground=\\"'
+                  --.. task.bg ..
+                  --'\\" background=\\"'
+                  --.. task.fg ..
+                  --'\\">\\2<\\/span><\\/b>\\3/"' )
+
 
 
     --c_text = "<tt><span font='" .. font .. " "
@@ -94,13 +66,13 @@ function task:show(t_out, inc_offset)
              --.. f:read("*all"):gsub("\n*$", "")
              --.. "</span></tt>"
     c_text = "hello tasks!"
-    f:close()
+    --f:close()
 
     task_notification = naughty.notify({ text = c_text,
-                                        icon = task.notify_icon,
-                                        position = task.position,
-                                        fg = task.fg,
-                                        bg = task.bg,
+                                        --icon = task.notify_icon,
+                                        --position = task.position,
+                                        --fg = task.fg,
+                                        --bg = task.bg,
                                         timeout = tims })
 end
 
