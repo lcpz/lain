@@ -1,3 +1,6 @@
+General usage
+-------------
+
 Every widget is output by a `function`.
 
 For some widgets, `function` returns a `wibox.widget.textbox`, for others a table to be used for notification and update purposes.
@@ -23,7 +26,8 @@ Here follows an example:
 
 If you want to see more complex applications, check [awesome-copycats](https://github.com/copycat-killer/awesome-copycats).
 
----
+Index
+-----
 
 - [alsa](https://github.com/copycat-killer/lain/wiki/alsa)
 - [alsabar](https://github.com/copycat-killer/lain/wiki/alsabar)
@@ -40,3 +44,8 @@ If you want to see more complex applications, check [awesome-copycats](https://g
 - [sysload](https://github.com/copycat-killer/lain/wiki/sysload)
 - [temp](https://github.com/copycat-killer/lain/wiki/temp)
 - [yawn](https://github.com/copycat-killer/lain/wiki/yawn)
+
+User contributed widgets
+------------------------
+
+- [task](https://github.com/copycat-killer/lain/wiki/task)
