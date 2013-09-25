@@ -32,9 +32,9 @@ Just make sure that:
 
 - You test your changes before submitting to make sure that not only your code works, but have not broken other parts of the module too!
 
-- You update `wiki` submodule with a thorough section.
+- You update ``wiki`` submodule with a thorough section.
 
-Contributed widgets have to be put it in `lain/widget/contrib`.
+Contributed widgets have to be put it in ``lain/widget/contrib``.
 
 Screenshots
 -----------
