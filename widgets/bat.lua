@@ -38,27 +38,24 @@ local function worker(args)
             watt   = "N/A"
         }
 
-        local present = first_line("/sys/class/power_supply/"
-                                   .. battery
-                                   .. "/present")
+        local bstr  = "/sys/class/power_supply/" .. battery
+
+        local present = first_line(bstr .. "/present")
 
         if present == "1"
         then
-            local rate = first_line("/sys/class/power_supply/"
-                                    .. battery ..
-                                    "/power_now")
-            local ratev = first_line("/sys/class/power_supply/"
-                                    .. battery ..
-                                     "/voltage_now")
-            local rem = first_line("/sys/class/power_supply/"
-                                    .. battery ..
-                                   "/energy_now")
-            local tot = first_line("/sys/class/power_supply/"
-                                    .. battery ..
-                                   "/energy_full")
-            bat_now.status = first_line("/sys/class/power_supply/"
-                                    .. battery ..
-                                   "/status")
+            local rate  = first_line(bstr .. "/power_now") or
+                          first_line(bstr .. "/current_now")
+
+            local ratev = first_line(bstr .. "/voltage_now")
+
+            local rem   = first_line(bstr .. "/energy_now") or
+                          first_line(bstr .. "/charge_now")
+
+            local tot   = first_line(bstr .. "/energy_full") or
+                          first_line(bstr .. "/charge_full")
+
+            bat_now.status = first_line(bstr .. "/status") or "N/A"
 
             local time_rat = 0
             if bat_now.status == "Charging"
