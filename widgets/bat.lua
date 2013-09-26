@@ -74,30 +74,33 @@ local function worker(args)
             bat_now.watt = string.format("%.2fW", (rate * ratev) / 1e12)
 
             -- notifications for low and critical states
-            if bat_now.perc <= 5
+            if bat_new.status == "Discharging"
             then
-                bat.id = naughty.notify({
-                    text = "shutdown imminent",
-                    title = "battery nearly exhausted",
-                    position = "top_right",
-                    timeout = 15,
-                    fg="#000000",
-                    bg="#ffffff",
-                    ontop = true,
-                    replaces_id = bat.id
-                }).id
-            elseif bat_now.perc <= 15
-            then
-                bat.id = naughty.notify({
-                    text = "plug the cable",
-                    title = "battery low",
-                    position = "top_right",
-                    timeout = 15,
-                    fg="#202020",
-                    bg="#cdcdcd",
-                    ontop = true,
-                    replaces_id = bat.id
-                }).id
+                if bat_now.perc <= 5
+                then
+                    bat.id = naughty.notify({
+                        text = "shutdown imminent",
+                        title = "battery nearly exhausted",
+                        position = "top_right",
+                        timeout = 15,
+                        fg="#000000",
+                        bg="#ffffff",
+                        ontop = true,
+                        replaces_id = bat.id
+                    }).id
+                elseif bat_now.perc <= 15
+                then
+                    bat.id = naughty.notify({
+                        text = "plug the cable",
+                        title = "battery low",
+                        position = "top_right",
+                        timeout = 15,
+                        fg="#202020",
+                        bg="#cdcdcd",
+                        ontop = true,
+                        replaces_id = bat.id
+                    }).id
+                end
             end
 
             bat_now.perc = string.format("%d", bat_now.perc)
