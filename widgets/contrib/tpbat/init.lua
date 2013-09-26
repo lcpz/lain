@@ -113,36 +113,39 @@ function tpbat.register(args)
 
         if bat:installed()
         then
-            bat_now.status = bat:status()
+            bat_now.status = bat:status() or "N/A"
             bat_now.perc   = bat:percent()
             bat_now.time   = bat:remaining_time()
             -- bat_now.watt = string.format("%.2fW", (VOLTS * AMPS) / 1e12)
 
-            -- notifications for low and critical states
-            if bat_now.perc <= 5
+            -- notifications for low and critical states (when discharging)
+            if bat_now.status == "discharging"
             then
-                tpbat.id = naughty.notify({
-                    text = "shutdown imminent",
-                    title = "battery nearly exhausted",
-                    position = "top_right",
-                    timeout = 15,
-                    fg="#000000",
-                    bg="#ffffff",
-                    ontop = true,
-                    replaces_id = tpbat.id
-                }).id
-            elseif bat_now.perc <= 15
-            then
-                tpbat.id = naughty.notify({
-                    text = "plug the cable",
-                    title = "battery low",
-                    position = "top_right",
-                    timeout = 15,
-                    fg="#202020",
-                    bg="#cdcdcd",
-                    ontop = true,
-                    replaces_id = tpbat.id
-                }).id
+                if bat_now.perc <= 5
+                then
+                    tpbat.id = naughty.notify({
+                        text = "shutdown imminent",
+                        title = "battery nearly exhausted",
+                        position = "top_right",
+                        timeout = 15,
+                        fg="#000000",
+                        bg="#ffffff",
+                        ontop = true,
+                        replaces_id = tpbat.id
+                    }).id
+                elseif bat_now.perc <= 15
+                then
+                    tpbat.id = naughty.notify({
+                        text = "plug the cable",
+                        title = "battery low",
+                        position = "top_right",
+                        timeout = 15,
+                        fg="#202020",
+                        bg="#cdcdcd",
+                        ontop = true,
+                        replaces_id = tpbat.id
+                    }).id
+                end
             end
 
             bat_now.perc = tostring(bat_now.perc)
