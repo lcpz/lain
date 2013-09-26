@@ -65,7 +65,7 @@ function tpbat:show(t_out)
     tpbat_notification = naughty.notify({
         preset = { fg = beautiful.fg_normal },
         text = str,
-      	timeout = t_out
+        timeout = t_out
     })
 end
 
@@ -80,17 +80,17 @@ function tpbat.register(args)
     
     tpbat.widget = wibox.widget.textbox('')
 
-	if bat:get('state') == nil then
-		local n = naughty.notify({
-			title = "SMAPI Battery Warning: Unable to read battery state!",
-			text = "This widget is intended for ThinkPads. Is tp_smapi installed? Check your configs & paths.",
-			position = "top_right",
-			timeout = 15,
-			fg="#202020",
-			bg="#cdcdcd",
-			ontop = true
-		})
-	end
+    if bat:get('state') == nil then
+        local n = naughty.notify({
+            title = "SMAPI Battery Warning: Unable to read battery state!",
+            text = "This widget is intended for ThinkPads. Is tp_smapi installed? Check your configs & paths.",
+            position = "top_right",
+            timeout = 15,
+            fg="#202020",
+            bg="#cdcdcd",
+            ontop = true
+        })
+    end
 
     function update()
         bat_now = {
