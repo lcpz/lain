@@ -1,36 +1,41 @@
+
 --[[
-     tpbat.lua
-     Battery status widget for ThinkPad laptops that use SMAPI
-     lain.widgets.contrib.tpbat
-
-     More on tp_smapi: http://www.thinkwiki.org/wiki/Tp_smapi
-
-     Licensed under GNU General Public License v2 
-      * (c) 2013,      Conor Heine
-      * (c) 2013,      Luke Bonham                
-      * (c) 2010-2012, Peter Hofmann              
-                                                  
+                                                               
+     tpbat.lua                                                 
+     Battery status widget for ThinkPad laptops that use SMAPI 
+     lain.widgets.contrib.tpbat                                
+                                                               
+     More on tp_smapi: http://www.thinkwiki.org/wiki/Tp_smapi  
+                                                               
+     Licensed under GNU General Public License v2              
+      * (c) 2013,      Conor Heine                             
+      * (c) 2013,      Luke Bonham                             
+      * (c) 2010-2012, Peter Hofmann                           
+                                                               
 --]]
 
+local debug        = { getinfo = debug.getinfo }
 local newtimer     = require("lain.helpers").newtimer
 local first_line   = require("lain.helpers").first_line
 local beautiful    = require("beautiful")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
-local smapi        = require("lain.widgets.contrib.tpbat.smapi") -- Ugly :(
 
 local string       = { format = string.format }
 local math         = { floor = math.floor }
 local tostring     = tostring
 local setmetatable = setmetatable
 
--- ThinkPad SMAPI-enabled battery info widget
-local tpbat = { }
+package.path       = debug.getinfo(1,"S").source:match[[^@?(.*[\/])[^\/]-$]] .. "?.lua;" .. package.path
+local smapi        = require("smapi")
 
+-- ThinkPad SMAPI-enabled battery info widget
+-- lain.widgets.contrib.tpbat
+local tpbat = { }
 local tpbat_notification = nil
 
 function tpbat:hide()
-    if tpbat_notification ~= nil 
+    if tpbat_notification ~= nil
     then
         naughty.destroy(tpbat_notification)
         tpbat_notification = nil
@@ -39,8 +44,10 @@ end
 
 function tpbat:show(t_out)
     tpbat:hide()
-    
-    local bat = self.bat
+
+    local bat   = self.bat
+    local t_out = t_out or 0
+
     if bat == nil or not bat:installed() then return end
 
     local mfgr   = bat:get('manufacturer') or "no_mfgr"
@@ -50,9 +57,9 @@ function tpbat:show(t_out)
     local time   = bat:remaining_time()
     local msg    = "\t"
 
-    if status ~= "idle" and status ~= "nil" 
+    if status ~= "idle" and status ~= "nil"
     then
-        if time == "N/A" 
+        if time == "N/A"
         then
             msg = "...Calculating time remaining..."
         else
@@ -63,7 +70,7 @@ function tpbat:show(t_out)
     end
 
     local str = string.format("%s : %s %s (%s)\n", bat.name, mfgr, model, chem)
-    str = str .. string.format("\n%s \t\t\t %s", status:upper(), msg)
+                .. string.format("\n%s \t\t\t %s", status:upper(), msg)
 
     tpbat_notification = naughty.notify({
         preset = { fg = beautiful.fg_normal },
@@ -80,10 +87,10 @@ function tpbat.register(args)
 
     tpbat.bat = smapi:battery(battery) -- Create a new battery
     local bat = tpbat.bat
-    
+
     tpbat.widget = wibox.widget.textbox('')
 
-    if bat:get('state') == nil 
+    if bat:get('state') == nil
     then
         local n = naughty.notify({
             title = "SMAPI Battery Warning: Unable to read battery state!",
@@ -141,13 +148,13 @@ function tpbat.register(args)
             bat_now.perc = tostring(bat_now.perc)
         end
 
-        widget = tpbat.widget -- 'widget' needed in rc.lua (following convention)
+        widget = tpbat.widget
         settings()
     end
 
     newtimer("tpbat", timeout, update)
 
-    widget:connect_signal('mouse::enter', function () tpbat:show(0) end)
+    widget:connect_signal('mouse::enter', function () tpbat:show() end)
     widget:connect_signal('mouse::leave', function () tpbat:hide() end)
 
     return tpbat.widget

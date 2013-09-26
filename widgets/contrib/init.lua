@@ -4,7 +4,7 @@
      Lain                                          
      Layouts, widgets and utilities for Awesome WM 
                                                    
-     User contributed widgets section              
+     Users contributed widgets section             
                                                    
      Licensed under GNU General Public License v2  
       * (c) 2013,      Luke Bonham                 
