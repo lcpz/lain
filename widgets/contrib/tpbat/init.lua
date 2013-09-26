@@ -30,7 +30,8 @@ local tpbat = { }
 local tpbat_notification = nil
 
 function tpbat:hide()
-    if tpbat_notification ~= nil then
+    if tpbat_notification ~= nil 
+    then
         naughty.destroy(tpbat_notification)
         tpbat_notification = nil
     end
@@ -49,8 +50,10 @@ function tpbat:show(t_out)
     local time   = bat:remaining_time()
     local msg    = "\t"
 
-    if status ~= "idle" and status ~= "nil" then
-        if time == "N/A" then
+    if status ~= "idle" and status ~= "nil" 
+    then
+        if time == "N/A" 
+        then
             msg = "...Calculating time remaining..."
         else
             msg = time .. (status == "charging" and " until charged" or " remaining")
@@ -80,7 +83,8 @@ function tpbat.register(args)
     
     tpbat.widget = wibox.widget.textbox('')
 
-    if bat:get('state') == nil then
+    if bat:get('state') == nil 
+    then
         local n = naughty.notify({
             title = "SMAPI Battery Warning: Unable to read battery state!",
             text = "This widget is intended for ThinkPads. Is tp_smapi installed? Check your configs & paths.",
