@@ -74,7 +74,7 @@ local function worker(args)
             bat_now.watt = string.format("%.2fW", (rate * ratev) / 1e12)
 
             -- notifications for low and critical states
-            if bat_new.status == "Discharging"
+            if bat_now.status == "Discharging"
             then
                 if bat_now.perc <= 5
                 then
