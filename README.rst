@@ -14,7 +14,7 @@ Description
 -----------
 
 Successor of awesome-vain_, this costantly evolving module
-provides new layouts, a set of widgets and utility functions
+provides new layouts, a set of widgets and utility functions,
 in order to improve Awesome_ usability and configurability.
 
 Read the wiki_ for all the info.
