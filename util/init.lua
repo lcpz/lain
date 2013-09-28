@@ -38,10 +38,7 @@ function util.menu_clients_current_tags(menu, args)
     -- Final list of menu items.
     local cls_t = {}
 
-    if cls_tags == nil
-    then
-        return nil
-    end
+    if cls_tags == nil then return nil end
 
     -- For each selected tag get all clients of that tag and add them to
     -- the menu. A click on a menu item will raise that client.
@@ -63,17 +60,11 @@ function util.menu_clients_current_tags(menu, args)
     end
 
     -- No clients? Then quit.
-    if #cls_t <= 0
-    then
-        return nil
-    end
+    if #cls_t <= 0 then return nil end
 
     -- menu may contain some predefined values, otherwise start with a
     -- fresh menu.
-    if not menu
-    then
-        menu = {}
-    end
+    if not menu then menu = {} end
 
     -- Set the list of items and show the menu.
     menu.items = cls_t
