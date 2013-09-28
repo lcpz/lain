@@ -50,6 +50,7 @@ That is:
 
 - create a new tag;
 - rename current tag;
+- move current tag;
 - delete current tag.
 
 If you delete a tag, any rule set on it shall be broken, so be careful.
@@ -58,6 +59,8 @@ Use it with key bindings like these:
 
     awful.key({ modkey, "Shift" }, "n", function () lain.util.create_tag(mypromptbox) end),
     awful.key({ modkey, "Shift" }, "r", function () lain.util.rename_tag(mypromptbox) end),
+    awful.key({ modkey, "Shift" }, "r", function () lain.util.move_tag(1) end),  -- move next tag
+    awful.key({ modkey, "Shift" }, "r", function () lain.util.move_tag(-1) end), -- move prev tag
     awful.key({ modkey, "Shift" }, "d", function () lain.util.delete_tag() end),
 
 useless\_gaps\_resize
