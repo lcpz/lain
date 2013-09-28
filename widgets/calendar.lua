@@ -105,7 +105,7 @@ end
 function calendar:attach(widget, args)
     local args = args or {}
     calendar.icons = args.icons or icons_dir .. "cal/white/"
-    calendar.font_size = tonumber(args.font_size) or 12
+    calendar.font_size = tonumber(args.font_size) or 11
     calendar.fg = args.fg or beautiful.fg_normal or "#FFFFFF"
     calendar.bg = args.bg or beautiful.bg_normal or "#FFFFFF"
     calendar.position = args.position or "top_right"
