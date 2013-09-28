@@ -191,6 +191,18 @@ function util.rename_tag(mypromptbox)
     end)
 end
 
+-- Move current tag
+-- pos in {-1, 1} <-> {previous, next} tag position
+function util.move_tag(pos)
+    local tag = awful.tag.selected(mouse.screen)
+    local idx = awful.tag.getidx(tag)
+    if tonumber(pos) <= -1 then
+        awful.tag.move(idx - 1, tag)
+    else
+        awful.tag.move(idx + 1, tag)
+    end
+end
+
 -- Delete current tag (if empty)
 -- Any rule set on the tag shall be broken
 function util.remove_tag()
