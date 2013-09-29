@@ -15,6 +15,7 @@ local wibox        = require("wibox")
 
 local math         = { floor  = math.floor }
 local string       = { format = string.format }
+local tonumber     = tonumber
 
 local setmetatable = setmetatable
 
@@ -57,6 +58,11 @@ local function worker(args)
 
             bat_now.status = first_line(bstr .. "/status") or "N/A"
 
+            rate  = tonumber(rate)
+            ratev = tonumber(ratev)
+            rem   = tonumber(rem)
+            tot   = tonumber(tot)
+
             local time_rat = 0
             if bat_now.status == "Charging"
             then
@@ -67,16 +73,16 @@ local function worker(args)
             end
 
             local hrs = math.floor(time_rat)
-            local min = (time_rat - hrs) * 60
+            local min = math.floor((time_rat - hrs) * 60)
 
             bat_now.time = string.format("%02d:%02d", hrs, min)
-            bat_now.perc = (rem / tot) * 100
+            bat_now.perc = string.format("%d", (rem / tot) * 100)
             bat_now.watt = string.format("%.2fW", (rate * ratev) / 1e12)
 
             -- notifications for low and critical states
             if bat_now.status == "Discharging"
             then
-                if bat_now.perc <= 5
+                if tonumber(bat_now.perc) <= 5
                 then
                     bat.id = naughty.notify({
                         text = "shutdown imminent",
@@ -88,7 +94,7 @@ local function worker(args)
                         ontop = true,
                         replaces_id = bat.id
                     }).id
-                elseif bat_now.perc <= 15
+                elseif tonumber(bat_now.perc) <= 15
                 then
                     bat.id = naughty.notify({
                         text = "plug the cable",
@@ -102,8 +108,6 @@ local function worker(args)
                     }).id
                 end
             end
-
-            bat_now.perc = string.format("%d", bat_now.perc)
         end
 
         widget = bat.widget
