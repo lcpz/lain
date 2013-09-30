@@ -73,7 +73,10 @@ local function worker(args)
             end
 
             local hrs = math.floor(time_rat)
+            if hrs < 0 then hrs = 0 elseif hrs > 23 then hrs = 23 end
+
             local min = math.floor((time_rat - hrs) * 60)
+            if min < 0 then min = 0 elseif min > 59 then min = 59 end
 
             bat_now.time = string.format("%02d:%02d", hrs, min)
             bat_now.perc = string.format("%d", (rem / tot) * 100)
