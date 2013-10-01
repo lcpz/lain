@@ -72,6 +72,14 @@ local function fetch_weather()
     -- Processing raw data
     weather_data = text:gsub("<.->", "")
     weather_data = weather_data:match("Current Conditions:.-Full")
+
+    -- may still happens in case of bad connectivity
+    if weather_data == nil then
+        yawn.icon:set_image(icon_path .. "na.png")
+        yawn.widget:set_text("?")
+        return
+    end
+
     weather_data = weather_data:gsub("Current Conditions:.-\n", "Now: ")
     weather_data = weather_data:gsub("Forecast:.-\n", "")
     weather_data = weather_data:gsub("\nFull", "")
