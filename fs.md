@@ -14,7 +14,7 @@ Variable | Meaning | Type | Default
 `partition` | Partition to monitor | string | "/"
 `settings` | User settings | function | empty function
 
-`settings` can use the following `partition` related float values: `used`, `available`, `size_mb`, `size_gb`.
+`settings` can use the following `partition` related float values: `fs_now.used`, `fs_now.available`, `fs_now.size_mb`, `fs_now.size_gb`.
 
 It can also use value strings in these formats:
 
