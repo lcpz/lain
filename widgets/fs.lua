@@ -65,6 +65,7 @@ local function worker(args)
 
     function update()
         fs_info = {}
+        fs_now  = {}
 
         local f = io.popen("LC_ALL=C df -kP")
 
@@ -85,15 +86,15 @@ local function worker(args)
 
         -- chosen partition easy stuff
         -- you can however check whatever partition else
-        used      = tonumber(fs_info[partition .. " used_p"])
-        available = tonumber(fs_info[partition .. " avail_p"])
-        size_mb   = tonumber(fs_info[partition .. " size_mb"])
-        size_gb   = tonumber(fs_info[partition .. " size_gb"])
+        fs_now.used      = tonumber(fs_info[partition .. " used_p"])  or 0
+        fs_now.available = tonumber(fs_info[partition .. " avail_p"]) or 0
+        fs_now.size_mb   = tonumber(fs_info[partition .. " size_mb"]) or 0
+        fs_now.size_gb   = tonumber(fs_info[partition .. " size_gb"]) or 0
 
         widget = fs.widget
         settings()
 
-        if used >= 99 and not helpers.get_map("fs")
+        if fs_now.used >= 99 and not helpers.get_map("fs")
         then
             naughty.notify({
                 title = "warning",
