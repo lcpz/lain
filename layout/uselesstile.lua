@@ -88,6 +88,8 @@ local function tile_group(cls, wa, orientation, fact, group)
             top = false
             left = false
 
+            gap_factor = (useless_gap / 100) * 2
+
             if geom[y] == wa[y] then
                 top = true
             end
@@ -97,17 +99,17 @@ local function tile_group(cls, wa, orientation, fact, group)
             end
 
             if top then
-                geom[height] = geom[height] - 2 * useless_gap
+                geom[height] = geom[height] - (2 + gap_factor) * useless_gap
                 geom[y] = geom[y] + useless_gap
             else
-                geom[height] = geom[height] - useless_gap
+                geom[height] = geom[height] - (1 + gap_factor) * useless_gap 
             end
 
             if left then
-                geom[width] = geom[width] - 2 * useless_gap
+                geom[width] = geom[width] - (2 + gap_factor) * useless_gap
                 geom[x] = geom[x] + useless_gap
             else
-                geom[width] = geom[width] - useless_gap
+                geom[width] = geom[width] - (1 + gap_factor) * useless_gap
             end
         end
         -- End of useless gap.
