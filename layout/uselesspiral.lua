@@ -64,6 +64,8 @@ local function spiral(p, spiral)
             top = false
             left = false
 
+            gap_factor = (useless_gap / 100) * 2
+
             if wa2.y == static_wa.y then
                top = true
             end
@@ -73,17 +75,17 @@ local function spiral(p, spiral)
             end
 
             if top then
-                wa2.height = wa2.height - 2 * useless_gap
+                wa2.height = wa2.height - (2 + gap_factor) * useless_gap
                 wa2.y = wa2.y + useless_gap
             else
-                wa2.height = wa2.height - useless_gap
+                wa2.height = wa2.height - (1 + gap_factor) * useless_gap
             end
 
             if left then
-                wa2.width = wa2.width - 2 * useless_gap
+                wa2.width = wa2.width - (2 + gap_factor) * useless_gap
                 wa2.x = wa2.x + useless_gap
             else
-                wa2.width = wa2.width - useless_gap
+                wa2.width = wa2.width - (1 + gap_factor) * useless_gap
             end
         end
         -- End of useless gap.

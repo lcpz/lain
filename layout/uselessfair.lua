@@ -71,20 +71,23 @@ local function fair(p, orientation)
                 -- Top and left clients are shrinked by two steps and
                 -- get moved away from the border. Other clients just
                 -- get shrinked in one direction.
+
+                gap_factor = (useless_gap / 100) * 2
+
                 if this_x == 0
                 then
-                    g.width = g.width - 2 * useless_gap
+                    g.width = g.width - (2 + gap_factor) * useless_gap
                     g.x = g.x + useless_gap
                 else
-                    g.width = g.width - useless_gap
+                    g.width = g.width - (1 + gap_factor) * useless_gap
                 end
 
                 if this_y == 0
                 then
-                    g.height = g.height - 2 * useless_gap
+                    g.height = g.height - (2 + gap_factor) * useless_gap
                     g.y = g.y + useless_gap
                 else
-                    g.height = g.height - useless_gap 
+                    g.height = g.height - (1 + gap_factor) * useless_gap
                 end
             end
             -- End of useless gap.
