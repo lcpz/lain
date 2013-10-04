@@ -1,11 +1,12 @@
-Currently, there are **7** layouts.
+Currently, there are **8** layouts.
 
     lain/layout
     .
+    |-- termfair
+    |-- centerfair
     |-- cascade
     |-- cascadetile
     |-- centerwork
-    |-- termfair
     |-- uselessfair
     |-- uselesspiral
     `-- uselesstile
@@ -26,6 +27,74 @@ Or set them on specific tags like this:
 
 How do layouts work?
 =========================
+
+termfair
+--------
+
+I do a lot of work on terminals. The common tiling algorithms usually
+maximize windows, so you'll end up with a terminal that has about 200
+columns or more. That's way too much. Have you ever read a manpage in a
+terminal of this size?
+
+This layout restricts the size of each window. Each window will have the
+same width but is variable in height. Furthermore, windows are
+left-aligned. The basic workflow is as follows (the number above the
+screen is the number of open windows, the number in a cell is the fixed
+number of a client):
+
+	     (1)                (2)                (3)
+	+---+---+---+      +---+---+---+      +---+---+---+
+	|   |   |   |      |   |   |   |      |   |   |   |
+	| 1 |   |   |  ->  | 2 | 1 |   |  ->  | 3 | 2 | 1 |  ->
+	|   |   |   |      |   |   |   |      |   |   |   |
+	+---+---+---+      +---+---+---+      +---+---+---+
+
+	     (4)                (5)                (6)
+	+---+---+---+      +---+---+---+      +---+---+---+
+	| 4 |   |   |      | 5 | 4 |   |      | 6 | 5 | 4 |
+	+---+---+---+  ->  +---+---+---+  ->  +---+---+---+
+	| 3 | 2 | 1 |      | 3 | 2 | 1 |      | 3 | 2 | 1 |
+	+---+---+---+      +---+---+---+      +---+---+---+
+
+The first client will be located in the left column. When opening
+another window, this new window will be placed in the left column while
+moving the first window into the middle column. Once a row is full,
+another row above it will be created.
+
+Default number of columns and rows are respectively taken from `nmaster`
+and `ncol` values in `awful.tag`, but you can set your own.
+
+For example, this sets `termfair` to 3 columns and at least 1 row:
+
+    lain.layout.termfair.nmaster = 3
+    lain.layout.termfair.ncol = 1
+
+centerfair
+----------
+
+Similar to `termfair`, but with fixed number of vertical columns. Cols are centerded until there is nmaster columns, then windows are stacked in the slave columns, with at most ncol clients per column if possible.
+
+            (1)                (2)                (3)
+       +---+---+---+      +-+---+---+-+      +---+---+---+
+       |   |   |   |      | |   |   | |      |   |   |   |
+       |   | 1 |   |  ->  | | 1 | 2 | | ->   | 1 | 2 | 3 |  ->
+       |   |   |   |      | |   |   | |      |   |   |   |
+       +---+---+---+      +-+---+---+-+      +---+---+---+
+
+            (4)                (5)
+       +---+---+---+      +---+---+---+
+       |   |   | 3 |      |   | 2 | 4 |
+       + 1 + 2 +---+  ->  + 1 +---+---+
+       |   |   | 4 |      |   | 3 | 5 |
+       +---+---+---+      +---+---+---+
+
+Like `termfair`, default number of columns and rows are respectively taken from `nmaster`
+and `ncol` values in `awful.tag`, but you can set your own.
+
+For example:
+
+    lain.layout.centerfair.nmaster = 3
+    lain.layout.centerfair.ncol = 1
 
 cascade
 -------
@@ -173,47 +242,6 @@ Here's an example:
 	        end),
 	    ...
 	)
-
-termfair
---------
-
-I do a lot of work on terminals. The common tiling algorithms usually
-maximize windows, so you'll end up with a terminal that has about 200
-columns or more. That's way too much. Have you ever read a manpage in a
-terminal of this size?
-
-This layout restricts the size of each window. Each window will have the
-same width but is variable in height. Furthermore, windows are
-left-aligned. The basic workflow is as follows (the number above the
-screen is the number of open windows, the number in a cell is the fixed
-number of a client):
-
-	     (1)                (2)                (3)
-	+---+---+---+      +---+---+---+      +---+---+---+
-	|   |   |   |      |   |   |   |      |   |   |   |
-	| 1 |   |   |  ->  | 2 | 1 |   |  ->  | 3 | 2 | 1 |  ->
-	|   |   |   |      |   |   |   |      |   |   |   |
-	+---+---+---+      +---+---+---+      +---+---+---+
-
-	     (4)                (5)                (6)
-	+---+---+---+      +---+---+---+      +---+---+---+
-	| 4 |   |   |      | 5 | 4 |   |      | 6 | 5 | 4 |
-	+---+---+---+  ->  +---+---+---+  ->  +---+---+---+
-	| 3 | 2 | 1 |      | 3 | 2 | 1 |      | 3 | 2 | 1 |
-	+---+---+---+      +---+---+---+      +---+---+---+
-
-The first client will be located in the left column. When opening
-another window, this new window will be placed in the left column while
-moving the first window into the middle column. Once a row is full,
-another row above it will be created.
-
-Default number of columns and rows are respectively taken from `nmaster`
-and `ncol` values in `awful.tag`, but you can set your own.
-
-For example, this sets `termfair` to 3 columns and at least 1 row:
-
-    lain.layout.termfair.nmaster = 3
-    lain.layout.termfair.ncol = 1
 
 uselessfair, uselesspiral & uselesstile
 ---------------------------------------
