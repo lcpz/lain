@@ -79,8 +79,21 @@ local function worker(args)
             if min < 0 then min = 0 elseif min > 59 then min = 59 end
 
             bat_now.time = string.format("%02d:%02d", hrs, min)
-            bat_now.perc = string.format("%d", (rem / tot) * 100)
-            bat_now.watt = string.format("%.2fW", (rate * ratev) / 1e12)
+
+            local perc = (rem / tot) * 100
+            if perc <= 100 then
+                bat_now.perc = string.format("%d", perc)
+            elseif perc > 100 then
+                bat_now.perc = "100"
+            elseif perc < 0 then
+                bat_now.perc = "0"
+            end
+
+            if rate ~= nil and ratev ~= nil then
+                bat_now.watt = string.format("%.2fW", (rate * ratev) / 1e12)
+            else
+                bat_not.watt = "N/A"
+            end
 
             -- notifications for low and critical states
             if bat_now.status == "Discharging"
