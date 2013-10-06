@@ -72,7 +72,7 @@ For example, this sets `termfair` to 3 columns and at least 1 row:
 centerfair
 ----------
 
-Similar to `termfair`, but with fixed number of vertical columns. Cols are centerded until there is nmaster columns, then windows are stacked in the slave columns, with at most ncol clients per column if possible.
+Similar to `termfair`, but with fixed number of vertical columns. Cols are centerded until there are `nmaster` columns, then windows are stacked as slaves, with possibly `ncol` clients per column at most.
 
             (1)                (2)                (3)
        +---+---+---+      +-+---+---+-+      +---+---+---+
