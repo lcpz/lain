@@ -92,7 +92,7 @@ local function worker(args)
             if rate ~= nil and ratev ~= nil then
                 bat_now.watt = string.format("%.2fW", (rate * ratev) / 1e12)
             else
-                bat_not.watt = "N/A"
+                bat_now.watt = "N/A"
             end
 
             -- notifications for low and critical states
