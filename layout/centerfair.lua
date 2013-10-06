@@ -3,7 +3,7 @@
                                                   
      Licensed under GNU General Public License v2 
       * (c) 2013,      Luke Bonham                
-      * (c) 2012,      Nicolas Estibals           
+      * (c) 2010,      Nicolas Estibals           
       * (c) 2010-2012, Peter Hofmann              
                                                   
 --]]
