@@ -27,6 +27,7 @@ local function worker(args)
     local args = args or {}
     local timeout = args.timeout or 30
     local battery = args.battery or "BAT0"
+    local ac = args.ac or "ACAD"
     local settings = args.settings or function() end
 
     bat.widget = wibox.widget.textbox('')
@@ -39,9 +40,19 @@ local function worker(args)
             watt   = "N/A"
         }
 
+        local astr  = "/sys/class/power_supply/" .. ac
         local bstr  = "/sys/class/power_supply/" .. battery
 
         local present = first_line(bstr .. "/present")
+
+        local ac_online = first_line(astr .. "/online")
+
+        if ac_online == "1"
+        then
+            bat_now.ac = "online"
+        else
+            bat_now.ac = "offline"
+        end
 
         if present == "1"
         then
