@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 #
 # A simple cover fetcher script for current playing song on mpd.
 #
