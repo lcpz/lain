@@ -30,7 +30,7 @@ end
 
 -- }}}
 
--- {{{ Read the first line of a file or return nil.
+-- {{{ Read the first line of a file or return nil
 
 function helpers.first_line(f)
     local fp = io.open(f)
