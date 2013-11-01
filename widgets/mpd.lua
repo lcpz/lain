@@ -42,6 +42,15 @@ local function worker(args)
 
     mpd.widget = wibox.widget.textbox('')
 
+    mpd_now = {
+        state  = "N/A",
+        file   = "N/A",
+        artist = "N/A",
+        title  = "N/A",
+        album  = "N/A",
+        date   = "N/A"
+    }
+
     mpd_notification_preset = {
         title   = "Now playing",
         timeout = 6
@@ -50,15 +59,6 @@ local function worker(args)
     helpers.set_map("current mpd track", nil)
 
     function mpd.update()
-        mpd_now = {
-            state  = "N/A",
-            file   = "N/A",
-            artist = "N/A",
-            title  = "N/A",
-            album  = "N/A",
-            date   = "N/A"
-        }
-
         local f = io.popen(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh)
 
         for line in f:lines() do
