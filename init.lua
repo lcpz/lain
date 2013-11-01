@@ -9,6 +9,8 @@
                                                    
 --]]
 
+package.loaded.lain = nil
+
 local lain =
 {
     layout  = require("lain.layout"),
