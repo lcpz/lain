@@ -59,7 +59,7 @@ local function worker(args)
             date   = "N/A"
         }
 
-        local f = io.popen(echo .. " | curl --connect-timeout 1 -fsm 1 " .. mpdh)
+        local f = io.popen(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh)
 
         for line in f:lines() do
             for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
