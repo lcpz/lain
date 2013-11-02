@@ -16,7 +16,7 @@ local wibox        = require("wibox")
 local io           = { popen    = io.popen }
 local os           = { execute  = os.execute,
                        getenv   = os.getenv }
-local string       = { format   = string.format, 
+local string       = { format   = string.format,
                        gmatch   = string.gmatch }
 
 local setmetatable = setmetatable
@@ -28,7 +28,7 @@ local mpd = {}
 local function worker(args)
     local args        = args or {}
     local timeout     = args.timeout or 2
-    local password    = args.password or "\"\""
+    local password    = args.password or ""
     local host        = args.host or "127.0.0.1"
     local port        = args.port or "6600"
     local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
@@ -38,18 +38,21 @@ local function worker(args)
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
     local mpdh = "telnet://" .. host .. ":" .. port
-    local echo = "echo 'password " .. password .. "\nstatus\ncurrentsong\nclose'"
+
+    local echo = nil
+
+    if password == "" then
+        echo = "(echo -e 'status'; sleep 0.1;" ..
+               "echo -e 'currentsong'; sleep 0.1;" ..
+               "echo -e 'close')"
+    else
+        echo = "(echo -e 'password " .. password .. "'" ..
+               "echo -e 'status'; sleep 0.1;" ..
+               "echo -e 'currentsong'; sleep 0.1;" ..
+               "echo -e 'close')"
+    end
 
     mpd.widget = wibox.widget.textbox('')
-
-    mpd_now = {
-        state  = "N/A",
-        file   = "N/A",
-        artist = "N/A",
-        title  = "N/A",
-        album  = "N/A",
-        date   = "N/A"
-    }
 
     mpd_notification_preset = {
         title   = "Now playing",
@@ -59,7 +62,16 @@ local function worker(args)
     helpers.set_map("current mpd track", nil)
 
     function mpd.update()
-        local f = io.popen(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh)
+        mpd_now = {
+            state  = "N/A",
+            file   = "N/A",
+            artist = "N/A",
+            title  = "N/A",
+            album  = "N/A",
+            date   = "N/A"
+        }
+
+        local f = io.popen(echo .. " | curl --connect-timeout 1 -fsm 1 " .. mpdh)
 
         for line in f:lines() do
             for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
