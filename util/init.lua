@@ -194,7 +194,7 @@ function util.move_tag(pos)
     end
 end
 
--- Delete current tag (if empty)
+-- Remove current tag (if empty)
 -- Any rule set on the tag shall be broken
 function util.remove_tag()
     local tag = awful.tag.selected(mouse.screen)
