@@ -59,8 +59,8 @@ Use it with key bindings like these:
 
     awful.key({ modkey, "Shift" }, "n", function () lain.util.add_tag(mypromptbox) end),
     awful.key({ modkey, "Shift" }, "r", function () lain.util.rename_tag(mypromptbox) end),
-    awful.key({ modkey, "Shift" }, "r", function () lain.util.move_tag(1) end),  -- move next tag
-    awful.key({ modkey, "Shift" }, "r", function () lain.util.move_tag(-1) end), -- move previous tag
+    awful.key({ modkey, "Shift" }, "r", function () lain.util.move_tag(1) end),  -- move to next tag
+    awful.key({ modkey, "Shift" }, "r", function () lain.util.move_tag(-1) end), -- move to previous tag
     awful.key({ modkey, "Shift" }, "d", function () lain.util.remove_tag() end),
 
 useless\_gaps\_resize
