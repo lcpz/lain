@@ -20,7 +20,7 @@ Notification will show the output of `task` command.
 
 You can call the notification with a key binding like this:
 
-    awful.key({ modkey, altkey }, "t", lain.widgets.task.show),
+    awful.key({ modkey, altkey }, "t", lain.widgets.contrib.task.show),
 
 where ``altkey = "Mod1"``.
 
