@@ -114,8 +114,7 @@ local function fetch_weather()
     sky = sky  .. forecast:gsub(" ", ""):gsub("/", "") .. ".png"
 
     -- In case there's no defined icon for current forecast
-    f = io.open(sky)
-    if f == nil then
+    if io.open(sky) == nil then
         sky = icon_path .. "na.png"
     else
         io.close(f)
