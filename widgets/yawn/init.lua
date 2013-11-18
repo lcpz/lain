@@ -1,4 +1,3 @@
-
 --[[
                                                   
      Licensed under GNU General Public License v2 
@@ -115,7 +114,7 @@ local function fetch_weather()
     sky = sky  .. forecast:gsub(" ", ""):gsub("/", "") .. ".png"
 
     -- In case there's no defined icon for current forecast
-    f = io.popen(sky)
+    f = io.open(sky)
     if f == nil then
         sky = icon_path .. "na.png"
     else
