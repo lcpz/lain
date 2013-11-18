@@ -116,8 +116,6 @@ local function fetch_weather()
     -- In case there's no defined icon for current forecast
     if io.open(sky) == nil then
         sky = icon_path .. "na.png"
-    else
-        io.close(f)
     end
 
     -- Localization
