@@ -59,8 +59,8 @@ Use it with key bindings like these:
 
     awful.key({ modkey, "Shift" }, "n", function () lain.util.add_tag(mypromptbox) end),
     awful.key({ modkey, "Shift" }, "r", function () lain.util.rename_tag(mypromptbox) end),
-    awful.key({ modkey, "Shift" }, "r", function () lain.util.move_tag(1) end),  -- move to next tag
-    awful.key({ modkey, "Shift" }, "r", function () lain.util.move_tag(-1) end), -- move to previous tag
+    awful.key({ modkey, "Shift" }, "Left", function () lain.util.move_tag(1) end),  -- move to next tag
+    awful.key({ modkey, "Shift" }, "Right", function () lain.util.move_tag(-1) end), -- move to previous tag
     awful.key({ modkey, "Shift" }, "d", function () lain.util.remove_tag() end),
 
 **Note** that these function won't work properly with [Copland theme](https://github.com/copycat-killer/awesome-copycats) or any other configuration that already uses a dynamic tagging module like [Eminent](https://github.com/copycat-killer/awesome-copycats/tree/master/eminent).
