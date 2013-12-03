@@ -6,7 +6,8 @@ Dependencies
 Package | Requested by | Reason of choice
 --- | --- | ---
 alsa-utils | [alsa](https://github.com/copycat-killer/lain/wiki/alsa), [alsabar](https://github.com/copycat-killer/lain/wiki/alsabar) | /
-curl | widgets accessing network resources | LuaSocket is not a core library, and still not available for Lua 5.2+. LuaSSL is out of date. 
+curl | widgets accessing network resources | LuaSocket is not a core library, and still not available for Lua 5.2+.
+LuaSSL is out of date. 
 imagemagick | album arts in [mpd](https://github.com/copycat-killer/lain/wiki/mpd) notifications | Cairo doesn't do high quality filtering.
 
 Installation
