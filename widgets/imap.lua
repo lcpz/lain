@@ -61,9 +61,7 @@ local function worker(args)
         ws = f:read("*all")
         f:close()
 
-        t, mailcount = string.gsub(ws, "%d", "")
-        t = nil 
-        mailcount = tonumber(mailcount)
+        _, mailcount = string.gsub(ws, "%d+", "")
 
         widget = imap.widget
         settings()
