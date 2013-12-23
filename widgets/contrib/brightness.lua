@@ -1,9 +1,9 @@
 
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
+
+     Licensed under GNU General Public License v2
       * (c) 2013, yawnt <yawn.localhost@gmail.com>
-                                                  
+
 --]]
 
 local newtimer        = require("lain.helpers").newtimer
@@ -14,7 +14,7 @@ local string          = { match  = string.match }
 
 local setmetatable    = setmetatable
 
--- Brightness 
+-- Brightness
 -- lain.widgets.contrib.brightness
 local brightness = {}
 
@@ -28,12 +28,9 @@ local function worker(args)
 
     function brightness.update()
         local f = assert(io.popen('cat /sys/class/backlight/' .. backlight .. "/brightness"))
-
-        brightness_now = {
-          level = f:read("*a")
-        }
+        brightness_now = f:read("*a")
         f:close()
-        
+
         widget = brightness.widget
         settings()
     end
