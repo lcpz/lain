@@ -1,9 +1,9 @@
 
 --[[
-
-     Licensed under GNU General Public License v2
-      * (c) 2013, yawnt <yawn.localhost@gmail.com>
-
+                                                   
+     Licensed under GNU General Public License v2  
+      * (c) 2013, yawnt <yawn.localhost@gmail.com> 
+                                                   
 --]]
 
 local newtimer        = require("lain.helpers").newtimer
@@ -14,7 +14,7 @@ local string          = { match  = string.match }
 
 local setmetatable    = setmetatable
 
--- Brightness
+-- Brightness level
 -- lain.widgets.contrib.brightness
 local brightness = {}
 
