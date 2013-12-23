@@ -1,15 +1,15 @@
 [<- widgets](https://github.com/copycat-killer/lain/wiki/Widgets)
 
-Shows brightness level in a textbox.
+Shows the current level of screen brightness in a textbox.
 
-	volumewidget = lain.widgets.contrib.brightness()
+	mybrightness = lain.widgets.contrib.brightness()
 
 ### input table
 
 Variable | Meaning | Type | Default
 --- | --- | --- | ---
 `timeout` | Refresh timeout seconds | int | 5
-`backlight` | Backlight Video | string | "acpi_video0" 
+`backlight` | Backlight video | string | "acpi_video0" 
 `settings` | User settings | function | empty function
 
 `settings` can use the following variables:
