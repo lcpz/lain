@@ -2,7 +2,7 @@
 
 Shows the current level of screen brightness in a textbox.
 
-	mybrightness = lain.widgets.contrib.brightness()
+	brightnesswidget = lain.widgets.contrib.brightness()
 
 ### input table
 
@@ -27,7 +27,7 @@ Variable | Meaning | Type
 
 You can control the widget with key bindings like these:
 
-    -- Volume control
+    -- Brightness control
     awful.key({}, "XF86MonBrightnessUp",
     function ()
         awful.util.spawn("xbacklight -inc 1")
