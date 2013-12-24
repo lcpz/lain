@@ -6,4 +6,4 @@ Includes hover notification with more details.
 
     tpbatwidget = lain.widgets.contrib.tpbat()
 
-Configuration is identical to [standard bat widget's](https://github.com/copycat-killer/lain/wiki/bat).
+Configuration is identical to [standard battery widget's](https://github.com/copycat-killer/lain/wiki/bat).
