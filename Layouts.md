@@ -101,7 +101,7 @@ cascade
 
 Cascade all windows of a tag.
 
-You can control the offsets by setting those two variables:
+You can control the offsets by setting these two variables:
 
 	lain.layout.cascade.cascade_offset_x = 64
 	lain.layout.cascade.cascade_offset_y = 16
