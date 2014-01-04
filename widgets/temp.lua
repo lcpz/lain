@@ -28,8 +28,14 @@ local function worker(args)
 
     function update()
         local f = io.open("/sys/class/thermal/thermal_zone0/temp")
-        coretemp_now = tonumber(f:read("*all")) / 1000
-        f:close()
+        if f ~= nil
+        then
+            coretemp_now = tonumber(f:read("*all")) / 1000
+            f:close()
+        else
+            coretemp_now = "N/A"
+        end
+
         widget = temp.widget
         settings()
     end
