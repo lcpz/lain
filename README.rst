@@ -6,7 +6,7 @@ Layouts, widgets and utilities for Awesome WM
 ---------------------------------------------
 
 :Author: Luke Bonham <dada [at] archlinux [dot] info>
-:Version: 1.0-git
+:Version: git
 :License: GNU-GPLv2_
 :Source: https://github.com/copycat-killer/lain
 
