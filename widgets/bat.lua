@@ -96,7 +96,7 @@ local function worker(args)
             end
 
             -- notifications for low and critical states
-            if (bat_now.status == "Discharging" and args.notify ~= "off")
+            if (bat_now.status == "Discharging" and notify ~= "off")
             then
                 if tonumber(bat_now.perc) <= 5
                 then
@@ -110,7 +110,7 @@ local function worker(args)
                         ontop = true,
                         replaces_id = bat.id
                     }).id
-                elseif tonumber(bat_now.perc) <= 15
+                elseif tonumber(bat_now.perc) <= 80
                 then
                     bat.id = naughty.notify({
                         text = "plug the cable",
