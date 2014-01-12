@@ -110,7 +110,7 @@ local function worker(args)
                         ontop = true,
                         replaces_id = bat.id
                     }).id
-                elseif tonumber(bat_now.perc) <= 80
+                elseif tonumber(bat_now.perc) <= 15
                 then
                     bat.id = naughty.notify({
                         text = "plug the cable",
