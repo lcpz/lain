@@ -97,7 +97,7 @@ local function worker(args)
 
             -- notifications for low and critical states
             if bat_now.status == "Discharging"
-            if args.notify == "on"
+            if args.notify ~= "off"
             then
                 if tonumber(bat_now.perc) <= 5
                 then
