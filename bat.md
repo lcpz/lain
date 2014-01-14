@@ -23,7 +23,7 @@ Variable | Meaning | Type | Default
 - `time`;
 - `watt`.
 
-To disable warning notifications, set `notify` to `off`.
+To disable warning notifications, set `notify` to `"off"`.
 
 ### output
 
