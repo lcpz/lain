@@ -95,7 +95,7 @@ local function worker(args)
     local settings = args.settings or function() end
     local width = args.width or 63
     local height = args.heigth or 1
-    local ticks = args.ticks or true
+    local ticks = args.ticks or false
     local ticks_size = args.ticks_size or 7
     local vertical = args.vertical or false
 
@@ -113,8 +113,7 @@ local function worker(args)
     alsabar.bar:set_height(height)
     alsabar.bar:set_ticks(ticks)
     alsabar.bar:set_ticks_size(ticks_size)
-
-    if vertical then alsabar.bar:set_vertical(true) end
+    alsabar.bar:set_vertical(vertical)
 
     function alsabar.update()
         -- Get mixer control contents
