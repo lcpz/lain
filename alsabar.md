@@ -16,7 +16,7 @@ Variable | Meaning | Type | Default
 `settings` | User settings | function | empty function
 `width` | Bar width | int | 63
 `height` | Bar height | int | 1
-`ticks` | Set bar ticks on | boolean | true
+`ticks` | Set bar ticks on | boolean | false
 `ticks_size` | Ticks size | int | 7
 `vertical` | Set the bar vertical | boolean | false
 `channel` | Mixer channel | string | "Master" 
