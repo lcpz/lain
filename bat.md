@@ -13,7 +13,7 @@ Variable | Meaning | Type | Default
 --- | --- | --- | ---
 `timeout` | Refresh timeout seconds | int | 30
 `battery` | Identifier of the battery | string | "BAT0"
-`notify` | Enable notifications | boolean | true
+`notify` | Enable notifications | string | "on"
 `settings` | User settings | function | empty function
 
 `settings` can use the `bat_now` table, which contains the following strings:
@@ -22,6 +22,8 @@ Variable | Meaning | Type | Default
 - `perc`;
 - `time`;
 - `watt`.
+
+To disable warning notifications, set `notify` to `off`.
 
 ### output
 
