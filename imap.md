@@ -46,10 +46,8 @@ and you'll have the same security provided by `~/.netrc`.
 **Or** you can use a keyring, like [python keyring](https://pypi.python.org/pypi/keyring):
 
     myimapcheck = lain.widgets.imap({
-        is_plain = true,
-        password = "myplainpassword",
-        server   = "mail.autistici.org",
-        mail     = "dada@anche.no",
+        password = "keyring get mymail",
+        [...]
     })
 
 When `is_plain == false`, it *executes* `password` before using it, so you can also use whatever password fetching solution you want.
