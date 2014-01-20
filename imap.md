@@ -31,7 +31,7 @@ Variable | Meaning | Type | Default
 
 Let's focus better on `is_plain`.
 
-The reason why it's false by default is to discourage the habit of storing passwords in plain files.
+The reason why it's false by default is to discourage the habit of storing passwords in plain.
 
 You can set your password in plain like this:
 
