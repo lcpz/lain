@@ -31,16 +31,26 @@ Variable | Meaning | Type | Default
 
 Let's focus better on `is_plain`.
 
-You can just set your password like this:
+The reason why it's false by default is to discourage the habit of storing passwords in plain files.
 
-    args.is_plain = false
-    args.password = "mypassword"
+You can set your password in plain like this:
+
+    myimapcheck = lain.widgets.imap({
+        is_plain = true,
+        password = "myplainpassword",
+        [...]
+    })
 
 and you'll have the same security provided by `~/.netrc`.
 
 **Or** you can use a keyring, like [python keyring](https://pypi.python.org/pypi/keyring):
 
-    args.password = "keyring get password"
+    myimapcheck = lain.widgets.imap({
+        is_plain = true,
+        password = "myplainpassword",
+        server   = "mail.autistici.org",
+        mail     = "dada@anche.no",
+    })
 
 When `is_plain == false`, it *executes* `password` before using it, so you can also use whatever password fetching solution you want.
 
