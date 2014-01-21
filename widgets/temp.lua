@@ -22,12 +22,13 @@ local temp = {}
 local function worker(args)
     local args     = args or {}
     local timeout  = args.timeout or 5
+    local tempfile = args.tempfile or "/sys/class/thermal/thermal_zone0/temp"
     local settings = args.settings or function() end
 
     temp.widget = wibox.widget.textbox('')
 
     function update()
-        local f = io.open("/sys/class/thermal/thermal_zone0/temp")
+        local f = io.open(tempfile)
         if f ~= nil
         then
             coretemp_now = tonumber(f:read("*all")) / 1000
