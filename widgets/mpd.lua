@@ -38,19 +38,7 @@ local function worker(args)
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
     local mpdh = "telnet://" .. host .. ":" .. port
-
-    local echo = nil
-
-    if password == "" then
-        echo = "(echo -e 'status'; sleep 0.1;" ..
-               "echo -e 'currentsong'; sleep 0.1;" ..
-               "echo -e 'close')"
-    else
-        echo = "(echo -e 'password " .. password .. "'" ..
-               "echo -e 'status'; sleep 0.1;" ..
-               "echo -e 'currentsong'; sleep 0.1;" ..
-               "echo -e 'close')"
-    end
+    local echo = "echo 'password " .. password .. "\nstatus\ncurrentsong\nclose'"
 
     mpd.widget = wibox.widget.textbox('')
 
@@ -71,7 +59,7 @@ local function worker(args)
             date   = "N/A"
         }
 
-        local f = io.popen(echo .. " | curl --connect-timeout 1 -fsm 1 " .. mpdh)
+        local f = io.popen(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh)
 
         for line in f:lines() do
             for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
