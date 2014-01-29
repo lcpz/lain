@@ -61,7 +61,7 @@ end
 -- get first non empty line from a file,
 -- returns nil otherwise
 function helpers.first_nonempty_line(file)
-  for k,v in pairs(lines_from(file)) do
+  for k,v in pairs(helpers.lines_from(file)) do
     if #v then return v end 
   end
   return nil
