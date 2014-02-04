@@ -59,7 +59,7 @@ local function worker(args)
 
             bat_now.status = first_line(bstr .. "/status") or "N/A"
 
-            rate  = tonumber(rate)
+            rate  = tonumber(rate) or 1
             ratev = tonumber(ratev)
             rem   = tonumber(rem)
             tot   = tonumber(tot)
