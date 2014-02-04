@@ -32,6 +32,22 @@ local function worker(args)
 
     bat.widget = wibox.widget.textbox('')
 
+    bat_notification_low_preset = {
+        title = "Battery low",
+        text = "Plug the cable!",
+        timeout = 15,
+        fg = "#202020",
+        bg = "#CDCDCD"
+    }
+
+    bat_notification_critical_preset = {
+        title = "Battery exhausted",
+        text = "Shutdown imminent",
+        timeout = 15,
+        fg = "#000000",
+        bg = "#FFFFFF"
+    }
+
     function update()
         bat_now = {
             status = "Not present",
@@ -96,39 +112,28 @@ local function worker(args)
                 bat_now.watt = "N/A"
             end
 
-            -- notifications for low and critical states
-            if bat_now.status == "Discharging" and notify == "on"
-            then
-                if tonumber(bat_now.perc) <= 5
-                then
-                    bat.id = naughty.notify({
-                        text = "shutdown imminent",
-                        title = "battery nearly exhausted",
-                        position = "top_right",
-                        timeout = 15,
-                        fg="#000000",
-                        bg="#ffffff",
-                        ontop = true,
-                        replaces_id = bat.id
-                    }).id
-                elseif tonumber(bat_now.perc) <= 15
-                then
-                    bat.id = naughty.notify({
-                        text = "plug the cable",
-                        title = "battery low",
-                        position = "top_right",
-                        timeout = 15,
-                        fg="#202020",
-                        bg="#cdcdcd",
-                        ontop = true,
-                        replaces_id = bat.id
-                    }).id
-                end
-            end
         end
 
         widget = bat.widget
         settings()
+
+        -- notifications for low and critical states
+        if bat_now.status == "Discharging" and notify == "on"
+        then
+            if tonumber(bat_now.perc) <= 5
+            then
+                bat.id = naughty.notify({
+                    preset = bat_notification_critical_preset,
+                    replaces_id = bat.id
+                }).id
+            elseif tonumber(bat_now.perc) <= 15
+            then
+                bat.id = naughty.notify({
+                    preset = bat_notification_low_preset,
+                    replaces_id = bat.id
+                }).id
+            end
+        end
     end
 
     newtimer("bat", timeout, update)
