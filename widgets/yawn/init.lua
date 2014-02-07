@@ -58,12 +58,12 @@ local function fetch_weather()
         yawn.icon:set_image(icon_path .. "na.png")
         if text == "" then
             weather_data = "Service not available at the moment."
-            yawn.widget:set_text(" N/A")
+            yawn.widget:set_text(" N/A ")
         else
             weather_data = "City not found!\n" ..
                            "Are you sure " .. city_id ..
                            " is your Yahoo city ID?"
-            yawn.widget:set_text(" ?")
+            yawn.widget:set_text(" ? ")
         end
         return
     end
