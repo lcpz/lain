@@ -35,7 +35,7 @@ function net.get_device()
     if ws ~= nil then
         return ws:gsub(": UP", "")
     else
-        return ""
+        return "network off"
     end
 end
 
@@ -80,10 +80,8 @@ local function worker(args)
         then
             if helpers.get_map(iface)
             then
-                n_title = iface
-                if n_title == "" then n_title = "network" end
                 naughty.notify({
-                    title    = n_title,
+                    title    = iface,
                     text     = "no carrier",
                     timeout  = 7,
                     position = "top_left",
