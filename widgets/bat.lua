@@ -97,13 +97,17 @@ local function worker(args)
 
             bat_now.time = string.format("%02d:%02d", hrs, min)
 
-            local perc = (rem / tot) * 100
-            if perc <= 100 then
-                bat_now.perc = string.format("%d", perc)
-            elseif perc > 100 then
-                bat_now.perc = "100"
-            elseif perc < 0 then
-                bat_now.perc = "0"
+            bat_now.perc = first_line(bstr .. "/capacity")
+
+            if not bat_now.perc then
+                local perc = (rem / tot) * 100
+                if perc <= 100 then
+                    bat_now.perc = string.format("%d", perc)
+                elseif perc > 100 then
+                    bat_now.perc = "100"
+                elseif perc < 0 then
+                    bat_now.perc = "0"
+                end
             end
 
             if rate ~= nil and ratev ~= nil then
@@ -118,7 +122,7 @@ local function worker(args)
         settings()
 
         -- notifications for low and critical states
-        if bat_now.status == "Discharging" and notify == "on"
+        if bat_now.status == "Discharging" and notify == "on" and bat_now.perc ~= nil
         then
             if tonumber(bat_now.perc) <= 5
             then
