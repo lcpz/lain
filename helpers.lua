@@ -35,11 +35,10 @@ end
 
 -- see if the file exists
 function helpers.file_exists(file)
-  local f = io.open(file, "rb")
+  local f = io.open(file)
   if f then f:close() end
   return f ~= nil
 end
-
 
 -- get all lines from a file, returns an empty 
 -- list/table if the file does not exist
