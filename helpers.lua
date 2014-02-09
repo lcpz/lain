@@ -3,7 +3,6 @@
                                                   
      Licensed under GNU General Public License v2 
       * (c) 2013,      Luke Bonham                
-      * (c) 2010-2012, Peter Hofmann              
                                                   
 --]]
 
@@ -33,10 +32,14 @@ end
 
 -- {{{ File operations
 
--- see if the file exists
+-- see if the file exists and is readable
 function helpers.file_exists(file)
   local f = io.open(file)
-  if f then f:close() end
+  if f then
+      local s = f:read()
+      f:close()
+      f = s
+  end
   return f ~= nil
 end
 
