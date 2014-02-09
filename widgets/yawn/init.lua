@@ -75,7 +75,7 @@ local function fetch_weather()
     -- may still happens in case of bad connectivity
     if weather_data == "" then
         yawn.icon:set_image(icon_path .. "na.png")
-        yawn.widget:set_text(" ?")
+        yawn.widget:set_text(" ? ")
         return
     end
 

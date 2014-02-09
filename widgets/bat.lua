@@ -122,15 +122,16 @@ local function worker(args)
         settings()
 
         -- notifications for low and critical states
+        bat_now.perc = tonumber(bat_now.perc)
         if bat_now.status == "Discharging" and notify == "on" and bat_now.perc ~= nil
         then
-            if tonumber(bat_now.perc) <= 5
+            if bat_now.perc <= 5
             then
                 bat.id = naughty.notify({
                     preset = bat_notification_critical_preset,
                     replaces_id = bat.id
                 }).id
-            elseif tonumber(bat_now.perc) <= 15
+            elseif bat_now.perc <= 15
             then
                 bat.id = naughty.notify({
                     preset = bat_notification_low_preset,
