@@ -7,8 +7,12 @@
 --]]
 
 local newtimer = require("lain.helpers").newtimer
+
 local wibox    = require("wibox")
 local json     = require("dkjson")
+
+local string   = { format = string.format }
+local tonumber = tonumber
 
 -- Crypto currencies widget
 -- lain.widgets.contrib.ccurr
