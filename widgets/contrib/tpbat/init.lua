@@ -90,16 +90,28 @@ function tpbat.register(args)
 
     tpbat.widget = wibox.widget.textbox('')
 
+    bat_notification_low_preset = {
+        title = "Battery low",
+        text = "Plug the cable!",
+        timeout = 15,
+        fg = "#202020",
+        bg = "#CDCDCD"
+    }
+
+    bat_notification_critical_preset = {
+        title = "Battery exhausted",
+        text = "Shutdown imminent",
+        timeout = 15,
+        fg = "#000000",
+        bg = "#FFFFFF"
+    }
+
     if bat:get('state') == nil
     then
         local n = naughty.notify({
+            preset = bat_notification_low_preset,
             title = "SMAPI Battery Warning: Unable to read battery state!",
-            text = "This widget is intended for ThinkPads. Is tp_smapi installed? Check your configs & paths.",
-            position = "top_right",
-            timeout = 15,
-            fg="#202020",
-            bg="#cdcdcd",
-            ontop = true
+            text = "This widget is intended for ThinkPads. Is tp_smapi installed? Check your configs & paths."
         })
     end
 
@@ -124,25 +136,13 @@ function tpbat.register(args)
                 if bat_now.perc <= 5
                 then
                     tpbat.id = naughty.notify({
-                        text = "shutdown imminent",
-                        title = "battery nearly exhausted",
-                        position = "top_right",
-                        timeout = 15,
-                        fg="#000000",
-                        bg="#ffffff",
-                        ontop = true,
+                        preset = bat_notification_critical_preset,
                         replaces_id = tpbat.id
                     }).id
                 elseif bat_now.perc <= 15
                 then
                     tpbat.id = naughty.notify({
-                        text = "plug the cable",
-                        title = "battery low",
-                        position = "top_right",
-                        timeout = 15,
-                        fg="#202020",
-                        bg="#cdcdcd",
-                        ontop = true,
+                        preset = bat_notification_low_preset,
                         replaces_id = tpbat.id
                     }).id
                 end
