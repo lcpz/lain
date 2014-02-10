@@ -37,7 +37,6 @@ function worker(args)
     local timeout = args.timeout or 600
     local settings = args.settings or function() end
 
-
     local function update()
         btc = parse(get("https://coinbase.com/api/v1/prices/buy"))
         if btc then
