@@ -6,6 +6,8 @@
 #   Integrated into Lain in september 2013
 #   https://github.com/copycat-killer/lain
 
+#   Requires gawk
+
 # -------------------------------------------------------------------------
 #   Decoding options
 # -------------------------------------------------------------------------
@@ -183,7 +185,7 @@ echo "$SORTED_FILE_SYSTEMS_INFO" | $AWK_COMMAND -v DEBUG=$DEBUG -v PATTERN=$PATT
 					 current_date = strftime ("%d-%m-%Y @ %H:%M:%S", localtime (systime ()));
 					 free_threshold = 10; # %
 
-						 printf ("<!-- DEBUT CONTENU -->\n");
+		  		 printf ("<!-- DEBUT CONTENU -->\n");
 
 					 printf ( \
 							 "<A NAME=\"top\"></A>\n" \
@@ -197,9 +199,9 @@ echo "$SORTED_FILE_SYSTEMS_INFO" | $AWK_COMMAND -v DEBUG=$DEBUG -v PATTERN=$PATT
 							 "<TD ALIGN=LEFT><STRONG>Mount point</STRONG></TD>\n" \
 							 "<TD ALIGN=CENTER><STRONG>%% Usato&nbsp;(<SPAN CLASS=\"titleblue\">*</SPAN>)" \
 							 "&nbsp;-&nbsp;%% Free&nbsp;(<SPAN CLASS=\"titlegreen\">*</SPAN>)</STRONG></TD>\n" \
-							 "<TD ALIGN=CENTER><STRONG>%% Usato</STRONG></TD>\n" \
-							 "<TD ALIGN=CENTER><STRONG>Spazio libero</STRONG></TD>\n" \
-							 "<TD ALIGN=CENTER><STRONG>Spazio totale</STRONG></TD>\n" \
+							 "<TD ALIGN=CENTER><STRONG>%% Used</STRONG></TD>\n" \
+							 "<TD ALIGN=CENTER><STRONG>Free</STRONG></TD>\n" \
+							 "<TD ALIGN=CENTER><STRONG>Total</STRONG></TD>\n" \
 							 "</TR>\n" );
 				 }
 				 else
