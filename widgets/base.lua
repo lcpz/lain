@@ -12,7 +12,7 @@ local wibox        = require("wibox")
 local io           = io
 local setmetatable = setmetatable
 
--- Basic template for simple widgets 
+-- Basic template for custom widgets 
 -- lain.widgets.base
 local base = {}
 
@@ -24,14 +24,17 @@ local function worker(args)
 
     base.widget = wibox.widget.textbox('')
 
-    function update()
-        output = io.popen(cmd):read("*all")
+    function base.update()
+        local f = assert(io.popen(cmd))
+        output = f:read("*all")
+        f:close()
         widget = base.widget
         settings()
     end
 
     newtimer(cmd, timeout, update)
-    return base.widget
+
+    return setmetatable(base, { __index = base.widget })
 end
 
 return setmetatable(base, { __call = function(_, ...) return worker(...) end })
