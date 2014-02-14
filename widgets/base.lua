@@ -32,7 +32,7 @@ local function worker(args)
         settings()
     end
 
-    newtimer(cmd, timeout, update)
+    newtimer(cmd, timeout, base.update)
 
     return setmetatable(base, { __index = base.widget })
 end
