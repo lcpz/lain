@@ -17,7 +17,7 @@ Successor of awesome-vain_, this module provides new layouts, a set of widgets a
 
 Read the wiki_ for all the info.
 
-**Note that**: this module requires Awesome version 3.5 or higher.
+**Note that** this module requires Awesome version 3.5 or higher.
 
 Contributions
 -------------
