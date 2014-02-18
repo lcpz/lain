@@ -146,7 +146,7 @@ function util.tag_view_nonempty(direction, sc)
    local s = sc or mouse.screen or 1
    local scr = screen[s]
 
-   for i = 1, #tags[s] do
+   for i = 1, #awful.tag.gettags(s) do
        awful.tag.viewidx(direction,s)
        if #awful.client.visible(s) > 0 then
            return
