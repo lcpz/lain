@@ -34,7 +34,7 @@ Just make sure that:
 
 - You eventually update ``wiki`` submodule with a thorough section.
 
-Contributed widgets have to be put in ``lain/widget/contrib``.
+Contributed widgets have to be put in ``lain/widgets/contrib``.
 
 Screenshots
 -----------
