@@ -1,9 +1,9 @@
 Lain
 ====
 
----------------------------------------------
-Layouts, widgets and utilities for Awesome WM
----------------------------------------------
+--------------------------------------------------
+Layouts, widgets and utilities for Awesome WM 3.5+
+--------------------------------------------------
 
 :Author: Luke Bonham <dada [at] archlinux [dot] info>
 :Version: git
@@ -16,8 +16,6 @@ Description
 Successor of awesome-vain_, this module provides new layouts, a set of widgets and utility functions, in order to improve Awesome_ usability and configurability.
 
 Read the wiki_ for all the info.
-
-**Note that** this module requires Awesome version 3.5 or higher.
 
 Contributions
 -------------
