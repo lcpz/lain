@@ -67,7 +67,7 @@ local function worker(args)
         widget = imap.widget
         settings()
 
-        if mailcount > helpers.get_map(mail) and mailcount >= 1
+        if mailcount >= 1 and mailcount > helpers.get_map(mail)
         then
             if mailcount == 1 then
                 nt = mail .. " has one new message"
