@@ -135,7 +135,8 @@ local function fetch_weather()
     yawn.icon:set_image(sky)
     widget = yawn.widget
 
-    forecast = weather_data:match(": %S.-,"):gsub(": ", ""):gsub(",", "")
+    _data = weather_data:match(": %S.-,") or weather_data
+    forecast = _data:gsub(": ", ""):gsub(",", "")
     units = units:gsub(" ", "")
 
     settings()
