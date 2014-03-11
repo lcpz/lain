@@ -122,9 +122,9 @@ local function worker(args)
         settings()
 
         -- notifications for low and critical states
-        local nperc = tonumber(bat_now.perc)
         if bat_now.status == "Discharging" and notify == "on" and bat_now.perc ~= nil
         then
+            local nperc = tonumber(bat_now.perc)
             if nperc <= 5
             then
                 bat.id = naughty.notify({
