@@ -37,13 +37,14 @@ function calendar:show(t_out, inc_offset)
     local tims = t_out or 0
     local f, c_text
     local today = tonumber(os.date('%d'))
-    local init_t = '/usr/bin/cal | sed -r -e "s/(^| )( '
+    local which_cal = '/usr/bin/cal -h'
+    local init_t = which_cal .. '| sed -r -e "s/(^| )( '
 
     if offs == 0
     then -- current month showing, today highlighted
         if today >= 10
         then
-           init_t = '/usr/bin/cal | sed -r -e "s/(^| )('
+           init_t = which_cal .. '| sed -r -e "s/(^| )('
         end
 
         calendar.offset = 0
@@ -80,7 +81,7 @@ function calendar:show(t_out, inc_offset)
 
        calendar.notify_icon = nil
 
-       f = io.popen('/usr/bin/cal ' .. month .. ' ' .. year)
+       f = io.popen(which_cal .. ' ' .. month .. ' ' .. year)
     end
 
     c_text = "<tt><span font='" .. calendar.font .. " "
