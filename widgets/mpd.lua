@@ -10,6 +10,7 @@
 local helpers      = require("lain.helpers")
 
 local escape_f     = require("awful.util").escape
+local surface      = require("gears").surface
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
@@ -91,7 +92,7 @@ local function worker(args)
 
                 mpd.id = naughty.notify({
                     preset = mpd_notification_preset,
-                    icon = "/tmp/mpdcover.png",
+                    icon = surface.load_uncached("/tmp/mpdcover.png"),
                     replaces_id = mpd.id
                 }).id
             end
