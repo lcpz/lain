@@ -39,7 +39,9 @@ function calendar:show(t_out, inc_offset)
     local today = tonumber(os.date('%d'))
     local init_t = calendar.cal .. ' | sed -r -e "s/(^| )( '
 
-    if offs == 0
+    calendar.offset = calendar.offset + offs
+
+    if offs == 0 or calendar.offset == 0
     then -- current month showing, today highlighted
         if today >= 10
         then
@@ -61,7 +63,6 @@ function calendar:show(t_out, inc_offset)
        local month = tonumber(os.date('%m'))
        local year = tonumber(os.date('%Y'))
 
-       calendar.offset = calendar.offset + offs
        month = month + calendar.offset
 
        if month > 12 then
