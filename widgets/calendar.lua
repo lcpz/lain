@@ -120,7 +120,11 @@ function calendar:attach(widget, args)
     widget:buttons(awful.util.table.join( awful.button({ }, 1, function ()
                                               calendar:show(0, -1) end),
                                           awful.button({ }, 3, function ()
-                                              calendar:show(0, 1) end) ))
+                                              calendar:show(0, 1) end),
+                                          awful.button({ }, 4, function ()
+                                              calendar:show(0, -1) end),
+                                          awful.button({ }, 5, function ()
+                                              calendar:show(0, 1) end)))
 end
 
 return setmetatable(calendar, { __call = function(_, ...) return create(...) end })
