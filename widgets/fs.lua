@@ -50,7 +50,7 @@ function fs:show(t_out)
     })
 end
 
--- Units definitions
+-- Unit definitions
 local unit = { ["mb"] = 1024, ["gb"] = 1024^2 }
 
 local function worker(args)
@@ -84,8 +84,6 @@ local function worker(args)
 
         f:close()
 
-        -- chosen partition easy stuff
-        -- you can however check whatever partition else
         fs_now.used      = tonumber(fs_info[partition .. " used_p"])  or 0
         fs_now.available = tonumber(fs_info[partition .. " avail_p"]) or 0
         fs_now.size_mb   = tonumber(fs_info[partition .. " size_mb"]) or 0
