@@ -43,9 +43,9 @@ local function worker(args)
         local total = 0
         for field in string.gmatch(times, "[%s]+([^%s]+)")
         do
-            -- 3 = idle, 4 = ioWait. Essentially, the CPUs have done
+            -- 4 = idle, 5 = ioWait. Essentially, the CPUs have done
             -- nothing during these times.
-            if at == 3 or at == 4
+            if at == 4 or at == 5
             then
                 idle = idle + field
             end
