@@ -44,6 +44,7 @@ local function worker(args)
     local timeout = args.timeout or 2
     local iface = args.iface or net.get_device()
     local units = args.units or 1024 --kb
+    local notify = args.notify or "on"
     local settings = args.settings or function() end
 
     net.widget = wibox.widget.textbox('')
@@ -76,7 +77,7 @@ local function worker(args)
         net.last_t = now_t
         net.last_r = now_r
 
-        if net_now.carrier ~= "1"
+        if net_now.carrier ~= "1" and notify == "on"
         then
             if helpers.get_map(iface)
             then
