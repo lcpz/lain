@@ -11,6 +11,8 @@ local newtimer        = require("lain.helpers").newtimer
 
 local wibox           = require("wibox")
 
+local util            = require("lain.util")
+
 local io              = io
 local os              = { getenv = os.getenv }
 local pairs           = pairs
@@ -66,15 +68,16 @@ local function worker(args)
         table.sort(boxes)
 
         newmail = "no mail"
+        --Count the total number of mails irrespective of where it was found
+        total = 0
 
-        local count = 0
         for box, number in pairs(boxes)
         do
-            count = count + 1
             -- Add this box only if it's not to be ignored.
             if not util.element_in_table(box, ignore_boxes)
             then
-                if newmail == ""
+                total = total + number
+                if newmail == "no mail"
                 then
                     newmail = box .. "(" .. number .. ")"
                 else
