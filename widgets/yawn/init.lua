@@ -36,7 +36,7 @@ local localizations_path  = project_path .. 'localizations/'
 local icon_path           = project_path .. 'icons/'
 local api_url             = 'http://weather.yahooapis.com/forecastrss'
 local units_set           = '?u=c&w=' -- Default is Celsius
-local language            = string.match(os.getenv("LANG"), "(%S*$*)[.]")
+local language            = string.match(os.getenv("LANG"), "(%S*$*)[.]") or "en_US" -- if LANG is not set
 local weather_data        = nil
 local notification        = nil
 local city_id             = nil
