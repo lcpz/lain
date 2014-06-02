@@ -45,7 +45,7 @@ function calendar:show(t_out, inc_offset)
     then -- current month showing, today highlighted
         if today >= 10
         then
-           init_t = calendar.cal .. ' | sed -r -e "s/(^| )('
+           init_t = calendar.cal .. ' | sed -r -e "s/_\\x08//g" | sed -r -e "s/(^| )('
         end
 
         calendar.offset = 0
