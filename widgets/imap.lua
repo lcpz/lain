@@ -20,9 +20,9 @@ local setmetatable = setmetatable
 
 -- Mail IMAP check
 -- lain.widgets.imap
-local imap = {}
 
 local function worker(args)
+    local imap     = {}
     local args     = args or {}
 
     local server   = args.server
@@ -81,7 +81,7 @@ local function worker(args)
     end
 
     helpers.newtimer(mail, timeout, update, true)
-    return imap.widget
+    return setmetatable(imap, { __index = imap.widget })
 end
 
-return setmetatable(imap, { __call = function(_, ...) return worker(...) end })
+return setmetatable({}, { __call = function(_, ...) return worker(...) end })
