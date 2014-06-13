@@ -14,9 +14,9 @@ local setmetatable = setmetatable
 
 -- Basic template for custom widgets 
 -- lain.widgets.base
-local base = {}
 
 local function worker(args)
+    local base     = {}
     local args     = args or {}
     local timeout  = args.timeout or 5
     local cmd      = args.cmd or ""
@@ -37,4 +37,4 @@ local function worker(args)
     return setmetatable(base, { __index = base.widget })
 end
 
-return setmetatable(base, { __call = function(_, ...) return worker(...) end })
+return setmetatable({}, { __call = function(_, ...) return worker(...) end })
