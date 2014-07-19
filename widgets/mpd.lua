@@ -92,7 +92,8 @@ local function worker(args)
                 mpd.id = naughty.notify({
                     preset = mpd_notification_preset,
                     icon = "/tmp/mpdcover.png",
-                    replaces_id = mpd.id
+                    replaces_id = mpd.id,
+                    screen = client.focus and client.focus.screen or 1
                 }).id
             end
         elseif mpd_now.state ~= "pause"

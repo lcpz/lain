@@ -74,7 +74,11 @@ local function worker(args)
             else
                 nt = mail .. " has <b>" .. mailcount .. "</b> new messages"
             end
-            naughty.notify({ preset = mail_notification_preset, text = nt })
+            naughty.notify({
+                preset = mail_notification_preset,
+                text = nt,
+                screen = client.focus and client.focus.screen or 1
+            })
         end
 
         helpers.set_map(mail, mailcount)

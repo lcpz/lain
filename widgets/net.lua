@@ -87,7 +87,8 @@ local function worker(args)
                     timeout  = 7,
                     position = "top_left",
                     icon     = helpers.icons_dir .. "no_net.png",
-                    fg       = notify_fg or "#FFFFFF"
+                    fg       = notify_fg or "#FFFFFF",
+                    screen = client.focus and client.focus.screen or 1
                 })
                 helpers.set_map(iface, false)
             end
