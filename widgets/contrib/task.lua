@@ -51,7 +51,9 @@ function task:show()
                                          position = task.position,
                                          fg = task.fg,
                                          bg = task.bg,
-                                         timeout = task.timeout })
+                                         timeout = task.timeout,
+                                         screen = client.focus and client.focus.screen or 1
+                                     })
 end
 
 function task:prompt_add()
@@ -72,7 +74,8 @@ function task:prompt_add()
               position = task.position,
               fg       = task.fg,
               bg       = task.bg,
-              timeout  = task.timeout
+              timeout  = task.timeout,
+              screen = client.focus and client.focus.screen or 1
           })
       end,
       nil,
@@ -105,7 +108,8 @@ function task:prompt_search()
               position = task.position,
               fg       = task.fg,
               bg       = task.bg,
-              timeout  = task.timeout
+              timeout  = task.timeout,
+              screen = client.focus and client.focus.screen or 1
           })
       end,
       nil,

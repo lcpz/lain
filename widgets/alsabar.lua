@@ -54,22 +54,22 @@ local alsabar =
 function alsabar.notify()
   alsabar.update()
 
-	local preset =
-	{
+    local preset =
+    {
       title   = "",
       text    = "",
       timeout = 4,
       font    = alsabar.notifications.font .. " " ..
                 alsabar.notifications.font_size,
       fg      = alsabar.notifications.color
-	}
+    }
 
-	if alsabar._muted
+    if alsabar._muted
   then
-		preset.title = alsabar.channel .. " - Muted"
-	else
-		preset.title = alsabar.channel .. " - " .. alsabar._current_level * 100 .. "%"
-	end
+        preset.title = alsabar.channel .. " - Muted"
+    else
+        preset.title = alsabar.channel .. " - " .. alsabar._current_level * 100 .. "%"
+    end
 
   int = math.modf(alsabar._current_level * alsabar.notifications.bar_size)
   preset.text = "["
@@ -78,15 +78,17 @@ function alsabar.notify()
                 .. "]"
 
   if alsabar._notify ~= nil then
-		alsabar._notify = naughty.notify ({
+        alsabar._notify = naughty.notify ({
         replaces_id = alsabar._notify.id,
-			  preset      = preset
+        preset      = preset,
+        screen = client.focus and client.focus.screen or 1
     })
-	else
-		alsabar._notify = naughty.notify ({
-        preset = preset
+    else
+        alsabar._notify = naughty.notify ({
+        preset = preset,
+        screen = client.focus and client.focus.screen or 1
     })
-	end
+    end
 end
 
 local function worker(args)
