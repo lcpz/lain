@@ -8,6 +8,7 @@
 --]]
 
 local newtimer        = require("lain.helpers").newtimer
+local awful        = require("awful")
 
 local wibox           = require("wibox")
 
@@ -25,6 +26,8 @@ local function worker(args)
     local timeout  = args.timeout or 5
     local channel  = args.channel or "Master"
     local settings = args.settings or function() end
+    local terminal = terminal or "xterm"
+    local mixer    = terminal .. " -e alsamixer"
 
     alsa.widget = wibox.widget.textbox('')
 
@@ -59,6 +62,11 @@ local function worker(args)
 
     newtimer("alsa", timeout, alsa.update)
 
+    alsa.widget:buttons(awful.util.table.join (
+        awful.button ({}, 1, function()
+            awful.util.spawn(mixer)
+        end)
+    ))
     return setmetatable(alsa, { __index = alsa.widget })
 end
 
