@@ -10,6 +10,7 @@
 local helpers      = require("lain.helpers")
 
 local escape_f     = require("awful.util").escape
+local awful        = require("awful")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
@@ -17,7 +18,8 @@ local io           = { popen    = io.popen }
 local os           = { execute  = os.execute,
                        getenv   = os.getenv }
 local string       = { format   = string.format,
-                       gmatch   = string.gmatch }
+                       gmatch   = string.gmatch,
+                       find     = string.find}
 
 local setmetatable = setmetatable
 
@@ -28,7 +30,7 @@ local mpd = {}
 local function worker(args)
     local args        = args or {}
     local timeout     = args.timeout or 2
-    local password    = args.password or ""
+    local password    = args.password or false
     local host        = args.host or "127.0.0.1"
     local port        = args.port or "6600"
     local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
@@ -37,10 +39,12 @@ local function worker(args)
     local settings    = args.settings or function() end
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
-    local mpdh = "telnet://" .. host .. ":" .. port
-    local echo = "echo 'password " .. password .. "\nstatus\ncurrentsong\nclose'"
+    local host = password and password .. '@' .. host or host
+    local mpc = "mpc -h " .. host .. " -p " .. port
+    local echo = mpc .. " -f 'file: %file%\nTime: %time%\nArtist: %artist%\nAlbumArtist: %albumartist%\nTitle: %title%\nAlbum: %album%\nTrack: %track%\nDate: %date%\nGenre: %genre%\nDisc: %disc%'"
 
     mpd.widget = wibox.widget.textbox('')
+    mpd.notification = nil
 
     mpd_notification_preset = {
         title   = "Now playing",
@@ -59,17 +63,19 @@ local function worker(args)
             date   = "N/A"
         }
 
-        local f = io.popen(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh)
+        local f = io.popen(echo)
 
         for line in f:lines() do
             for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
-                if     k == "state"  then mpd_now.state  = v
-                elseif k == "file"   then mpd_now.file   = v
+                if k == "file"   then mpd_now.file   = v
                 elseif k == "Artist" then mpd_now.artist = escape_f(v)
                 elseif k == "Title"  then mpd_now.title  = escape_f(v)
                 elseif k == "Album"  then mpd_now.album  = escape_f(v)
                 elseif k == "Date"   then mpd_now.date   = escape_f(v)
                 end
+            end
+            if string.find(line, "[playing]") then
+                mpd_now.state = 'play'
             end
         end
 
@@ -89,18 +95,44 @@ local function worker(args)
                 os.execute(string.format("%s %q %q %d %q", mpdcover, music_dir,
                            mpd_now.file, cover_size, default_art))
 
-                mpd.id = naughty.notify({
-                    preset = mpd_notification_preset,
-                    icon = "/tmp/mpdcover.png",
-                    replaces_id = mpd.id,
-                    screen = client.focus and client.focus.screen or 1
-                }).id
+                mpd.popup()
             end
         elseif mpd_now.state ~= "pause"
         then
             helpers.set_map("current mpd track", nil)
-	      end
+        end
     end
+
+
+    function mpd.popup()
+        mpd.notification = naughty.notify({
+            preset = mpd_notification_preset,
+            icon = "/tmp/mpdcover.png",
+            replaces_id = mpd.id,
+            screen = client.focus and client.focus.screen or 1
+        })
+    end
+
+    function mpd.hide()
+        if mpd.notification ~= nil then
+            naughty.destroy(mpd.notification)
+            mpd.notification = nil
+        end
+    end
+
+    mpd.widget:connect_signal("mouse::enter", function () mpd.popup() end)
+    mpd.widget:connect_signal("mouse::leave", function () mpd.hide() end)
+
+    mpd.widget:buttons(awful.util.table.join (
+        awful.button ({}, 1, function()
+            awful.util.spawn("mpc next")
+            mpd.update()
+        end),
+        awful.button ({}, 3, function()
+            awful.util.spawn("mpc prev")
+            mpd.update()
+        end)
+    ))
 
     helpers.newtimer("mpd", timeout, mpd.update)
 
