@@ -14,7 +14,7 @@ local awful        = require("awful")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
-local io           = { popen    = io.popen }
+local io           = { popen    = io.popen, stderr=io.stderr }
 local os           = { execute  = os.execute,
                        getenv   = os.getenv }
 local string       = { format   = string.format,
@@ -74,8 +74,10 @@ local function worker(args)
                 elseif k == "Date"   then mpd_now.date   = escape_f(v)
                 end
             end
-            if string.find(line, "[playing]") then
+            if string.find(line, '[playing]', 1, true) then
                 mpd_now.state = 'play'
+            elseif string.find(line, "[paused]", 1, true) then
+                mpd_now.state = 'pause'
             end
         end
 
