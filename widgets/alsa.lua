@@ -29,7 +29,7 @@ local function worker(args)
     alsa.widget = wibox.widget.textbox('')
 
     function alsa.update()
-        local f = assert(io.popen('amixer get ' .. channel))
+        local f = assert(io.popen('amixer -M get ' .. channel))
         local mixer = f:read("*all")
         f:close()
 
