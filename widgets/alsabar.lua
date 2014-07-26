@@ -115,7 +115,7 @@ local function worker(args)
 
     function alsabar.update()
         -- Get mixer control contents
-        local f = io.popen("amixer get " .. alsabar.channel)
+        local f = io.popen("amixer -M get " .. alsabar.channel)
         local mixer = f:read("*all")
         f:close()
 
