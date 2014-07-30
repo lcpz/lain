@@ -37,7 +37,7 @@ function centerwork.arrange(p)
     if #cls > 0
     then
         -- Main column, fixed width and height.
-        local c = cls[#cls]
+        local c = cls[1]
         local g = {}
         local mainwid = math.floor(wa.width * mwfact)
         local slavewid = wa.width - mainwid
@@ -57,7 +57,7 @@ function centerwork.arrange(p)
         if #cls > 1
         then
             local at = 0
-            for i = (#cls - 1),1,-1
+            for i = (#cls),2,-1
             do
                 -- It's all fixed. If there are more than 5 clients,
                 -- those additional clients will float. This is
