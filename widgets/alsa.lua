@@ -27,7 +27,7 @@ local function worker(args)
     local channel  = args.channel or "Master"
     local settings = args.settings or function() end
     local terminal = terminal or "xterm"
-    local mixer    = terminal .. " -e alsamixer -T alsamixer"
+    local mixer    = terminal .. " -e alsamixer"
 
     alsa.widget = wibox.widget.textbox('')
 
