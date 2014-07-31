@@ -14,12 +14,11 @@ local awful        = require("awful")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
-local io           = { popen    = io.popen, stderr=io.stderr }
+local io           = { popen    = io.popen }
 local os           = { execute  = os.execute,
                        getenv   = os.getenv }
 local string       = { format   = string.format,
-                       gmatch   = string.gmatch,
-                       find     = string.find}
+                       gmatch   = string.gmatch, }
 
 local setmetatable = setmetatable
 
@@ -30,7 +29,7 @@ local mpd = {}
 local function worker(args)
     local args        = args or {}
     local timeout     = args.timeout or 2
-    local password    = args.password or false
+    local password    = args.password or ""
     local host        = args.host or "127.0.0.1"
     local port        = args.port or "6600"
     local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
@@ -39,9 +38,14 @@ local function worker(args)
     local settings    = args.settings or function() end
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
-    local host = password and password .. '@' .. host or host
-    local mpc = "mpc -h " .. host .. " -p " .. port
-    local echo = mpc .. " -f 'file: %file%\nTime: %time%\nArtist: %artist%\nAlbumArtist: %albumartist%\nTitle: %title%\nAlbum: %album%\nTrack: %track%\nDate: %date%\nGenre: %genre%\nDisc: %disc%'"
+
+    function call_mpd(command)
+        local cmd  = "echo 'password " .. command .. "\nstatus\n".. command .. "\nclose'"
+        local f = io.popen(cmd .. " | curl --connect-timeout 1 -fsm 3 " .. "telnet://" .. host .. ":" .. port)
+        local stdout = f:lines()
+        return stdout
+    end
+    
 
     mpd.widget = wibox.widget.textbox('')
     mpd.notification = nil
@@ -63,25 +67,17 @@ local function worker(args)
             date   = "N/A"
         }
 
-        local f = io.popen(echo)
-
-        for line in f:lines() do
+        for line in call_mpd("currentsong") do
             for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
-                if k == "file"   then mpd_now.file   = v
+                if     k == "state"  then mpd_now.state  = v
+                elseif k == "file"   then mpd_now.file   = v
                 elseif k == "Artist" then mpd_now.artist = escape_f(v)
                 elseif k == "Title"  then mpd_now.title  = escape_f(v)
                 elseif k == "Album"  then mpd_now.album  = escape_f(v)
                 elseif k == "Date"   then mpd_now.date   = escape_f(v)
                 end
             end
-            if string.find(line, '[playing]', 1, true) then
-                mpd_now.state = 'play'
-            elseif string.find(line, "[paused]", 1, true) then
-                mpd_now.state = 'pause'
-            end
         end
-
-        f:close()
 
         mpd_notification_preset.text = string.format("%s (%s) - %s\n%s", mpd_now.artist,
                                        mpd_now.album, mpd_now.date, mpd_now.title)
@@ -127,11 +123,11 @@ local function worker(args)
 
     mpd.widget:buttons(awful.util.table.join (
         awful.button ({}, 1, function()
-            awful.util.spawn("mpc next")
+            call_mpd("next")
             mpd.update()
         end),
         awful.button ({}, 3, function()
-            awful.util.spawn("mpc prev")
+            call_mpd("previous")
             mpd.update()
         end)
     ))
