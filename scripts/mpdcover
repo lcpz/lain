@@ -50,7 +50,7 @@ art="$MUSIC_DIR/${file%/*}"
 
 # find every file that matches IMG_REG set the first matching file to be the
 # cover.
-cover="$(find "$art/" -maxdepth 1 -type f | egrep -i -m1 "$IMG_REG")"
+cover="$(find -L "$art/" -maxdepth 1 -type f | egrep -i -m1 "$IMG_REG")"
 
 # when no cover is found, use DEFAULT_ART as cover
 cover="${cover:=$DEFAULT_ART}"

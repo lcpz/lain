@@ -10,6 +10,7 @@
 local helpers      = require("lain.helpers")
 
 local escape_f     = require("awful.util").escape
+local awful        = require("awful")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
@@ -17,7 +18,7 @@ local io           = { popen    = io.popen }
 local os           = { execute  = os.execute,
                        getenv   = os.getenv }
 local string       = { format   = string.format,
-                       gmatch   = string.gmatch }
+                       gmatch   = string.gmatch, }
 
 local setmetatable = setmetatable
 
@@ -37,10 +38,16 @@ local function worker(args)
     local settings    = args.settings or function() end
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
-    local mpdh = "telnet://" .. host .. ":" .. port
-    local echo = "echo 'password " .. password .. "\nstatus\ncurrentsong\nclose'"
+
+    function call_mpd(command)
+        local cmd  = "echo 'password " .. command .. "\nstatus\n".. command .. "\nclose'"
+        local f = io.popen(cmd .. " | curl --connect-timeout 1 -fsm 3 " .. "telnet://" .. host .. ":" .. port)
+        return f:lines()
+    end
+    
 
     mpd.widget = wibox.widget.textbox('')
+    mpd.notification = nil
 
     mpd_notification_preset = {
         title   = "Now playing",
@@ -59,9 +66,7 @@ local function worker(args)
             date   = "N/A"
         }
 
-        local f = io.popen(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh)
-
-        for line in f:lines() do
+        for line in call_mpd("currentsong") do
             for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
                 if     k == "state"  then mpd_now.state  = v
                 elseif k == "file"   then mpd_now.file   = v
@@ -72,8 +77,6 @@ local function worker(args)
                 end
             end
         end
-
-        f:close()
 
         mpd_notification_preset.text = string.format("%s (%s) - %s\n%s", mpd_now.artist,
                                        mpd_now.album, mpd_now.date, mpd_now.title)
@@ -89,18 +92,44 @@ local function worker(args)
                 os.execute(string.format("%s %q %q %d %q", mpdcover, music_dir,
                            mpd_now.file, cover_size, default_art))
 
-                mpd.id = naughty.notify({
-                    preset = mpd_notification_preset,
-                    icon = "/tmp/mpdcover.png",
-                    replaces_id = mpd.id,
-                    screen = client.focus and client.focus.screen or 1
-                }).id
+                mpd.popup()
             end
         elseif mpd_now.state ~= "pause"
         then
             helpers.set_map("current mpd track", nil)
-	      end
+        end
     end
+
+
+    function mpd.popup()
+        mpd.notification = naughty.notify({
+            preset = mpd_notification_preset,
+            icon = "/tmp/mpdcover.png",
+            replaces_id = mpd.id,
+            screen = client.focus and client.focus.screen or 1
+        })
+    end
+
+    function mpd.hide()
+        if mpd.notification ~= nil then
+            naughty.destroy(mpd.notification)
+            mpd.notification = nil
+        end
+    end
+
+    mpd.widget:connect_signal("mouse::enter", function () mpd.popup() end)
+    mpd.widget:connect_signal("mouse::leave", function () mpd.hide() end)
+
+    mpd.widget:buttons(awful.util.table.join (
+        awful.button ({}, 1, function()
+            call_mpd("next")
+            mpd.update()
+        end),
+        awful.button ({}, 3, function()
+            call_mpd("previous")
+            mpd.update()
+        end)
+    ))
 
     helpers.newtimer("mpd", timeout, mpd.update)
 
