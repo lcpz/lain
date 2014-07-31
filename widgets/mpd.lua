@@ -42,8 +42,7 @@ local function worker(args)
     function call_mpd(command)
         local cmd  = "echo 'password " .. command .. "\nstatus\n".. command .. "\nclose'"
         local f = io.popen(cmd .. " | curl --connect-timeout 1 -fsm 3 " .. "telnet://" .. host .. ":" .. port)
-        local stdout = f:lines()
-        return stdout
+        return f:lines()
     end
     
 
