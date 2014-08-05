@@ -26,7 +26,7 @@ local function worker(args)
 
     function base.update()
         local f = assert(io.popen(cmd))
-        output = f:read("*all")
+        output = f:read("*a")
         f:close()
         widget = base.widget
         settings()

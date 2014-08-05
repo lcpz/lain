@@ -29,7 +29,7 @@ local net = {
 
 function net.get_device()
     f = io.popen("ip link show | cut -d' ' -f2,9")
-    ws = f:read("*all")
+    ws = f:read("*a")
     f:close()
     ws = ws:match("%w+: UP")
     if ws ~= nil then

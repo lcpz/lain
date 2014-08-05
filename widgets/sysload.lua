@@ -30,7 +30,7 @@ local function worker(args)
 
     function update()
         local f = io.open("/proc/loadavg")
-        local ret = f:read("*all")
+        local ret = f:read("*a")
         f:close()
 
         load_1, load_5, load_15 = string.match(ret, "([^%s]+) ([^%s]+) ([^%s]+)")
