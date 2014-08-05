@@ -116,7 +116,7 @@ local function worker(args)
     function alsabar.update()
         -- Get mixer control contents
         local f = io.popen("amixer -M get " .. alsabar.channel)
-        local mixer = f:read("*all")
+        local mixer = f:read("*a")
         f:close()
 
         -- Capture mixer control state:          [5%] ... ... [on]

@@ -7,11 +7,11 @@
 --]]
 
 local helpers      = require("lain.helpers")
+local async        = require("lain.asyncshell")
 
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
-local io           = { popen  = io.popen }
 local string       = { format = string.format,
                        gsub   = string.gsub }
 local tonumber     = tonumber
@@ -42,7 +42,7 @@ local function worker(args)
     if not is_plain
     then
         local f = io.popen(password)
-        password = f:read("*all"):gsub("\n", "")
+        password = f:read("*a"):gsub("\n", "")
         f:close()
     end
 
@@ -57,34 +57,37 @@ local function worker(args)
         curl = string.format("%s --url imaps://%s:%s/INBOX -u %s:%s %s -k",
                head_command, server, port, mail, password, request)
 
-        f = io.popen(curl)
-        ws = f:read("*all")
-        f:close()
+        async.request(curl, function(f) 
+            ws = f:read("*a")
+            f:close()
 
-        _, mailcount = string.gsub(ws, "%d+", "")
-        _ = nil
+            _, mailcount = string.gsub(ws, "%d+", "")
+            _ = nil
 
-        widget = imap.widget
-        settings()
+            widget = imap.widget
+            settings()
 
-        if mailcount >= 1 and mailcount > helpers.get_map(mail)
-        then
-            if mailcount == 1 then
-                nt = mail .. " has one new message"
-            else
-                nt = mail .. " has <b>" .. mailcount .. "</b> new messages"
+            if mailcount >= 1 and mailcount > helpers.get_map(mail)
+            then
+                if mailcount == 1 then
+                    nt = mail .. " has one new message"
+                else
+                    nt = mail .. " has <b>" .. mailcount .. "</b> new messages"
+                end
+                naughty.notify({
+                    preset = mail_notification_preset,
+                    text = nt,
+                    screen = client.focus and client.focus.screen or 1
+                })
             end
-            naughty.notify({
-                preset = mail_notification_preset,
-                text = nt,
-                screen = client.focus and client.focus.screen or 1
-            })
-        end
 
-        helpers.set_map(mail, mailcount)
+            helpers.set_map(mail, mailcount)
+        end)
+
     end
 
     helpers.newtimer(mail, timeout, update, true)
+
     return setmetatable(imap, { __index = imap.widget })
 end
 
