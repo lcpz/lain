@@ -48,7 +48,7 @@ yawn_notification_preset = {}
 local function fetch_weather()
     local url = api_url .. units_set .. city_id
     local f = io.popen("curl --connect-timeout 1 -fsm 3 '" .. url .. "'" )
-    local text = f:read("*all")
+    local text = f:read("*a")
     f:close()
 
     -- In case of no connection or invalid city ID
