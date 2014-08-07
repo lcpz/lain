@@ -13,6 +13,8 @@
 -- ...synchronously
 -- wwidget.text = asyncshell.demand('wscript -Kiev', 5):read("*l") or "Error"
 
+-- This makes things faster, but puts weight on sysload and is more cpu demanding.
+
 local spawn = require('awful.util').spawn
 
 asyncshell               = {}

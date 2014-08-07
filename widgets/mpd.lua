@@ -8,6 +8,7 @@
 --]]
 
 local helpers      = require("lain.helpers")
+local async        = require("lain.asyncshell")
 
 local escape_f     = require("awful.util").escape
 local naughty      = require("naughty")
@@ -50,56 +51,54 @@ local function worker(args)
     helpers.set_map("current mpd track", nil)
 
     function mpd.update()
-        mpd_now = {
-            state  = "N/A",
-            file   = "N/A",
-            artist = "N/A",
-            title  = "N/A",
-            album  = "N/A",
-            date   = "N/A"
-        }
+        async.request(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh, function (f)
+            mpd_now = {
+                state  = "N/A",
+                file   = "N/A",
+                artist = "N/A",
+                title  = "N/A",
+                album  = "N/A",
+                date   = "N/A"
+            }
 
-        local f = io.popen(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh)
-
-        for line in f:lines() do
-            for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
-                if     k == "state"  then mpd_now.state  = v
-                elseif k == "file"   then mpd_now.file   = v
-                elseif k == "Artist" then mpd_now.artist = escape_f(v)
-                elseif k == "Title"  then mpd_now.title  = escape_f(v)
-                elseif k == "Album"  then mpd_now.album  = escape_f(v)
-                elseif k == "Date"   then mpd_now.date   = escape_f(v)
+            for line in f:lines() do
+                for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
+                    if     k == "state"  then mpd_now.state  = v
+                    elseif k == "file"   then mpd_now.file   = v
+                    elseif k == "Artist" then mpd_now.artist = escape_f(v)
+                    elseif k == "Title"  then mpd_now.title  = escape_f(v)
+                    elseif k == "Album"  then mpd_now.album  = escape_f(v)
+                    elseif k == "Date"   then mpd_now.date   = escape_f(v)
+                    end
                 end
             end
-        end
 
-        f:close()
+            mpd_notification_preset.text = string.format("%s (%s) - %s\n%s", mpd_now.artist,
+                                           mpd_now.album, mpd_now.date, mpd_now.title)
+            widget = mpd.widget
+            settings()
 
-        mpd_notification_preset.text = string.format("%s (%s) - %s\n%s", mpd_now.artist,
-                                       mpd_now.album, mpd_now.date, mpd_now.title)
-        widget = mpd.widget
-        settings()
-
-        if mpd_now.state == "play"
-        then
-            if mpd_now.title ~= helpers.get_map("current mpd track")
+            if mpd_now.state == "play"
             then
-                helpers.set_map("current mpd track", mpd_now.title)
+                if mpd_now.title ~= helpers.get_map("current mpd track")
+                then
+                    helpers.set_map("current mpd track", mpd_now.title)
 
-                os.execute(string.format("%s %q %q %d %q", mpdcover, music_dir,
-                           mpd_now.file, cover_size, default_art))
+                    os.execute(string.format("%s %q %q %d %q", mpdcover, music_dir,
+                               mpd_now.file, cover_size, default_art))
 
-                mpd.id = naughty.notify({
-                    preset = mpd_notification_preset,
-                    icon = "/tmp/mpdcover.png",
-                    replaces_id = mpd.id,
-                    screen = client.focus and client.focus.screen or 1
-                }).id
+                    mpd.id = naughty.notify({
+                        preset = mpd_notification_preset,
+                        icon = "/tmp/mpdcover.png",
+                        replaces_id = mpd.id,
+                        screen = client.focus and client.focus.screen or 1
+                    }).id
+                end
+            elseif mpd_now.state ~= "pause"
+            then
+                helpers.set_map("current mpd track", nil)
             end
-        elseif mpd_now.state ~= "pause"
-        then
-            helpers.set_map("current mpd track", nil)
-	      end
+        end)
     end
 
     helpers.newtimer("mpd", timeout, mpd.update)

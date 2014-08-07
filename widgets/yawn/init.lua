@@ -7,6 +7,7 @@
 --]]
 
 local newtimer     = require("lain.helpers").newtimer
+local async        = require("lain.asyncshell")
 
 local naughty      = require("naughty")
 local wibox        = require("wibox")
@@ -47,99 +48,102 @@ yawn_notification_preset = {}
 
 local function fetch_weather()
     local url = api_url .. units_set .. city_id
-    local f = io.popen("curl --connect-timeout 1 -fsm 3 '" .. url .. "'" )
-    local text = f:read("*a")
-    f:close()
+    local cmd = "curl --connect-timeout 1 -fsm 3 '" .. url .. "'"
 
-    -- In case of no connection or invalid city ID
-    -- widgets won't display
-    if text == "" or text:match("City not found")
-    then
-        yawn.icon:set_image(icon_path .. "na.png")
-        if text == "" then
-            weather_data = "Service not available at the moment."
-            yawn.widget:set_text(" N/A ")
-        else
-            weather_data = "City not found!\n" ..
-                           "Are you sure " .. city_id ..
-                           " is your Yahoo city ID?"
-            yawn.widget:set_text(" ? ")
-        end
-        return
-    end
-
-    -- Processing raw data
-    weather_data = text:gsub("<.->", "")
-    weather_data = weather_data:match("Current Conditions:.-Full") or ""
-
-    -- may still happens in case of bad connectivity
-    if weather_data == "" then
-        yawn.icon:set_image(icon_path .. "na.png")
-        yawn.widget:set_text(" ? ")
-        return
-    end
-
-    weather_data = weather_data:gsub("Current Conditions:.-\n", "Now: ")
-    weather_data = weather_data:gsub("Forecast:.-\n", "")
-    weather_data = weather_data:gsub("\nFull", "")
-    weather_data = weather_data:gsub("[\n]$", "")
-    weather_data = weather_data:gsub(" [-] " , ": ")
-    weather_data = weather_data:gsub("[.]", ",")
-    weather_data = weather_data:gsub("High: ", "")
-    weather_data = weather_data:gsub(" Low: ", " - ")
-
-    -- Getting info for text widget
-    local now      = weather_data:sub(weather_data:find("Now:")+5,
-                     weather_data:find("\n")-1)
-    forecast       = now:sub(1, now:find(",")-1)
-    units          = now:sub(now:find(",")+2, -2)
-
-    -- Day/Night icon change
-    local hour = tonumber(os.date("%H"))
-    sky = icon_path
-
-    if forecast == "Clear"         or
-       forecast == "Fair"          or
-       forecast == "Partly Cloudy" or
-       forecast == "Mostly Cloudy"
-       then
-           if hour >= 6 and hour <= 18
-           then
-               sky = sky .. "Day"
-           else
-               sky = sky .. "Night"
-           end
-    end
-
-    sky = sky  .. forecast:gsub(" ", ""):gsub("/", "") .. ".png"
-
-    -- In case there's no defined icon for current forecast
-    if io.open(sky) == nil then
-        sky = icon_path .. "na.png"
-    end
-
-    -- Localization
-    local f = io.open(localizations_path .. language, "r")
-    if language:find("en_") == nil and f ~= nil
-    then
+    async.request(cmd, function(f)
+        local text = f:read("*a")
         f:close()
-        for line in io.lines(localizations_path .. language)
-        do
-            word = string.sub(line, 1, line:find("|")-1)
-            translation = string.sub(line, line:find("|")+1)
-            weather_data = string.gsub(weather_data, word, translation)
+
+        -- In case of no connection or invalid city ID
+        -- widgets won't display
+        if text == "" or text:match("City not found")
+        then
+            yawn.icon:set_image(icon_path .. "na.png")
+            if text == "" then
+                weather_data = "Service not available at the moment."
+                yawn.widget:set_text(" N/A ")
+            else
+                weather_data = "City not found!\n" ..
+                               "Are you sure " .. city_id ..
+                               " is your Yahoo city ID?"
+                yawn.widget:set_text(" ? ")
+            end
+            return
         end
-    end
 
-    -- Finally setting infos
-    yawn.icon:set_image(sky)
-    widget = yawn.widget
+        -- Processing raw data
+        weather_data = text:gsub("<.->", "")
+        weather_data = weather_data:match("Current Conditions:.-Full") or ""
 
-    _data = weather_data:match(": %S.-,") or weather_data
-    forecast = _data:gsub(": ", ""):gsub(",", "")
-    units = units:gsub(" ", "")
+        -- may still happens in case of bad connectivity
+        if weather_data == "" then
+            yawn.icon:set_image(icon_path .. "na.png")
+            yawn.widget:set_text(" ? ")
+            return
+        end
 
-    settings()
+        weather_data = weather_data:gsub("Current Conditions:.-\n", "Now: ")
+        weather_data = weather_data:gsub("Forecast:.-\n", "")
+        weather_data = weather_data:gsub("\nFull", "")
+        weather_data = weather_data:gsub("[\n]$", "")
+        weather_data = weather_data:gsub(" [-] " , ": ")
+        weather_data = weather_data:gsub("[.]", ",")
+        weather_data = weather_data:gsub("High: ", "")
+        weather_data = weather_data:gsub(" Low: ", " - ")
+
+        -- Getting info for text widget
+        local now      = weather_data:sub(weather_data:find("Now:")+5,
+                         weather_data:find("\n")-1)
+        forecast       = now:sub(1, now:find(",")-1)
+        units          = now:sub(now:find(",")+2, -2)
+
+        -- Day/Night icon change
+        local hour = tonumber(os.date("%H"))
+        sky = icon_path
+
+        if forecast == "Clear"         or
+           forecast == "Fair"          or
+           forecast == "Partly Cloudy" or
+           forecast == "Mostly Cloudy"
+           then
+               if hour >= 6 and hour <= 18
+               then
+                   sky = sky .. "Day"
+               else
+                   sky = sky .. "Night"
+               end
+        end
+
+        sky = sky  .. forecast:gsub(" ", ""):gsub("/", "") .. ".png"
+
+        -- In case there's no defined icon for current forecast
+        if io.open(sky) == nil then
+            sky = icon_path .. "na.png"
+        end
+
+        -- Localization
+        local f = io.open(localizations_path .. language, "r")
+        if language:find("en_") == nil and f ~= nil
+        then
+            f:close()
+            for line in io.lines(localizations_path .. language)
+            do
+                word = string.sub(line, 1, line:find("|")-1)
+                translation = string.sub(line, line:find("|")+1)
+                weather_data = string.gsub(weather_data, word, translation)
+            end
+        end
+
+        -- Finally setting infos
+        yawn.icon:set_image(sky)
+        widget = yawn.widget
+
+        _data = weather_data:match(": %S.-,") or weather_data
+        forecast = _data:gsub(": ", ""):gsub(",", "")
+        units = units:gsub(" ", "")
+
+        settings()
+    end)
 end
 
 function yawn.hide()
