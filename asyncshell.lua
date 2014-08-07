@@ -39,7 +39,7 @@ function asyncshell.request(command, callback)
    local tmpfname = asyncshell.file_template .. id
    asyncshell.request_table[id] = {callback = callback}
    local req =
-      string.format("bash -c '%s > %s; " ..
+      string.format("sh -c '%s > %s; " ..
                     'echo "asyncshell.deliver(%s)" | ' ..
                     "awesome-client' 2> /dev/null",
                     string.gsub(command, "'", "'\\''"), tmpfname,
