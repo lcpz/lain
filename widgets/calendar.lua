@@ -12,7 +12,7 @@ local awful        = require("awful")
 local beautiful    = require("beautiful")
 local naughty      = require("naughty")
 
-local io           = io
+local io           = { popen = io.popen }
 local os           = { date = os.date }
 local tonumber     = tonumber
 
