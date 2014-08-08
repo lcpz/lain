@@ -13,7 +13,7 @@ local notify_fg    = require("beautiful").fg_focus
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
-local io           = io
+local io           = { popen  = io.popen }
 local tostring     = tostring
 local string       = { format = string.format,
                        gsub   = string.gsub }

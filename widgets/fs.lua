@@ -14,7 +14,7 @@ local beautiful    = require("beautiful")
 local wibox        = require("wibox")
 local naughty      = require("naughty")
 
-local io           = io
+local io           = { popen  = io.popen }
 local pairs        = pairs
 local string       = { match  = string.match,
                        format = string.format }

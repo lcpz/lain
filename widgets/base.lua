@@ -9,10 +9,10 @@
 local newtimer     = require("lain.helpers").newtimer
 local wibox        = require("wibox")
 
-local io           = io
+local io           = { popen = io.popen }
 local setmetatable = setmetatable
 
--- Basic template for custom widgets 
+-- Basic template for custom widgets
 -- lain.widgets.base
 
 local function worker(args)

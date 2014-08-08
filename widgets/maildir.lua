@@ -13,7 +13,7 @@ local wibox           = require("wibox")
 
 local util            = require("lain.util")
 
-local io              = io
+local io              = { popen  = io.popen }
 local os              = { getenv = os.getenv }
 local pairs           = pairs
 local string          = { len    = string.len,

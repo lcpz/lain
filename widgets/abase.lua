@@ -10,7 +10,6 @@ local newtimer     = require("lain.helpers").newtimer
 local async        = require("lain.asyncshell")
 local wibox        = require("wibox")
 
-local io           = io
 local setmetatable = setmetatable
 
 -- Basic template for custom widgets 

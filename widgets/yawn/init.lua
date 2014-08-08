@@ -13,7 +13,8 @@ local naughty      = require("naughty")
 local wibox        = require("wibox")
 
 local debug        = { getinfo = debug.getinfo }
-local io           = io
+local io           = { lines   = io.lines,
+                       open    = io.open }
 local os           = { date    = os.date,
                        getenv  = os.getenv }
 local string       = { find    = string.find,
