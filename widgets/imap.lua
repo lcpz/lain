@@ -34,7 +34,7 @@ local function worker(args)
     local is_plain = args.is_plain or false
     local settings = args.settings or function() end
 
-    local head_command  = "curl --connect-timeout 1 -fsm 3"
+    local head_command  = "curl --connect-timeout 3 -fsm 3"
     local request = "-X 'SEARCH (UNSEEN)'"
 
     helpers.set_map(mail, 0)
