@@ -1,11 +1,12 @@
 
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013,      Luke Bonham                
-      * (c) 2010,      Nicolas Estibals           
-      * (c) 2010-2012, Peter Hofmann              
-                                                  
+                                                 
+     Licensed under GNU General Public License v2
+      * (c) 2014,      projektile                
+      * (c) 2013,      Luke Bonham               
+      * (c) 2010,      Nicolas Estibals          
+      * (c) 2010-2012, Peter Hofmann             
+                                                 
 --]]
 
 local tag       = require("awful.tag")
@@ -41,15 +42,30 @@ function centerfair.arrange(p)
     -- A useless gap (like the dwm patch) can be defined with
     -- beautiful.useless_gap_width .
     local useless_gap = tonumber(beautiful.useless_gap_width) or 0
+    if useless_gap < 0 then useless_gap = 0 end
+
+    -- A global border can be defined with
+    -- beautiful.global_border_width
+    local global_border = tonumber(beautiful.global_border_width) or 0
+    if global_border < 0 then global_border = 0 end
+
+    -- Themes border width requires an offset
+    local bw = tonumber(beautiful.border_width) or 0
 
     -- Screen.
     local wa = p.workarea
     local cls = p.clients
 
+    -- Borders are factored in.
+    wa.height = wa.height - ((global_border * 2) + (bw * 2))
+    wa.width = wa.width - ((global_border * 2) + (bw * 2))
+
     -- How many vertical columns? Read from nmaster on the tag.
     local t = tag.selected(p.screen)
     local num_x = centerfair.nmaster or tag.getnmaster(t)
     local ncol = centerfair.ncol or tag.getncol(t)
+    if num_x <= 2 then num_x = 2 end
+    if num_x > #cls then num_x = #cls end
 
     local width = math.floor((wa.width-(num_x+1)*useless_gap) / num_x)
 
@@ -61,24 +77,24 @@ function centerfair.arrange(p)
         local g = {}
         g.width = width
         g.height = wa.height - 2*useless_gap - 2
-        g.y = offset_y
+        g.y = offset_y + global_border
         for i = 1, #cls do
-            g.x = offset_x + (i - 1) * (width + useless_gap + 2)
+            g.x = offset_x + (i - 1) * (width + useless_gap + 2) + global_border
             cls[i]:geometry(g)
         end
     else
         -- More clients than the number of columns, let's arrange it!
-        local offset_x = wa.x 
+        local offset_x = wa.x
         if useless_gap > 0 then
-           offset_x = offset_x 
+           offset_x = offset_x
         end
 
         -- Master client deserves a special treatement
         local g = {}
-        g.width = wa.width - (num_x-1)*width -num_x*useless_gap - 2
+        g.width = wa.width - (num_x  - 1) * width - num_x * useless_gap
         g.height = wa.height - 2*useless_gap - 2
-        g.x = offset_x + useless_gap
-        g.y = offset_y
+        g.x = offset_x + useless_gap + global_border
+        g.y = offset_y + global_border
         cls[1]:geometry(g)
 
         -- Treat the other clients
@@ -128,8 +144,8 @@ function centerfair.arrange(p)
 
         for i = 1, (num_x-1) do
             to_remove = 2
-            g.height = math.floor((wa.height-useless_gap)/num_y[i]) 
-            g.y = offset_y
+            g.height = math.floor((wa.height - (num_y[i] * useless_gap)) / num_y[i])
+            g.y = offset_y + global_border
             for j = 0, (num_y[i]-2) do
                 cls[nclient]:geometry(g)
                 nclient = nclient + 1

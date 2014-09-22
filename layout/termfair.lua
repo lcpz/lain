@@ -2,6 +2,7 @@
 --[[
                                                   
      Licensed under GNU General Public License v2 
+      * (c) 2014,      projektile                 
       * (c) 2013,      Luke Bonham                
       * (c) 2010-2012, Peter Hofmann              
                                                   
@@ -38,10 +39,23 @@ function termfair.arrange(p)
     -- A useless gap (like the dwm patch) can be defined with
     -- beautiful.useless_gap_width.
     local useless_gap = tonumber(beautiful.useless_gap_width) or 0
+    if useless_gap < 0 then useless_gap = 0 end
+
+    -- A global border can be defined with
+    -- beautiful.global_border_width
+    local global_border = tonumber(beautiful.global_border_width) or 0
+    if global_border < 0 then global_border = 0 end
+
+    -- Themes border width requires an offset
+    local bw = tonumber(beautiful.border_width) or 0
 
     -- Screen.
     local wa = p.workarea
     local cls = p.clients
+
+    -- Borders are factored in.
+    wa.height = wa.height - ((global_border * 2) + (bw * 2))
+    wa.width = wa.width - ((global_border * 2) + (bw * 2))
 
     -- How many vertical columns?
     local t = tag.selected(p.screen)
@@ -79,43 +93,26 @@ function termfair.arrange(p)
             local g = {}
             if this_x == (num_x - 1)
             then
-                g.width = wa.width - (num_x - 1) * width
+                g.width = wa.width - (num_x - 1) * width - useless_gap
             else
-                g.width = width
+                g.width = width - useless_gap
             end
             if this_y == (num_y - 1)
             then
-                g.height = wa.height - (num_y - 1) * height
+                g.height = wa.height - (num_y - 1) * height - useless_gap
             else
-                g.height = height
+                g.height = height - useless_gap
             end
 
-            g.x = wa.x + this_x * width
-            g.y = wa.y + this_y * height
+            g.x = wa.x + this_x * width + global_border
+            g.y = wa.y + this_y * height + global_border
 
             if useless_gap > 0
             then
-                -- Top and left clients are shrinked by two steps and
-                -- get moved away from the border. Other clients just
-                -- get shrinked in one direction.
-                
-                gap_factor = (useless_gap / 100) * 2
+                -- All clients tile evenly.
+                g.x = g.x + (useless_gap / 2)
+                g.y = g.y + (useless_gap / 2)
 
-                if this_x == 0
-                then
-                    g.width = g.width - (2 + gap_factor) * useless_gap
-                    g.x = g.x + useless_gap
-                else
-                    g.width = g.width - (1 + gap_factor) * useless_gap
-                end
-
-                if this_y == 0
-                then
-                    g.height = g.height - (2 + gap_factor) * useless_gap
-                    g.y = g.y + useless_gap
-                else
-                    g.height = g.height - (1 + gap_factor) * useless_gap
-                end
             end
             c:geometry(g)
             remaining_clients = remaining_clients - 1
