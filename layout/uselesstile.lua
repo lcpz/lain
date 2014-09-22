@@ -9,7 +9,6 @@
                                                   
 --]]
 
-local naughty = require("naughty")
 local tag       = require("awful.tag")
 local beautiful = require("beautiful")
 local ipairs    = ipairs

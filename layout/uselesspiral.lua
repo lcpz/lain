@@ -13,7 +13,6 @@ local beautiful = require("beautiful")
 local ipairs    = ipairs
 local tonumber  = tonumber
 local math      = require("math")
-local naughty   = require("naughty")
 
 local uselesspiral = {}
 
