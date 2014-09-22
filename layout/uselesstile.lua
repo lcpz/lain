@@ -2,12 +2,14 @@
 --[[
                                                   
      Licensed under GNU General Public License v2 
-      * (c) 2013,      Luke Bonham                
+      * (c) 2014       projektile                 
+      * (c) 2013       Luke Bonham                
       * (c) 2009       Donald Ephraim Curtis      
       * (c) 2008       Julien Danjolu             
                                                   
 --]]
 
+local naughty = require("naughty")
 local tag       = require("awful.tag")
 local beautiful = require("beautiful")
 local ipairs    = ipairs
@@ -22,6 +24,14 @@ local function tile_group(cls, wa, orientation, fact, group)
     -- A useless gap (like the dwm patch) can be defined with
     -- beautiful.useless_gap_width .
     local useless_gap = tonumber(beautiful.useless_gap_width) or 0
+    if useless_gap < 0 then useless_gap = 0 end
+
+    -- A global border can be defined with
+    -- beautiful.global_border_width
+    global_border = tonumber(beautiful.global_border_width) or 0
+    if global_border < 0 then global_border = 0 end
+
+    -- BW!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 
     -- get our orientation right
     local height = "height"
@@ -36,7 +46,8 @@ local function tile_group(cls, wa, orientation, fact, group)
     end
 
     -- make this more generic (not just width)
-    available = wa[width] - (group.coord - wa[x])
+    --if for top
+    available = wa[width] - (group.coord - wa[x]) -- it's truly not here
 
     -- find our total values
     local total_fact = 0
@@ -58,20 +69,19 @@ local function tile_group(cls, wa, orientation, fact, group)
         end
         total_fact = total_fact + fact[i]
     end
-    size = math.min(size, available)
-
+    size = math.min(size, (available - global_border))
     local coord = wa[y]
     local geom = {}
     local used_size = 0
-    local unused = wa[height]
+    local unused = wa[height] - (global_border * 2)
     local stat_coord = wa[x]
     --stat_coord = size
     for c = group.first,group.last do
         local i = c - group.first +1
-        geom[width] = size
+        geom[width] = size - global_border
         geom[height] = math.floor(unused * fact[i] / total_fact)
-        geom[x] = group.coord
-        geom[y] = coord
+        geom[x] = group.coord + global_border + (useless_gap / 2)
+        geom[y] = coord + global_border + (useless_gap / 2)
 
         coord = coord + geom[height]
         unused = unused - geom[height]
@@ -88,8 +98,6 @@ local function tile_group(cls, wa, orientation, fact, group)
             top = false
             left = false
 
-            gap_factor = (useless_gap / 100) * 2
-
             if geom[y] == wa[y] then
                 top = true
             end
@@ -99,17 +107,17 @@ local function tile_group(cls, wa, orientation, fact, group)
             end
 
             if top then
-                geom[height] = geom[height] - (2 + gap_factor) * useless_gap
+                geom[height] = geom[height] - (2 * useless_gap)
                 geom[y] = geom[y] + useless_gap
             else
-                geom[height] = geom[height] - (1 + gap_factor) * useless_gap 
+                geom[height] = geom[height] - useless_gap
             end
 
             if left then
-                geom[width] = geom[width] - (2 + gap_factor) * useless_gap
+                geom[width] = geom[width] - (2 * useless_gap)
                 geom[x] = geom[x] + useless_gap
             else
-                geom[width] = geom[width] - (1 + gap_factor) * useless_gap
+                geom[width] = geom[width] - useless_gap
             end
         end
         -- End of useless gap.
@@ -135,6 +143,11 @@ local function tile(param, orientation)
         x = "y"
         y = "x"
     end
+
+    -- A global border can be defined with
+    -- beautiful.global_border_width
+    global_border = tonumber(beautiful.global_border_width) or 0
+    if global_border < 0 then global_border = 0 end
 
     local cls = param.clients
     local nmaster = math.min(tag.getnmaster(t), #cls)
@@ -181,7 +194,7 @@ local function tile(param, orientation)
             end
             for i = 1,ncol do
                 -- Try to get equal width among remaining columns
-                local size = math.min( (wasize - (coord - wa[x])) / (ncol - i + 1) )
+                local size = math.min((wasize - (coord - wa[x]))  / (ncol - i + 1)) --+ (global_border/(ncol))/(ncol+i^2)
                 local first = last + 1
                 last = last + math.floor((#cls - last)/(ncol - i + 1))
                 -- tile the column and update our current x coordinate
@@ -228,3 +241,4 @@ uselesstile.arrange = uselesstile.right.arrange
 uselesstile.name = uselesstile.right.name
 
 return uselesstile
+

@@ -2,6 +2,7 @@
 --[[
                                                   
      Licensed under GNU General Public License v2 
+      * (c) 2014,      projektile                 
       * (c) 2013,      Luke Bonham                
       * (c) 2012,      Josh Komoroske             
       * (c) 2010-2012, Peter Hofmann              
@@ -19,9 +20,22 @@ local function fair(p, orientation)
     -- A useless gap (like the dwm patch) can be defined with
     -- beautiful.useless_gap_width.
     local useless_gap = tonumber(beautiful.useless_gap_width) or 0
+    if useless_gap < 0 then useless_gap = 0 end
 
+    -- A global border can be defined with
+    -- beautiful.global_border_width.
+    local global_border = tonumber(beautiful.global_border_width) or 0
+    if global_border < 0 then global_border = 0 end
+
+    -- Themes border width requires an offset.
+    local bw = tonumber(beautiful.border_width) or 0
+
+    -- get our orientation right.
     local wa = p.workarea
     local cls = p.clients
+
+    wa.height = wa.height - ((global_border * 2) + (bw * 2))
+    wa.width = wa.width - ((global_border * 2) + (bw * 2))
 
     if #cls > 0 then
         local cells = math.ceil(math.sqrt(#cls))
@@ -47,8 +61,8 @@ local function fair(p, orientation)
                 this_x = cell
                 this_y = strip
 
-                g.x = wa.x + cell * g.width
-                g.y = wa.y + strip * g.height
+                g.x = wa.x + cell * g.width + global_border
+                g.y = wa.y + strip * g.height + global_border
 
             else
                 if #cls < (strips * cells) and strip == strips - 1 then
@@ -61,34 +75,20 @@ local function fair(p, orientation)
                 this_x = strip
                 this_y = cell
 
-                g.x = wa.x + strip * g.width
-                g.y = wa.y + cell * g.height
+                g.x = wa.x + strip * g.width + global_border
+                g.y = wa.y + cell * g.height + global_border
+
             end
 
             -- Useless gap.
             if useless_gap > 0
             then
-                -- Top and left clients are shrinked by two steps and
-                -- get moved away from the border. Other clients just
-                -- get shrinked in one direction.
+                -- All clients tile evenly.
+                g.width = g.width - useless_gap
+                g.x = g.x + (useless_gap / 2)
+                g.height = g.height - useless_gap
+                g.y = g.y + (useless_gap / 2)
 
-                gap_factor = (useless_gap / 100) * 2
-
-                if this_x == 0
-                then
-                    g.width = g.width - (2 + gap_factor) * useless_gap
-                    g.x = g.x + useless_gap
-                else
-                    g.width = g.width - (1 + gap_factor) * useless_gap
-                end
-
-                if this_y == 0
-                then
-                    g.height = g.height - (2 + gap_factor) * useless_gap
-                    g.y = g.y + useless_gap
-                else
-                    g.height = g.height - (1 + gap_factor) * useless_gap
-                end
             end
             -- End of useless gap.
 
