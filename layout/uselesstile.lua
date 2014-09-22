@@ -28,10 +28,11 @@ local function tile_group(cls, wa, orientation, fact, group)
 
     -- A global border can be defined with
     -- beautiful.global_border_width
-    global_border = tonumber(beautiful.global_border_width) or 0
+    local global_border = tonumber(beautiful.global_border_width) or 0
     if global_border < 0 then global_border = 0 end
 
-    -- BW!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+    -- Themes border width requires an offset
+    local bw = tonumber(beautiful.border_width) or 0
 
     -- get our orientation right
     local height = "height"
@@ -78,8 +79,8 @@ local function tile_group(cls, wa, orientation, fact, group)
     --stat_coord = size
     for c = group.first,group.last do
         local i = c - group.first +1
-        geom[width] = size - global_border
-        geom[height] = math.floor(unused * fact[i] / total_fact)
+        geom[width] = size - global_border - (bw * 2)
+        geom[height] = math.floor(unused * fact[i] / total_fact) - (bw * 2)
         geom[x] = group.coord + global_border + (useless_gap / 2)
         geom[y] = coord + global_border + (useless_gap / 2)
 
@@ -143,11 +144,6 @@ local function tile(param, orientation)
         x = "y"
         y = "x"
     end
-
-    -- A global border can be defined with
-    -- beautiful.global_border_width
-    global_border = tonumber(beautiful.global_border_width) or 0
-    if global_border < 0 then global_border = 0 end
 
     local cls = param.clients
     local nmaster = math.min(tag.getnmaster(t), #cls)
