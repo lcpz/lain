@@ -2,12 +2,14 @@
 --[[
                                                   
      Licensed under GNU General Public License v2 
+      * (c) 2014,      projektile                 
       * (c) 2013,      Luke Bonham                
       * (c) 2010-2012, Peter Hofmann              
                                                   
 --]]
 
-local tag = require("awful.tag")
+local tag       = require("awful.tag")
+local beautiful = require("beautiful")
 
 local cascade =
 {
@@ -21,9 +23,22 @@ function cascade.arrange(p)
 
     -- Cascade windows.
 
+    -- A global border can be defined with
+    -- beautiful.global_border_width.
+    local global_border = tonumber(beautiful.global_border_width) or 0
+    if global_border < 0 then global_border = 0 end
+
+    -- Themes border width requires an offset.
+    local bw = tonumber(beautiful.border_width) or 0
+
     -- Screen.
     local wa = p.workarea
     local cls = p.clients
+
+    wa.height = wa.height - ((global_border * 2) + (bw * 2))
+    wa.width = wa.width - ((global_border * 2) + (bw * 2))
+    wa.x = wa.x + global_border
+    wa.y = wa.y + global_border
 
     -- Opening a new window will usually force all existing windows to
     -- get resized. This wastes a lot of CPU time. So let's set a lower
