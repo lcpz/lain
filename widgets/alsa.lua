@@ -23,14 +23,14 @@ local alsa = {}
 local function worker(args)
     local args     = args or {}
     local timeout  = args.timeout or 5
-    local channel  = args.channel or "Master -c 1"
+    local channel  = args.channel or "Master"
     local settings = args.settings or function() end
 
     alsa.widget = wibox.widget.textbox('')
 
     function alsa.update()
-        local f = assert(io.popen('amixer get ' .. channel))
-        local mixer = f:read("*all")
+        local f = assert(io.popen('amixer -M get ' .. channel))
+        local mixer = f:read("*a")
         f:close()
 
         volume_now = {}
