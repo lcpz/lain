@@ -52,7 +52,7 @@ function task:show()
                                          fg = task.fg,
                                          bg = task.bg,
                                          timeout = task.timeout,
-                                         screen = client.focus and client.focus.screen or 1
+                                         screen = mouse.screen
                                      })
 end
 
@@ -75,7 +75,7 @@ function task:prompt_add()
               fg       = task.fg,
               bg       = task.bg,
               timeout  = task.timeout,
-              screen = client.focus and client.focus.screen or 1
+              screen = mouse.screen
           })
       end,
       nil,
@@ -109,7 +109,7 @@ function task:prompt_search()
               fg       = task.fg,
               bg       = task.bg,
               timeout  = task.timeout,
-              screen = client.focus and client.focus.screen or 1
+              screen = mouse.screen
           })
       end,
       nil,

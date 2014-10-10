@@ -88,7 +88,7 @@ local function worker(args)
                     position = "top_left",
                     icon     = helpers.icons_dir .. "no_net.png",
                     fg       = notify_fg or "#FFFFFF",
-                    screen = client.focus and client.focus.screen or 1
+                    screen = mouse.screen
                 })
                 helpers.set_map(iface, false)
             end

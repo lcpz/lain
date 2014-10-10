@@ -77,12 +77,12 @@ function alsabar.notify()
         alsabar._notify = naughty.notify ({
             replaces_id = alsabar._notify.id,
             preset      = preset,
-            screen = client.focus and client.focus.screen or 1
+            screen = mouse.screen
         })
     else
         alsabar._notify = naughty.notify ({
             preset = preset,
-            screen = client.focus and client.focus.screen or 1
+            screen = mouse.screen
         })
     end
 end
