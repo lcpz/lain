@@ -76,7 +76,7 @@ function tpbat:show(t_out)
         preset = { fg = beautiful.fg_normal },
         text = str,
         timeout = t_out,
-        screen = client.focus and client.focus.screen or 1
+        screen = mouse.screen
     })
 end
 
@@ -113,7 +113,7 @@ function tpbat.register(args)
             preset = bat_notification_low_preset,
             title = "SMAPI Battery Warning: Unable to read battery state!",
             text = "This widget is intended for ThinkPads. Is tp_smapi installed? Check your configs & paths.",
-            screen = client.focus and client.focus.screen or 1
+            screen = mouse.screen
         })
     end
 
@@ -140,14 +140,14 @@ function tpbat.register(args)
                     tpbat.id = naughty.notify({
                         preset = bat_notification_critical_preset,
                         replaces_id = tpbat.id,
-                        screen = client.focus and client.focus.screen or 1
+                        screen = mouse.screen
                     }).id
                 elseif bat_now.perc <= 15
                 then
                     tpbat.id = naughty.notify({
                         preset = bat_notification_low_preset,
                         replaces_id = tpbat.id,
-                        screen = client.focus and client.focus.screen or 1
+                        screen = mouse.screen
                     }).id
                 end
             end

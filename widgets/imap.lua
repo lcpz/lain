@@ -77,7 +77,7 @@ local function worker(args)
                 naughty.notify({
                     preset = mail_notification_preset,
                     text = nt,
-                    screen = client.focus and client.focus.screen or 1
+                    screen = mouse.screen
                 })
             end
 

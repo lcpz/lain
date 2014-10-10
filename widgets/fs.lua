@@ -47,7 +47,7 @@ function fs:show(t_out)
         preset = fs_notification_preset,
         text = ws,
         timeout = t_out,
-        screen = client.focus and client.focus.screen or 1
+        screen = mouse.screen
     })
 end
 
@@ -100,7 +100,7 @@ local function worker(args)
                 timeout = 8,
                 fg = "#000000",
                 bg = "#FFFFFF",
-                screen = client.focus and client.focus.screen or 1
+                screen = mouse.screen
             })
             helpers.set_map("fs", true)
         else
