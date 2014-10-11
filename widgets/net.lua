@@ -45,6 +45,7 @@ local function worker(args)
     local iface = args.iface or net.get_device()
     local units = args.units or 1024 --kb
     local notify = args.notify or "on"
+    local screen = args.screen or 1
     local settings = args.settings or function() end
 
     net.widget = wibox.widget.textbox('')
@@ -88,6 +89,7 @@ local function worker(args)
                     position = "top_left",
                     icon     = helpers.icons_dir .. "no_net.png",
                     fg       = notify_fg or "#FFFFFF",
+                    screen   = screen
                 })
                 helpers.set_map(iface, false)
             end

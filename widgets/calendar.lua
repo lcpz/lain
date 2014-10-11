@@ -30,7 +30,7 @@ function calendar:hide()
     end
 end
 
-function calendar:show(t_out, inc_offset)
+function calendar:show(t_out, inc_offset, scr)
     calendar:hide()
 
     local offs = inc_offset or 0
@@ -99,6 +99,7 @@ function calendar:show(t_out, inc_offset)
         fg = calendar.fg,
         bg = calendar.bg,
         timeout = tims,
+        screen = scr or 1
     })
 end
 

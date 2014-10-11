@@ -41,7 +41,8 @@ local alsabar = {
         font      = beautiful.font:sub(beautiful.font:find(""), beautiful.font:find(" ")),
         font_size = "11",
         color     = beautiful.fg_normal,
-        bar_size  = 18
+        bar_size  = 18,
+        screen    = 1
     },
 
     _current_level = 0,
@@ -55,6 +56,7 @@ function alsabar.notify()
         title   = "",
         text    = "",
         timeout = 4,
+        screen  = alsabar.notifications.screen,
         font    = alsabar.notifications.font .. " " ..
                   alsabar.notifications.font_size,
         fg      = alsabar.notifications.color
