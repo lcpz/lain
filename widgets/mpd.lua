@@ -91,7 +91,6 @@ local function worker(args)
                         preset = mpd_notification_preset,
                         icon = "/tmp/mpdcover.png",
                         replaces_id = mpd.id,
-                        screen = client.focus and client.focus.screen or 1
                     }).id
                 end
             elseif mpd_now.state ~= "pause"

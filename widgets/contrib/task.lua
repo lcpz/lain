@@ -2,7 +2,6 @@
 --[[
                                                   
      Licensed under GNU General Public License v2 
-      * (c) 2013, Luke Bonham                     
       * (c) 2013, Jan Xie                         
                                                   
 --]]
@@ -20,7 +19,7 @@ local tonumber     = tonumber
 local setmetatable = setmetatable
 
 -- Taskwarrior notification
--- lain.widgets.task
+-- lain.widgets.contrib.task
 local task = {}
 
 local task_notification = nil
@@ -52,7 +51,6 @@ function task:show()
                                          fg = task.fg,
                                          bg = task.bg,
                                          timeout = task.timeout,
-                                         screen = client.focus and client.focus.screen or 1
                                      })
 end
 
@@ -75,7 +73,6 @@ function task:prompt_add()
               fg       = task.fg,
               bg       = task.bg,
               timeout  = task.timeout,
-              screen = client.focus and client.focus.screen or 1
           })
       end,
       nil,
@@ -109,7 +106,6 @@ function task:prompt_search()
               fg       = task.fg,
               bg       = task.bg,
               timeout  = task.timeout,
-              screen = client.focus and client.focus.screen or 1
           })
       end,
       nil,

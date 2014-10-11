@@ -167,7 +167,6 @@ function yawn.show(t_out)
         text = weather_data,
         icon = sky,
         timeout = t_out,
-        screen = client.focus and client.focus.screen or 1
     })
 end
 
