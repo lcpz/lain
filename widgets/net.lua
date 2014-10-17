@@ -27,13 +27,21 @@ local net = {
     last_r = 0
 }
 
-function net.get_device()
+function net.get_device(include_misbehaving_ppp)
     f = io.popen("ip link show | cut -d' ' -f2,9")
     ws = f:read("*a")
+    if include_misbehaving_ppp then
+        ws1 = ws
+    end
     f:close()
     ws = ws:match("%w+: UP")
+    if include_misbehaving_ppp then
+        ws1 = ws1:match("ppp%w+: UNKNOWN")
+    end
     if ws ~= nil then
         return ws:gsub(": UP", "")
+    elseif include_misbehaving_ppp and ws1 ~= nil then
+        return ws1:gsub(": UNKNOWN", "")
     else
         return "network off"
     end
@@ -42,7 +50,8 @@ end
 local function worker(args)
     local args = args or {}
     local timeout = args.timeout or 2
-    local iface = args.iface or net.get_device()
+    local include_misbehaving_ppp = args.include_misbehaving_ppp or false
+    local iface = args.iface or net.get_device(include_misbehaving_ppp)
     local units = args.units or 1024 --kb
     local notify = args.notify or "on"
     local screen = args.screen or 1
@@ -55,7 +64,7 @@ local function worker(args)
     function update()
         net_now = {}
 
-        if iface == "" then iface = net.get_device() end
+        if iface == "" then iface = net.get_device(include_misbehaving_ppp) end
 
         net_now.carrier = helpers.first_line('/sys/class/net/' .. iface ..
                                            '/carrier') or "0"
