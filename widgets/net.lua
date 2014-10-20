@@ -31,9 +31,9 @@ function net.get_device()
     f = io.popen("ip link show | cut -d' ' -f2,9")
     ws = f:read("*a")
     f:close()
-    ws = ws:match("%w+: UP")
+    ws = ws:match("%w+: UP") or ws:match("ppp%w+: UNKNOWN")
     if ws ~= nil then
-        return ws:gsub(": UP", "")
+        return ws:match("(%w+):")
     else
         return "network off"
     end
