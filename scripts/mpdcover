@@ -2,7 +2,7 @@
 #
 # A simple cover fetcher script for current playing song on mpd.
 #
-# Author : Wolfgang Mueller
+# Original author: Wolfgang Mueller
 #
 # Adapted for Lain internal use.
 # https://github.com/copycat-killer/lain
@@ -58,7 +58,7 @@ cover="${cover:=$DEFAULT_ART}"
 # check if art is available
 if [[ -n $cover ]]; then
    if [[ -n $COVER_RESIZE ]]; then
-        convert "$cover" -thumbnail $COVER_RESIZE -gravity "center" -background "$COVER_BACKGROUND" -extent $COVER_RESIZE "$TEMP_PATH"
+        convert "$cover" -scale $COVER_RESIZE -gravity "center" -background "$COVER_BACKGROUND" "$TEMP_PATH"
         cover="$TEMP_PATH"
    fi
 else
