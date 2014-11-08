@@ -95,7 +95,10 @@ function centerfair.arrange(p)
         g.height = wa.height - 2*useless_gap - 2
         g.x = offset_x + useless_gap + global_border
         g.y = offset_y + global_border
-        cls[1]:geometry(g)
+
+        if cls[1] then
+            cls[1]:geometry(g)
+        end
 
         -- Treat the other clients
 
