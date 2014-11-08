@@ -91,7 +91,7 @@ function centerfair.arrange(p)
 
         -- Master client deserves a special treatement
         local g = {}
-        g.width = wa.width - (num_x  - 1) * width - num_x * useless_gap
+        g.width = wa.width - (num_x  - 1) * width - num_x * 2*useless_gap - 2 
         g.height = wa.height - 2*useless_gap - 2
         g.x = offset_x + useless_gap + global_border
         g.y = offset_y + global_border
@@ -142,7 +142,7 @@ function centerfair.arrange(p)
         g.width = width
 
         if useless_gap > 0 then
-            g.width = g.width - useless_gap/2 - 2
+            g.width = g.width + useless_gap - 2
         end
 
         for i = 1, (num_x-1) do
