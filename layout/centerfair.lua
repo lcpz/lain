@@ -104,7 +104,7 @@ function centerfair.arrange(p)
         do
             local remaining_clients = #cls-1
             local ncol_min = math.ceil(remaining_clients/(num_x-1))
-            if ncol >= ncol_min 
+            if ncol >= ncol_min
             then
                 for i = (num_x-1), 1, -1 do
                     if (remaining_clients-i+1) < ncol
