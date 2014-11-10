@@ -146,7 +146,7 @@ function centerfair.arrange(p)
             to_remove = 2
             g.height = math.floor((wa.height - (num_y[i] * useless_gap)) / num_y[i])
             g.y = offset_y + global_border
-            for j = 1, (num_y[i]-1) do
+            for j = 0, (num_y[i]-2) do
                 cls[nclient]:geometry(g)
                 nclient = nclient - 1
                 g.y = g.y + g.height+useless_gap + 2
