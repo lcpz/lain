@@ -11,9 +11,9 @@
 -- ...asynchronously:
 -- asyncshell.request('wscript -Kiev', function(f) wwidget.text = f:read("*l") end)
 -- ...synchronously
--- wwidget.text = asyncshell.demand('wscript -Kiev', 5):read("*l") or "Error"
+-- widget:set_text(asyncshell.demand('wscript -Kiev', 5):read("*l") or "Error")
 
--- This makes things faster, but puts weight on sysload and is more cpu demanding.
+-- This is more cpu demanding, but makes things faster.
 
 local spawn = require('awful.util').spawn
 
@@ -39,7 +39,7 @@ end
 function asyncshell.request(command, callback)
    local id = next_id()
    local tmpfname = asyncshell.file_template .. id
-   asyncshell.request_table[id] = {callback = callback}
+   asyncshell.request_table[id] = { callback = callback }
    local req =
       string.format("sh -c '%s > %s; " ..
                     'echo "asyncshell.deliver(%s)" | ' ..

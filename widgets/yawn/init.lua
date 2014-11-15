@@ -45,9 +45,9 @@ local city_id             = nil
 local sky                 = nil
 local settings            = function() end
 
-yawn_notification_preset = {}
+yawn_notification_preset  = {}
 
-local function fetch_weather()
+function yawn.fetch_weather()
     local url = api_url .. units_set .. city_id
     local cmd = "curl --connect-timeout 1 -fsm 3 '" .. url .. "'"
 
@@ -157,7 +157,7 @@ end
 function yawn.show(t_out)
     if yawn.widget._layout.text:match("?")
     then
-        fetch_weather(settings)
+        yawn.fetch_weather()
     end
 
     yawn.hide()
@@ -179,7 +179,7 @@ function yawn.register(id, args)
 
     city_id = id
 
-    newtimer("yawn", timeout, fetch_weather)
+    newtimer("yawn", timeout, yawn.fetch_weather)
 
     yawn.icon:connect_signal("mouse::enter", function()
         yawn.show(0)
