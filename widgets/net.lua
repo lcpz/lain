@@ -16,7 +16,8 @@ local wibox        = require("wibox")
 local io           = { popen  = io.popen }
 local tostring     = tostring
 local string       = { format = string.format,
-                       gsub   = string.gsub }
+                       gsub   = string.gsub,
+                       match  = string.match }
 
 local setmetatable = setmetatable
 
@@ -56,7 +57,10 @@ local function worker(args)
     function update()
         net_now = {}
 
-        if iface == "" then iface = net.get_device() end
+        if iface == "" or string.match(iface, "network off")
+        then
+            iface = net.get_device()
+        end
 
         net_now.carrier = helpers.first_line('/sys/class/net/' .. iface ..
                                            '/carrier') or "0"
