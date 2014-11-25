@@ -54,7 +54,7 @@ local function worker(args)
             position = "top_left"
         }
 
-        curl = string.format("%s --url imaps://%s:%s/INBOX -u %s:%s %s -k",
+        curl = string.format("%s --url imaps://%s:%s/INBOX -u %s:%q %s -k",
                head_command, server, port, mail, password, request)
 
         async.request(curl, function(f)
