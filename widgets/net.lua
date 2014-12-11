@@ -40,6 +40,18 @@ function net.get_device()
     end
 end
 
+function net.get_ssid()
+   file = io.popen("iwgetid -r")
+   ssid = file:read("*all")
+
+   if (ssid == "") then
+	  ssid = "Not connected"
+   end
+   
+   file:close()
+   return ssid
+end
+
 local function worker(args)
     local args = args or {}
     local timeout = args.timeout or 2
@@ -65,21 +77,23 @@ local function worker(args)
         net_now.carrier = helpers.first_line('/sys/class/net/' .. iface ..
                                            '/carrier') or "0"
         net_now.state = helpers.first_line('/sys/class/net/' .. iface ..
-                                           '/operstate') or "down"
+											  '/operstate') or "down"
         local now_t = helpers.first_line('/sys/class/net/' .. iface ..
                                            '/statistics/tx_bytes') or 0
         local now_r = helpers.first_line('/sys/class/net/' .. iface ..
                                            '/statistics/rx_bytes') or 0
-
+		
         net_now.sent = tostring((now_t - net.last_t) / timeout / units)
         net_now.sent = string.gsub(string.format('%.1f', net_now.sent), ",", ".")
 
         net_now.received = tostring((now_r - net.last_r) / timeout / units)
         net_now.received = string.gsub(string.format('%.1f', net_now.received), ",", ".")
 
+		net_now.ssid = net.get_ssid()
+				
         widget = net.widget
         settings()
-
+		
         net.last_t = now_t
         net.last_r = now_r
 
@@ -104,6 +118,7 @@ local function worker(args)
     end
 
     helpers.newtimer(iface, timeout, update)
+
     return net.widget
 end
 
