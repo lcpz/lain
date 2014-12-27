@@ -1,3 +1,11 @@
+
+--[[
+                                                   
+     Licensed under GNU General Public License v2  
+      * (c) 2014, anticlockwise <http://github.com/anticlockwise>
+                                                   
+--]]
+
 local helpers = require("lain.helpers")
 local async   = require("lain.asyncshell")
 
@@ -16,34 +24,38 @@ local setmetatable = setmetatable
 local moc = {}
 
 local function worker(args)
-    local args = args or {}
-    local timeout = args.timeout or 2
-    local music_dir = args.music_dir or os.getenv("HOME") .. "/Music"
-    local cover_size = args.cover_size or 100
+    local args        = args or {}
+    local timeout     = args.timeout or 2
+    local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
+    local cover_size  = args.cover_size or 100
     local default_art = args.default_art or ""
-    local settings = args.settings or function() end
+    local settings    = args.settings or function() end
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
 
     moc.widget = wibox.widget.textbox('')
 
     moc_notification_preset = {
-        title = "Now playing",
+        title   = "Now playing",
         timeout = 6
     }
 
     helpers.set_map("current moc track", nil)
 
     function moc.update()
+        -- mocp -i will produce output like:
+        -- Artist: Travis
+        -- Album: The Man Who
+        -- etc.
         async.request("mocp -i", function(f)
             moc_now = {
-                state = "N/A",
-                file  = "N/A",
-                artist = "N/A",
-                title = "N/A",
-                album = "N/A",
+                state   = "N/A",
+                file    = "N/A",
+                artist  = "N/A",
+                title   = "N/A",
+                album   = "N/A",
                 elapsed = "N/A",
-                total = "N/A"
+                total   = "N/A"
             }
 
             for line in f:lines() do
