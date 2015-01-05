@@ -1,12 +1,12 @@
 
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2014       projektile                 
-      * (c) 2013       Luke Bonham                
-      * (c) 2009       Donald Ephraim Curtis      
-      * (c) 2008       Julien Danjolu             
-                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2014       projektile
+      * (c) 2013       Luke Bonham
+      * (c) 2009       Donald Ephraim Curtis
+      * (c) 2008       Julien Danjolu
+
 --]]
 
 local tag       = require("awful.tag")
@@ -19,16 +19,7 @@ local tonumber  = tonumber
 
 local uselesstile = {}
 
-local function tile_group(cls, wa, orientation, fact, group)
-    -- A useless gap (like the dwm patch) can be defined with
-    -- beautiful.useless_gap_width .
-    local useless_gap = tonumber(beautiful.useless_gap_width) or 0
-    if useless_gap < 0 then useless_gap = 0 end
-
-    -- A global border can be defined with
-    -- beautiful.global_border_width
-    local global_border = tonumber(beautiful.global_border_width) or 0
-    if global_border < 0 then global_border = 0 end
+local function tile_group(cls, wa, orientation, fact, group, gap)
 
     -- Themes border width requires an offset
     local bw = tonumber(beautiful.border_width) or 0
@@ -69,58 +60,28 @@ local function tile_group(cls, wa, orientation, fact, group)
         end
         total_fact = total_fact + fact[i]
     end
-    size = math.min(size, (available - global_border))
+    size = math.min(size, available)
     local coord = wa[y]
     local geom = {}
     local used_size = 0
-    local unused = wa[height] - (global_border * 2)
+    local unused = wa[height]
     local stat_coord = wa[x]
     --stat_coord = size
     for c = group.first,group.last do
         local i = c - group.first +1
-        geom[width] = size - global_border - (bw * 2)
+        geom[width] = size - (bw * 2)
         geom[height] = math.floor(unused * fact[i] / total_fact) - (bw * 2)
-        geom[x] = group.coord + global_border
-        geom[y] = coord + global_border
+        geom[x] = group.coord
+        geom[y] = coord
 
-        coord = coord + geom[height]
-        unused = unused - geom[height]
+        coord = coord + geom[height] + 2 * bw
+        unused = unused - geom[height] - 2 * bw
         total_fact = total_fact - fact[i]
-        used_size = math.max(used_size, geom[width])
+        used_size = math.max(used_size, geom[width] + 2 * bw)
 
-        -- Useless gap
-        if useless_gap > 0
-        then
-            -- Top and left clients are shrinked by two steps and
-            -- get moved away from the border. Other clients just
-            -- get shrinked in one direction.
-
-            top = false
-            left = false
-
-            if geom[y] == wa[y] then
-                top = true
-            end
-
-            if geom[x] == 0 or geom[x] == wa[x] then
-                left = true
-            end
-
-            if top then
-                geom[height] = geom[height] - (2 * useless_gap)
-                geom[y] = geom[y] + useless_gap
-            else
-                geom[height] = geom[height] - useless_gap
-            end
-
-            if left then
-                geom[width] = geom[width] - (2 * useless_gap)
-                geom[x] = geom[x] + useless_gap
-            else
-                geom[width] = geom[width] - useless_gap
-            end
-        end
-        -- End of useless gap.
+        -- Useless gap correction
+        geom.width = geom.width - gap
+        geom.height = geom.height - gap
 
         geom = cls[c]:geometry(geom)
     end
@@ -131,6 +92,16 @@ end
 local function tile(param, orientation)
     local t = tag.selected(param.screen)
     orientation = orientation or "right"
+
+    -- A useless gap (like the dwm patch) can be defined with
+    -- beautiful.useless_gap_width .
+    local useless_gap = tonumber(beautiful.useless_gap_width) or 0
+    if useless_gap < 0 then useless_gap = 0 end
+
+    -- A global border can be defined with
+    -- beautiful.global_border_width
+    local global_border = tonumber(beautiful.global_border_width) or 0
+    if global_border < 0 then global_border = 0 end
 
     -- this handles are different orientations
     local height = "height"
@@ -151,6 +122,12 @@ local function tile(param, orientation)
     local mwfact = tag.getmwfact(t)
     local wa = param.workarea
     local ncol = tag.getncol(t)
+
+    -- Workarea size correction
+    wa.height = wa.height - 2 * global_border - useless_gap
+    wa.width  = wa.width -  2 * global_border - useless_gap
+    wa.x = wa.x + useless_gap + global_border
+    wa.y = wa.y + useless_gap + global_border
 
     local data = tag.getdata(t).windowfact
 
@@ -176,7 +153,7 @@ local function tile(param, orientation)
             if not data[0] then
                 data[0] = {}
             end
-            coord = coord + tile_group(cls, wa, orientation, data[0], {first=1, last=nmaster, coord = coord, size = size})
+            coord = coord + tile_group(cls, wa, orientation, data[0], {first=1, last=nmaster, coord = coord, size = size}, useless_gap)
         end
 
         if not place_master and nother > 0 then
@@ -196,7 +173,7 @@ local function tile(param, orientation)
                 if not data[i] then
                     data[i] = {}
                 end
-                coord = coord + tile_group(cls, wa, orientation, data[i], { first = first, last = last, coord = coord, size = size })
+                coord = coord + tile_group(cls, wa, orientation, data[i], { first = first, last = last, coord = coord, size = size }, useless_gap)
             end
         end
         place_master = not place_master
