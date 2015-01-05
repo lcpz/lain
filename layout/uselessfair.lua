@@ -1,12 +1,12 @@
 
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2014,      projektile                 
-      * (c) 2013,      Luke Bonham                
-      * (c) 2012,      Josh Komoroske             
-      * (c) 2010-2012, Peter Hofmann              
-                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2014,      projektile
+      * (c) 2013,      Luke Bonham
+      * (c) 2012,      Josh Komoroske
+      * (c) 2010-2012, Peter Hofmann
+
 --]]
 
 local beautiful = require("beautiful")
@@ -30,12 +30,17 @@ local function fair(p, orientation)
     -- Themes border width requires an offset.
     local bw = tonumber(beautiful.border_width) or 0
 
+    -- Total window size extend
+    local ext = 2 * bw + useless_gap
+
     -- get our orientation right.
     local wa = p.workarea
     local cls = p.clients
 
-    wa.height = wa.height - ((global_border * 2) + (bw * 2))
-    wa.width = wa.width - ((global_border * 2) + (bw * 2))
+    wa.height = wa.height - 2 * global_border - useless_gap
+    wa.width  = wa.width -  2 * global_border - useless_gap
+    wa.x = wa.x + useless_gap + global_border
+    wa.y = wa.y + useless_gap + global_border
 
     if #cls > 0 then
         local cells = math.ceil(math.sqrt(#cls))
@@ -45,10 +50,7 @@ local function fair(p, orientation)
         local strip = 0
         for k, c in ipairs(cls) do
             local g = {}
-            -- Save actual grid index for use in the useless_gap
-            -- routine.
-            local this_x = 0
-            local this_y = 0
+
             if ( orientation == "east" and #cls > 2 )
             or ( orientation == "south" and #cls <= 2 ) then
                 if #cls < (strips * cells) and strip == strips - 1 then
@@ -58,11 +60,8 @@ local function fair(p, orientation)
                 end
                 g.height = wa.height / strips
 
-                this_x = cell
-                this_y = strip
-
-                g.x = wa.x + cell * g.width + global_border
-                g.y = wa.y + strip * g.height + global_border
+                g.x = wa.x + cell * g.width
+                g.y = wa.y + strip * g.height
 
             else
                 if #cls < (strips * cells) and strip == strips - 1 then
@@ -72,25 +71,13 @@ local function fair(p, orientation)
                 end
                 g.width = wa.width / strips
 
-                this_x = strip
-                this_y = cell
-
-                g.x = wa.x + strip * g.width + global_border
-                g.y = wa.y + cell * g.height + global_border
+                g.x = wa.x + strip * g.width
+                g.y = wa.y + cell * g.height
 
             end
 
-            -- Useless gap.
-            if useless_gap > 0
-            then
-                -- All clients tile evenly.
-                g.width = g.width - useless_gap
-                g.x = g.x + (useless_gap / 2)
-                g.height = g.height - useless_gap
-                g.y = g.y + (useless_gap / 2)
-
-            end
-            -- End of useless gap.
+            g.width = g.width - ext
+            g.height = g.height - ext
 
             c:geometry(g)
 
