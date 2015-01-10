@@ -2,7 +2,7 @@
 --[[
 
      Licensed under GNU General Public License v2
-      * (c) 2014       projektile
+      * (c) 2014       projektile, worron
       * (c) 2013       Luke Bonham
       * (c) 2009       Donald Ephraim Curtis
       * (c) 2008       Julien Danjolu
@@ -13,204 +13,180 @@ local tag       = require("awful.tag")
 local beautiful = require("beautiful")
 local ipairs    = ipairs
 local math      = { floor = math.floor,
+                    ceil  = math.ceil,
                     max   = math.max,
                     min   = math.min }
 local tonumber  = tonumber
 
 local uselesstile = {}
 
-local function tile_group(cls, wa, orientation, fact, group, gap)
-
-    -- Themes border width requires an offset
-    local bw = tonumber(beautiful.border_width) or 0
-
-    -- get our orientation right
-    local height = "height"
-    local width = "width"
-    local x = "x"
-    local y = "y"
-    if orientation == "top" or orientation == "bottom" then
-        height = "width"
-        width = "height"
-        x = "y"
-        y = "x"
-    end
-
-    -- make this more generic (not just width)
-    --if for top
-    available = wa[width] - (group.coord - wa[x]) -- it's truly not here
-
-    -- find our total values
-    local total_fact = 0
-    local min_fact = 1
-    local size = group.size
-    for c = group.first,group.last do
-        -- determine the width/height based on the size_hint
-        local i = c - group.first +1
-        local size_hints = cls[c].size_hints
-        local size_hint = size_hints["min_"..width] or size_hints["base_"..width] or 0
-        size_hint = size_hint + cls[c].border_width*2
-        size = math.max(size_hint, size)
-
-        -- calculate the height
-        if not fact[i] then
-            fact[i] = min_fact
-        else
-            min_fact = math.min(fact[i],min_fact)
-        end
-        total_fact = total_fact + fact[i]
-    end
-    size = math.min(size, available)
-    local coord = wa[y]
-    local geom = {}
-    local used_size = 0
-    local unused = wa[height]
-    local stat_coord = wa[x]
-    --stat_coord = size
-    for c = group.first,group.last do
-        local i = c - group.first +1
-        geom[width] = size - (bw * 2)
-        geom[height] = math.floor(unused * fact[i] / total_fact) - (bw * 2)
-        geom[x] = group.coord
-        geom[y] = coord
-
-        coord = coord + geom[height] + 2 * bw
-        unused = unused - geom[height] - 2 * bw
-        total_fact = total_fact - fact[i]
-        used_size = math.max(used_size, geom[width] + 2 * bw)
-
-        -- Useless gap correction
-        geom.width = geom.width - gap
-        geom.height = geom.height - gap
-
-        geom = cls[c]:geometry(geom)
-    end
-
-    return used_size
+-- Transformation functions
+local function flip(canvas, geometry)
+    return {
+        -- vertical only
+        x = 2 * canvas.x + canvas.width - geometry.x - geometry.width,
+        y = geometry.y,
+        width = geometry.width,
+        height = geometry.height
+    }
 end
 
-local function tile(param, orientation)
-    local t = tag.selected(param.screen)
-    orientation = orientation or "right"
+local function swap(geometry)
+    return { x = geometry.y, y = geometry.x, width = geometry.height, height = geometry.width }
+end
 
-    -- A useless gap (like the dwm patch) can be defined with
-    -- beautiful.useless_gap_width .
-    local useless_gap = tonumber(beautiful.useless_gap_width) or 0
-    if useless_gap < 0 then useless_gap = 0 end
+-- Find geometry for column/row tiling
+local function cut_area(wa, total, index, is_horizontal)
+    local wa = is_horizontal and swap(wa) or wa
+    local height = wa.height / total
 
-    -- A global border can be defined with
-    -- beautiful.global_border_width
-    local global_border = tonumber(beautiful.global_border_width) or 0
-    if global_border < 0 then global_border = 0 end
+    local area = {
+        x = wa.x,
+        y = wa.y + (index - 1) * height,
+        width = wa.width,
+        height = height
+    }
 
-    -- this handles are different orientations
-    local height = "height"
-    local width = "width"
-    local x = "x"
-    local y = "y"
-    if orientation == "top" or orientation == "bottom" then
-        height = "width"
-        width = "height"
-        x = "y"
-        y = "x"
+    if is_horizontal then area = swap(area) end
+
+    return area
+end
+
+-- Client geometry correction depending on useless gap and window border
+local function size_correction(c, geometry, useless_gap)
+    geometry.width  = math.max(geometry.width  - 2 * c.border_width - useless_gap, 1)
+    geometry.height = math.max(geometry.height - 2 * c.border_width - useless_gap, 1)
+    geometry.x = geometry.x + useless_gap / 2
+    geometry.y = geometry.y + useless_gap / 2
+end
+
+-- Tile group of clients in given area
+-- @canvas need for proper transformation only
+local function tile_column(canvas, area, list, useless_gap, transformation)
+    for i, c in ipairs(list) do
+        local g = cut_area(area, #list, i)
+
+        -- swap workarea dimensions
+        if transformation.flip then g = flip(canvas, g) end
+        if transformation.swap then g = swap(g) end
+
+        -- useless gap and border correction
+        size_correction(c, g, useless_gap)
+
+        c:geometry(g)
+    end
+end
+
+--Main tile function
+local function tile(p, orientation)
+
+    -- Theme vars
+    local useless_gap = beautiful.useless_gap_width or 0
+    local global_border = beautiful.global_border_width or 0
+
+    -- Aliases
+    local wa = p.workarea
+    local cls = p.clients
+    local t = tag.selected(p.screen)
+
+    -- Nothing to tile here
+    if #cls == 0 then return end
+
+    -- Get tag prop
+    local nmaster = math.min(tag.getnmaster(t), #cls)
+    local mwfact = tag.getmwfact(t)
+
+    if nmaster == 0 then
+        mwfact = 0
+    elseif nmaster == #cls then
+        mwfact = 1
     end
 
-    local cls = param.clients
-    local nmaster = math.min(tag.getnmaster(t), #cls)
-    local nother = math.max(#cls - nmaster,0)
-
-    local mwfact = tag.getmwfact(t)
-    local wa = param.workarea
-    local ncol = tag.getncol(t)
-
-    -- Workarea size correction
+    -- Workarea size correction depending on useless gap and global border
     wa.height = wa.height - 2 * global_border - useless_gap
     wa.width  = wa.width -  2 * global_border - useless_gap
-    wa.x = wa.x + useless_gap + global_border
-    wa.y = wa.y + useless_gap + global_border
+    wa.x = wa.x + useless_gap / 2 + global_border
+    wa.y = wa.y + useless_gap / 2 + global_border
 
-    local data = tag.getdata(t).windowfact
+    -- Find which transformation we need for given orientation
+    local transformation = {
+        swap = orientation == 'top' or orientation == 'bottom',
+        flip = orientation == 'left' or orientation == 'top'
+    }
 
-    if not data then
-        data = {}
-        tag.getdata(t).windowfact = data
+    -- Swap workarea dimensions if orientation vertical
+    if transformation.swap then wa = swap(wa) end
+
+    -- Split master and other windows
+    local cls_master, cls_other = {}, {}
+
+    for i, c in ipairs(cls) do
+        if i <= nmaster then
+            table.insert(cls_master, c)
+        else
+            table.insert(cls_other, c)
+        end
     end
 
-    local coord = wa[x]
-    local place_master = true
-    if orientation == "left" or orientation == "top" then
-        -- if we are on the left or top we need to render the other windows first
-        place_master = false
-    end
+    -- Tile master windows
+    local master_area = {
+        x = wa.x,
+        y = wa.y,
+        width  = nmaster > 0 and wa.width * mwfact or 0,
+        height = wa.height
+    }
 
-    -- this was easier than writing functions because there is a lot of data we need
-    for d = 1,2 do
-        if place_master and nmaster > 0 then
-            local size = wa[width]
-            if nother > 0 then
-                size = math.min(wa[width] * mwfact, wa[width] - (coord - wa[x]))
-            end
-            if not data[0] then
-                data[0] = {}
-            end
-            coord = coord + tile_group(cls, wa, orientation, data[0], {first=1, last=nmaster, coord = coord, size = size}, useless_gap)
+    tile_column(wa, master_area, cls_master, useless_gap, transformation)
+
+    -- Tile other windows
+    local other_area = {
+        x = wa.x + master_area.width,
+        y = wa.y,
+        width  = wa.width - master_area.width,
+        height = wa.height
+    }
+
+    -- get column number for other windows
+    local ncol = math.min(tag.getncol(t), #cls_other)
+
+    -- split other windows to column groups
+    local last_small_column = ncol - #cls_other % ncol
+    local rows_min = math.floor(#cls_other / ncol)
+
+    local client_index = 1
+    for i = 1, ncol do
+        local position = transformation.flip and ncol - i + 1 or i
+        local rows = i <= last_small_column and rows_min or rows_min + 1
+        local column = {}
+
+        for j = 1, rows do
+            table.insert(column, cls_other[client_index])
+            client_index = client_index + 1
         end
 
-        if not place_master and nother > 0 then
-            local last = nmaster
-
-            -- we have to modify the work area size to consider left and top views
-            local wasize = wa[width]
-            if nmaster > 0 and (orientation == "left" or orientation == "top") then
-                wasize = wa[width] - wa[width]*mwfact
-            end
-            for i = 1,ncol do
-                -- Try to get equal width among remaining columns
-                local size = math.min((wasize - (coord - wa[x]))  / (ncol - i + 1)) --+ (global_border/(ncol))/(ncol+i^2)
-                local first = last + 1
-                last = last + math.floor((#cls - last)/(ncol - i + 1))
-                -- tile the column and update our current x coordinate
-                if not data[i] then
-                    data[i] = {}
-                end
-                coord = coord + tile_group(cls, wa, orientation, data[i], { first = first, last = last, coord = coord, size = size }, useless_gap)
-            end
-        end
-        place_master = not place_master
+		-- and tile
+		local column_area = cut_area(other_area, ncol, position, true)
+        tile_column(wa, column_area, column, useless_gap, transformation)
     end
-
 end
 
-uselesstile.right = {}
-uselesstile.right.name = "uselesstile"
-uselesstile.right.arrange = tile
-
---- The main tile algo, on left.
--- @param screen The screen number to tile.
-uselesstile.left = {}
-uselesstile.left.name = "uselesstileleft"
-function uselesstile.left.arrange(p)
-    return tile(p, "left")
+-- Layout constructor
+local function construct_layout(name, orientation)
+    return {
+        name = name,
+        -- @p screen number to tile
+        arrange = function(p) return tile(p, orientation) end
+    }
 end
 
---- The main tile algo, on bottom.
--- @param screen The screen number to tile.
-uselesstile.bottom = {}
-uselesstile.bottom.name = "uselesstilebottom"
-function uselesstile.bottom.arrange(p)
-    return tile(p, "bottom")
-end
+-- Build layouts with different tile direction
+uselesstile.right  = construct_layout("uselesstile", "right")
+uselesstile.left   = construct_layout("uselesstileleft", "left")
+uselesstile.bottom = construct_layout("uselesstilebottom", "bottom")
+uselesstile.top    = construct_layout("uselesstiletop", "top")
 
---- The main tile algo, on top.
--- @param screen The screen number to tile.
-uselesstile.top = {}
-uselesstile.top.name = "uselesstiletop"
-function uselesstile.top.arrange(p)
-    return tile(p, "top")
-end
-
+-- Module aliase
 uselesstile.arrange = uselesstile.right.arrange
 uselesstile.name = uselesstile.right.name
 
 return uselesstile
-
