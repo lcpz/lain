@@ -107,7 +107,7 @@ fi
 #   Computing mount point max length
 # -------------------------------------------------------------------------
 MOUNT_POINT_MAX_LENGTH=` \
-											 echo $SORTED_FILE_SYSTEMS_INFO | $AWK_COMMAND -v PATTERN=$PATTERN \
+											 echo "$SORTED_FILE_SYSTEMS_INFO" | $AWK_COMMAND -v PATTERN=$PATTERN \
 											 '
 											 BEGIN       {
 												 mount_point_length_max = 15;
@@ -364,22 +364,22 @@ $0 ~ PATTERN    {
 
 			if (total_size > 1 * t_bytes)
 				printf ( \
-						"| %3d%%    %5.1f    %5.1f Tb\n", \
+						"| %3d%%   %6.1f   %6.1f Tb\n", \
 						percentage_occupied, free_size / t_bytes, total_size / t_bytes \
 						);
 			else if (total_size > 1 * g_bytes)
 				printf ( \
-						"| %3d%%    %5.1f    %5.1f Gb\n", \
+						"| %3d%%   %6.1f   %6.1f Gb\n", \
 						percentage_occupied, free_size / g_bytes, total_size / g_bytes \
 						);
 			else if (total_size > 1 * m_byptes)
 				printf ( \
-						"| %3d%%    %5.1f    %5.1f Mb\n", \
+						"| %3d%%   %6.1f   %6.1f Mb\n", \
 						percentage_occupied, free_size / m_bytes, total_size / m_bytes \
 						);
 			else
 				printf ( \
-						"| %3d%%    %5.1f    %5.1f Kb\n", \
+						"| %3d%%   %6.1f   %6.1f Kb\n", \
 						percentage_occupied, free_size / k_bytes, total_size / k_bytes \
 						);
 		}
