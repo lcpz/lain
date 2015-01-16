@@ -58,7 +58,9 @@ local function worker(args)
                 artist = "N/A",
                 title  = "N/A",
                 album  = "N/A",
-                date   = "N/A"
+                date   = "N/A",
+                time   = "N/A",
+                elapsed= "N/A"
             }
 
             for line in f:lines() do
@@ -69,6 +71,8 @@ local function worker(args)
                     elseif k == "Title"  then mpd_now.title  = escape_f(v)
                     elseif k == "Album"  then mpd_now.album  = escape_f(v)
                     elseif k == "Date"   then mpd_now.date   = escape_f(v)
+                    elseif k == "Time"   then mpd_now.time   = v
+                    elseif k == "elapsed"then mpd_now.elapsed= math.floor(v)
                     end
                 end
             end
