@@ -53,26 +53,26 @@ local function worker(args)
     function mpd.update()
         async.request(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh, function (f)
             mpd_now = {
-                state  = "N/A",
-                file   = "N/A",
-                artist = "N/A",
-                title  = "N/A",
-                album  = "N/A",
-                date   = "N/A",
-                time   = "N/A",
-                elapsed= "N/A"
+                state   = "N/A",
+                file    = "N/A",
+                artist  = "N/A",
+                title   = "N/A",
+                album   = "N/A",
+                date    = "N/A",
+                time    = "N/A",
+                elapsed = "N/A"
             }
 
             for line in f:lines() do
                 for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
-                    if     k == "state"  then mpd_now.state  = v
-                    elseif k == "file"   then mpd_now.file   = v
-                    elseif k == "Artist" then mpd_now.artist = escape_f(v)
-                    elseif k == "Title"  then mpd_now.title  = escape_f(v)
-                    elseif k == "Album"  then mpd_now.album  = escape_f(v)
-                    elseif k == "Date"   then mpd_now.date   = escape_f(v)
-                    elseif k == "Time"   then mpd_now.time   = v
-                    elseif k == "elapsed"then mpd_now.elapsed= math.floor(v)
+                    if     k =  = "state"   then mpd_now.state   = v
+                    elseif k =  = "file"    then mpd_now.file    = v
+                    elseif k =  = "Artist"  then mpd_now.artist  = escape_f(v)
+                    elseif k =  = "Title"   then mpd_now.title   = escape_f(v)
+                    elseif k =  = "Album"   then mpd_now.album   = escape_f(v)
+                    elseif k =  = "Date"    then mpd_now.date    = escape_f(v)
+                    elseif k =  = "Time"    then mpd_now.time    = v
+                    elseif k =  = "elapsed" then mpd_now.elapsed = math.floor(v)
                     end
                 end
             end
