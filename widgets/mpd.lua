@@ -14,10 +14,11 @@ local escape_f     = require("awful.util").escape
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
-local io           = { popen    = io.popen }
 local os           = { execute  = os.execute,
                        getenv   = os.getenv }
+local math         = { floor    = math.floor }
 local string       = { format   = string.format,
+                       match    = string.match,
                        gmatch   = string.gmatch }
 
 local setmetatable = setmetatable
@@ -72,7 +73,7 @@ local function worker(args)
                     elseif k == "Album"   then mpd_now.album   = escape_f(v)
                     elseif k == "Date"    then mpd_now.date    = escape_f(v)
                     elseif k == "Time"    then mpd_now.time    = v
-                    elseif k == "elapsed" then mpd_now.elapsed = math.floor(v)
+                    elseif k == "elapsed" then mpd_now.elapsed = string.match(v, "%d+")
                     end
                 end
             end
