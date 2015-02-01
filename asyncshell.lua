@@ -44,8 +44,7 @@ function asyncshell.request(command, callback)
       string.format("sh -c '%s > %s; " ..
                     'echo "asyncshell.deliver(%s)" | ' ..
                     "awesome-client' 2> /dev/null",
-                    string.gsub(command, "'", "'\\''"), tmpfname,
-                    id, tmpfname)
+                    string.gsub(command, "'", "'\\''"), tmpfname, id)
    spawn(req, false)
    return id
 end
