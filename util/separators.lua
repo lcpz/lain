@@ -2,7 +2,7 @@
 --[[
                                                    
      Licensed under GNU General Public License v2  
-      * (c) 2015,      luke bonham                 
+      * (c) 2015,      Luke Bonham                 
       * (c) 2015,      plotnikovanton              
                                                    
 --]]
@@ -11,7 +11,7 @@ local wibox     = require("wibox")
 local beautiful = require("beautiful")
 local gears     = require("gears")
 
--- Lain cairo separators util submodule
+-- Lain Cairo separators util submodule
 -- lain.util.separators
 local separators = {}
 
