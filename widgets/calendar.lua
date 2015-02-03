@@ -37,7 +37,7 @@ function calendar:show(t_out, inc_offset, scr)
     local tims = t_out or 0
     local f, c_text
     local today = tonumber(os.date('%d'))
-    local init_t = calendar.cal .. ' | sed -r -e "s/(^| )( '
+    local init_t = calendar.cal .. ' | sed -r -e "s/_\\x08//g" | sed -r -e "s/(^| )( '
 
     calendar.offset = calendar.offset + offs
 
