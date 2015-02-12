@@ -35,19 +35,18 @@ local function swap(geometry)
     return { x = geometry.y, y = geometry.x, width = geometry.height, height = geometry.width }
 end
 
--- Find geometry for column/row tiling
-local function cut_area(wa, total, index, is_horizontal)
-    local wa = is_horizontal and swap(wa) or wa
-    local height = wa.height / total
+-- Find geometry for secondary windows column
+local function cut_column(wa, n, index)
+    local width = wa.width / n
+    local area = { x = wa.x + (index - 1) * width, y = wa.y, width = width, height = wa.height }
 
-    local area = {
-        x = wa.x,
-        y = wa.y + (index - 1) * height,
-        width = wa.width,
-        height = height
-    }
+    return area
+end
 
-    if is_horizontal then area = swap(area) end
+-- Find geometry for certain window in column
+local function cut_row(wa, factor, index, used)
+    local height = wa.height * factor.window[index] / factor.total
+    local area = { x = wa.x, y = wa.y + used, width = wa.width, height = height }
 
     return area
 end
@@ -60,11 +59,33 @@ local function size_correction(c, geometry, useless_gap)
     geometry.y = geometry.y + useless_gap / 2
 end
 
+-- Check size factor for group of clients and calculate total
+local function calc_factor(n, winfactors)
+    local factor = { window = winfactors, total = 0, min = 1 }
+
+    for i = 1, n do
+        if not factor.window[i] then
+            factor.window[i] = factor.min
+        else
+            factor.min = math.min(factor.window[i], factor.min)
+            if factor.window[i] < 0.05 then factor.window[i] = 0.05 end
+        end
+        factor.total = factor.total + factor.window[i]
+    end
+
+    return factor
+end
+
 -- Tile group of clients in given area
 -- @canvas need for proper transformation only
-local function tile_column(canvas, area, list, useless_gap, transformation)
+-- @winfactors table with clients size factors
+local function tile_column(canvas, area, list, useless_gap, transformation, winfactors)
+    local used = 0
+    local factor = calc_factor(#list, winfactors)
+
     for i, c in ipairs(list) do
-        local g = cut_area(area, #list, i)
+        local g = cut_row(area, factor, i, used)
+        used = used + g.height
 
         -- swap workarea dimensions
         if transformation.flip then g = flip(canvas, g) end
@@ -102,6 +123,14 @@ local function tile(p, orientation)
         mwfact = 1
     end
 
+    -- clients size factor
+    local data = tag.getdata(t).windowfact
+
+    if not data then
+        data = {}
+        tag.getdata(t).windowfact = data
+    end
+
     -- Workarea size correction depending on useless gap and global border
     wa.height = wa.height - 2 * global_border - useless_gap
     wa.width  = wa.width -  2 * global_border - useless_gap
@@ -136,7 +165,8 @@ local function tile(p, orientation)
         height = wa.height
     }
 
-    tile_column(wa, master_area, cls_master, useless_gap, transformation)
+    if not data[0] then data[0] = {} end
+    tile_column(wa, master_area, cls_master, useless_gap, transformation, data[0])
 
     -- Tile other windows
     local other_area = {
@@ -164,9 +194,11 @@ local function tile(p, orientation)
             client_index = client_index + 1
         end
 
-		-- and tile
-		local column_area = cut_area(other_area, ncol, position, true)
-        tile_column(wa, column_area, column, useless_gap, transformation)
+        -- and tile
+        local column_area = cut_column(other_area, ncol, position)
+
+        if not data[i] then data[i] = {} end
+        tile_column(wa, column_area, column, useless_gap, transformation, data[i])
     end
 end
 
