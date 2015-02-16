@@ -25,6 +25,7 @@ local setmetatable = setmetatable
 -- ALSA volume bar
 -- lain.widgets.alsabar
 local alsabar = {
+    card    = "0",
     channel = "Master",
     step    = "5%",
 
@@ -97,6 +98,7 @@ local function worker(args)
     local ticks_size = args.ticks_size or 7
     local vertical = args.vertical or false
 
+    alsabar.card = args.card or alsabar.card
     alsabar.channel = args.channel or alsabar.channel
     alsabar.step = args.step or alsabar.step
     alsabar.colors = args.colors or alsabar.colors
@@ -115,7 +117,7 @@ local function worker(args)
 
     function alsabar.update()
         -- Get mixer control contents
-        local f = io.popen("amixer -M get " .. alsabar.channel)
+        local f = assert(io.popen(string.format("amixer -c %s -M get %s", alsabar.card, alsabar.channel)))
         local mixer = f:read("*a")
         f:close()
 
@@ -129,7 +131,6 @@ local function worker(args)
 
         alsabar._current_level = tonumber(volu)
         alsabar.bar:set_value(alsabar._current_level / 100)
-
         if not mute and tonumber(volu) == 0 or mute == "off"
         then
             alsabar._muted = true
@@ -154,15 +155,15 @@ local function worker(args)
             awful.util.spawn(alsabar.mixer)
           end),
           awful.button ({}, 3, function()
-            awful.util.spawn(string.format("amixer set %s toggle", alsabar.channel))
+            awful.util.spawn(string.format("amixer -c %s set %s toggle", alsabar.card, alsabar.channel))
             alsabar.update()
           end),
           awful.button ({}, 4, function()
-            awful.util.spawn(string.format("amixer set %s %s+", alsabar.channel, alsabar.step))
+            awful.util.spawn(string.format("amixer -c %s set %s %s+", alsabar.card, alsabar.channel, alsabar.step))
             alsabar.update()
           end),
           awful.button ({}, 5, function()
-            awful.util.spawn(string.format("amixer set %s %s-", alsabar.channel, alsabar.step))
+            awful.util.spawn(string.format("amixer -c %s set %s %s-", alsabar.card, alsabar.channel, alsabar.step))
             alsabar.update()
           end)
     ))
