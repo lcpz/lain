@@ -39,53 +39,53 @@ local alsabar = {
     mixer    = terminal .. " -e alsamixer",
 
     notifications = {
-        font      = beautiful.font:sub(beautiful.font:find(""), beautiful.font:find(" ")),
-        font_size = "11",
-        color     = beautiful.fg_normal,
-        bar_size  = 18,
-        screen    = 1
+        -- notification preset
+        preset = {
+            font      = beautiful.font:sub(beautiful.font:find(""), beautiful.font:find(" ")),
+            font_size = "11",
+            color     = beautiful.fg_normal,
+            screen    = 1
+        },
+        -- slider parameters
+        bar = {
+	    size  = 18,
+	    fill = "|",
+	    empty = " ",
+	},
     },
 
     _current_level = 0,
     _muted         = false
 }
 
+-- slider drawing function
+alsabar.notifications.bar.draw = function(int)
+    return string.format("[%s%s]",
+        string.rep(alsabar.notifications.bar.fill, int),
+        string.rep(alsabar.notifications.bar.empty,
+            alsabar.notifications.bar.size - int)
+    )
+end
+
 function alsabar.notify()
     alsabar.update()
 
-    local preset = {
-        title   = "",
-        text    = "",
-        timeout = 4,
-        screen  = alsabar.notifications.screen,
-        font    = alsabar.notifications.font .. " " ..
-                  alsabar.notifications.font_size,
-        fg      = alsabar.notifications.color
-    }
+    local title = alsabar.channel.." - "
+    if alsabar._muted then title = title.."Muted"
+    else title = title..alsabar._current_level.."%" end
 
-    if alsabar._muted
-    then
-        preset.title = alsabar.channel .. " - Muted"
-    else
-        preset.title = alsabar.channel .. " - " .. alsabar._current_level .. "%"
-    end
+    local int = math.modf((alsabar._current_level / 100) *
+        alsabar.notifications.bar.size)
+    local text = alsabar.notifications.bar.draw(int)
 
-    int = math.modf((alsabar._current_level / 100) * alsabar.notifications.bar_size)
-    preset.text = "["
-                .. string.rep("|", int)
-                .. string.rep(" ", alsabar.notifications.bar_size - int)
-                .. "]"
-
-    if alsabar._notify ~= nil then
-        alsabar._notify = naughty.notify ({
-            replaces_id = alsabar._notify.id,
-            preset      = preset,
-        })
-    else
-        alsabar._notify = naughty.notify ({
-            preset = preset,
-        })
-    end
+    local id = nil
+    if alsabar._notify then id = alsabar._notify.id end
+    alsabar._notify = naughty.notify ({
+        title = title,
+        text = text,
+        preset = alsabar.notifications.preset,
+        replaces_id = id,
+    })
 end
 
 local function worker(args)
