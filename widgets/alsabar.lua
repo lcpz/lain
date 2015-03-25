@@ -27,7 +27,7 @@ local setmetatable = setmetatable
 local alsabar = {
     card    = "0",
     channel = "Master",
-    step    = "5%",
+    step    = "2%",
 
     colors = {
         background = beautiful.bg_normal,
