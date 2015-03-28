@@ -70,11 +70,9 @@ function alsabar.notify()
         preset.title = alsabar.channel .. " - " .. alsabar._current_level .. "%"
     end
 
-    int = math.modf((alsabar._current_level / 100) * alsabar.notifications.bar_size)
-    preset.text = "["
-                .. string.rep("|", int)
-                .. string.rep(" ", alsabar.notifications.bar_size - int)
-                .. "]"
+    local int = math.modf((alsabar._current_level / 100) * alsabar.notifications.bar_size)
+    preset.text = string.format("[%s%s]", string.rep("|", int), 
+                  string.rep(" ", alsabar.notifications.bar_size - int))
 
     if alsabar._notify ~= nil then
         alsabar._notify = naughty.notify ({
