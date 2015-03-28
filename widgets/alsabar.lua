@@ -71,7 +71,7 @@ function alsabar.notify()
     end
 
     local int = math.modf((alsabar._current_level / 100) * alsabar.notifications.bar_size)
-    preset.text = string.format("[%s%s]", string.rep("|", int), 
+    preset.text = string.format("[%s%s]", string.rep("|", int),
                   string.rep(" ", alsabar.notifications.bar_size - int))
 
     if alsabar._notify ~= nil then
