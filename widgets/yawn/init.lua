@@ -102,10 +102,10 @@ function yawn.fetch_weather()
         local hour = tonumber(os.date("%H"))
         sky = icon_path
 
-        if forecast == "Clear"         or
-           forecast == "Fair"          or
-           forecast == "Partly Cloudy" or
-           forecast == "Mostly Cloudy"
+        if string.find(forecast, "Clear")         or
+           string.find(forecast, "Fair")          or
+           string.find(forecast, "Partly Cloudy") or
+           string.find(forecast, "Mostly Cloudy")
            then
                if hour >= 6 and hour <= 18
                then
