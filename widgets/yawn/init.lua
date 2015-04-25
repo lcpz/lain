@@ -51,9 +51,7 @@ function yawn.fetch_weather()
     local url = api_url .. units_set .. city_id
     local cmd = "curl --connect-timeout 1 -fsm 3 '" .. url .. "'"
 
-    async.request(cmd, function(f)
-        local text = f:read("*a")
-        f:close()
+    async.request(cmd, function(text)
 
         -- In case of no connection or invalid city ID
         -- widgets won't display

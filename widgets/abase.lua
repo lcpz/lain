@@ -18,7 +18,7 @@ local setmetatable = setmetatable
 
 local function worker(args)
     local abase    = {}
-    local args     = args or {}
+    args     = args or {}
     local timeout  = args.timeout or 5
     local cmd      = args.cmd or ""
     local settings = args.settings or function() end
@@ -26,11 +26,10 @@ local function worker(args)
     abase.widget = wibox.widget.textbox('')
 
     function abase.update()
-        async.request(cmd, function(f)
-            output = f:read("*a")
-            f:close()
+        async.request(cmd, function(output_local)
+            output = output_local
             widget = abase.widget
-            settings()
+            settings() -- @TODO: pass output and widget to settings as args?
         end)
     end
 
