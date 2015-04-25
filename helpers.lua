@@ -69,6 +69,14 @@ function helpers.first_nonempty_line(file)
   return nil
 end
 
+function helpers.string_split(str, separator)
+  separator = separator or "\n"
+  local fields = {}
+  local pattern = string.format("([^%s]+)", separator)
+  str:gsub(pattern, function(c) fields[#fields+1] = c end)
+  return fields
+end
+
 -- }}}
 
 -- {{{ Timer maker

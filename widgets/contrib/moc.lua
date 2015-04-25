@@ -47,7 +47,7 @@ local function worker(args)
         -- Artist: Travis
         -- Album: The Man Who
         -- etc.
-        async.request("mocp -i", function(f)
+        async.request("mocp -i", function(output)
             moc_now = {
                 state   = "N/A",
                 file    = "N/A",
@@ -58,7 +58,7 @@ local function worker(args)
                 total   = "N/A"
             }
 
-            for line in f:lines() do
+            for _, line in ipairs(helpers.string_split(output)) do
                 for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
                     if k == "State" then moc_now.state = v
                     elseif k == "File" then moc_now.file = v

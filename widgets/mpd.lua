@@ -52,7 +52,7 @@ local function worker(args)
     helpers.set_map("current mpd track", nil)
 
     function mpd.update()
-        async.request(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh, function (f)
+        async.request(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh, function (output)
             mpd_now = {
                 state   = "N/A",
                 file    = "N/A",
@@ -64,7 +64,7 @@ local function worker(args)
                 elapsed = "N/A"
             }
 
-            for line in f:lines() do
+            for _, line in ipairs(helpers.string_split(output)) do
                 for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
                     if     k == "state"   then mpd_now.state   = v
                     elseif k == "file"    then mpd_now.file    = v

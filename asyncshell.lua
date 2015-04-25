@@ -3,6 +3,7 @@
                                                   
      Licensed under GNU General Public License v2 
       * (c) 2013, Alexander Yakushev              
+      * (c) 2014, Yauhen Kirylau
                                                   
 --]]
 
@@ -15,16 +16,11 @@
 
 -- This is more cpu demanding, but makes things faster.
 
-local spawn = require('awful.util').spawn
+local awful = require('awful')
 
 asyncshell               = {}
 asyncshell.request_table = {}
 asyncshell.id_counter    = 0
-asyncshell.folder        = "/tmp/asyncshell"
-asyncshell.file_template = asyncshell.folder .. '/req'
-
--- Create a directory for asynchell response files
-os.execute("mkdir -p " .. asyncshell.folder)
 
 -- Returns next tag - unique identifier of the request
 local function next_id()
@@ -37,28 +33,32 @@ end
 -- @param callback Function to be called when the command finishes
 -- @return Request ID
 function asyncshell.request(command, callback)
-   local id = next_id()
-   local tmpfname = asyncshell.file_template .. id
-   asyncshell.request_table[id] = { callback = callback }
-   local req =
-      string.format("sh -c '%s > %s; " ..
-                    'echo "asyncshell.deliver(%s)" | ' ..
-                    "awesome-client' 2> /dev/null",
-                    string.gsub(command, "'", "'\\''"), tmpfname, id)
-   spawn(req, false)
-   return id
+  local id = next_id()
+  asyncshell.request_table[id] = {
+    callback = callback,
+    table = {}}
+  awful.util.spawn_with_shell(string.format(
+    [[
+  echo asyncshell.deliver\(\"%q\", \""$(%s | %s)"\"\) | awesome-client;
+    ]],
+    --"]]-- syntax highlighter fix
+    id,
+    command:gsub('"','\"'),
+    [[tr '\\n' '\\\\n' | tr '"' '\\"']]
+  ))
+  return id
 end
 
 -- Calls the remembered callback function on the output of the shell
 -- command.
 -- @param id Request ID
--- @param output The output file of the shell command to be delievered
-function asyncshell.deliver(id)
-   if asyncshell.request_table[id] and
-      asyncshell.request_table[id].callback then
-      local output = io.open(asyncshell.file_template .. id, 'r')
-      asyncshell.request_table[id].callback(output)
-   end
+-- @param str The output of the shell command to be delievered
+function asyncshell.deliver(id, str)
+  id = tonumber(id)
+  if not asyncshell.request_table[id] then return end
+  str = str:gsub('\\n','\n')
+  asyncshell.request_table[id].callback(str)
+  asyncshell.request_table[id] = nil
 end
 
 -- Sends a synchronous request for an output of the command. Waits for
@@ -67,15 +67,10 @@ end
 -- @param timeout Maximum amount of time to wait for the result
 -- @return File handler on success, nil otherwise
 function asyncshell.demand(command, timeout)
-   local id = next_id()
-   local tmpfname = asyncshell.file_template .. id
-   local f = io.popen(string.format("(%s > %s; echo asyncshell_done) & " ..
-                                    "(sleep %s; echo asynchell_timeout)",
-                                    command, tmpfname, timeout))
+   local f = io.popen(string.format("timeout %s %s",
+                                    timeout, command))
    local result = f:read("*line")
-   if result == "asyncshell_done" then
-      return io.open(tmpfname)
-   end
+   return result
 end
 
 return asyncshell

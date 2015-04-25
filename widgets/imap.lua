@@ -57,10 +57,7 @@ local function worker(args)
         curl = string.format("%s --url imaps://%s:%s/INBOX -u %s:%q %s -k",
                head_command, server, port, mail, password, request)
 
-        async.request(curl, function(f)
-            ws = f:read("*a")
-            f:close()
-
+        async.request(curl, function(ws)
             _, mailcount = string.gsub(ws, "%d+", "")
             _ = nil
 
