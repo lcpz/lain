@@ -12,8 +12,7 @@ local newtimer     = require("lain.helpers").newtimer
 local wibox        = require("wibox")
 
 local io           = { open = io.open }
-local string       = { format = string.format,
-                       match  = string.match }
+local string       = { match  = string.match }
 
 local setmetatable = setmetatable
 

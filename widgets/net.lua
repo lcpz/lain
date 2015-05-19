@@ -14,7 +14,6 @@ local naughty      = require("naughty")
 local wibox        = require("wibox")
 
 local io           = { popen  = io.popen }
-local tostring     = tostring
 local string       = { format = string.format,
                        gsub   = string.gsub,
                        match  = string.match }
@@ -71,10 +70,10 @@ local function worker(args)
         local now_r = helpers.first_line('/sys/class/net/' .. iface ..
                                            '/statistics/rx_bytes') or 0
 
-        net_now.sent = tostring((now_t - net.last_t) / timeout / units)
+        net_now.sent = (now_t - net.last_t) / timeout / units
         net_now.sent = string.gsub(string.format('%.1f', net_now.sent), ",", ".")
 
-        net_now.received = tostring((now_r - net.last_r) / timeout / units)
+        net_now.received = (now_r - net.last_r) / timeout / units
         net_now.received = string.gsub(string.format('%.1f', net_now.received), ",", ".")
 
         widget = net.widget
