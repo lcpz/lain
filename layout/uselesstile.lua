@@ -179,6 +179,8 @@ local function tile(p, orientation)
     -- get column number for other windows
     local ncol = math.min(tag.getncol(t), #cls_other)
 
+    if ncol == 0 then ncol = 1 end
+
     -- split other windows to column groups
     local last_small_column = ncol - #cls_other % ncol
     local rows_min = math.floor(#cls_other / ncol)
