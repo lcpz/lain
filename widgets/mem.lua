@@ -13,9 +13,7 @@ local wibox           = require("wibox")
 
 local io              = { lines  = io.lines }
 local math            = { floor  = math.floor }
-local string          = { format = string.format,
-                          gmatch = string.gmatch,
-                          len    = string.len }
+local string          = { gmatch = string.gmatch }
 
 local setmetatable    = setmetatable
 
