@@ -87,7 +87,7 @@ function smapi:battery(name)
             return "N/A"
         end
 
-        local hrs = mins_left / 60
+        local hrs = math.floor(mins_left / 60)
         local min = mins_left % 60
         return string.format("%02d:%02d", hrs, min)
     end
