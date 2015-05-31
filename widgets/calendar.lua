@@ -37,7 +37,8 @@ function calendar:show(t_out, inc_offset, scr)
     local tims = t_out or 0
     local f, c_text
     local today = tonumber(os.date('%d'))
-    local init_t = calendar.cal .. ' | sed -r -e "s/_\\x08//g" | sed -r -e "s/(^| )('
+    local init_t = calendar.cal .. ' ' .. calendar.post_cal  .. ' ' .. 
+        ' | sed -r -e "s/_\\x08//g" | sed -r -e "s/(^| )('
 
     calendar.offset = calendar.offset + offs
 
@@ -76,7 +77,8 @@ function calendar:show(t_out, inc_offset, scr)
 
        calendar.notify_icon = nil
 
-       f = io.popen(calendar.cal .. ' ' .. month .. ' ' .. year)
+       f = io.popen(calendar.cal .. ' ' .. month .. ' ' .. year .. ' ' .. 
+            calendar.post_cal)
     end
 
     c_text = "<tt><span font='" .. calendar.font .. " "
@@ -101,6 +103,7 @@ end
 function calendar:attach(widget, args)
     local args = args or {}
     calendar.cal       = args.cal or "/usr/bin/cal"
+    calendar.post_cal  = args.post_cal or ""
     calendar.icons     = args.icons or icons_dir .. "cal/white/"
     calendar.font      = args.font or beautiful.font:sub(beautiful.font:find(""),
                          beautiful.font:find(" "))
