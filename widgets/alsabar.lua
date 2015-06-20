@@ -28,6 +28,7 @@ local alsabar = {
     card    = "0",
     channel = "Master",
     step    = "2%",
+    mapped  = "-M",
 
     colors = {
         background = beautiful.bg_normal,
@@ -98,6 +99,7 @@ local function worker(args)
 
     alsabar.card = args.card or alsabar.card
     alsabar.channel = args.channel or alsabar.channel
+    alsabar.mapped  = args.mapped or alsabar.mapped
     alsabar.step = args.step or alsabar.step
     alsabar.colors = args.colors or alsabar.colors
     alsabar.notifications = args.notifications or alsabar.notifications
@@ -115,7 +117,7 @@ local function worker(args)
 
     function alsabar.update()
         -- Get mixer control contents
-        local f = assert(io.popen(string.format("amixer -c %s -M get %s", alsabar.card, alsabar.channel)))
+        local f = assert(io.popen(string.format("amixer -c %s %s get %s", alsabar.card, alsabar.mapped, alsabar.channel)))
         local mixer = f:read("*a")
         f:close()
 

@@ -28,11 +28,12 @@ local function worker(args)
 
     alsa.card    = args.card or "0"
     alsa.channel = args.channel or "Master"
+    alsa.mapped  = args.mapped or "-M"
 
     alsa.widget = wibox.widget.textbox('')
 
     function alsa.update()
-        local f = assert(io.popen(string.format("amixer -c %s -M get %s", alsa.card, alsa.channel)))
+        local f = assert(io.popen(string.format("amixer -c %s %s get %s", alsa.card, alsa.mapped, alsa.channel)))
         local mixer = f:read("*a")
         f:close()
 
