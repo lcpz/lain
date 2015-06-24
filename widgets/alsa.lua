@@ -26,13 +26,13 @@ local function worker(args)
     local timeout  = args.timeout or 5
     local settings = args.settings or function() end
 
-    alsa.card    = args.card or "0"
+    alsa.cmd     = args.cmd or "amixer"
     alsa.channel = args.channel or "Master"
 
     alsa.widget = wibox.widget.textbox('')
 
     function alsa.update()
-        local f = assert(io.popen(string.format("amixer -c %s -M get %s", alsa.card, alsa.channel)))
+        local f = assert(io.popen(string.format("%s get %s", alsa.cmd, alsa.channel)))
         local mixer = f:read("*a")
         f:close()
 
