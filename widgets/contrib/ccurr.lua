@@ -7,9 +7,9 @@
 --]]
 
 local newtimer = require("lain.helpers").newtimer
+local json     = require("lain.util").dkjson
 
 local wibox    = require("wibox")
-local json     = require("dkjson")
 
 local string   = { format = string.format }
 local tonumber = tonumber
