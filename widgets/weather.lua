@@ -75,7 +75,7 @@ local function worker(args)
             f:close()
             weather_now, pos, err = json.decode(j, 1, nil)
 
-            if not err and tonumber(weather_now["cod"]) == 200 then
+            if not err and weather_now ~= nil and tonumber(weather_now["cod"]) == 200 then
                 weather.notification_text = ''
                 for i = 1, weather_now["cnt"] do
                     local f = assert(io.popen(string.format(date_cmd, weather_now["list"][i]["dt"])))
