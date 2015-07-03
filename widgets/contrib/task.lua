@@ -59,7 +59,7 @@ function task:prompt_add()
       mypromptbox[mouse.screen].widget,
       function (...)
           local f = io.popen("task add " .. ...)
-          c_text = "\n<span font='" 
+          c_text = "\n<span font='"
                    .. task.font .. " "
                    .. task.font_size .. "'>"
                    .. f:read("*all")
@@ -94,7 +94,7 @@ function task:prompt_search()
               c_text = "<span font='"
                        .. task.font .. " "
                        .. task.font_size .. "'>"
-                       .. c_text 
+                       .. c_text
                        .. "</span>"
           end
 

@@ -1,9 +1,9 @@
 
 --[[
-                                                   
-     Licensed under GNU General Public License v2  
-      * (c) 2014, anticlockwise <http://github.com/anticlockwise>
-                                                   
+                                                                  
+     Licensed under GNU General Public License v2                 
+      * (c) 2014, anticlockwise <http://github.com/anticlockwise> 
+                                                                  
 --]]
 
 local helpers = require("lain.helpers")

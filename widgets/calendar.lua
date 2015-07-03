@@ -37,7 +37,7 @@ function calendar:show(t_out, inc_offset, scr)
     local tims = t_out or 0
     local f, c_text
     local today = tonumber(os.date('%d'))
-    local init_t = calendar.cal .. ' ' .. calendar.post_cal  .. ' ' .. 
+    local init_t = calendar.cal .. ' ' .. calendar.post_cal  .. ' ' ..
         ' | sed -r -e "s/_\\x08//g" | sed -r -e "s/(^| )('
 
     calendar.offset = calendar.offset + offs
@@ -77,7 +77,7 @@ function calendar:show(t_out, inc_offset, scr)
 
        calendar.notify_icon = nil
 
-       f = io.popen(calendar.cal .. ' ' .. month .. ' ' .. year .. ' ' .. 
+       f = io.popen(calendar.cal .. ' ' .. month .. ' ' .. year .. ' ' ..
             calendar.post_cal)
     end
 

@@ -1,12 +1,12 @@
 
 --[[
-
-     Licensed under GNU General Public License v2
-      * (c) 2014,      projektile, worron
-      * (c) 2013,      Luke Bonham
-      * (c) 2012,      Josh Komoroske
-      * (c) 2010-2012, Peter Hofmann
-
+                                                  
+     Licensed under GNU General Public License v2 
+      * (c) 2014,      projektile, worron         
+      * (c) 2013,      Luke Bonham                
+      * (c) 2012,      Josh Komoroske             
+      * (c) 2010-2012, Peter Hofmann              
+                                                  
 --]]
 
 local beautiful = require("beautiful")

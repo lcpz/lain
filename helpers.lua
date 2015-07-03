@@ -43,12 +43,12 @@ function helpers.file_exists(file)
   return f ~= nil
 end
 
--- get all lines from a file, returns an empty 
+-- get all lines from a file, returns an empty
 -- list/table if the file does not exist
 function helpers.lines_from(file)
   if not helpers.file_exists(file) then return {} end
   lines = {}
-  for line in io.lines(file) do 
+  for line in io.lines(file) do
     lines[#lines + 1] = line
   end
   return lines
@@ -64,7 +64,7 @@ end
 -- returns nil otherwise
 function helpers.first_nonempty_line(file)
   for k,v in pairs(helpers.lines_from(file)) do
-    if #v then return v end 
+    if #v then return v end
   end
   return nil
 end
