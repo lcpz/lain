@@ -1,12 +1,12 @@
 
 --[[
-
-     Licensed under GNU General Public License v2
-      * (c) 2014       projektile, worron
-      * (c) 2013       Luke Bonham
-      * (c) 2009       Donald Ephraim Curtis
-      * (c) 2008       Julien Danjolu
-
+                                                  
+     Licensed under GNU General Public License v2 
+      * (c) 2014, projektile, worron              
+      * (c) 2013, Luke Bonham                     
+      * (c) 2009, Donald Ephraim Curtis           
+      * (c) 2008, Julien Danjolu                  
+                                                  
 --]]
 
 local tag       = require("awful.tag")
