@@ -30,7 +30,7 @@ local function worker(args)
     local timeout_forecast      = args.timeout or 86400 -- 24 hrs
     local current_call          = "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s'"
     local forecast_call         = "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s'"
-    local city_id               = args.city_id
+    local city_id               = args.city_id or 0 -- placeholder
     local units                 = args.units or "metric"
     local lang                  = args.lang or "en"
     local cnt                   = args.cnt or 7
@@ -93,6 +93,9 @@ local function worker(args)
                         weather.notification_text = weather.notification_text .. "\n"
                     end
                 end
+            else
+                weather.icon_path = icons_path .. "na.png"
+                weather.notification_text = "API/connection error or bad/not set city ID"
             end
         end)
     end
@@ -104,14 +107,14 @@ local function worker(args)
             f:close()
             weather_now, pos, err = json.decode(j, 1, nil)
 
-            if err then
-                weather.widget.set_text("N/A")
-                weather.icon:set_image(icons_path .. "na.png")
-            elseif tonumber(weather_now["cod"]) == 200 then
+            if not err and weather_now ~= nil and tonumber(weather_now["cod"]) == 200 then
                 weather.icon_path = icons_path .. weather_now["weather"][1]["icon"] .. ".png"
                 weather.icon:set_image(weather.icon_path)
                 widget = weather.widget
                 settings()
+            else
+                weather.widget._layout.text = " N/A " -- tries to avoid textbox bugs
+                weather.icon:set_image(icons_path .. "na.png")
             end
         end)
     end
