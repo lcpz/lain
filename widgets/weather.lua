@@ -116,6 +116,8 @@ local function worker(args)
         end)
     end
 
+    weather.attach(weather.widget)
+
     newtimer("weather", timeout, weather.update)
     newtimer("weather_forecast", timeout, weather.forecast_update)
 
