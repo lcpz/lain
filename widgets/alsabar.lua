@@ -168,7 +168,7 @@ local function worker(args)
 
     timer_id = string.format("alsabar-%s-%s", alsabar.cmd, alsabar.channel)
 
-    newtimer(timer_id, timeout, alsa.update)
+    newtimer(timer_id, timeout, alsabar.update)
 
     return alsabar
 end
