@@ -159,7 +159,7 @@ function tpbat.register(args)
         settings()
     end
 
-    newtimer("tpbat", timeout, update)
+    newtimer("tpbat-" .. bat.name, timeout, update)
 
     widget:connect_signal('mouse::enter', function () tpbat:show() end)
     widget:connect_signal('mouse::leave', function () tpbat:hide() end)

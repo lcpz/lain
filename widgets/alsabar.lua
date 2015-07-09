@@ -148,8 +148,6 @@ local function worker(args)
         settings()
     end
 
-    newtimer("alsabar", timeout, alsabar.update)
-
     alsabar.bar:buttons (awful.util.table.join (
           awful.button ({}, 1, function()
             awful.util.spawn(alsabar.mixer)
@@ -167,6 +165,10 @@ local function worker(args)
             alsabar.update()
           end)
     ))
+
+    timer_id = string.format("alsabar-%s-%s", alsabar.cmd, alsabar.channel)
+
+    newtimer(timer_id, timeout, alsa.update)
 
     return alsabar
 end

@@ -60,7 +60,9 @@ local function worker(args)
         settings()
     end
 
-    newtimer("alsa", timeout, alsa.update)
+    timer_id = string.format("alsa-%s-%s", alsa.cmd, alsa.channel)
+
+    newtimer(timer_id, timeout, alsa.update)
 
     return setmetatable(alsa, { __index = alsa.widget })
 end
