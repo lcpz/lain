@@ -106,8 +106,8 @@ local function worker(args)
         end
     end
 
-    widget:connect_signal('mouse::enter', function () fs:show(0) end)
-    widget:connect_signal('mouse::leave', function () fs:hide() end)
+    fs.widget:connect_signal('mouse::enter', function () fs:show(0) end)
+    fs.widget:connect_signal('mouse::leave', function () fs:hide() end)
 
     helpers.newtimer(partition, timeout, update)
 
