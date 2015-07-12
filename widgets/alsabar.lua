@@ -56,7 +56,7 @@ function alsabar.notify()
     local preset = {
         title   = "",
         text    = "",
-        timeout = 4,
+        timeout = 5,
         screen  = alsabar.notifications.screen,
         font    = alsabar.notifications.font .. " " ..
                   alsabar.notifications.font_size,
@@ -90,7 +90,7 @@ end
 
 local function worker(args)
     local args       = args or {}
-    local timeout    = args.timeout or 4
+    local timeout    = args.timeout or 5
     local settings   = args.settings or function() end
     local width      = args.width or 63
     local height     = args.heigth or 1

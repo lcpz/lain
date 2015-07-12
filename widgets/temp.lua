@@ -21,7 +21,7 @@ local temp = {}
 
 local function worker(args)
     local args     = args or {}
-    local timeout  = args.timeout or 5
+    local timeout  = args.timeout or 2
     local tempfile = args.tempfile or "/sys/class/thermal/thermal_zone0/temp"
     local settings = args.settings or function() end
 

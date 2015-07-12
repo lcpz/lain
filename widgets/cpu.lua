@@ -28,7 +28,7 @@ local cpu = {
 
 local function worker(args)
     local args     = args or {}
-    local timeout  = args.timeout or 5
+    local timeout  = args.timeout or 2
     local settings = args.settings or function() end
 
     cpu.widget = wibox.widget.textbox('')
