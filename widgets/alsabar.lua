@@ -25,7 +25,6 @@ local setmetatable = setmetatable
 -- ALSA volume bar
 -- lain.widgets.alsabar
 local alsabar = {
-    card    = "0",
     channel = "Master",
     step    = "2%",
 
@@ -153,15 +152,15 @@ local function worker(args)
             awful.util.spawn(alsabar.mixer)
           end),
           awful.button ({}, 3, function()
-            awful.util.spawn(string.format("amixer -c %s set %s toggle", alsabar.card, alsabar.channel))
+            awful.util.spawn(string.format("%s set %s toggle", alsabar.cmd, alsabar.channel))
             alsabar.update()
           end),
           awful.button ({}, 4, function()
-            awful.util.spawn(string.format("amixer -c %s set %s %s+", alsabar.card, alsabar.channel, alsabar.step))
+            awful.util.spawn(string.format("%s set %s %s+", alsabar.cmd, alsabar.channel, alsabar.step))
             alsabar.update()
           end),
           awful.button ({}, 5, function()
-            awful.util.spawn(string.format("amixer -c %s set %s %s-", alsabar.card, alsabar.channel, alsabar.step))
+            awful.util.spawn(string.format("%s set %s %s-", alsabar.cmd, alsabar.channel, alsabar.step))
             alsabar.update()
           end)
     ))
