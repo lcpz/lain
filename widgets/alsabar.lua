@@ -99,6 +99,7 @@ local function worker(args)
     local vertical   = args.vertical or false
 
     alsabar.cmd           = args.cmd or "amixer"
+    alsabar.card          = args.card or alsabar.card
     alsabar.channel       = args.channel or alsabar.channel
     alsabar.step          = args.step or alsabar.step
     alsabar.colors        = args.colors or alsabar.colors
@@ -117,7 +118,7 @@ local function worker(args)
 
     function alsabar.update()
         -- Get mixer control contents
-        local f = assert(io.popen(string.format("%s get %s", alsabar.cmd, alsabar.channel)))
+        local f = assert(io.popen(string.format("%s -c %s get %s", alsabar.cmd, alsabar.card, alsabar.channel)))
         local mixer = f:read("*a")
         f:close()
 
