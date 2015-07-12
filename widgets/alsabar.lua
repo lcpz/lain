@@ -36,7 +36,6 @@ local alsabar = {
     },
 
     terminal = terminal or "xterm",
-    mixer    = terminal .. " -e alsamixer",
 
     notifications = {
         font      = beautiful.font:sub(beautiful.font:find(""), beautiful.font:find(" ")),
@@ -104,6 +103,7 @@ local function worker(args)
     alsabar.step          = args.step or alsabar.step
     alsabar.colors        = args.colors or alsabar.colors
     alsabar.notifications = args.notifications or alsabar.notifications
+    alsabar.mixer         = args.mixer or string.format("%s -e 'alsamixer -c %s'", alsabar.terminal, alsabar.card)
 
     alsabar.bar = awful.widget.progressbar()
 
