@@ -36,7 +36,6 @@ local alsabar = {
     },
 
     terminal = terminal or "xterm",
-    mixer    = terminal .. " -e alsamixer",
 
     notifications = {
         font      = beautiful.font:sub(beautiful.font:find(""), beautiful.font:find(" ")),
@@ -99,10 +98,12 @@ local function worker(args)
     local vertical   = args.vertical or false
 
     alsabar.cmd           = args.cmd or "amixer"
+    alsabar.card          = args.card or alsabar.card
     alsabar.channel       = args.channel or alsabar.channel
     alsabar.step          = args.step or alsabar.step
     alsabar.colors        = args.colors or alsabar.colors
     alsabar.notifications = args.notifications or alsabar.notifications
+    alsabar.mixer         = args.mixer or string.format("%s -e 'alsamixer -c %s'", alsabar.terminal, alsabar.card)
 
     alsabar.bar = awful.widget.progressbar()
 
@@ -117,7 +118,7 @@ local function worker(args)
 
     function alsabar.update()
         -- Get mixer control contents
-        local f = assert(io.popen(string.format("%s get %s", alsabar.cmd, alsabar.channel)))
+        local f = assert(io.popen(string.format("%s -c %s get %s", alsabar.cmd, alsabar.card, alsabar.channel)))
         local mixer = f:read("*a")
         f:close()
 
