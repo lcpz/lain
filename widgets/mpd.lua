@@ -89,12 +89,18 @@ local function worker(args)
                 then
                     helpers.set_map("current mpd track", mpd_now.title)
 
-                    os.execute(string.format("%s %q %q %d %q", mpdcover, music_dir,
-                               mpd_now.file, cover_size, default_art))
+                    if string.match(mpd_now.file, "http://") == nil
+                    then -- local file
+                        os.execute(string.format("%s %q %q %d %q", mpdcover, music_dir,
+                                   mpd_now.file, cover_size, default_art))
+                        current_icon = "/tmp/mpdcover.png"
+                    else -- http stream
+                        current_icon = default_art
+                    end
 
                     mpd.id = naughty.notify({
                         preset = mpd_notification_preset,
-                        icon = "/tmp/mpdcover.png",
+                        icon = current_icon,
                         replaces_id = mpd.id,
                     }).id
                 end
