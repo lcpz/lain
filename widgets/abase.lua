@@ -26,9 +26,8 @@ local function worker(args)
     abase.widget = wibox.widget.textbox('')
 
     function abase.update()
-        async.request(cmd, function(f)
-            output = f:read("*a")
-            f:close()
+        async.request(cmd, function(shell_output)
+            output = shell_output
             widget = abase.widget
             settings()
         end)

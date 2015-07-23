@@ -10,6 +10,7 @@
 --]]
 
 package.loaded.lain = nil
+asyncshell = require("lain.asyncshell")
 
 local lain =
 {
