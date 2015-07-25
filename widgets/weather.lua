@@ -79,7 +79,7 @@ local function worker(args)
                 weather.notification_text = ''
                 for i = 1, weather_now["cnt"] do
                     local f = assert(io.popen(string.format(date_cmd, weather_now["list"][i]["dt"])))
-                    day = string.gsub(f:read("a"), "\n", "")
+                    day = string.gsub(f:read("*a"), "\n", "")
                     f:close()
 
                     tmin = math.floor(weather_now["list"][i]["temp"]["min"])
