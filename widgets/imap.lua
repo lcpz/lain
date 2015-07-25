@@ -42,7 +42,7 @@ local function worker(args)
     if not is_plain
     then
         local f = io.popen(password)
-        password = f:read("*a"):gsub("\n", "")
+        password = f:read("*all"):gsub("\n", "")
         f:close()
     end
 
@@ -58,7 +58,7 @@ local function worker(args)
                head_command, server, port, mail, password, request)
 
         async.request(curl, function(f)
-            ws = f:read("*a")
+            ws = f:read("*all")
             f:close()
 
             _, mailcount = string.gsub(ws, "%d+", "")

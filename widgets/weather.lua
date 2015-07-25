@@ -71,7 +71,7 @@ local function worker(args)
     function weather.forecast_update()
         local cmd = string.format(forecast_call, city_id, units, lang, cnt)
         async.request(cmd, function(f)
-            j = f:read("*a")
+            j = f:read("*all")
             f:close()
             weather_now, pos, err = json.decode(j, 1, nil)
 
@@ -79,7 +79,7 @@ local function worker(args)
                 weather.notification_text = ''
                 for i = 1, weather_now["cnt"] do
                     local f = assert(io.popen(string.format(date_cmd, weather_now["list"][i]["dt"])))
-                    day = string.gsub(f:read("*a"), "\n", "")
+                    day = string.gsub(f:read("*all"), "\n", "")
                     f:close()
 
                     tmin = math.floor(weather_now["list"][i]["temp"]["min"])
@@ -103,7 +103,7 @@ local function worker(args)
     function weather.update()
         local cmd = string.format(current_call, city_id, units, lang)
         async.request(cmd, function(f)
-            j = f:read("*a")
+            j = f:read("*all")
             f:close()
             weather_now, pos, err = json.decode(j, 1, nil)
 
