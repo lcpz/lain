@@ -53,7 +53,7 @@ local function worker(args)
                 local np = io.popen("find " .. line ..
                                     "/new -mindepth 1 -type f " ..
                                     "-not -name '.*' -printf a")
-                local mailstring = np:read("*a")
+                local mailstring = np:read("*all")
 
                 -- Strip off leading mailpath.
                 local box = string.match(line, mailpath .. "/*([^/]+)")

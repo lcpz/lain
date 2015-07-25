@@ -33,7 +33,7 @@ local function worker(args)
 
     function alsa.update()
         local f = assert(io.popen(string.format("%s get %s", alsa.cmd, alsa.channel)))
-        local mixer = f:read("*a")
+        local mixer = f:read("*all")
         f:close()
 
         volume_now = {}

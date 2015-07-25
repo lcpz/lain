@@ -85,7 +85,7 @@ function calendar:show(t_out, inc_offset, scr)
              .. calendar.font_size .. "'><b>"
              .. f:read() .. "</b>\n\n"
              .. f:read() .. "\n"
-             .. f:read("*a"):gsub("\n*$", "")
+             .. f:read("*all"):gsub("\n*$", "")
              .. "</span></tt>"
     f:close()
 

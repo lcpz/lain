@@ -40,7 +40,7 @@ function fs:show(t_out)
     fs:hide()
 
     local f = io.popen(helpers.scripts_dir .. "dfs")
-    ws = f:read("*a"):gsub("\n*$", "")
+    ws = f:read("*all"):gsub("\n*$", "")
     f:close()
 
     notification = naughty.notify({
