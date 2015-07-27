@@ -31,9 +31,10 @@ function calendar:hide()
     end
 end
 
-function calendar:show(t_out, inc_offset, scr)
+function calendar:show(t_out, inc_offset)
     calendar:hide()
 
+    local scr  = calendar.scr_pos
     local offs = inc_offset or 0
     local tims = t_out or 0
     local f, c_text
@@ -101,7 +102,7 @@ function calendar:show(t_out, inc_offset, scr)
         fg = calendar.fg,
         bg = calendar.bg,
         timeout = tims,
-        screen = scr or 1
+        screen = scr
     })
 end
 
@@ -122,16 +123,16 @@ function calendar:attach(widget, args)
     calendar.offset = 0
     calendar.notify_icon = nil
 
-    widget:connect_signal("mouse::enter", function () calendar:show(0, 0, scr_pos) end)
+    widget:connect_signal("mouse::enter", function () calendar:show(0, 0) end)
     widget:connect_signal("mouse::leave", function () calendar:hide() end)
     widget:buttons(awful.util.table.join( awful.button({ }, 1, function ()
-                                              calendar:show(0, -1, scr_pos) end),
+                                              calendar:show(0, -1) end),
                                           awful.button({ }, 3, function ()
-                                              calendar:show(0, 1, scr_pos) end),
+                                              calendar:show(0, 1) end),
                                           awful.button({ }, 4, function ()
-                                              calendar:show(0, -1, scr_pos) end),
+                                              calendar:show(0, -1) end),
                                           awful.button({ }, 5, function ()
-                                              calendar:show(0, 1, scr_pos) end)))
+                                              calendar:show(0, 1) end)))
 end
 
 return setmetatable(calendar, { __call = function(_, ...) return create(...) end })
