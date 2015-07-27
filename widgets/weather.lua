@@ -16,6 +16,7 @@ local wibox        = require("wibox")
 local math         = { floor  = math.floor }
 local string       = { format = string.format,
                        gsub   = string.gsub }
+local mouse        = mouse
 
 local setmetatable = setmetatable
 
@@ -38,12 +39,18 @@ local function worker(args)
     local icons_path            = args.icons_path or lain_icons .. "openweathermap/"
     local w_notification_preset = args.w_notification_preset or {}
     local settings              = args.settings or function() end
+    local followmouse           = args.followmouse or false
 
     weather.widget = wibox.widget.textbox('')
     weather.icon   = wibox.widget.imagebox()
 
-    function weather.show(t_out)
+    function weather.show(t_out, followmouse)
         weather.hide()
+
+        if followmouse == true then
+            w_notification_preset.screen = mouse.screen
+        end
+
         weather.notification = naughty.notify({
             text    = weather.notification_text,
             icon    = weather.icon_path,
@@ -61,7 +68,7 @@ local function worker(args)
 
     function weather.attach(obj)
         obj:connect_signal("mouse::enter", function()
-            weather.show(0)
+            weather.show(0, followmouse)
         end)
         obj:connect_signal("mouse::leave", function()
             weather.hide()
