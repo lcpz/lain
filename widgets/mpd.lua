@@ -89,7 +89,7 @@ local function worker(args)
                 then
                     helpers.set_map("current mpd track", mpd_now.title)
 
-                    if string.match(mpd_now.file, "http://") == nil
+                    if string.match(mpd_now.file, "http.*://") == nil
                     then -- local file
                         os.execute(string.format("%s %q %q %d %q", mpdcover, music_dir,
                                    mpd_now.file, cover_size, default_art))
