@@ -19,6 +19,7 @@ local pairs        = pairs
 local string       = { match  = string.match,
                        format = string.format }
 local tonumber     = tonumber
+local mouse        = mouse
 
 local setmetatable = setmetatable
 
@@ -36,12 +37,16 @@ function fs:hide()
     end
 end
 
-function fs:show(t_out)
+function fs:show(t_out, followmouse)
     fs:hide()
 
     local f = io.popen(helpers.scripts_dir .. "dfs")
     ws = f:read("*all"):gsub("\n*$", "")
     f:close()
+
+    if followmouse == true then
+        fs_notification_preset.screen = mouse.screen
+    end
 
     notification = naughty.notify({
         preset = fs_notification_preset,
@@ -54,10 +59,11 @@ end
 local unit = { ["mb"] = 1024, ["gb"] = 1024^2 }
 
 local function worker(args)
-    local args      = args or {}
-    local timeout   = args.timeout or 600
-    local partition = args.partition or "/"
-    local settings  = args.settings or function() end
+    local args        = args or {}
+    local timeout     = args.timeout or 600
+    local partition   = args.partition or "/"
+    local settings    = args.settings or function() end
+    local followmouse = args.followmouse or false
 
     fs.widget = wibox.widget.textbox('')
 
@@ -106,7 +112,7 @@ local function worker(args)
         end
     end
 
-    fs.widget:connect_signal('mouse::enter', function () fs:show(0) end)
+    fs.widget:connect_signal('mouse::enter', function () fs:show(0, followmouse) end)
     fs.widget:connect_signal('mouse::leave', function () fs:hide() end)
 
     helpers.newtimer(partition, timeout, update)

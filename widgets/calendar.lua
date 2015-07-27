@@ -15,6 +15,7 @@ local naughty      = require("naughty")
 local io           = { popen = io.popen }
 local os           = { date = os.date }
 local tonumber     = tonumber
+local mouse        = mouse
 
 local setmetatable = setmetatable
 
@@ -89,6 +90,10 @@ function calendar:show(t_out, inc_offset, scr)
              .. "</span></tt>"
     f:close()
 
+    if calendar.followmouse == true then
+        scr = mouse.screen
+    end
+
     cal_notification = naughty.notify({
         text = c_text,
         icon = calendar.notify_icon,
@@ -112,6 +117,7 @@ function calendar:attach(widget, args)
     calendar.bg        = args.bg or beautiful.bg_normal or "#FFFFFF"
     calendar.position  = args.position or "top_right"
     calendar.scr_pos   = args.scr_pos or 1
+    calendar.followmouse = args.followmouse or false
 
     calendar.offset = 0
     calendar.notify_icon = nil
