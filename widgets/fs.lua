@@ -36,7 +36,7 @@ function fs:hide()
     end
 end
 
-function fs:show(t_out)
+function fs:show(t_out, scr)
     fs:hide()
 
     local f = io.popen(helpers.scripts_dir .. "dfs")
@@ -44,9 +44,10 @@ function fs:show(t_out)
     f:close()
 
     notification = naughty.notify({
-        preset = fs_notification_preset,
-        text = ws,
+        preset  = fs_notification_preset,
+        text    = ws,
         timeout = t_out,
+        screen  = scr or 1
     })
 end
 
@@ -106,7 +107,7 @@ local function worker(args)
         end
     end
 
-    fs.widget:connect_signal('mouse::enter', function () fs:show(0) end)
+    fs.widget:connect_signal('mouse::enter', function () fs:show(0, mouse.screen) end)
     fs.widget:connect_signal('mouse::leave', function () fs:hide() end)
 
     helpers.newtimer(partition, timeout, update)

@@ -76,7 +76,7 @@ local function worker(args)
                 end
                 naughty.notify({
                     preset = mail_notification_preset,
-                    text = nt,
+                    text = nt
                 })
             end
 
