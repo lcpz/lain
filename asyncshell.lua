@@ -43,10 +43,9 @@ function asyncshell.request(command, callback, timeout)
     asyncshell.request_table[id] = { callback = callback }
 
     local formatted_command = string.gsub(command, '"','\"')
-                              .. " | sed -e 's/\"/\\\\\"/g' -e ':a;N;$!ba;s/\\n/\\\\n/g'"
 
     local req = string.format(
-        "echo \"asyncshell.deliver(%s, \\\"$(%s)\\\")\" | awesome-client &",
+        "echo \"asyncshell.deliver(%s, [[\\\"$(%s)\\\"]])\" | awesome-client &",
         id, formatted_command
     )
 
@@ -63,6 +62,7 @@ end
 -- @param id Request ID
 -- @param output Shell command output to be delievered
 function asyncshell.deliver(id, output)
+	local output = string.sub(output, 2, -2)
     if asyncshell.request_table[id] then
         asyncshell.request_table[id].callback(output)
         asyncshell.clear(id)
