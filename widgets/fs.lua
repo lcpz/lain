@@ -26,18 +26,20 @@ local setmetatable = setmetatable
 -- lain.widgets.fs
 local fs = {}
 
-local notification  = nil
+local fs_notification  = nil
 fs_notification_preset = { fg = beautiful.fg_normal }
 
 function fs:hide()
-    if notification ~= nil then
-        naughty.destroy(notification)
-        notification = nil
+    if fs_notification ~= nil then
+        naughty.destroy(fs_notification)
+        fs_notification = nil
     end
 end
 
-function fs:show(t_out, scr)
+function fs:show(t_out)
     fs:hide()
+
+    naughty.notify({text=fs_notification_preset.screen})
 
     local f = io.popen(helpers.scripts_dir .. "dfs")
     ws = f:read("*all"):gsub("\n*$", "")
@@ -46,8 +48,7 @@ function fs:show(t_out, scr)
     notification = naughty.notify({
         preset  = fs_notification_preset,
         text    = ws,
-        timeout = t_out,
-        screen  = scr or 1
+        timeout = t_out
     })
 end
 
@@ -107,7 +108,7 @@ local function worker(args)
         end
     end
 
-    fs.widget:connect_signal('mouse::enter', function () fs:show(0, mouse.screen) end)
+    fs.widget:connect_signal('mouse::enter', function () fs:show(0) end)
     fs.widget:connect_signal('mouse::leave', function () fs:hide() end)
 
     helpers.newtimer(partition, timeout, update)
