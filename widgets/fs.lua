@@ -46,7 +46,7 @@ function fs:show(t_out)
         fs.notification_preset.screen = mouse.screen
     end
 
-    notification = naughty.notify({
+    fs_notification = naughty.notify({
         preset  = fs.notification_preset,
         text    = ws,
         timeout = t_out
