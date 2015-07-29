@@ -91,9 +91,9 @@ function calendar:show(t_out, inc_offset, scr)
     f:close()
 
     if calendar.followmouse then
-        local scrp = mouse.screen
+        scrp = mouse.screen
     else
-        local scrp = scr or calendar.scr_pos
+        scrp = scr or calendar.scr_pos
     end
 
     cal_notification = naughty.notify({
