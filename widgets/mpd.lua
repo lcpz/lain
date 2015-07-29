@@ -38,11 +38,12 @@ local function worker(args)
     local cover_size  = args.cover_size or 100
     local default_art = args.default_art or ""
     local followmouse = args.followmouse or false
+    local echo_cmd    = args.echo_cmd or "echo"
     local settings    = args.settings or function() end
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
     local mpdh = "telnet://" .. host .. ":" .. port
-    local echo = "/bin/echo -e 'password " .. password .. "\nstatus\ncurrentsong\nclose'"
+    local echo = echo_cmd .. " 'password " .. password .. "\nstatus\ncurrentsong\nclose'"
 
     mpd.widget = wibox.widget.textbox('')
 
