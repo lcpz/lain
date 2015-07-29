@@ -15,6 +15,7 @@ local naughty      = require("naughty")
 
 local io           = { popen  = io.popen }
 local math         = { modf   = math.modf }
+local mouse        = mouse
 local string       = { format = string.format,
                        match  = string.match,
                        rep    = string.rep }
@@ -75,6 +76,10 @@ function alsabar.notify()
                 .. string.rep(" ", alsabar.notifications.bar_size - int)
                 .. "]"
 
+    if alsabar.followmouse then
+        preset.screen = mouse.screen
+    end
+
     if alsabar._notify ~= nil then
         alsabar._notify = naughty.notify ({
             replaces_id = alsabar._notify.id,
@@ -102,6 +107,7 @@ local function worker(args)
     alsabar.step          = args.step or alsabar.step
     alsabar.colors        = args.colors or alsabar.colors
     alsabar.notifications = args.notifications or alsabar.notifications
+    alsabar.followmouse   = args.followmouse or false
 
     alsabar.bar = awful.widget.progressbar()
 

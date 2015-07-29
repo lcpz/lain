@@ -17,6 +17,7 @@ local wibox        = require("wibox")
 local os           = { execute  = os.execute,
                        getenv   = os.getenv }
 local math         = { floor    = math.floor }
+local mouse        = mouse
 local string       = { format   = string.format,
                        match    = string.match,
                        gmatch   = string.gmatch }
@@ -36,6 +37,7 @@ local function worker(args)
     local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
     local cover_size  = args.cover_size or 100
     local default_art = args.default_art or ""
+    local followmouse = args.followmouse or false
     local settings    = args.settings or function() end
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
@@ -96,6 +98,10 @@ local function worker(args)
                         current_icon = "/tmp/mpdcover.png"
                     else -- http stream
                         current_icon = default_art
+                    end
+
+                    if followmouse then
+                        mpd_notification_preset.screen = mouse.screen
                     end
 
                     mpd.id = naughty.notify({

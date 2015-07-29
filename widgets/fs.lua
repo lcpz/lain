@@ -16,6 +16,7 @@ local naughty      = require("naughty")
 
 local io           = { popen  = io.popen }
 local pairs        = pairs
+local mouse        = mouse
 local string       = { match  = string.match,
                        format = string.format }
 local tonumber     = tonumber
@@ -25,9 +26,7 @@ local setmetatable = setmetatable
 -- File system disk space usage
 -- lain.widgets.fs
 local fs = {}
-
 local fs_notification  = nil
-fs_notification_preset = { fg = beautiful.fg_normal }
 
 function fs:hide()
     if fs_notification ~= nil then
@@ -39,14 +38,16 @@ end
 function fs:show(t_out)
     fs:hide()
 
-    naughty.notify({text=fs_notification_preset.screen})
-
     local f = io.popen(helpers.scripts_dir .. "dfs")
     ws = f:read("*all"):gsub("\n*$", "")
     f:close()
 
+    if fs.followmouse then
+        fs.notification_preset.screen = mouse.screen
+    end
+
     notification = naughty.notify({
-        preset  = fs_notification_preset,
+        preset  = fs.notification_preset,
         text    = ws,
         timeout = t_out
     })
@@ -56,10 +57,13 @@ end
 local unit = { ["mb"] = 1024, ["gb"] = 1024^2 }
 
 local function worker(args)
-    local args      = args or {}
-    local timeout   = args.timeout or 600
-    local partition = args.partition or "/"
-    local settings  = args.settings or function() end
+    local args             = args or {}
+    local timeout          = args.timeout or 600
+    local partition        = args.partition or "/"
+    local settings         = args.settings or function() end
+
+    fs.followmouse         = args.followmouse or false
+    fs.notification_preset = args.notification_preset or { fg = beautiful.fg_normal }
 
     fs.widget = wibox.widget.textbox('')
 

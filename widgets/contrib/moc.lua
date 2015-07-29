@@ -29,6 +29,7 @@ local function worker(args)
     local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
     local cover_size  = args.cover_size or 100
     local default_art = args.default_art or ""
+    local followmouse = args.followmouse or false
     local settings    = args.settings or function() end
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
@@ -81,6 +82,10 @@ local function worker(args)
                     helpers.set_map("current moc track", moc_now.title)
                     os.execute(string.format("%s %q %q %d %q", mpdcover, "",
                                moc_now.file, cover_size, default_art))
+
+                    if followmouse then
+                        moc_notification_preset.screen = mouse.screen
+                    end
 
                     moc.id = naughty.notify({
                         preset = moc_notification_preset,

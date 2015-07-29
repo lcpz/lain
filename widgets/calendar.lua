@@ -14,6 +14,7 @@ local naughty      = require("naughty")
 
 local io           = { popen = io.popen }
 local os           = { date = os.date }
+local mouse        = mouse
 local tonumber     = tonumber
 
 local setmetatable = setmetatable
@@ -89,6 +90,12 @@ function calendar:show(t_out, inc_offset, scr)
              .. "</span></tt>"
     f:close()
 
+    if calendar.followmouse then
+        local scrp = mouse.screen
+    else
+        local scrp = scr or calendar.scr_pos
+    end
+
     cal_notification = naughty.notify({
         text = c_text,
         icon = calendar.notify_icon,
@@ -96,36 +103,38 @@ function calendar:show(t_out, inc_offset, scr)
         fg = calendar.fg,
         bg = calendar.bg,
         timeout = tims,
-        screen = scr or 1
+        screen = scrp
     })
 end
 
 function calendar:attach(widget, args)
     local args = args or {}
-    calendar.cal       = args.cal or "/usr/bin/cal"
-    calendar.post_cal  = args.post_cal or ""
-    calendar.icons     = args.icons or icons_dir .. "cal/white/"
-    calendar.font      = args.font or beautiful.font:sub(beautiful.font:find(""),
-                         beautiful.font:find(" "))
-    calendar.font_size = tonumber(args.font_size) or 11
-    calendar.fg        = args.fg or beautiful.fg_normal or "#FFFFFF"
-    calendar.bg        = args.bg or beautiful.bg_normal or "#FFFFFF"
-    calendar.position  = args.position or "top_right"
-    calendar.scr_pos   = args.scr_pos or mouse.screen
 
-    calendar.offset = 0
+    calendar.cal         = args.cal or "/usr/bin/cal"
+    calendar.post_cal    = args.post_cal or ""
+    calendar.icons       = args.icons or icons_dir .. "cal/white/"
+    calendar.font        = args.font or beautiful.font:sub(beautiful.font:find(""),
+                           beautiful.font:find(" "))
+    calendar.font_size   = tonumber(args.font_size) or 11
+    calendar.fg          = args.fg or beautiful.fg_normal or "#FFFFFF"
+    calendar.bg          = args.bg or beautiful.bg_normal or "#FFFFFF"
+    calendar.position    = args.position or "top_right"
+    calendar.scr_pos     = args.scr_pos or 1
+    calendar.followmouse = args.followmouse or false
+
+    calendar.offset      = 0
     calendar.notify_icon = nil
 
     widget:connect_signal("mouse::enter", function () calendar:show(0, 0, calendar.scr_pos) end)
     widget:connect_signal("mouse::leave", function () calendar:hide() end)
-    widget:buttons(awful.util.table.join( awful.button({ }, 1, function ()
-                                              calendar:show(0, -1, calendar.scr_pos) end),
-                                          awful.button({ }, 3, function ()
-                                              calendar:show(0, 1, calendar.scr_pos) end),
-                                          awful.button({ }, 4, function ()
-                                              calendar:show(0, -1, calendar.scr_pos) end),
-                                          awful.button({ }, 5, function ()
-                                              calendar:show(0, 1, calendar.scr_pos) end)))
+    widget:buttons(awful.util.table.join(awful.button({ }, 1, function ()
+                                             calendar:show(0, -1, calendar.scr_pos) end),
+                                         awful.button({ }, 3, function ()
+                                             calendar:show(0, 1, calendar.scr_pos) end),
+                                         awful.button({ }, 4, function ()
+                                             calendar:show(0, -1, calendar.scr_pos) end),
+                                         awful.button({ }, 5, function ()
+                                             calendar:show(0, 1, calendar.scr_pos) end)))
 end
 
 return setmetatable(calendar, { __call = function(_, ...) return create(...) end })
