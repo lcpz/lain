@@ -40,7 +40,7 @@ local function worker(args)
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
     local mpdh = "telnet://" .. host .. ":" .. port
-    local echo = "echo -e 'password " .. password .. "\nstatus\ncurrentsong\nclose'"
+    local echo = "/bin/echo -e 'password " .. password .. "\nstatus\ncurrentsong\nclose'"
 
     mpd.widget = wibox.widget.textbox('')
 
