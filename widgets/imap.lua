@@ -64,10 +64,7 @@ local function worker(args)
                head_command, server, port, mail, password, request)
 
         async.request(curl, function(f)
-            ws = f:read("*all")
-            f:close()
-
-            _, mailcount = string.gsub(ws, "%d+", "")
+            _, mailcount = string.gsub(f, "%d+", "")
             _ = nil
 
             widget = imap.widget

@@ -78,9 +78,7 @@ local function worker(args)
     function weather.forecast_update()
         local cmd = string.format(forecast_call, city_id, units, lang, cnt)
         async.request(cmd, function(f)
-            j = f:read("*all")
-            f:close()
-            weather_now, pos, err = json.decode(j, 1, nil)
+            weather_now, pos, err = json.decode(f, 1, nil)
 
             if not err and weather_now ~= nil and tonumber(weather_now["cod"]) == 200 then
                 weather.notification_text = ''
@@ -110,9 +108,7 @@ local function worker(args)
     function weather.update()
         local cmd = string.format(current_call, city_id, units, lang)
         async.request(cmd, function(f)
-            j = f:read("*all")
-            f:close()
-            weather_now, pos, err = json.decode(j, 1, nil)
+            weather_now, pos, err = json.decode(f, 1, nil)
 
             if not err and weather_now ~= nil and tonumber(weather_now["cod"]) == 200 then
                 weather.icon_path = icons_path .. weather_now["weather"][1]["icon"] .. ".png"

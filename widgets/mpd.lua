@@ -67,7 +67,7 @@ local function worker(args)
                 elapsed = "N/A"
             }
 
-            for line in f:lines() do
+            for line in string.gmatch(f, "[^\n]+") do
                 for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
                     if     k == "state"   then mpd_now.state   = v
                     elseif k == "file"    then mpd_now.file    = v

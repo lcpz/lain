@@ -59,7 +59,7 @@ local function worker(args)
                 total   = "N/A"
             }
 
-            for line in f:lines() do
+            for line in string.gmatch(f, "[^\n]+") do
                 for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
                     if k == "State" then moc_now.state = v
                     elseif k == "File" then moc_now.file = v
