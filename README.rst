@@ -7,7 +7,7 @@ Layouts, widgets and utilities for Awesome WM 3.5+
 
 :Author: Luke Bonham <dada [at] archlinux [dot] info>
 :Version: git
-:License: GNU-GPLv2_
+:License: GNU-GPL2_
 :Source: https://github.com/copycat-killer/lain
 
 Description
@@ -41,7 +41,7 @@ Screenshots
 .. image:: http://i.imgur.com/9Iv3OR3.png
 .. image:: http://i.imgur.com/STCPcaJ.png
 
-.. _GNU-GPLv2: http://www.gnu.org/licenses/gpl-2.0.html
+.. _GNU-GPL2: http://www.gnu.org/licenses/gpl-2.0.html
 .. _awesome-vain: https://github.com/vain/awesome-vain
 .. _Awesome: http://awesome.naquadah.org/
 .. _wiki: https://github.com/copycat-killer/lain/wiki
