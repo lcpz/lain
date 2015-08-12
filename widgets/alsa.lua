@@ -8,10 +8,10 @@
 --]]
 
 local newtimer        = require("lain.helpers").newtimer
+local read_pipe       = require("lain.helpers").read_pipe
 
 local wibox           = require("wibox")
 
-local io              = { popen  = io.popen }
 local string          = { match  = string.match,
                           format = string.format }
 
@@ -32,9 +32,7 @@ local function worker(args)
     alsa.widget = wibox.widget.textbox('')
 
     function alsa.update()
-        local f = assert(io.popen(string.format("%s get %s", alsa.cmd, alsa.channel)))
-        local mixer = f:read("*all")
-        f:close()
+        local mixer = read_pipe(string.format("%s get %s", alsa.cmd, alsa.channel))
 
         volume_now = {}
 

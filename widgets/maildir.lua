@@ -8,12 +8,12 @@
 --]]
 
 local newtimer        = require("lain.helpers").newtimer
+local read_pipe       = require("lain.helpers").read_pipe
 
 local wibox           = require("wibox")
 
 local util            = require("lain.util")
 
-local io              = { popen  = io.popen }
 local os              = { getenv = os.getenv }
 local pairs           = pairs
 local string          = { len    = string.len,
@@ -50,10 +50,9 @@ local function worker(args)
                 -- match files that begin with a dot.
                 -- Afterwards the length of this string is the number of
                 -- new mails in that box.
-                local np = io.popen("find " .. line ..
+                local mailstring = read_pipe("find " .. line ..
                                     "/new -mindepth 1 -type f " ..
                                     "-not -name '.*' -printf a")
-                local mailstring = np:read("*all")
 
                 -- Strip off leading mailpath.
                 local box = string.match(line, mailpath .. "/*([^/]+)")
@@ -65,10 +64,11 @@ local function worker(args)
             end
         until line == nil
 
+	p:close()
         table.sort(boxes)
 
         newmail = "no mail"
-        --Count the total number of mails irrespective of where it was found
+        -- Count the total number of mails irrespective of where it was found
         total = 0
 
         for box, number in pairs(boxes)
