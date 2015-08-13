@@ -10,6 +10,7 @@ local newtimer     = require("lain.helpers").newtimer
 local read_pipe    = require("lain.helpers").read_pipe
 
 local wibox        = require("wibox")
+local awful        = require("awful")
 
 local string       = { match = string.match }
 
@@ -22,7 +23,14 @@ local function worker (args)
    local layouts          = args.layouts
    local settings         = args.settings or function () end
    local add_us_secondary = args.add_us_secondary or true
+   local timeout          = args.timeout or 5
+   
    local idx              = 1
+
+   -- Mouse bindings
+   kbdlayout.widget:buttons(awful.util.table.join(
+			       awful.button({ }, 1, function () kbdlayout.next() end),
+			       awful.button({ }, 3, function () kbdlayout.prev() end)))
    
    local function run_settings (layout, variant)
       widget = kbdlayout.widget
@@ -63,7 +71,7 @@ local function worker (args)
       kbdlayout.set(idx - 1)
    end
 
-   newtimer("kbdlayout", args.timeout or 10, kbdlayout.update)
+   newtimer("kbdlayout", timeout, kbdlayout.update)
    return setmetatable(kbdlayout, { __index = kbdlayout.widget })
 end
 
