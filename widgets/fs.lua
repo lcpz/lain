@@ -38,7 +38,7 @@ end
 function fs:show(t_out)
     fs:hide()
 
-    ws = helpers.read_pipe(helpers.scripts_dir .. "dfs"):gsub("\n*$", "")
+    local ws = helpers.read_pipe(helpers.scripts_dir .. "dfs"):gsub("\n*$", "")
 
     if fs.followmouse then
         fs.notification_preset.screen = mouse.screen
