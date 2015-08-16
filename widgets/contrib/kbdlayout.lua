@@ -1,7 +1,7 @@
 
 --[[
 
-     Licensed under GNU General Public License v2 
+     Licensed under GNU General Public License v2
       * (c) 2015, Dario Gjorgjevski
 
 --]]
@@ -24,26 +24,26 @@ local function worker (args)
    local settings         = args.settings or function () end
    local add_us_secondary = args.add_us_secondary or true
    local timeout          = args.timeout or 5
-   
+
    local idx              = 1
 
    -- Mouse bindings
    kbdlayout.widget:buttons(awful.util.table.join(
-			       awful.button({ }, 1, function () kbdlayout.next() end),
-			       awful.button({ }, 3, function () kbdlayout.prev() end)))
-   
+                              awful.button({ }, 1, function () kbdlayout.next() end),
+                              awful.button({ }, 3, function () kbdlayout.prev() end)))
+
    local function run_settings (layout, variant)
       widget = kbdlayout.widget
       kbdlayout_now = { layout=string.match(layout, "[^,]+"), -- Make sure to match the primary layout only.
 			variant=variant }
       settings()
    end
-   
+
    function kbdlayout.update ()
       local status = read_pipe('setxkbmap -query')
 
       run_settings(string.match(status, "layout:%s*([^\n]*)"),
-		   string.match(status, "variant:%s*([^\n]*)"))
+                   string.match(status, "variant:%s*([^\n]*)"))
    end
 
    function kbdlayout.set (i)
@@ -51,15 +51,15 @@ local function worker (args)
       local to_execute = 'setxkbmap ' .. layouts[idx].layout
 
       if add_us_secondary then
-	 to_execute = to_execute .. ",us"
+         to_execute = to_execute .. ",us"
       end
 
       if layouts[idx].variant then
-	 to_execute = to_execute .. ' ' .. layouts[idx].variant
+         to_execute = to_execute .. ' ' .. layouts[idx].variant
       end
 
       if os.execute(to_execute) then
-	 run_settings(layouts[idx].layout, layouts[idx].variant)
+         run_settings(layouts[idx].layout, layouts[idx].variant)
       end
    end
 
