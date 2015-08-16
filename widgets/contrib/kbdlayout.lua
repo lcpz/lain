@@ -50,7 +50,7 @@ local function worker (args)
       idx = ((i - 1) % #layouts) + 1 -- Make sure to wrap around as needed.
       local to_execute = 'setxkbmap ' .. layouts[idx].layout
 
-      if add_us_secondary then
+      if add_us_secondary and not string.match(layouts[idx].layout, ",?us,?") then
          to_execute = to_execute .. ",us"
       end
 
