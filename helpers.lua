@@ -10,7 +10,8 @@ local debug  = require("debug")
 
 local capi   = { timer = timer }
 local io     = { open  = io.open,
-                 lines = io.lines }
+                 lines = io.lines,
+                 popen = io.popen }
 local rawget = rawget
 
 -- Lain helper functions for internal use
@@ -82,6 +83,18 @@ function helpers.newtimer(name, timeout, fun, nostart)
     if not nostart then
         helpers.timer_table[name]:emit_signal("timeout")
     end
+end
+
+-- }}}
+
+-- {{{ Pipe operations
+
+-- read the full output of a pipe (command)
+function helpers.read_pipe(cmd)
+   local f = assert(io.popen(cmd))
+   local output = f:read("*all")
+   f:close()
+   return output
 end
 
 -- }}}

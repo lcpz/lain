@@ -43,9 +43,7 @@ local function worker(args)
 
     if not is_plain
     then
-        local f = io.popen(password)
-        password = f:read("*all"):gsub("\n", "")
-        f:close()
+        password = helpers.read_pipe(password):gsub("\n", "")
     end
 
     imap.widget = wibox.widget.textbox('')

@@ -8,12 +8,12 @@
 --]]
 
 local newtimer     = require("lain.helpers").newtimer
+local read_pipe    = require("lain.helpers").read_pipe
 
 local awful        = require("awful")
 local beautiful    = require("beautiful")
 local naughty      = require("naughty")
 
-local io           = { popen  = io.popen }
 local math         = { modf   = math.modf }
 local mouse        = mouse
 local string       = { format = string.format,
@@ -122,9 +122,7 @@ local function worker(args)
 
     function alsabar.update()
         -- Get mixer control contents
-        local f = assert(io.popen(string.format("%s get %s", alsabar.cmd, alsabar.channel)))
-        local mixer = f:read("*all")
-        f:close()
+        local mixer = read_pipe(string.format("%s get %s", alsabar.cmd, alsabar.channel))
 
         -- Capture mixer control state:          [5%] ... ... [on]
         local volu, mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
