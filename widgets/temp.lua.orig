@@ -31,7 +31,11 @@ local function worker(args)
         local f = io.open(tempfile)
         if f ~= nil
         then
+<<<<<<< HEAD
+            coretemp_now = tonumber(f:read("*a")) / 1000
+=======
             coretemp_now = tonumber(f:read("*all")) / 1000
+>>>>>>> upstream/master
             f:close()
         else
             coretemp_now = "N/A"

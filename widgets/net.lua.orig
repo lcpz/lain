@@ -13,6 +13,10 @@ local notify_fg    = require("beautiful").fg_focus
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
+<<<<<<< HEAD
+local io           = { popen  = io.popen }
+=======
+>>>>>>> upstream/master
 local string       = { format = string.format,
                        gsub   = string.gsub,
                        match  = string.match }
@@ -27,7 +31,13 @@ local net = {
 }
 
 function net.get_device()
+<<<<<<< HEAD
+    f = io.popen("ip link show | cut -d' ' -f2,9")
+    ws = f:read("*a")
+    f:close()
+=======
     local ws = helpers.read_pipe("ip link show | cut -d' ' -f2,9")
+>>>>>>> upstream/master
     ws = ws:match("%w+: UP") or ws:match("ppp%w+: UNKNOWN")
     if ws ~= nil then
         return ws:match("(%w+):")

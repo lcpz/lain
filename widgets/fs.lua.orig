@@ -16,7 +16,10 @@ local naughty      = require("naughty")
 
 local io           = { popen  = io.popen }
 local pairs        = pairs
+<<<<<<< HEAD
+=======
 local mouse        = mouse
+>>>>>>> upstream/master
 local string       = { match  = string.match,
                        format = string.format }
 local tonumber     = tonumber
@@ -26,18 +29,39 @@ local setmetatable = setmetatable
 -- File system disk space usage
 -- lain.widgets.fs
 local fs = {}
+<<<<<<< HEAD
+
+local notification  = nil
+fs_notification_preset = { fg = beautiful.fg_normal }
+
+function fs:hide()
+    if notification ~= nil then
+        naughty.destroy(notification)
+        notification = nil
+=======
 local fs_notification  = nil
 
 function fs:hide()
     if fs_notification ~= nil then
         naughty.destroy(fs_notification)
         fs_notification = nil
+>>>>>>> upstream/master
     end
 end
 
 function fs:show(t_out)
     fs:hide()
 
+<<<<<<< HEAD
+    local f = io.popen(helpers.scripts_dir .. "dfs")
+    ws = f:read("*a"):gsub("\n*$", "")
+    f:close()
+
+    notification = naughty.notify({
+        preset = fs_notification_preset,
+        text = ws,
+        timeout = t_out,
+=======
     local ws = helpers.read_pipe(helpers.scripts_dir .. "dfs"):gsub("\n*$", "")
 
     if fs.followmouse then
@@ -48,6 +72,7 @@ function fs:show(t_out)
         preset  = fs.notification_preset,
         text    = ws,
         timeout = t_out
+>>>>>>> upstream/master
     })
 end
 
@@ -55,6 +80,12 @@ end
 local unit = { ["mb"] = 1024, ["gb"] = 1024^2 }
 
 local function worker(args)
+<<<<<<< HEAD
+    local args      = args or {}
+    local timeout   = args.timeout or 600
+    local partition = args.partition or "/"
+    local settings  = args.settings or function() end
+=======
     local args             = args or {}
     local timeout          = args.timeout or 600
     local partition        = args.partition or "/"
@@ -62,6 +93,7 @@ local function worker(args)
 
     fs.followmouse         = args.followmouse or false
     fs.notification_preset = args.notification_preset or { fg = beautiful.fg_normal }
+>>>>>>> upstream/master
 
     fs.widget = wibox.widget.textbox('')
 

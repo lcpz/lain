@@ -10,8 +10,12 @@ local debug  = require("debug")
 
 local capi   = { timer = timer }
 local io     = { open  = io.open,
+<<<<<<< HEAD
+                 lines = io.lines }
+=======
                  lines = io.lines,
                  popen = io.popen }
+>>>>>>> upstream/master
 local rawget = rawget
 
 -- Lain helper functions for internal use
@@ -87,6 +91,8 @@ end
 
 -- }}}
 
+<<<<<<< HEAD
+=======
 -- {{{ Pipe operations
 
 -- read the full output of a pipe (command)
@@ -99,6 +105,7 @@ end
 
 -- }}}
 
+>>>>>>> upstream/master
 -- {{{ A map utility
 
 helpers.map_table = {}

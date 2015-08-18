@@ -7,7 +7,11 @@
      Users contributed widgets section             
                                                    
      Licensed under GNU General Public License v2  
+<<<<<<< HEAD
+      * (c) 2013,      Luke Bonham                 
+=======
       * (c) 2013, Luke Bonham                      
+>>>>>>> upstream/master
                                                    
 --]]
 

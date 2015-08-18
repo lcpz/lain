@@ -29,7 +29,10 @@ local function worker(args)
     local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
     local cover_size  = args.cover_size or 100
     local default_art = args.default_art or ""
+<<<<<<< HEAD
+=======
     local followmouse = args.followmouse or false
+>>>>>>> upstream/master
     local settings    = args.settings or function() end
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
@@ -59,7 +62,11 @@ local function worker(args)
                 total   = "N/A"
             }
 
+<<<<<<< HEAD
+            for line in f:lines() do
+=======
             for line in string.gmatch(f, "[^\n]+") do
+>>>>>>> upstream/master
                 for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
                     if k == "State" then moc_now.state = v
                     elseif k == "File" then moc_now.file = v
@@ -83,10 +90,13 @@ local function worker(args)
                     os.execute(string.format("%s %q %q %d %q", mpdcover, "",
                                moc_now.file, cover_size, default_art))
 
+<<<<<<< HEAD
+=======
                     if followmouse then
                         moc_notification_preset.screen = mouse.screen
                     end
 
+>>>>>>> upstream/master
                     moc.id = naughty.notify({
                         preset = moc_notification_preset,
                         icon = "/tmp/mpdcover.png",

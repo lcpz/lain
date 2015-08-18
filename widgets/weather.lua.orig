@@ -7,17 +7,26 @@
 --]]
 
 local newtimer     = require("lain.helpers").newtimer
+<<<<<<< HEAD
+local async        = require("lain.asyncshell")
+local json         = require("lain.util").dkjson
+local lain_icons   = require("lain.helpers").icons_dir
+=======
 local read_pipe    = require("lain.helpers").read_pipe
 
 local async        = require("lain.asyncshell")
 local json         = require("lain.util").dkjson
 local lain_icons   = require("lain.helpers").icons_dir
 
+>>>>>>> upstream/master
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
 local math         = { floor  = math.floor }
+<<<<<<< HEAD
+=======
 local mouse        = mouse
+>>>>>>> upstream/master
 local string       = { format = string.format,
                        gsub   = string.gsub }
 
@@ -28,6 +37,22 @@ local setmetatable = setmetatable
 -- lain.widgets.weather
 
 local function worker(args)
+<<<<<<< HEAD
+    local weather               = {}
+    local args                  = args or {}
+    local timeout               = args.timeout or 900   -- 15 min
+    local timeout_forecast      = args.timeout or 86400 -- 24 hrs
+    local current_call          = "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s'"
+    local forecast_call         = "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s'"
+    local city_id               = args.city_id or 0 -- placeholder
+    local units                 = args.units or "metric"
+    local lang                  = args.lang or "en"
+    local cnt                   = args.cnt or 7
+    local date_cmd              = args.date_cmd or "date -u -d @%d +'%%a %%d'"
+    local icons_path            = args.icons_path or lain_icons .. "openweathermap/"
+    local w_notification_preset = args.w_notification_preset or {}
+    local settings              = args.settings or function() end
+=======
     local weather             = {}
     local args                = args or {}
     local timeout             = args.timeout or 900   -- 15 min
@@ -43,22 +68,30 @@ local function worker(args)
     local notification_preset = args.notification_preset or {}
     local followmouse         = args.followmouse or false
     local settings            = args.settings or function() end
+>>>>>>> upstream/master
 
     weather.widget = wibox.widget.textbox('')
     weather.icon   = wibox.widget.imagebox()
 
     function weather.show(t_out)
         weather.hide()
+<<<<<<< HEAD
+=======
 
         if followmouse then
             notification_preset.screen = mouse.screen
         end
 
+>>>>>>> upstream/master
         weather.notification = naughty.notify({
             text    = weather.notification_text,
             icon    = weather.icon_path,
             timeout = t_out,
+<<<<<<< HEAD
+            preset  = w_notification_preset
+=======
             preset  = notification_preset
+>>>>>>> upstream/master
         })
     end
 
@@ -81,12 +114,24 @@ local function worker(args)
     function weather.forecast_update()
         local cmd = string.format(forecast_call, city_id, units, lang, cnt)
         async.request(cmd, function(f)
+<<<<<<< HEAD
+            j = f:read("*a")
+            f:close()
+            weather_now, pos, err = json.decode(j, 1, nil)
+=======
             weather_now, pos, err = json.decode(f, 1, nil)
+>>>>>>> upstream/master
 
             if not err and weather_now ~= nil and tonumber(weather_now["cod"]) == 200 then
                 weather.notification_text = ''
                 for i = 1, weather_now["cnt"] do
+<<<<<<< HEAD
+                    local f = assert(io.popen(string.format(date_cmd, weather_now["list"][i]["dt"])))
+                    day = string.gsub(f:read("a"), "\n", "")
+                    f:close()
+=======
                     day = string.gsub(read_pipe(string.format(date_cmd, weather_now["list"][i]["dt"])), "\n", "")
+>>>>>>> upstream/master
 
                     tmin = math.floor(weather_now["list"][i]["temp"]["min"])
                     tmax = math.floor(weather_now["list"][i]["temp"]["max"])
@@ -109,7 +154,13 @@ local function worker(args)
     function weather.update()
         local cmd = string.format(current_call, city_id, units, lang)
         async.request(cmd, function(f)
+<<<<<<< HEAD
+            j = f:read("*a")
+            f:close()
+            weather_now, pos, err = json.decode(j, 1, nil)
+=======
             weather_now, pos, err = json.decode(f, 1, nil)
+>>>>>>> upstream/master
 
             if not err and weather_now ~= nil and tonumber(weather_now["cod"]) == 200 then
                 weather.icon_path = icons_path .. weather_now["weather"][1]["icon"] .. ".png"

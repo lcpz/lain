@@ -17,7 +17,10 @@ local wibox        = require("wibox")
 local os           = { execute  = os.execute,
                        getenv   = os.getenv }
 local math         = { floor    = math.floor }
+<<<<<<< HEAD
+=======
 local mouse        = mouse
+>>>>>>> upstream/master
 local string       = { format   = string.format,
                        match    = string.match,
                        gmatch   = string.gmatch }
@@ -37,13 +40,20 @@ local function worker(args)
     local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
     local cover_size  = args.cover_size or 100
     local default_art = args.default_art or ""
+<<<<<<< HEAD
+=======
     local followmouse = args.followmouse or false
     local echo_cmd    = args.echo_cmd or "echo"
+>>>>>>> upstream/master
     local settings    = args.settings or function() end
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
     local mpdh = "telnet://" .. host .. ":" .. port
+<<<<<<< HEAD
+    local echo = "echo 'password " .. password .. "\nstatus\ncurrentsong\nclose'"
+=======
     local echo = echo_cmd .. " 'password " .. password .. "\nstatus\ncurrentsong\nclose'"
+>>>>>>> upstream/master
 
     mpd.widget = wibox.widget.textbox('')
 
@@ -67,7 +77,11 @@ local function worker(args)
                 elapsed = "N/A"
             }
 
+<<<<<<< HEAD
+            for line in f:lines() do
+=======
             for line in string.gmatch(f, "[^\n]+") do
+>>>>>>> upstream/master
                 for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
                     if     k == "state"   then mpd_now.state   = v
                     elseif k == "file"    then mpd_now.file    = v
@@ -92,7 +106,11 @@ local function worker(args)
                 then
                     helpers.set_map("current mpd track", mpd_now.title)
 
+<<<<<<< HEAD
+                    if string.match(mpd_now.file, "http://") == nil
+=======
                     if string.match(mpd_now.file, "http.*://") == nil
+>>>>>>> upstream/master
                     then -- local file
                         os.execute(string.format("%s %q %q %d %q", mpdcover, music_dir,
                                    mpd_now.file, cover_size, default_art))
@@ -101,10 +119,13 @@ local function worker(args)
                         current_icon = default_art
                     end
 
+<<<<<<< HEAD
+=======
                     if followmouse then
                         mpd_notification_preset.screen = mouse.screen
                     end
 
+>>>>>>> upstream/master
                     mpd.id = naughty.notify({
                         preset = mpd_notification_preset,
                         icon = current_icon,
