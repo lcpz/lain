@@ -117,10 +117,13 @@ function calendar:attach(widget, args)
                            beautiful.font:find(" "))
     calendar.font_size   = tonumber(args.font_size) or 11
     calendar.fg          = args.fg or beautiful.fg_normal or "#FFFFFF"
-    calendar.bg          = args.bg or beautiful.bg_normal or "#FFFFFF"
+    calendar.bg          = args.bg or beautiful.bg_normal or "#000000"
     calendar.position    = args.position or "top_right"
     calendar.scr_pos     = args.scr_pos or 1
     calendar.followmouse = args.followmouse or false
+
+    calendar.fg = string.sub(calendar.fg, 1, 7)
+    calendar.bg = string.sub(calendar.bg, 1, 7)
 
     calendar.offset      = 0
     calendar.notify_icon = nil
