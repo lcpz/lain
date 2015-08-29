@@ -132,7 +132,7 @@ local function worker(args)
     weather.attach(weather.widget)
 
     newtimer("weather-" .. city_id, timeout, weather.update)
-    newtimer("weather_forecast" .. city_id, timeout, weather.forecast_update)
+    newtimer("weather_forecast-" .. city_id, timeout, weather.forecast_update)
 
     return setmetatable(weather, { __index = weather.widget })
 end
