@@ -28,21 +28,25 @@ local setmetatable = setmetatable
 -- lain.widgets.weather
 
 local function worker(args)
-    local weather             = {}
-    local args                = args or {}
-    local timeout             = args.timeout or 900   -- 15 min
-    local timeout_forecast    = args.timeout or 86400 -- 24 hrs
-    local current_call        = "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s'"
-    local forecast_call       = "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s'"
-    local city_id             = args.city_id or 0 -- placeholder
-    local units               = args.units or "metric"
-    local lang                = args.lang or "en"
-    local cnt                 = args.cnt or 7
-    local date_cmd            = args.date_cmd or "date -u -d @%d +'%%a %%d'"
-    local icons_path          = args.icons_path or lain_icons .. "openweathermap/"
-    local notification_preset = args.notification_preset or {}
-    local followmouse         = args.followmouse or false
-    local settings            = args.settings or function() end
+    local weather               = {}
+    local args                  = args or {}
+    local timeout               = args.timeout or 900   -- 15 min
+    local timeout_forecast      = args.timeout or 86400 -- 24 hrs
+    local current_call          = "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s'"
+    local forecast_call         = "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s'"
+    local city_id               = args.city_id or 0 -- placeholder
+    local units                 = args.units or "metric"
+    local lang                  = args.lang or "en"
+    local cnt                   = args.cnt or 7
+    local date_cmd              = args.date_cmd or "date -u -d @%d +'%%a %%d'"
+    local icons_path            = args.icons_path or lain_icons .. "openweathermap/"
+    local notification_preset   = args.notification_preset or {}
+    local notification_text_cmd = args.notification_text_cmd or
+                                  function (day, desc, tmin, tmax)
+                                      return string.format("<b>%s</b>: %s, %d - %d  ", day, desc, tmin, tmax)
+                                  end
+    local followmouse           = args.followmouse or false
+    local settings              = args.settings or function() end
 
     weather.widget = wibox.widget.textbox('')
     weather.icon   = wibox.widget.imagebox()
@@ -93,7 +97,7 @@ local function worker(args)
                     desc = weather_now["list"][i]["weather"][1]["description"]
 
                     weather.notification_text = weather.notification_text ..
-                                                string.format("<b>%s</b>: %s, %d - %d  ", day, desc, tmin, tmax)
+                                                notification_text_cmd(day, desc, tmin, tmax)
 
                     if i < weather_now["cnt"] then
                         weather.notification_text = weather.notification_text .. "\n"
