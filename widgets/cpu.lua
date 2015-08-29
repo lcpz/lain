@@ -54,19 +54,21 @@ local function worker(args)
         end
         local active = total - idle
 
-        -- Read current data and calculate relative values.
-        local dactive = active - cpu.last_active
-        local dtotal = total - cpu.last_total
+        if cpu.last_active ~= active or cpu.last_total ~= total then
+            -- Read current data and calculate relative values.
+            local dactive = active - cpu.last_active
+            local dtotal = total - cpu.last_total
 
-        cpu_now = {}
-        cpu_now.usage = tostring(math.ceil((dactive / dtotal) * 100))
+            cpu_now = {}
+            cpu_now.usage = tostring(math.ceil((dactive / dtotal) * 100))
 
-        widget = cpu.widget
-        settings()
+            widget = cpu.widget
+            settings()
 
-        -- Save current data for the next run.
-        cpu.last_active = active
-        cpu.last_total = total
+            -- Save current data for the next run.
+            cpu.last_active = active
+            cpu.last_total = total
+        end
     end
 
     newtimer("cpu", timeout, update)

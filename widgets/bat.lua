@@ -21,7 +21,12 @@ local setmetatable = setmetatable
 
 -- Battery infos
 -- lain.widgets.bat
-local bat = {}
+local bat = {
+    last_status = 0,
+    last_perc   = 0,
+    last_time   = 0,
+    last_watt   = 0
+}
 
 local function worker(args)
     local args = args or {}
@@ -115,11 +120,21 @@ local function worker(args)
             else
                 bat_now.watt = "N/A"
             end
-
         end
 
-        widget = bat.widget
-        settings()
+        if bat.last_status ~= bat_now.status
+        or bat.last_perc   ~= bat_now_perc
+        or bat.last_watt   ~= bat_now_watt
+        or bat.last_time   ~= bat_now_time
+        then
+            widget = bat.widget
+            settings()
+
+            bat.last_status = bat_now.status
+            bat.last_perc   = bat_now_perc
+            bat.last_watt   = bat_now_watt
+            bat.last_time   = bat_now_time
+        end
 
         -- notifications for low and critical states
         if bat_now.status == "Discharging" and notify == "on" and bat_now.perc ~= nil

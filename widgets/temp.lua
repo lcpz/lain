@@ -17,7 +17,9 @@ local setmetatable = setmetatable
 
 -- coretemp
 -- lain.widgets.temp
-local temp = {}
+local temp = {
+    last_t = 0
+}
 
 local function worker(args)
     local args     = args or {}
@@ -37,8 +39,12 @@ local function worker(args)
             coretemp_now = "N/A"
         end
 
-        widget = temp.widget
-        settings()
+        if temp.last_t ~= coretemp_now then
+            widget = temp.widget
+            settings()
+
+            temp.last_t = coretemp_now
+        end
     end
 
     newtimer("coretemp", timeout, update)
