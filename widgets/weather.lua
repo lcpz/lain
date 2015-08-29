@@ -41,7 +41,7 @@ local function worker(args)
     local date_cmd              = args.date_cmd or "date -u -d @%d +'%%a %%d'"
     local icons_path            = args.icons_path or lain_icons .. "openweathermap/"
     local notification_preset   = args.notification_preset or {}
-    local notification_text_cmd = args.notification_text_cmd or
+    local notification_text_fun = args.notification_text_fun or
                                   function (day, desc, tmin, tmax)
                                       return string.format("<b>%s</b>: %s, %d - %d  ", day, desc, tmin, tmax)
                                   end
@@ -98,7 +98,7 @@ local function worker(args)
                     local desc = weather_now["list"][i]["weather"][1]["description"]
 
                     weather.notification_text = weather.notification_text ..
-                                                notification_text_cmd(day, desc, tmin, tmax)
+                                                notification_text_fun(day, desc, tmin, tmax)
 
                     if i < weather_now["cnt"] then
                         weather.notification_text = weather.notification_text .. "\n"
