@@ -85,16 +85,17 @@ local function worker(args)
     function weather.forecast_update()
         local cmd = string.format(forecast_call, city_id, units, lang, cnt)
         async.request(cmd, function(f)
+            local pos, err
             weather_now, pos, err = json.decode(f, 1, nil)
 
             if not err and weather_now ~= nil and tonumber(weather_now["cod"]) == 200 then
                 weather.notification_text = ''
                 for i = 1, weather_now["cnt"] do
-                    day = string.gsub(read_pipe(string.format(date_cmd, weather_now["list"][i]["dt"])), "\n", "")
+                    local day = string.gsub(read_pipe(string.format(date_cmd, weather_now["list"][i]["dt"])), "\n", "")
 
-                    tmin = math.floor(weather_now["list"][i]["temp"]["min"])
-                    tmax = math.floor(weather_now["list"][i]["temp"]["max"])
-                    desc = weather_now["list"][i]["weather"][1]["description"]
+                    local tmin = math.floor(weather_now["list"][i]["temp"]["min"])
+                    local tmax = math.floor(weather_now["list"][i]["temp"]["max"])
+                    local desc = weather_now["list"][i]["weather"][1]["description"]
 
                     weather.notification_text = weather.notification_text ..
                                                 notification_text_cmd(day, desc, tmin, tmax)
@@ -113,6 +114,7 @@ local function worker(args)
     function weather.update()
         local cmd = string.format(current_call, city_id, units, lang)
         async.request(cmd, function(f)
+            local pos, err
             weather_now, pos, err = json.decode(f, 1, nil)
 
             if not err and weather_now ~= nil and tonumber(weather_now["cod"]) == 200 then
