@@ -152,8 +152,8 @@ function cascadetile.arrange(p)
                 c = cls[i]
                 g = {}
                 g.width = slavewid - current_offset_x - 2*bw
-                g.height = wa.height - current_offset_y -2*bw
-                g.x = wa.x + mainwid + (how_many - (i - 1)) * cascadetile.offset_x
+                g.height = wa.height - current_offset_y - 2*bw
+                g.x = wa.x + mainwid + (how_many - (i - 1)) * cascadetile.offset_x + global_border
                 g.y = wa.y + (i - 2) * cascadetile.offset_y + global_border
                 if useless_gap > 0
                 then
