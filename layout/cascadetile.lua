@@ -100,7 +100,7 @@ function cascadetile.arrange(p)
     if #cls > 0
     then
         -- Main column, fixed width and height.
-        local c = cls[#cls]
+        local c = cls[1]
         local g = {}
         local mainwid = wa.width * mwfact
         local slavewid = wa.width - mainwid
@@ -143,14 +143,14 @@ function cascadetile.arrange(p)
         -- Remaining clients stacked in slave column, new ones on top.
         if #cls > 1
         then
-            for i = (#cls - 1),1,-1
+            for i = (#cls),2,-1
             do
                 c = cls[i]
                 g = {}
                 g.width = slavewid - current_offset_x
                 g.height = wa.height - current_offset_y
                 g.x = wa.x + mainwid + (how_many - i) * cascadetile.offset_x
-                g.y = wa.y + (i - 1) * cascadetile.offset_y + global_border
+                g.y = wa.y + (i - 2) * cascadetile.offset_y + global_border
                 if useless_gap > 0
                 then
                     g.width = g.width - 2 * useless_gap
