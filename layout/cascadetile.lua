@@ -58,8 +58,8 @@ function cascadetile.arrange(p)
     local cls = p.clients
 
     -- Borders are factored in.
-    wa.height = wa.height - ((global_border * 2) + (bw * 2))
-    wa.width = wa.width - ((global_border * 2) + (bw * 2))
+    wa.height = wa.height - (global_border * 2)
+    wa.width = wa.width - (global_border * 2)
 
     -- Width of main column?
     local t = tag.selected(p.screen)
@@ -102,12 +102,16 @@ function cascadetile.arrange(p)
         -- Main column, fixed width and height.
         local c = cls[1]
         local g = {}
-        local mainwid = wa.width * mwfact
+        -- Subtracting the useless_gap width from the work area width here
+        -- makes this mwfact calculation work the same as in uselesstile.
+        -- Explicitly rounding is necessary to prevent the rendered size of
+        -- slavewid from changing depending on whether we round up or down.
+        local mainwid = math.floor((wa.width - useless_gap) * mwfact)
         local slavewid = wa.width - mainwid
 
         if overlap_main == 1
         then
-            g.width = wa.width
+            g.width = wa.width - 2*bw
 
             -- The size of the main window may be reduced a little bit.
             -- This allows you to see if there are any windows below the
@@ -116,10 +120,10 @@ function cascadetile.arrange(p)
             -- overlapping everything else.
             g.width = g.width - cascadetile.extra_padding
         else
-            g.width = mainwid
+            g.width = mainwid - 2*bw
         end
 
-        g.height = wa.height
+        g.height = wa.height - 2*bw
         g.x = wa.x + global_border
         g.y = wa.y + global_border
         if useless_gap > 0
@@ -143,13 +147,13 @@ function cascadetile.arrange(p)
         -- Remaining clients stacked in slave column, new ones on top.
         if #cls > 1
         then
-            for i = (#cls),2,-1
+            for i = 2,#cls
             do
                 c = cls[i]
                 g = {}
-                g.width = slavewid - current_offset_x
-                g.height = wa.height - current_offset_y
-                g.x = wa.x + mainwid + (how_many - i) * cascadetile.offset_x
+                g.width = slavewid - current_offset_x - 2*bw
+                g.height = wa.height - current_offset_y -2*bw
+                g.x = wa.x + mainwid + (how_many - (i - 1)) * cascadetile.offset_x
                 g.y = wa.y + (i - 2) * cascadetile.offset_y + global_border
                 if useless_gap > 0
                 then
