@@ -46,16 +46,13 @@ function termfair.arrange(p)
     local global_border = tonumber(beautiful.global_border_width) or 0
     if global_border < 0 then global_border = 0 end
 
-    -- Themes border width requires an offset
-    local bw = tonumber(beautiful.border_width) or 0
-
     -- Screen.
     local wa = p.workarea
     local cls = p.clients
 
     -- Borders are factored in.
-    wa.height = wa.height - ((global_border * 2) + (bw * 2))
-    wa.width = wa.width - ((global_border * 2) + (bw * 2))
+    wa.height = wa.height - (global_border * 2)
+    wa.width = wa.width - (global_border * 2)
 
     -- How many vertical columns?
     local t = tag.selected(p.screen)
@@ -71,8 +68,8 @@ function termfair.arrange(p)
         local at_x = 0
         local at_y = 0
         local remaining_clients = #cls
-        local width = math.floor(wa.width / num_x)
-        local height = math.floor(wa.height / num_y)
+        local width = math.floor((wa.width - (num_x + 1)*useless_gap) / num_x)
+        local height = math.floor((wa.height - (num_y + 1)*useless_gap) / num_y)
 
         -- We start the first row. Left-align by limiting the number of
         -- available slots.
@@ -93,25 +90,25 @@ function termfair.arrange(p)
             local g = {}
             if this_x == (num_x - 1)
             then
-                g.width = wa.width - (num_x - 1) * width - useless_gap
+                g.width = wa.width - (num_x - 1)*width - (num_x + 1)*useless_gap - 2*c.border_width
             else
-                g.width = width - useless_gap
+                g.width = width - 2*c.border_width
             end
             if this_y == (num_y - 1)
             then
-                g.height = wa.height - (num_y - 1) * height - useless_gap
+                g.height = wa.height - (num_y - 1)*height - (num_y + 1)*useless_gap - 2*c.border_width
             else
-                g.height = height - useless_gap
+                g.height = height - 2*c.border_width
             end
 
-            g.x = wa.x + this_x * width + global_border
-            g.y = wa.y + this_y * height + global_border
+            g.x = wa.x + this_x*width + global_border
+            g.y = wa.y + this_y*height + global_border
 
             if useless_gap > 0
             then
                 -- All clients tile evenly.
-                g.x = g.x + (useless_gap / 2)
-                g.y = g.y + (useless_gap / 2)
+                g.x = g.x + (this_x + 1)*useless_gap
+                g.y = g.y + (this_y + 1)*useless_gap
 
             end
             c:geometry(g)

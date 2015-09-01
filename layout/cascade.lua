@@ -28,15 +28,12 @@ function cascade.arrange(p)
     local global_border = tonumber(beautiful.global_border_width) or 0
     if global_border < 0 then global_border = 0 end
 
-    -- Themes border width requires an offset.
-    local bw = tonumber(beautiful.border_width) or 0
-
     -- Screen.
     local wa = p.workarea
     local cls = p.clients
 
-    wa.height = wa.height - ((global_border * 2) + (bw * 2))
-    wa.width = wa.width - ((global_border * 2) + (bw * 2))
+    wa.height = wa.height - (global_border * 2)
+    wa.width = wa.width - (global_border * 2)
     wa.x = wa.x + global_border
     wa.y = wa.y + global_border
 
@@ -70,8 +67,8 @@ function cascade.arrange(p)
 
         g.x = wa.x + (how_many - i) * cascade.offset_x
         g.y = wa.y + (i - 1) * cascade.offset_y
-        g.width = wa.width - current_offset_x
-        g.height = wa.height - current_offset_y
+        g.width = wa.width - current_offset_x - 2*c.border_width
+        g.height = wa.height - current_offset_y - 2*c.border_width
 
         c:geometry(g)
     end
