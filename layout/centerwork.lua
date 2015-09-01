@@ -32,9 +32,6 @@ function centerwork.arrange(p)
     local global_border = tonumber(beautiful.global_border_width) or 0
     if global_border < 0 then global_border = 0 end
 
-    -- Themes border width requires an offset
-    local bw = tonumber(beautiful.border_width) or 0
-
     -- Screen.
     local wa = p.workarea
     local cls = p.clients
@@ -59,8 +56,8 @@ function centerwork.arrange(p)
         local slaveThei = math.floor(wa.height / 2)
         local slaveBhei = wa.height - slaveThei
 
-        g.height = wa.height - 2*useless_gap - 2*bw
-        g.width = mainwid - 2*bw
+        g.height = wa.height - 2*useless_gap - 2*c.border_width
+        g.width = mainwid - 2*c.border_width
         g.x = wa.x + slaveLwid + global_border
         g.y = wa.y + useless_gap + global_border
 
@@ -88,29 +85,29 @@ function centerwork.arrange(p)
                     -- top left
                     g.x = wa.x + useless_gap + global_border
                     g.y = wa.y + useless_gap + global_border
-                    g.width = slaveLwid - 2*useless_gap - 2*bw
-                    g.height = slaveThei - useless_gap - 2*bw
+                    g.width = slaveLwid - 2*useless_gap - 2*c.border_width
+                    g.height = slaveThei - useless_gap - 2*c.border_width
                 elseif i - 2 == centerwork.top_right
                 then
                     -- top right
                     g.x = wa.x + slaveLwid + mainwid + useless_gap + global_border
                     g.y = wa.y + useless_gap + global_border
-                    g.width = slaveRwid - 2*useless_gap - 2*bw
-                    g.height = slaveThei - useless_gap - 2*bw
+                    g.width = slaveRwid - 2*useless_gap - 2*c.border_width
+                    g.height = slaveThei - useless_gap - 2*c.border_width
                 elseif i - 2 == centerwork.bottom_left
                 then
                     -- bottom left
                     g.x = wa.x + useless_gap + global_border
                     g.y = wa.y + slaveThei + useless_gap + global_border
-                    g.width = slaveLwid - 2*useless_gap - 2*bw
-                    g.height = slaveBhei - 2*useless_gap - 2*bw
+                    g.width = slaveLwid - 2*useless_gap - 2*c.border_width
+                    g.height = slaveBhei - 2*useless_gap - 2*c.border_width
                 elseif i - 2 == centerwork.bottom_right
                 then
                     -- bottom right
                     g.x = wa.x + slaveLwid + mainwid + useless_gap + global_border
                     g.y = wa.y + slaveThei + useless_gap + global_border
-                    g.width = slaveRwid - 2*useless_gap - 2*bw
-                    g.height = slaveBhei - 2*useless_gap - 2*bw
+                    g.width = slaveRwid - 2*useless_gap - 2*c.border_width
+                    g.height = slaveBhei - 2*useless_gap - 2*c.border_width
                 end
 
                 c:geometry(g)

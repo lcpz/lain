@@ -49,9 +49,6 @@ function centerfair.arrange(p)
     local global_border = tonumber(beautiful.global_border_width) or 0
     if global_border < 0 then global_border = 0 end
 
-    -- Themes border width requires an offset
-    local bw = tonumber(beautiful.border_width) or 0
-
     -- Screen.
     local wa = p.workarea
     local cls = p.clients
@@ -66,33 +63,35 @@ function centerfair.arrange(p)
     local ncol = centerfair.ncol or tag.getncol(t)
     if num_x <= 2 then num_x = 2 end
 
-    local width = math.floor((wa.width - (num_x + 1)*useless_gap - num_x*2*bw) / num_x)
+    local width = math.floor((wa.width - (num_x + 1)*useless_gap) / num_x)
 
     local offset_y = wa.y + useless_gap
     if #cls < num_x
     then
         -- Less clients than the number of columns, let's center it!
-        local offset_x = wa.x + (wa.width - #cls*width - #cls*2*bw - (#cls - 1)*useless_gap) / 2
+        local offset_x = wa.x + (wa.width - #cls*width - (#cls - 1)*useless_gap) / 2
         local g = {}
-        g.width = width
-        g.height = wa.height - 2*useless_gap - 2*bw
         g.y = offset_y + global_border
         for i = 1, #cls do
-            g.x = offset_x + (i - 1) * (width + useless_gap + 2*bw) + global_border
-            cls[i]:geometry(g)
+            local c = cls[i]
+            g.width = width - 2*c.border_width
+            g.height = wa.height - 2*useless_gap - 2*c.border_width
+            g.x = offset_x + (i - 1) * (width + useless_gap) + global_border
+            c:geometry(g)
         end
     else
         -- More clients than the number of columns, let's arrange it!
         local offset_x = wa.x + useless_gap
 
         -- Master client deserves a special treatement
+        local c = cls[1]
         local g = {}
-        g.width = wa.width - (num_x - 1)*width - (num_x + 1)*useless_gap - num_x*2*bw
-        g.height = wa.height - 2*useless_gap - 2*bw
+        g.width = wa.width - (num_x - 1)*width - (num_x + 1)*useless_gap - 2*c.border_width
+        g.height = wa.height - 2*useless_gap - 2*c.border_width
         g.x = offset_x + global_border
         g.y = offset_y + global_border
 
-        cls[1]:geometry(g)
+        c:geometry(g)
 
         -- Treat the other clients
 
@@ -132,21 +131,25 @@ function centerfair.arrange(p)
 
         -- Compute geometry of the other clients
         local nclient = 2 -- we start with the 2nd client
-        g.x = g.x + g.width + useless_gap + 2*bw
-        g.width = width
+        g.x = g.x + g.width + useless_gap + 2*c.border_width
 
         for i = 1, (num_x-1) do
-            g.height = math.floor((wa.height - (num_y[i] + 1)*useless_gap - num_y[i]*2*bw) / num_y[i])
+            local height = math.floor((wa.height - (num_y[i] + 1)*useless_gap) / num_y[i])
             g.y = offset_y + global_border
             for j = 0, (num_y[i]-2) do
-                cls[nclient]:geometry(g)
+                local c = cls[nclient]
+                g.height = height - 2*c.border_width
+                g.width = width - 2*c.border_width
+                c:geometry(g)
                 nclient = nclient + 1
-                g.y = g.y + g.height + useless_gap + 2*bw
+                g.y = g.y + height + useless_gap
             end
-            g.height = wa.height - (num_y[i] + 1)*useless_gap - (num_y[i] - 1)*g.height - num_y[i]*2*bw
-            cls[nclient]:geometry(g)
+            local c = cls[nclient]
+            g.height = wa.height - (num_y[i] + 1)*useless_gap - (num_y[i] - 1)*height - 2*c.border_width
+            g.width = width - 2*c.border_width
+            c:geometry(g)
             nclient = nclient + 1
-            g.x = g.x + g.width + useless_gap + 2*bw
+            g.x = g.x + width + useless_gap
         end
     end
 end

@@ -50,9 +50,6 @@ function cascadetile.arrange(p)
     local global_border = tonumber(beautiful.global_border_width) or 0
     if global_border < 0 then global_border = 0 end
 
-    -- Themes border width requires an offset
-    local bw = tonumber(beautiful.border_width) or 0
-
     -- Screen.
     local wa = p.workarea
     local cls = p.clients
@@ -111,7 +108,7 @@ function cascadetile.arrange(p)
 
         if overlap_main == 1
         then
-            g.width = wa.width - 2*bw
+            g.width = wa.width - 2*c.border_width
 
             -- The size of the main window may be reduced a little bit.
             -- This allows you to see if there are any windows below the
@@ -120,10 +117,10 @@ function cascadetile.arrange(p)
             -- overlapping everything else.
             g.width = g.width - cascadetile.extra_padding
         else
-            g.width = mainwid - 2*bw
+            g.width = mainwid - 2*c.border_width
         end
 
-        g.height = wa.height - 2*bw
+        g.height = wa.height - 2*c.border_width
         g.x = wa.x + global_border
         g.y = wa.y + global_border
         if useless_gap > 0
@@ -151,8 +148,8 @@ function cascadetile.arrange(p)
             do
                 c = cls[i]
                 g = {}
-                g.width = slavewid - current_offset_x - 2*bw
-                g.height = wa.height - current_offset_y - 2*bw
+                g.width = slavewid - current_offset_x - 2*c.border_width
+                g.height = wa.height - current_offset_y - 2*c.border_width
                 g.x = wa.x + mainwid + (how_many - (i - 1)) * cascadetile.offset_x + global_border
                 g.y = wa.y + (i - 2) * cascadetile.offset_y + global_border
                 if useless_gap > 0
