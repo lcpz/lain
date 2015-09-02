@@ -53,6 +53,8 @@ function termfair.arrange(p)
     -- Borders are factored in.
     wa.height = wa.height - (global_border * 2)
     wa.width = wa.width - (global_border * 2)
+    wa.x = wa.x + global_border
+    wa.y = wa.y + global_border
 
     -- How many vertical columns?
     local t = tag.selected(p.screen)
@@ -101,8 +103,8 @@ function termfair.arrange(p)
                 g.height = height - 2*c.border_width
             end
 
-            g.x = wa.x + this_x*width + global_border
-            g.y = wa.y + this_y*height + global_border
+            g.x = wa.x + this_x*width
+            g.y = wa.y + this_y*height
 
             if useless_gap > 0
             then

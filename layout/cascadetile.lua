@@ -57,6 +57,8 @@ function cascadetile.arrange(p)
     -- Borders are factored in.
     wa.height = wa.height - (global_border * 2)
     wa.width = wa.width - (global_border * 2)
+    wa.x = wa.x + global_border
+    wa.y = wa.y + global_border
 
     -- Width of main column?
     local t = tag.selected(p.screen)
@@ -101,8 +103,8 @@ function cascadetile.arrange(p)
         local g = {}
         -- Subtracting the useless_gap width from the work area width here
         -- makes this mwfact calculation work the same as in uselesstile.
-        -- Explicitly rounding is necessary to prevent the rendered size of
-        -- slavewid from changing depending on whether we round up or down.
+        -- Rounding is necessary to prevent the rendered size of slavewid
+        -- from being 1 pixel off when the result is not an integer.
         local mainwid = math.floor((wa.width - useless_gap) * mwfact)
         local slavewid = wa.width - mainwid
 
@@ -121,8 +123,8 @@ function cascadetile.arrange(p)
         end
 
         g.height = wa.height - 2*c.border_width
-        g.x = wa.x + global_border
-        g.y = wa.y + global_border
+        g.x = wa.x
+        g.y = wa.y
         if useless_gap > 0
         then
             -- Reduce width once and move window to the right. Reduce
@@ -150,8 +152,8 @@ function cascadetile.arrange(p)
                 g = {}
                 g.width = slavewid - current_offset_x - 2*c.border_width
                 g.height = wa.height - current_offset_y - 2*c.border_width
-                g.x = wa.x + mainwid + (how_many - (i - 1)) * cascadetile.offset_x + global_border
-                g.y = wa.y + (i - 2) * cascadetile.offset_y + global_border
+                g.x = wa.x + mainwid + (how_many - (i - 1)) * cascadetile.offset_x
+                g.y = wa.y + (i - 2) * cascadetile.offset_y
                 if useless_gap > 0
                 then
                     g.width = g.width - 2 * useless_gap

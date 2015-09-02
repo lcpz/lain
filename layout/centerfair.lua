@@ -56,6 +56,8 @@ function centerfair.arrange(p)
     -- Borders are factored in.
     wa.height = wa.height - (global_border * 2)
     wa.width = wa.width - (global_border * 2)
+    wa.x = wa.x + global_border
+    wa.y = wa.y + global_border
 
     -- How many vertical columns? Read from nmaster on the tag.
     local t = tag.selected(p.screen)
@@ -65,31 +67,28 @@ function centerfair.arrange(p)
 
     local width = math.floor((wa.width - (num_x + 1)*useless_gap) / num_x)
 
-    local offset_y = wa.y + useless_gap
     if #cls < num_x
     then
         -- Less clients than the number of columns, let's center it!
         local offset_x = wa.x + (wa.width - #cls*width - (#cls - 1)*useless_gap) / 2
         local g = {}
-        g.y = offset_y + global_border
+        g.y = wa.y + useless_gap
         for i = 1, #cls do
             local c = cls[i]
             g.width = width - 2*c.border_width
             g.height = wa.height - 2*useless_gap - 2*c.border_width
-            g.x = offset_x + (i - 1) * (width + useless_gap) + global_border
+            g.x = offset_x + (i - 1) * (width + useless_gap)
             c:geometry(g)
         end
     else
         -- More clients than the number of columns, let's arrange it!
-        local offset_x = wa.x + useless_gap
-
         -- Master client deserves a special treatement
         local c = cls[1]
         local g = {}
         g.width = wa.width - (num_x - 1)*width - (num_x + 1)*useless_gap - 2*c.border_width
         g.height = wa.height - 2*useless_gap - 2*c.border_width
-        g.x = offset_x + global_border
-        g.y = offset_y + global_border
+        g.x = wa.x + useless_gap
+        g.y = wa.y + useless_gap
 
         c:geometry(g)
 
@@ -135,7 +134,7 @@ function centerfair.arrange(p)
 
         for i = 1, (num_x-1) do
             local height = math.floor((wa.height - (num_y[i] + 1)*useless_gap) / num_y[i])
-            g.y = offset_y + global_border
+            g.y = wa.y + useless_gap
             for j = 0, (num_y[i]-2) do
                 local c = cls[nclient]
                 g.height = height - 2*c.border_width

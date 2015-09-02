@@ -39,6 +39,8 @@ function centerwork.arrange(p)
     -- Borders are factored in.
     wa.height = wa.height - (global_border * 2)
     wa.width = wa.width - (global_border * 2)
+    wa.x = wa.x + global_border
+    wa.y = wa.y + global_border
 
     -- Width of main column?
     local t = awful.tag.selected(p.screen)
@@ -58,8 +60,8 @@ function centerwork.arrange(p)
 
         g.height = wa.height - 2*useless_gap - 2*c.border_width
         g.width = mainwid - 2*c.border_width
-        g.x = wa.x + slaveLwid + global_border
-        g.y = wa.y + useless_gap + global_border
+        g.x = wa.x + slaveLwid
+        g.y = wa.y + useless_gap
 
         c:geometry(g)
 
@@ -83,29 +85,29 @@ function centerwork.arrange(p)
                 if i - 2 == centerwork.top_left
                 then
                     -- top left
-                    g.x = wa.x + useless_gap + global_border
-                    g.y = wa.y + useless_gap + global_border
+                    g.x = wa.x + useless_gap
+                    g.y = wa.y + useless_gap
                     g.width = slaveLwid - 2*useless_gap - 2*c.border_width
                     g.height = slaveThei - useless_gap - 2*c.border_width
                 elseif i - 2 == centerwork.top_right
                 then
                     -- top right
-                    g.x = wa.x + slaveLwid + mainwid + useless_gap + global_border
-                    g.y = wa.y + useless_gap + global_border
+                    g.x = wa.x + slaveLwid + mainwid + useless_gap
+                    g.y = wa.y + useless_gap
                     g.width = slaveRwid - 2*useless_gap - 2*c.border_width
                     g.height = slaveThei - useless_gap - 2*c.border_width
                 elseif i - 2 == centerwork.bottom_left
                 then
                     -- bottom left
-                    g.x = wa.x + useless_gap + global_border
-                    g.y = wa.y + slaveThei + useless_gap + global_border
+                    g.x = wa.x + useless_gap
+                    g.y = wa.y + slaveThei + useless_gap
                     g.width = slaveLwid - 2*useless_gap - 2*c.border_width
                     g.height = slaveBhei - 2*useless_gap - 2*c.border_width
                 elseif i - 2 == centerwork.bottom_right
                 then
                     -- bottom right
-                    g.x = wa.x + slaveLwid + mainwid + useless_gap + global_border
-                    g.y = wa.y + slaveThei + useless_gap + global_border
+                    g.x = wa.x + slaveLwid + mainwid + useless_gap
+                    g.y = wa.y + slaveThei + useless_gap
                     g.width = slaveRwid - 2*useless_gap - 2*c.border_width
                     g.height = slaveBhei - 2*useless_gap - 2*c.border_width
                 end
