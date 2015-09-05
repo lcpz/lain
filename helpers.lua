@@ -76,7 +76,6 @@ end
 
 helpers.timer_table = {}
 
---function helpers.newtimer(_name, timeout, fun, nostart)
 function helpers.newtimer(_name, timeout, fun, nostart)
     local name = timeout
 
