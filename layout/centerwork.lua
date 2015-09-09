@@ -60,6 +60,8 @@ function centerwork.arrange(p)
 
         g.height = wa.height - 2*useless_gap - 2*c.border_width
         g.width = mainwid - 2*c.border_width
+        if g.width < 1 then g.width = 1 end
+        if g.height < 1 then g.height = 1 end
         g.x = wa.x + slaveLwid
         g.y = wa.y + useless_gap
 
@@ -112,6 +114,8 @@ function centerwork.arrange(p)
                     g.height = slaveBhei - 2*useless_gap - 2*c.border_width
                 end
 
+                if g.width < 1 then g.width = 1 end
+                if g.height < 1 then g.height = 1 end
                 c:geometry(g)
 
                 at = at + 1

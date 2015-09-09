@@ -113,6 +113,8 @@ function termfair.arrange(p)
                 g.y = g.y + (this_y + 1)*useless_gap
 
             end
+            if g.width < 1 then g.width = 1 end
+            if g.height < 1 then g.height = 1 end
             c:geometry(g)
             remaining_clients = remaining_clients - 1
 

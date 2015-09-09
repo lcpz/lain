@@ -141,6 +141,8 @@ function cascadetile.arrange(p)
                 g.width = g.width - useless_gap
             end
         end
+        if g.width < 1 then g.width = 1 end
+        if g.height < 1 then g.height = 1 end
         c:geometry(g)
 
         -- Remaining clients stacked in slave column, new ones on top.
@@ -161,6 +163,8 @@ function cascadetile.arrange(p)
                     g.x = g.x + useless_gap
                     g.y = g.y + useless_gap
                 end
+                if g.width < 1 then g.width = 1 end
+                if g.height < 1 then g.height = 1 end
                 c:geometry(g)
             end
         end

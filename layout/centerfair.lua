@@ -77,6 +77,8 @@ function centerfair.arrange(p)
             local c = cls[i]
             g.width = width - 2*c.border_width
             g.height = wa.height - 2*useless_gap - 2*c.border_width
+            if g.width < 1 then g.width = 1 end
+            if g.height < 1 then g.height = 1 end
             g.x = offset_x + (i - 1) * (width + useless_gap)
             c:geometry(g)
         end
@@ -87,6 +89,8 @@ function centerfair.arrange(p)
         local g = {}
         g.width = wa.width - (num_x - 1)*width - (num_x + 1)*useless_gap - 2*c.border_width
         g.height = wa.height - 2*useless_gap - 2*c.border_width
+        if g.width < 1 then g.width = 1 end
+        if g.height < 1 then g.height = 1 end
         g.x = wa.x + useless_gap
         g.y = wa.y + useless_gap
 
@@ -139,6 +143,8 @@ function centerfair.arrange(p)
                 local c = cls[nclient]
                 g.height = height - 2*c.border_width
                 g.width = width - 2*c.border_width
+                if g.width < 1 then g.width = 1 end
+                if g.height < 1 then g.height = 1 end
                 c:geometry(g)
                 nclient = nclient + 1
                 g.y = g.y + height + useless_gap
@@ -146,6 +152,8 @@ function centerfair.arrange(p)
             local c = cls[nclient]
             g.height = wa.height - (num_y[i] + 1)*useless_gap - (num_y[i] - 1)*height - 2*c.border_width
             g.width = width - 2*c.border_width
+            if g.width < 1 then g.width = 1 end
+            if g.height < 1 then g.height = 1 end
             c:geometry(g)
             nclient = nclient + 1
             g.x = g.x + width + useless_gap

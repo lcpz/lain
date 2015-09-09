@@ -69,6 +69,8 @@ function cascade.arrange(p)
         g.y = wa.y + (i - 1) * cascade.offset_y
         g.width = wa.width - current_offset_x - 2*c.border_width
         g.height = wa.height - current_offset_y - 2*c.border_width
+        if g.width < 1 then g.width = 1 end
+        if g.height < 1 then g.height = 1 end
 
         c:geometry(g)
     end
