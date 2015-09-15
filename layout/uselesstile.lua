@@ -37,7 +37,7 @@ end
 
 -- Find geometry for secondary windows column
 local function cut_column(wa, n, index)
-    local width = wa.width / n
+    local width = math.floor(wa.width / n)
     local area = { x = wa.x + (index - 1) * width, y = wa.y, width = width, height = wa.height }
 
     return area
@@ -45,7 +45,7 @@ end
 
 -- Find geometry for certain window in column
 local function cut_row(wa, factor, index, used)
-    local height = wa.height * factor.window[index] / factor.total
+    local height = math.floor(wa.height * factor.window[index] / factor.total)
     local area = { x = wa.x, y = wa.y + used, width = wa.width, height = height }
 
     return area
@@ -55,8 +55,8 @@ end
 local function size_correction(c, geometry, useless_gap)
     geometry.width  = math.max(geometry.width  - 2 * c.border_width - useless_gap, 1)
     geometry.height = math.max(geometry.height - 2 * c.border_width - useless_gap, 1)
-    geometry.x = geometry.x + useless_gap / 2
-    geometry.y = geometry.y + useless_gap / 2
+    geometry.x = math.floor(geometry.x + useless_gap / 2)
+    geometry.y = math.floor(geometry.y + useless_gap / 2)
 end
 
 -- Check size factor for group of clients and calculate total
@@ -85,6 +85,7 @@ local function tile_column(canvas, area, list, useless_gap, transformation, winf
 
     for i, c in ipairs(list) do
         local g = cut_row(area, factor, i, used)
+        if i == #list then g.height = area.height - used end
         used = used + g.height
 
         -- swap workarea dimensions
@@ -93,6 +94,7 @@ local function tile_column(canvas, area, list, useless_gap, transformation, winf
 
         -- useless gap and border correction
         size_correction(c, g, useless_gap)
+
 
         c:geometry(g)
     end
@@ -161,7 +163,7 @@ local function tile(p, orientation)
     local master_area = {
         x = wa.x,
         y = wa.y,
-        width  = nmaster > 0 and wa.width * mwfact or 0,
+        width  = nmaster > 0 and math.floor(wa.width * mwfact) or 0,
         height = wa.height
     }
 
@@ -186,6 +188,7 @@ local function tile(p, orientation)
     local rows_min = math.floor(#cls_other / ncol)
 
     local client_index = 1
+    local used = 0
     for i = 1, ncol do
         local position = transformation.flip and ncol - i + 1 or i
         local rows = i <= last_small_column and rows_min or rows_min + 1
@@ -198,6 +201,8 @@ local function tile(p, orientation)
 
         -- and tile
         local column_area = cut_column(other_area, ncol, position)
+        if i == ncol then column_area.width = other_area.width - used end
+        used = used + column_area.width
 
         if not data[i] then data[i] = {} end
         tile_column(wa, column_area, column, useless_gap, transformation, data[i])

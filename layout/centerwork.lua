@@ -16,10 +16,10 @@ local math      = { floor = math.floor }
 local centerwork =
 {
     name         = "centerwork",
-    top_left     = 0,
-    top_right    = 1,
+    top_right    = 0,
+    bottom_right = 1,
     bottom_left  = 2,
-    bottom_right = 3
+    top_left     = 3
 }
 
 function centerwork.arrange(p)
@@ -32,16 +32,15 @@ function centerwork.arrange(p)
     local global_border = tonumber(beautiful.global_border_width) or 0
     if global_border < 0 then global_border = 0 end
 
-    -- Themes border width requires an offset
-    local bw = tonumber(beautiful.border_width) or 0
-
     -- Screen.
     local wa = p.workarea
     local cls = p.clients
 
     -- Borders are factored in.
-    wa.height = wa.height - ((global_border * 2) + (bw * 2))
-    wa.width = wa.width - ((global_border * 2) + (bw * 2))
+    wa.height = wa.height - (global_border * 2)
+    wa.width = wa.width - (global_border * 2)
+    wa.x = wa.x + global_border
+    wa.y = wa.y + global_border
 
     -- Width of main column?
     local t = awful.tag.selected(p.screen)
@@ -50,7 +49,7 @@ function centerwork.arrange(p)
     if #cls > 0
     then
         -- Main column, fixed width and height.
-        local c = cls[#cls]
+        local c = cls[1]
         local g = {}
         local mainwid = math.floor(wa.width * mwfact)
         local slavewid = wa.width - mainwid
@@ -59,10 +58,12 @@ function centerwork.arrange(p)
         local slaveThei = math.floor(wa.height / 2)
         local slaveBhei = wa.height - slaveThei
 
-        g.height = wa.height - 2 * useless_gap
-        g.width = mainwid
-        g.x = wa.x + slaveLwid + global_border
-        g.y = wa.y + useless_gap + global_border
+        g.height = wa.height - 2*useless_gap - 2*c.border_width
+        g.width = mainwid - 2*c.border_width
+        if g.width < 1 then g.width = 1 end
+        if g.height < 1 then g.height = 1 end
+        g.x = wa.x + slaveLwid
+        g.y = wa.y + useless_gap
 
         c:geometry(g)
 
@@ -70,7 +71,7 @@ function centerwork.arrange(p)
         if #cls > 1
         then
             local at = 0
-            for i = (#cls - 1),1,-1
+            for i = 2,#cls
             do
                 -- It's all fixed. If there are more than 5 clients,
                 -- those additional clients will float. This is
@@ -83,36 +84,38 @@ function centerwork.arrange(p)
                 c = cls[i]
                 g = {}
 
-                if at == centerwork.top_left
+                if i - 2 == centerwork.top_left
                 then
                     -- top left
-                    g.x = wa.x + useless_gap + global_border
-                    g.y = wa.y + useless_gap + global_border
-                    g.width = slaveLwid - 2 * useless_gap
-                    g.height = slaveThei - useless_gap
-                elseif at == centerwork.top_right
+                    g.x = wa.x + useless_gap
+                    g.y = wa.y + useless_gap
+                    g.width = slaveLwid - 2*useless_gap - 2*c.border_width
+                    g.height = slaveThei - useless_gap - 2*c.border_width
+                elseif i - 2 == centerwork.top_right
                 then
                     -- top right
-                    g.x = wa.x + slaveLwid + mainwid + useless_gap + global_border
-                    g.y = wa.y + useless_gap + global_border
-                    g.width = slaveRwid - 2 * useless_gap
-                    g.height = slaveThei - useless_gap
-                elseif at == centerwork.bottom_left
+                    g.x = wa.x + slaveLwid + mainwid + useless_gap
+                    g.y = wa.y + useless_gap
+                    g.width = slaveRwid - 2*useless_gap - 2*c.border_width
+                    g.height = slaveThei - useless_gap - 2*c.border_width
+                elseif i - 2 == centerwork.bottom_left
                 then
                     -- bottom left
-                    g.x = wa.x + useless_gap + global_border
-                    g.y = wa.y + slaveThei + useless_gap + global_border
-                    g.width = slaveLwid - 2 * useless_gap
-                    g.height = slaveBhei - 2 * useless_gap
-                elseif at == centerwork.bottom_right
+                    g.x = wa.x + useless_gap
+                    g.y = wa.y + slaveThei + useless_gap
+                    g.width = slaveLwid - 2*useless_gap - 2*c.border_width
+                    g.height = slaveBhei - 2*useless_gap - 2*c.border_width
+                elseif i - 2 == centerwork.bottom_right
                 then
                     -- bottom right
-                    g.x = wa.x + slaveLwid + mainwid + useless_gap + global_border
-                    g.y = wa.y + slaveThei + useless_gap + global_border
-                    g.width = slaveRwid - 2 * useless_gap
-                    g.height = slaveBhei - 2 * useless_gap
+                    g.x = wa.x + slaveLwid + mainwid + useless_gap
+                    g.y = wa.y + slaveThei + useless_gap
+                    g.width = slaveRwid - 2*useless_gap - 2*c.border_width
+                    g.height = slaveBhei - 2*useless_gap - 2*c.border_width
                 end
 
+                if g.width < 1 then g.width = 1 end
+                if g.height < 1 then g.height = 1 end
                 c:geometry(g)
 
                 at = at + 1
