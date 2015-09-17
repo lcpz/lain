@@ -55,8 +55,8 @@ end
 local function size_correction(c, geometry, useless_gap)
     geometry.width  = math.max(geometry.width  - 2 * c.border_width - useless_gap, 1)
     geometry.height = math.max(geometry.height - 2 * c.border_width - useless_gap, 1)
-    geometry.x = math.floor(geometry.x + useless_gap / 2)
-    geometry.y = math.floor(geometry.y + useless_gap / 2)
+    geometry.x = geometry.x + useless_gap / 2
+    geometry.y = geometry.y + useless_gap / 2
 end
 
 -- Check size factor for group of clients and calculate total
