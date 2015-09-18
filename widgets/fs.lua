@@ -25,7 +25,9 @@ local setmetatable = setmetatable
 
 -- File system disk space usage
 -- lain.widgets.fs
-local fs = {}
+local fs = {
+    last_used = 0
+}
 local fs_notification  = nil
 
 function fs:hide()
@@ -92,8 +94,12 @@ local function worker(args)
         fs_now.size_mb   = tonumber(fs_info[partition .. " size_mb"]) or 0
         fs_now.size_gb   = tonumber(fs_info[partition .. " size_gb"]) or 0
 
-        widget = fs.widget
-        settings()
+        if fs.last_used ~= fs_now.used then
+            widget = fs.widget
+            settings()
+
+            fs.last_used      = fs_now.used
+        end
 
         if fs_now.used >= 99 and not helpers.get_map(partition)
         then

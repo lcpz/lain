@@ -51,33 +51,39 @@ local function worker(args)
     helpers.set_map(iface, true)
 
     function update()
-        net_now = {}
+        net_now = {
+            sent     = "0.0",
+            received = "0.0"
+        }
 
         if iface == "" or string.match(iface, "network off")
         then
             iface = net.get_device()
         end
 
-        net_now.carrier = helpers.first_line('/sys/class/net/' .. iface ..
-                                           '/carrier') or "0"
-        net_now.state = helpers.first_line('/sys/class/net/' .. iface ..
-                                           '/operstate') or "down"
         local now_t = helpers.first_line('/sys/class/net/' .. iface ..
                                            '/statistics/tx_bytes') or 0
         local now_r = helpers.first_line('/sys/class/net/' .. iface ..
                                            '/statistics/rx_bytes') or 0
 
-        net_now.sent = (now_t - net.last_t) / timeout / units
-        net_now.sent = string.gsub(string.format('%.1f', net_now.sent), ",", ".")
+        if now_t ~= net.last_t or now_r ~= net.last_r then
+            net_now.carrier = helpers.first_line('/sys/class/net/' .. iface ..
+                                           '/carrier') or "0"
+            net_now.state = helpers.first_line('/sys/class/net/' .. iface ..
+                                           '/operstate') or "down"
 
-        net_now.received = (now_r - net.last_r) / timeout / units
-        net_now.received = string.gsub(string.format('%.1f', net_now.received), ",", ".")
+            net_now.sent = (now_t - net.last_t) / timeout / units
+            net_now.sent = string.gsub(string.format('%.1f', net_now.sent), ",", ".")
 
-        widget = net.widget
-        settings()
+            net_now.received = (now_r - net.last_r) / timeout / units
+            net_now.received = string.gsub(string.format('%.1f', net_now.received), ",", ".")
 
-        net.last_t = now_t
-        net.last_r = now_r
+            widget = net.widget
+            settings()
+
+            net.last_t = now_t
+            net.last_r = now_r
+        end
 
         if net_now.carrier ~= "1" and notify == "on"
         then
@@ -99,7 +105,7 @@ local function worker(args)
         end
     end
 
-    helpers.newtimer(iface, timeout, update)
+    helpers.newtimer(iface, timeout, update, false)
     return net.widget
 end
 
