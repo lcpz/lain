@@ -71,6 +71,7 @@ local function worker(args)
                 for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
                     if     k == "state"   then mpd_now.state   = v
                     elseif k == "file"    then mpd_now.file    = v
+                    elseif k == "Name"    then mpd_now.name    = escape_f(v)
                     elseif k == "Artist"  then mpd_now.artist  = escape_f(v)
                     elseif k == "Title"   then mpd_now.title   = escape_f(v)
                     elseif k == "Album"   then mpd_now.album   = escape_f(v)
