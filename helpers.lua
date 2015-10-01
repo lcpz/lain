@@ -8,7 +8,7 @@
 
 local debug  = require("debug")
 
-local capi   = { timer = timer }
+local capi   = { timer = (type(timer) == 'table' and timer or require ("gears.timer")) }
 local io     = { open  = io.open,
                  lines = io.lines,
                  popen = io.popen }
