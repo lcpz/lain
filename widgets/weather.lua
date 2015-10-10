@@ -30,10 +30,11 @@ local setmetatable = setmetatable
 local function worker(args)
     local weather               = {}
     local args                  = args or {}
+    local APPID                = args.APPID or 1 -- mandatory
     local timeout               = args.timeout or 900   -- 15 min
     local timeout_forecast      = args.timeout or 86400 -- 24 hrs
-    local current_call          = "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s'"
-    local forecast_call         = "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s'"
+    local current_call          = "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
+    local forecast_call         = "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s&APPID=%s'"
     local city_id               = args.city_id or 0 -- placeholder
     local units                 = args.units or "metric"
     local lang                  = args.lang or "en"
@@ -83,7 +84,7 @@ local function worker(args)
     end
 
     function weather.forecast_update()
-        local cmd = string.format(forecast_call, city_id, units, lang, cnt)
+        local cmd = string.format(forecast_call, city_id, units, lang, cnt, APPID)
         async.request(cmd, function(f)
             local pos, err
             weather_now, pos, err = json.decode(f, 1, nil)
@@ -112,7 +113,7 @@ local function worker(args)
     end
 
     function weather.update()
-        local cmd = string.format(current_call, city_id, units, lang)
+        local cmd = string.format(current_call, city_id, units, lang, APPID)
         async.request(cmd, function(f)
             local pos, err
             weather_now, pos, err = json.decode(f, 1, nil)
