@@ -14,6 +14,9 @@
 -- Grab environment
 local awful = require('awful')
 
+-- Avoid discrepancies across multiple shells
+awful.util.shell = '/bin/sh'
+
 -- Initialize tables for module
 asyncshell = { request_table = {}, id_counter = 0 }
 
