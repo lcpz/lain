@@ -6,8 +6,7 @@
                                                   
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
-
+local helpers      = require("lain.helpers")
 local wibox        = require("wibox")
 
 local io           = { open = io.open }
@@ -21,11 +20,12 @@ local temp = {}
 
 local function worker(args)
     local args     = args or {}
-    local timeout  = args.timeout or 2
+    local timeout  = args.timeout or 1
     local tempfile = args.tempfile or "/sys/class/thermal/thermal_zone0/temp"
     local settings = args.settings or function() end
 
     temp.widget = wibox.widget.textbox('')
+    helpers.set_map("temp_last", 0)
 
     function update()
         local f = io.open(tempfile)
@@ -37,11 +37,15 @@ local function worker(args)
             coretemp_now = "N/A"
         end
 
-        widget = temp.widget
-        settings()
+        if helpers.get_map("temp_last") ~= coretemp_now then
+            widget = temp.widget
+            settings()
+            helpers.set_map("temp_last", coretemp_now)
+        end
     end
 
-    newtimer("coretemp", timeout, update)
+    helpers.newtimer("coretemp", timeout, update)
+
     return temp.widget
 end
 

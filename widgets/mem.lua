@@ -7,26 +7,32 @@
                                                   
 --]]
 
-local newtimer        = require("lain.helpers").newtimer
+local helpers      = require("lain.helpers")
+local wibox        = require("wibox")
 
-local wibox           = require("wibox")
+local io           = { lines  = io.lines }
+local math         = { floor  = math.floor }
+local string       = { gmatch = string.gmatch }
 
-local io              = { lines  = io.lines }
-local math            = { floor  = math.floor }
-local string          = { gmatch = string.gmatch }
+local setmetatable = setmetatable
 
-local setmetatable    = setmetatable
-
--- Memory usage (ignoring caches)
+-- Memory usage
 -- lain.widgets.mem
 local mem = {}
 
 local function worker(args)
     local args     = args or {}
-    local timeout  = args.timeout or 2
+    local timeout  = args.timeout or 1
     local settings = args.settings or function() end
 
     mem.widget = wibox.widget.textbox('')
+
+    helpers.set_map("mem_last_total", 0)
+    helpers.set_map("mem_last_free", 0)
+    helpers.set_map("mem_last_buf", 0)
+    helpers.set_map("mem_last_cache", 0)
+    helpers.set_map("mem_last_swap", 0)
+    helpers.set_map("mem_last_swapf", 0)
 
     function update()
         mem_now = {}
@@ -44,14 +50,29 @@ local function worker(args)
             end
         end
 
-        mem_now.used = mem_now.total - (mem_now.free + mem_now.buf + mem_now.cache)
-        mem_now.swapused = mem_now.swap - mem_now.swapf
+        if mem_now.total ~= helpers.set_map("mem_last_total")
+        or mem_now.free  ~= helpers.set_map("mem_last_free")
+        or mem_now.buf   ~= helpers.set_map("mem_last_buf")
+        or mem_now.cache ~= helpers.set_map("mem_last_cache")
+        or mem_now.swap  ~= helpers.set_map("mem_last_swap")
+        or mem_now.swapf ~= helpers.set_map("mem_last_swapf")
+        then
+            mem_now.used = mem_now.total - (mem_now.free + mem_now.buf + mem_now.cache)
+            mem_now.swapused = mem_now.swap - mem_now.swapf
 
-        widget = mem.widget
-        settings()
+            widget = mem.widget
+            settings()
+
+            helpers.set_map("mem_last_total", mem_now.total)
+            helpers.set_map("mem_last_free", mem_now.free)
+            helpers.set_map("mem_last_buf", mem_now.buf)
+            helpers.set_map("mem_last_cache", mem_now.cache)
+            helpers.set_map("mem_last_swap", mem_now.swap)
+            helpers.set_map("mem_last_swapf", mem_now.swapf)
+        end
     end
 
-    newtimer("mem", timeout, update)
+    helpers.newtimer("mem", timeout, update)
 
     return mem.widget
 end

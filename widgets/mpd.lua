@@ -30,7 +30,7 @@ local mpd = {}
 
 local function worker(args)
     local args        = args or {}
-    local timeout     = args.timeout or 2
+    local timeout     = args.timeout or 1
     local password    = args.password or ""
     local host        = args.host or "127.0.0.1"
     local port        = args.port or "6600"
@@ -49,10 +49,11 @@ local function worker(args)
 
     mpd_notification_preset = {
         title   = "Now playing",
-        timeout = 6
+        timeout = 5
     }
 
-    helpers.set_map("current mpd track", nil)
+    helpers.set_map("current mpd track", "")
+    helpers.set_map("current mpd file", "")
 
     function mpd.update()
         async.request(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh, function (f)
@@ -84,8 +85,13 @@ local function worker(args)
 
             mpd_notification_preset.text = string.format("%s (%s) - %s\n%s", mpd_now.artist,
                                            mpd_now.album, mpd_now.date, mpd_now.title)
-            widget = mpd.widget
-            settings()
+
+            if mpd_now.file ~= helpers.get_map("current mpd file")
+            then
+                widget = mpd.widget
+                settings()
+                helpers.set_map("current mpd file", mpd_now.file)
+            end
 
             if mpd_now.state == "play"
             then

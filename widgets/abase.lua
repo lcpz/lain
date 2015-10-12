@@ -6,9 +6,9 @@
                                                   
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
-local async        = require("lain.asyncshell")
-local wibox        = require("wibox")
+local helpers = require("lain.helpers")
+local async   = require("lain.asyncshell")
+local wibox   = require("wibox")
 
 local setmetatable = setmetatable
 
@@ -19,21 +19,26 @@ local setmetatable = setmetatable
 local function worker(args)
     local abase    = {}
     local args     = args or {}
-    local timeout  = args.timeout or 5
+    local timeout  = args.timeout or 1
     local cmd      = args.cmd or ""
     local settings = args.settings or function() end
 
     abase.widget = wibox.widget.textbox('')
+    helpers.set_map(cmd, '')
 
     function abase.update()
         async.request(cmd, function(f)
             output = f
-            widget = abase.widget
-            settings()
+
+            if helpers.get_map(cmd) ~= output then
+                widget = abase.widget
+                settings()
+                helpers.set_map(cmd, output)
+            end
         end)
     end
 
-    newtimer(cmd, timeout, abase.update)
+    helpers.newtimer(cmd, timeout, abase.update)
 
     return setmetatable(abase, { __index = abase.widget })
 end

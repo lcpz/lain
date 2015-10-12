@@ -25,7 +25,7 @@ local setmetatable    = setmetatable
 
 -- Maildir check
 -- lain.widgets.maildir
-local maildir = {}
+local maildir = { total = 0 }
 
 local function worker(args)
     local args         = args or {}
@@ -65,7 +65,7 @@ local function worker(args)
             end
         until line == nil
 
-	p:close()
+        p:close()
         table.sort(boxes)
 
         newmail = "no mail"
@@ -88,8 +88,10 @@ local function worker(args)
             end
         end
 
-        widget = maildir.widget
-        settings()
+        if maildir.total ~= total then
+            widget = maildir.widget
+            settings()
+        end
     end
 
     newtimer(mailpath, timeout, update, true)

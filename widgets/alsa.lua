@@ -19,11 +19,14 @@ local setmetatable    = setmetatable
 
 -- ALSA volume
 -- lain.widgets.alsa
-local alsa = {}
+local alsa = {
+    level  = "0",
+    status = "off",
+}
 
 local function worker(args)
     local args     = args or {}
-    local timeout  = args.timeout or 5
+    local timeout  = args.timeout or 1
     local settings = args.settings or function() end
 
     alsa.cmd     = args.cmd or "amixer"
@@ -54,8 +57,14 @@ local function worker(args)
             end
         end
 
-        widget = alsa.widget
-        settings()
+        if alsa.level ~= volume_now.level or alsa.status ~= volume_now.status
+        then
+            widget = alsa.widget
+            settings()
+
+            alsa.level = volume_now.level
+            alsa.status = volume_now.status
+        end
     end
 
     timer_id = string.format("alsa-%s-%s", alsa.cmd, alsa.channel)

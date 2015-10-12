@@ -7,8 +7,7 @@
                                                   
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
-
+local helpers      = require("lain.helpers")
 local wibox        = require("wibox")
 
 local io           = { open = io.open }
@@ -22,10 +21,13 @@ local sysload = {}
 
 local function worker(args)
     local args = args or {}
-    local timeout = args.timeout or 2
+    local timeout = args.timeout or 1
     local settings = args.settings or function() end
 
     sysload.widget = wibox.widget.textbox('')
+    helpers.set_map("load_1", 0)
+    helpers.set_map("load_5", 0)
+    helpers.set_map("load_15", 0)
 
     function update()
         local f = io.open("/proc/loadavg")
@@ -34,11 +36,21 @@ local function worker(args)
 
         load_1, load_5, load_15 = string.match(ret, "([^%s]+) ([^%s]+) ([^%s]+)")
 
-        widget = sysload.widget
-        settings()
+        if load_1 ~= helpers.get_map("load_1")
+           or load_5 ~= helpers.get_map("load_5")
+           or load_15 ~= helpers.get_map("load_15")
+        then
+            widget = sysload.widget
+            settings()
+
+            helpers.set_map("load_1", load_1)
+            helpers.set_map("load_5", load_5)
+            helpers.set_map("load_15", load_15)
+        end
     end
 
-    newtimer("sysload", timeout, update)
+    helpers.newtimer("sysload", timeout, update)
+
     return sysload.widget
 end
 
