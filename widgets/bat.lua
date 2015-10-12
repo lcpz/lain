@@ -159,4 +159,4 @@ local function worker(args)
     return bat.widget
 end
 
-return setmetatable(bat, { __call = function(_, ...) return worker(...) end })
+return setmetatable({}, { __call = function(_, ...) return worker(...) end })
