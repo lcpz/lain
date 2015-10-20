@@ -26,8 +26,7 @@ local setmetatable = setmetatable
 -- File system disk space usage
 -- lain.widgets.fs
 local fs = {}
-
-local fs_notification = nil
+local fs_notification  = nil
 
 function fs:hide()
     if fs_notification ~= nil then
@@ -42,11 +41,11 @@ function fs:show(t_out)
     local ws = helpers.read_pipe(helpers.scripts_dir .. "dfs"):gsub("\n*$", "")
 
     if fs.followmouse then
-        fs_notification_preset.screen = mouse.screen
+        fs.notification_preset.screen = mouse.screen
     end
 
     fs_notification = naughty.notify({
-        preset  = fs_notification_preset,
+        preset  = fs.notification_preset,
         text    = ws,
         timeout = t_out
     })
@@ -67,7 +66,6 @@ local function worker(args)
     fs.widget = wibox.widget.textbox('')
 
     helpers.set_map(partition, false)
-    helpers.set_map("fsused", 0)
 
     function update()
         fs_info = {}
@@ -94,11 +92,8 @@ local function worker(args)
         fs_now.size_mb   = tonumber(fs_info[partition .. " size_mb"]) or 0
         fs_now.size_gb   = tonumber(fs_info[partition .. " size_gb"]) or 0
 
-        if helpers.get_map("fsused") ~= fs_now.used then
-            widget = fs.widget
-            settings()
-            helpers.set_map("fsused", fs_now.used)
-        end
+        widget = fs.widget
+        settings()
 
         if fs_now.used >= 99 and not helpers.get_map(partition)
         then

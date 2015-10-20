@@ -76,16 +76,10 @@ end
 
 helpers.timer_table = {}
 
-function helpers.newtimer(_name, timeout, fun, nostart)
-    local name = timeout
-
-    if not helpers.timer_table[name] then
-        helpers.timer_table[name] = capi.timer({ timeout = timeout })
-        helpers.timer_table[name]:start()
-    end
-
+function helpers.newtimer(name, timeout, fun, nostart)
+    helpers.timer_table[name] = capi.timer({ timeout = timeout })
     helpers.timer_table[name]:connect_signal("timeout", fun)
-
+    helpers.timer_table[name]:start()
     if not nostart then
         helpers.timer_table[name]:emit_signal("timeout")
     end

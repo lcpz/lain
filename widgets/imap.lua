@@ -65,10 +65,8 @@ local function worker(args)
             _, mailcount = string.gsub(f, "%d+", "")
             _ = nil
 
-            if mailcount ~= helpers.get_map(mail) then
-                widget = imap.widget
-                settings()
-            end
+            widget = imap.widget
+            settings()
 
             if mailcount >= 1 and mailcount > helpers.get_map(mail)
             then

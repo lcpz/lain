@@ -7,7 +7,9 @@
                                                   
 --]]
 
-local helpers      = require("lain.helpers")
+local newtimer     = require("lain.helpers").newtimer
+local first_line   = require("lain.helpers").first_line
+
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
@@ -19,9 +21,9 @@ local setmetatable = setmetatable
 
 -- Battery infos
 -- lain.widgets.bat
+local bat = {}
 
 local function worker(args)
-    local bat = {}
     local args = args or {}
     local timeout = args.timeout or 30
     local battery = args.battery or "BAT0"
@@ -46,11 +48,6 @@ local function worker(args)
         bg = "#FFFFFF"
     }
 
-    helpers.set_map(battery .. "status", "N/A")
-    helpers.set_map(battery .. "perc", "N/A")
-    helpers.set_map(battery .. "time", "N/A")
-    helpers.set_map(battery .. "watt", "N/A")
-
     function update()
         bat_now = {
             status = "Not present",
@@ -61,22 +58,22 @@ local function worker(args)
 
         local bstr  = "/sys/class/power_supply/" .. battery
 
-        local present = helpers.first_line(bstr .. "/present")
+        local present = first_line(bstr .. "/present")
 
         if present == "1"
         then
-            local rate  = helpers.first_line(bstr .. "/power_now") or
-                          helpers.first_line(bstr .. "/current_now")
+            local rate  = first_line(bstr .. "/power_now") or
+                          first_line(bstr .. "/current_now")
 
-            local ratev = helpers.first_line(bstr .. "/voltage_now")
+            local ratev = first_line(bstr .. "/voltage_now")
 
-            local rem   = helpers.first_line(bstr .. "/energy_now") or
-                          helpers.first_line(bstr .. "/charge_now")
+            local rem   = first_line(bstr .. "/energy_now") or
+                          first_line(bstr .. "/charge_now")
 
-            local tot   = helpers.first_line(bstr .. "/energy_full") or
-                          helpers.first_line(bstr .. "/charge_full")
+            local tot   = first_line(bstr .. "/energy_full") or
+                          first_line(bstr .. "/charge_full")
 
-            bat_now.status = helpers.first_line(bstr .. "/status") or "N/A"
+            bat_now.status = first_line(bstr .. "/status") or "N/A"
 
             rate  = tonumber(rate) or 1
             ratev = tonumber(ratev)
@@ -100,7 +97,7 @@ local function worker(args)
 
             bat_now.time = string.format("%02d:%02d", hrs, min)
 
-            bat_now.perc = helpers.first_line(bstr .. "/capacity")
+            bat_now.perc = first_line(bstr .. "/capacity")
 
             if not bat_now.perc then
                 local perc = (rem / tot) * 100
@@ -118,21 +115,11 @@ local function worker(args)
             else
                 bat_now.watt = "N/A"
             end
+
         end
 
-        if bat_now.status ~= helpers.get_map(battery .. "status")
-           or bat_now.perc ~= helpers.get_map(battery .. "perc")
-           or bat_now.time ~= helpers.get_map(battery .. "time")
-           or bat_now.watt ~= helpers.get_map(battery .. "watt")
-        then
-            widget = bat.widget
-            settings()
-
-            helpers.set_map(battery .. "status", bat_now.status)
-            helpers.set_map(battery .. "perc", bat_now.perc)
-            helpers.set_map(battery .. "time", bat_now.time)
-            helpers.set_map(battery .. "watt", bat_now.watt)
-        end
+        widget = bat.widget
+        settings()
 
         -- notifications for low and critical states
         if bat_now.status == "Discharging" and notify == "on" and bat_now.perc ~= nil
@@ -154,7 +141,7 @@ local function worker(args)
         end
     end
 
-    helpers.newtimer(battery, timeout, update)
+    newtimer(battery, timeout, update)
 
     return bat.widget
 end

@@ -21,7 +21,10 @@ local setmetatable = setmetatable
 
 -- Network infos
 -- lain.widgets.net
-local net = {}
+local net = {
+    last_t = 0,
+    last_r = 0
+}
 
 function net.get_device()
     local ws = helpers.read_pipe("ip link show | cut -d' ' -f2,9")
@@ -35,7 +38,7 @@ end
 
 local function worker(args)
     local args = args or {}
-    local timeout = args.timeout or 1
+    local timeout = args.timeout or 2
     local units = args.units or 1024 --kb
     local notify = args.notify or "on"
     local screen = args.screen or 1
@@ -46,44 +49,35 @@ local function worker(args)
     net.widget = wibox.widget.textbox('')
 
     helpers.set_map(iface, true)
-    helpers.set_map("net_t", 0)
-    helpers.set_map("net_r", 0)
 
     function update()
-        net_now = {
-            sent     = "0.0",
-            received = "0.0"
-        }
+        net_now = {}
 
         if iface == "" or string.match(iface, "network off")
         then
             iface = net.get_device()
         end
 
+        net_now.carrier = helpers.first_line('/sys/class/net/' .. iface ..
+                                           '/carrier') or "0"
+        net_now.state = helpers.first_line('/sys/class/net/' .. iface ..
+                                           '/operstate') or "down"
         local now_t = helpers.first_line('/sys/class/net/' .. iface ..
                                            '/statistics/tx_bytes') or 0
         local now_r = helpers.first_line('/sys/class/net/' .. iface ..
                                            '/statistics/rx_bytes') or 0
 
-        if now_t ~= helpers.get_map("net_t")
-           or now_r ~= helpers.get_map("net_r") then
-            net_now.carrier = helpers.first_line('/sys/class/net/' .. iface ..
-                                           '/carrier') or "0"
-            net_now.state = helpers.first_line('/sys/class/net/' .. iface ..
-                                           '/operstate') or "down"
+        net_now.sent = (now_t - net.last_t) / timeout / units
+        net_now.sent = string.gsub(string.format('%.1f', net_now.sent), ",", ".")
 
-            net_now.sent = (now_t - net.last_t) / timeout / units
-            net_now.sent = string.gsub(string.format('%.1f', net_now.sent), ",", ".")
+        net_now.received = (now_r - net.last_r) / timeout / units
+        net_now.received = string.gsub(string.format('%.1f', net_now.received), ",", ".")
 
-            net_now.received = (now_r - net.last_r) / timeout / units
-            net_now.received = string.gsub(string.format('%.1f', net_now.received), ",", ".")
+        widget = net.widget
+        settings()
 
-            widget = net.widget
-            settings()
-
-            helpers.set_map("net_t", now_t)
-            helpers.set_map("net_r", now_r)
-        end
+        net.last_t = now_t
+        net.last_r = now_r
 
         if net_now.carrier ~= "1" and notify == "on"
         then
@@ -105,8 +99,7 @@ local function worker(args)
         end
     end
 
-    helpers.newtimer(iface, timeout, update, false)
-
+    helpers.newtimer(iface, timeout, update)
     return net.widget
 end
 

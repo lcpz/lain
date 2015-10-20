@@ -6,7 +6,9 @@
                                                   
 --]]
 
-local helpers      = require("lain.helpers")
+local newtimer     = require("lain.helpers").newtimer
+local read_pipe    = require("lain.helpers").read_pipe
+
 local wibox        = require("wibox")
 
 local setmetatable = setmetatable
@@ -17,24 +19,19 @@ local setmetatable = setmetatable
 local function worker(args)
     local base     = {}
     local args     = args or {}
-    local timeout  = args.timeout or 1
+    local timeout  = args.timeout or 5
     local cmd      = args.cmd or ""
     local settings = args.settings or function() end
 
     base.widget = wibox.widget.textbox('')
-    helpers.set_map(cmd, '')
 
     function base.update()
-        output = helpers.read_pipe(cmd)
-
-        if helpers.get_map(cmd) ~= output then
-            widget = base.widget
-            settings()
-            helpers.set_map(cmd, output)
-        end
+        output = read_pipe(cmd)
+        widget = base.widget
+        settings()
     end
 
-    helpers.newtimer(cmd, timeout, base.update)
+    newtimer(cmd, timeout, base.update)
 
     return setmetatable(base, { __index = base.widget })
 end
