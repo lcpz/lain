@@ -30,7 +30,7 @@ local setmetatable = setmetatable
 local function worker(args)
     local weather               = {}
     local args                  = args or {}
-    local APPID                = args.APPID or 1 -- mandatory
+    local APPID                 = args.APPID or "3e321f9414eaedbfab34983bda77a66e" -- lain default
     local timeout               = args.timeout or 900   -- 15 min
     local timeout_forecast      = args.timeout or 86400 -- 24 hrs
     local current_call          = "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
