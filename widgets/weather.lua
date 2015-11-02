@@ -50,7 +50,7 @@ local function worker(args)
     local followmouse           = args.followmouse or false
     local settings              = args.settings or function() end
 
-    weather.widget    = wibox.widget.textbox(weather_na_text)
+    weather.widget    = wibox.widget.textbox(weather_na_markup)
     weather.icon_path = icons_path .. "na.png"
     weather.icon      = wibox.widget.imagebox(weather.icon_path)
 
