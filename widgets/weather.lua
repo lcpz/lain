@@ -46,11 +46,13 @@ local function worker(args)
                                   function (day, desc, tmin, tmax)
                                       return string.format("<b>%s</b>: %s, %d - %d  ", day, desc, tmin, tmax)
                                   end
+    local weather_na_markup     = args.weather_na_markup or " N/A "
     local followmouse           = args.followmouse or false
     local settings              = args.settings or function() end
 
-    weather.widget = wibox.widget.textbox('')
-    weather.icon   = wibox.widget.imagebox()
+    weather.widget    = wibox.widget.textbox(weather_na_markup)
+    weather.icon_path = icons_path .. "na.png"
+    weather.icon      = wibox.widget.imagebox(weather.icon_path)
 
     function weather.show(t_out)
         weather.hide()
@@ -60,7 +62,8 @@ local function worker(args)
         end
 
         weather.notification = naughty.notify({
-            text    = weather.notification_text,
+            text    = weather.notification_text
+                      or "Waiting for the server to respond...",
             icon    = weather.icon_path,
             timeout = t_out,
             preset  = notification_preset
@@ -106,7 +109,6 @@ local function worker(args)
                     end
                 end
             else
-                weather.icon_path = icons_path .. "na.png"
                 weather.notification_text = "API/connection error or bad/not set city ID"
             end
         end)
@@ -120,13 +122,14 @@ local function worker(args)
 
             if not err and weather_now ~= nil and tonumber(weather_now["cod"]) == 200 then
                 weather.icon_path = icons_path .. weather_now["weather"][1]["icon"] .. ".png"
-                weather.icon:set_image(weather.icon_path)
                 widget = weather.widget
                 settings()
             else
-                weather.widget._layout.text = " N/A " -- tries to avoid textbox bugs
-                weather.icon:set_image(icons_path .. "na.png")
+                weather.icon_path = icons_path .. "na.png"
+                weather.widget:set_markup(weather_na_markup)
             end
+
+            weather.icon:set_image(weather.icon_path)
         end)
     end
 
