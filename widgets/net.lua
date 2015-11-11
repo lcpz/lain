@@ -35,14 +35,13 @@ local function worker(args)
         end
     end
 
-    local args = args or {}
-    local timeout = args.timeout or 2
-    local units = args.units or 1024 --kb
-    local notify = args.notify or "on"
-    local screen = args.screen or 1
+    local args     = args or {}
+    local timeout  = args.timeout or 2
+    local units    = args.units or 1024 --kb
+    local notify   = args.notify or "on"
+    local screen   = args.screen or 1
     local settings = args.settings or function() end
-
-    iface = args.iface or net.get_device()
+    local iface    = args.iface or net.get_device()
 
     net.widget = wibox.widget.textbox('')
 
