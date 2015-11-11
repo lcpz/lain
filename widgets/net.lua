@@ -21,22 +21,20 @@ local setmetatable = setmetatable
 
 -- Network infos
 -- lain.widgets.net
-local net = {
-    last_t = 0,
-    last_r = 0
-}
-
-function net.get_device()
-    local ws = helpers.read_pipe("ip link show | cut -d' ' -f2,9")
-    ws = ws:match("%w+: UP") or ws:match("ppp%w+: UNKNOWN")
-    if ws ~= nil then
-        return ws:match("(%w+):")
-    else
-        return "network off"
-    end
-end
 
 local function worker(args)
+    local net = { last_t = 0, last_r = 0 }
+
+    function net.get_device()
+        local ws = helpers.read_pipe("ip link show | cut -d' ' -f2,9")
+        ws = ws:match("%w+: UP") or ws:match("ppp%w+: UNKNOWN")
+        if ws ~= nil then
+            return ws:match("(%w+):")
+        else
+            return "network off"
+        end
+    end
+
     local args = args or {}
     local timeout = args.timeout or 2
     local units = args.units or 1024 --kb
@@ -100,7 +98,8 @@ local function worker(args)
     end
 
     helpers.newtimer(iface, timeout, update)
-    return net.widget
+
+    return setmetatable(net, { __index = net.widget })
 end
 
-return setmetatable(net, { __call = function(_, ...) return worker(...) end })
+return setmetatable({}, { __call = function(_, ...) return worker(...) end })
