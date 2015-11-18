@@ -9,6 +9,7 @@
 
 local newtimer        = require("lain.helpers").newtimer
 local read_pipe       = require("lain.helpers").read_pipe
+local spairs          = require("lain.helpers").spairs
 
 local wibox           = require("wibox")
 
@@ -19,7 +20,6 @@ local os              = { getenv = os.getenv }
 local pairs           = pairs
 local string          = { len    = string.len,
                           match  = string.match }
-local table           = { sort   = table.sort }
 
 local setmetatable    = setmetatable
 
@@ -65,14 +65,13 @@ local function worker(args)
             end
         until line == nil
 
-	p:close()
-        table.sort(boxes)
+        p:close()
 
         newmail = "no mail"
         -- Count the total number of mails irrespective of where it was found
         total = 0
 
-        for box, number in pairs(boxes)
+        for box, number in spairs(boxes)
         do
             -- Add this box only if it's not to be ignored.
             if not util.element_in_table(box, ignore_boxes)
