@@ -13,6 +13,7 @@ local spairs          = require("lain.helpers").spairs
 
 local wibox           = require("wibox")
 
+local awful           = require("awful")
 local util            = require("lain.util")
 
 local io              = { popen  = io.popen }
