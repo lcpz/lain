@@ -33,14 +33,19 @@ local function worker(args)
     local mailpath     = args.mailpath or os.getenv("HOME") .. "/Mail"
     local ignore_boxes = args.ignore_boxes or {}
     local settings     = args.settings or function() end
+    local ext_mail_cmd = args.external_mail_cmd
 
     maildir.widget = wibox.widget.textbox('')
 
     function update()
+        if ext_mail_cmd ~= nil
+        then
+            awful.util.spawn(ext_mail_cmd)
+        end
         -- Find pathes to mailboxes.
         local p = io.popen("find " .. mailpath ..
-                           " -mindepth 1 -maxdepth 1 -type d" ..
-                           " -not -name .git")
+                " -mindepth 1 -maxdepth 2 -type d" ..
+                " -not -name .git")
         local boxes = {}
         repeat
             line = p:read("*l")
@@ -56,7 +61,7 @@ local function worker(args)
                                     "-not -name '.*' -printf a")
 
                 -- Strip off leading mailpath.
-                local box = string.match(line, mailpath .. "/*([^/]+)")
+                local box = string.match(line, mailpath .. "/(.*)")
                 local nummails = string.len(mailstring)
                 if nummails > 0
                 then
