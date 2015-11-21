@@ -44,8 +44,8 @@ local function worker(args)
         end
         -- Find pathes to mailboxes.
         local p = io.popen("find " .. mailpath ..
-                " -mindepth 1 -maxdepth 2 -type d" ..
-                " -not -name .git")
+                           " -mindepth 1 -maxdepth 2 -type d" ..
+                           " -not -name .git")
         local boxes = {}
         repeat
             line = p:read("*l")
