@@ -43,6 +43,7 @@ local function worker(args)
         then
             awful.util.spawn(ext_mail_cmd)
         end
+
         -- Find pathes to mailboxes.
         local p = io.popen("find " .. mailpath ..
                            " -mindepth 1 -maxdepth 2 -type d" ..
