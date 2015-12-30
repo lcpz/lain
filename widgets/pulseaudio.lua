@@ -31,8 +31,27 @@ local function worker(args)
    pulseaudio.level   = 0
    pulseaudio.status  = "on"
    pulseaudio.sink    = args.sink or default_sink
+
+   function pulseaudio.get_sink()
+      local f = io.popen(pacmd .. " dump | /bin/grep -v -e '^$' | /bin/grep -v load")
+      local sink = nil
+
+      while true  do
+         line = f:read("*l")
+         if line == nil then break end
+         sink = string.match(line, "set%-default%-sink ([^\n]+)")
+         if sink ~= nil then
+            return sink
+         end
+      end
+      f:close()
+      return nil    
+   end
    
    function pulseaudio.update()
+      -- Get default sink
+      default_sink = pulseaudio.get_sink()
+      
       local f = io.popen(pacmd .. " dump | /bin/grep -v -e '^$' | /bin/grep -v load")
       local self = {}
       volume_now = {}
@@ -42,21 +61,15 @@ local function worker(args)
          return false
       end
       
-      -- -- get the default sink
-      --default_sink = string.match(out, "set%-default%-sink ([^\n]+)")
-      -- if default_sink == nil then
-      --    default_sink = ""
-      --    return false
-      -- end
-
       while true  do
          line = f:read("*l")
          if line == nil then break end
          
          sink, value = string.match(line, "set%-sink%-volume ([^%s]+) (0x%x+)")
-         if sink == default_sink then
+         if sink == default_sink and value ~= 0  then
             volume_now.level = round((tonumber(value) / 0x10000) * 100)
          end
+
 
          sink, value = string.match(line, "set%-sink%-mute ([^%s]+) (%a+)")
          if sink == default_sink and value == "no" then
