@@ -102,7 +102,7 @@ local function worker(args)
             if not bat_now.perc then
                 local perc = (rem / tot) * 100
                 if perc <= 100 then
-                    bat_now.perc = string.format("%d", perc)
+				   bat_now.perc = string.format("%d", math.min(100, perc))
                 elseif perc > 100 then
                     bat_now.perc = "100"
                 elseif perc < 0 then
