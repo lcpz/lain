@@ -91,11 +91,13 @@ local function worker(args)
          volume_now.status = "off"
       end
 
+      widget = pulseaudio.widget
+      widget:set_markup(markup("#7493d2", volume_now.level .. "% "))
+      settings()
+      
       pulseaudio.level = volume_now.level
       pulseaudio.status = volume_now.status
       
-      widget = pulseaudio.widget
-      settings()
    end
 
    
