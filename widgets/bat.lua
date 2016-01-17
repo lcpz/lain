@@ -97,9 +97,9 @@ local function worker(args)
 
             bat_now.time = string.format("%02d:%02d", hrs, min)
 
-            local perc = tonumber(first_line(bstr .. "/capacity")) or (rem / tot) * 100
-
-			if perc <= 100 then
+            local perc = tonumber(first_line(bstr .. "/capacity")) or math.floor((rem / tot) * 100)
+			
+            if perc <= 100 then
                 bat_now.perc = string.format("%d", perc)
             elseif perc > 100 then
                 bat_now.perc = "100"
