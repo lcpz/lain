@@ -59,6 +59,7 @@ local function worker(args)
             mpd_now = {
                 state   = "N/A",
                 file    = "N/A",
+                name    = "N/A",
                 artist  = "N/A",
                 title   = "N/A",
                 album   = "N/A",

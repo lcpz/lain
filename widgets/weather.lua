@@ -30,10 +30,11 @@ local setmetatable = setmetatable
 local function worker(args)
     local weather               = {}
     local args                  = args or {}
+    local APPID                 = args.APPID or "3e321f9414eaedbfab34983bda77a66e" -- lain default
     local timeout               = args.timeout or 900   -- 15 min
     local timeout_forecast      = args.timeout or 86400 -- 24 hrs
-    local current_call          = "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s'"
-    local forecast_call         = "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s'"
+    local current_call          = "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
+    local forecast_call         = "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s&APPID=%s'"
     local city_id               = args.city_id or 0 -- placeholder
     local units                 = args.units or "metric"
     local lang                  = args.lang or "en"
@@ -45,11 +46,13 @@ local function worker(args)
                                   function (day, desc, tmin, tmax)
                                       return string.format("<b>%s</b>: %s, %d - %d  ", day, desc, tmin, tmax)
                                   end
+    local weather_na_markup     = args.weather_na_markup or " N/A "
     local followmouse           = args.followmouse or false
     local settings              = args.settings or function() end
 
-    weather.widget = wibox.widget.textbox('')
-    weather.icon   = wibox.widget.imagebox()
+    weather.widget    = wibox.widget.textbox(weather_na_markup)
+    weather.icon_path = icons_path .. "na.png"
+    weather.icon      = wibox.widget.imagebox(weather.icon_path)
 
     function weather.show(t_out)
         weather.hide()
@@ -59,7 +62,8 @@ local function worker(args)
         end
 
         weather.notification = naughty.notify({
-            text    = weather.notification_text,
+            text    = weather.notification_text
+                      or "Waiting for the server to respond...",
             icon    = weather.icon_path,
             timeout = t_out,
             preset  = notification_preset
@@ -83,7 +87,7 @@ local function worker(args)
     end
 
     function weather.forecast_update()
-        local cmd = string.format(forecast_call, city_id, units, lang, cnt)
+        local cmd = string.format(forecast_call, city_id, units, lang, cnt, APPID)
         async.request(cmd, function(f)
             local pos, err
             weather_now, pos, err = json.decode(f, 1, nil)
@@ -105,27 +109,27 @@ local function worker(args)
                     end
                 end
             else
-                weather.icon_path = icons_path .. "na.png"
                 weather.notification_text = "API/connection error or bad/not set city ID"
             end
         end)
     end
 
     function weather.update()
-        local cmd = string.format(current_call, city_id, units, lang)
+        local cmd = string.format(current_call, city_id, units, lang, APPID)
         async.request(cmd, function(f)
             local pos, err
             weather_now, pos, err = json.decode(f, 1, nil)
 
             if not err and weather_now ~= nil and tonumber(weather_now["cod"]) == 200 then
                 weather.icon_path = icons_path .. weather_now["weather"][1]["icon"] .. ".png"
-                weather.icon:set_image(weather.icon_path)
                 widget = weather.widget
                 settings()
             else
-                weather.widget._layout.text = " N/A " -- tries to avoid textbox bugs
-                weather.icon:set_image(icons_path .. "na.png")
+                weather.icon_path = icons_path .. "na.png"
+                weather.widget:set_markup(weather_na_markup)
             end
+
+            weather.icon:set_image(weather.icon_path)
         end)
     end
 

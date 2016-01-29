@@ -212,7 +212,7 @@ echo "$SORTED_FILE_SYSTEMS_INFO" | $AWK_COMMAND -v DEBUG=$DEBUG -v PATTERN=$PATT
 							 printf ("\n%s", narrow_margin);
 						 else
 							 printf ("%-*s", LEFT_COLUMN + 2, "");
-					 print "                                                     Used    Free     Total ";
+					 print "                                                    Used     Free       Total ";
 					 if (! NARROW_MODE)
 						 print "";
 				 }
@@ -352,7 +352,7 @@ $0 ~ PATTERN    {
 #           printf ("stars_number = %d\n", stars_number);
 
 			printf ("|");
-			for (i = 1; i <= stars_number; i++)
+			for (i = 1; i <= stars_number && i <= 49; i++)
 			{
 				printf ("%s", "*");
 			}

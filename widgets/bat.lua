@@ -97,17 +97,14 @@ local function worker(args)
 
             bat_now.time = string.format("%02d:%02d", hrs, min)
 
-            bat_now.perc = first_line(bstr .. "/capacity")
+            local perc = tonumber(first_line(bstr .. "/capacity")) or math.floor((rem / tot) * 100)
 
-            if not bat_now.perc then
-                local perc = (rem / tot) * 100
-                if perc <= 100 then
-                    bat_now.perc = string.format("%d", perc)
-                elseif perc > 100 then
-                    bat_now.perc = "100"
-                elseif perc < 0 then
-                    bat_now.perc = "0"
-                end
+            if perc <= 100 then
+                bat_now.perc = string.format("%d", perc)
+            elseif perc > 100 then
+                bat_now.perc = "100"
+            elseif perc < 0 then
+                bat_now.perc = "0"
             end
 
             if rate ~= nil and ratev ~= nil then

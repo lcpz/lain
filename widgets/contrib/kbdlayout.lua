@@ -16,6 +16,9 @@ local string       = { match = string.match }
 
 local setmetatable = setmetatable
 
+-- Keyboard layout switcher
+-- lain.widgets.contrib.kblayout
+
 local function worker (args)
    local kbdlayout    = {}
    kbdlayout.widget   = wibox.widget.textbox('')
@@ -24,9 +27,8 @@ local function worker (args)
    local settings         = args.settings or function () end
    local add_us_secondary = true
    local timeout          = args.timeout or 5
-
    local idx              = 1
-   
+
    if args.add_us_secondary == false then add_us_secondary = false end
 
    -- Mouse bindings
