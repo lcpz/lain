@@ -25,7 +25,8 @@ local function worker(args)
    local settings    = args.settings or function() end
 
    pulseaudio.sink   = args.sink or 0 -- user defined or first one
-   pulseaudio.cmd    = args.cmd or string.format("pacmd list-sinks | grep -e 'index: %d' -e 'volume:' -e 'muted'", pulseaudio.sink)
+   pulseaudio.cmd    = args.cmd or string.format("pacmd list-sinks | sed -n -e '/base volume/d' -e '/index: %d/p' -e '/volume:/p' -e '/muted:/p' | sed -n -e '/index: %d/,+2p'",
+                       pulseaudio.sink, pulseaudio.sink)
    pulseaudio.widget = wibox.widget.textbox('')
 
    function pulseaudio.update()
