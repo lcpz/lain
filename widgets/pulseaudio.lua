@@ -15,6 +15,7 @@ local string          = { match  = string.match,
 
 local setmetatable    = setmetatable
 
+local naughty = require("naughty")
 -- PulseAudio volume
 -- lain.widgets.pulseaudio
 local pulseaudio = {}
@@ -23,24 +24,20 @@ local function worker(args)
    local args        = args or {}
    local timeout     = args.timeout or 5
    local settings    = args.settings or function() end
-   local scallback   = args.scallback or nil
+   local scallback   = args.scallback
 
-   pulseaudio.sink   = args.sink or 0 -- user defined or first one
-   pulseaudio.cmd    = args.cmd or string.format("pacmd list-sinks | sed -n -e '/base volume/d' -e '/index: %d/p' -e '/volume:/p' -e '/muted:/p' | sed -n -e '/index: %d/,+2p'",
-                       pulseaudio.sink, pulseaudio.sink)
+   pulseaudio.cmd    = args.cmd or string.format("pacmd list-sinks | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p'")
    pulseaudio.widget = wibox.widget.textbox('')
 
    function pulseaudio.update()
       local s = read_pipe(pulseaudio.cmd)
 
       volume_now = {}
-      volume_now.left  = tonumber(string.match(s, "left.-(%d+)%%")) or tonumber(string.match(s, "0:.-(%d+)%%"))
-      volume_now.right = tonumber(string.match(s, "right.-(%d+)%%")) or tonumber(string.match(s, "1:.-(%d+)%%"))
+      volume_now.left  = tonumber(string.match(s, ":.-(%d+)%%"))
+      volume_now.right = tonumber(string.match(s, ":.-(%d+)%%"))
       volume_now.muted = string.match(s, "muted: (%S+)")
 
-      if scallback ~= nil then
-         pulseaudio.sink   = scallback()
-      end
+      if scallback then pulseaudio.sink = scallback() end
 
       widget = pulseaudio.widget
       settings()
