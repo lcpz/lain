@@ -23,7 +23,7 @@ local function worker(args)
    local args        = args or {}
    local timeout     = args.timeout or 5
    local settings    = args.settings or function() end
-   local scallback   = args.scallback or function() end
+   local scallback   = args.scallback or nil
 
    pulseaudio.sink   = args.sink or 0 -- user defined or first one
    pulseaudio.cmd    = args.cmd or string.format("pacmd list-sinks | sed -n -e '/base volume/d' -e '/index: %d/p' -e '/volume:/p' -e '/muted:/p' | sed -n -e '/index: %d/,+2p'",
