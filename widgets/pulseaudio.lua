@@ -23,6 +23,7 @@ local function worker(args)
    local args        = args or {}
    local timeout     = args.timeout or 5
    local settings    = args.settings or function() end
+   local scallback   = args.scallback or function() end
 
    pulseaudio.sink   = args.sink or 0 -- user defined or first one
    pulseaudio.cmd    = args.cmd or string.format("pacmd list-sinks | sed -n -e '/base volume/d' -e '/index: %d/p' -e '/volume:/p' -e '/muted:/p' | sed -n -e '/index: %d/,+2p'",
@@ -36,6 +37,10 @@ local function worker(args)
       volume_now.left  = tonumber(string.match(s, "left.-(%d+)%%")) or tonumber(string.match(s, "0:.-(%d+)%%"))
       volume_now.right = tonumber(string.match(s, "right.-(%d+)%%")) or tonumber(string.match(s, "1:.-(%d+)%%"))
       volume_now.muted = string.match(s, "muted: (%S+)")
+
+      if scallback ~= nil then
+         pulseaudio.sink   = scallback()
+      end
 
       widget = pulseaudio.widget
       settings()
