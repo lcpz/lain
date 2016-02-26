@@ -15,7 +15,6 @@ local string          = { match  = string.match,
 
 local setmetatable    = setmetatable
 
-local naughty = require("naughty")
 -- PulseAudio volume
 -- lain.widgets.pulseaudio
 local pulseaudio = {}
@@ -30,14 +29,13 @@ local function worker(args)
    pulseaudio.widget = wibox.widget.textbox('')
 
    function pulseaudio.update()
+      if scallback then pulseaudio.cmd = scallback() end
       local s = read_pipe(pulseaudio.cmd)
 
       volume_now = {}
       volume_now.left  = tonumber(string.match(s, ":.-(%d+)%%"))
       volume_now.right = tonumber(string.match(s, ":.-(%d+)%%"))
       volume_now.muted = string.match(s, "muted: (%S+)")
-
-      if scallback then pulseaudio.sink = scallback() end
 
       widget = pulseaudio.widget
       settings()
