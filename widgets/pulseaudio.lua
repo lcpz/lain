@@ -23,17 +23,18 @@ local function worker(args)
    local args        = args or {}
    local timeout     = args.timeout or 5
    local settings    = args.settings or function() end
+   local scallback   = args.scallback
 
-   pulseaudio.sink   = args.sink or 0 -- user defined or first one
-   pulseaudio.cmd    = args.cmd or string.format("pacmd list-sinks | grep -e 'index: %d' -e 'volume: front' -e 'muted'", pulseaudio.sink)
+   pulseaudio.cmd    = args.cmd or string.format("pacmd list-sinks | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p'")
    pulseaudio.widget = wibox.widget.textbox('')
 
    function pulseaudio.update()
+      if scallback then pulseaudio.cmd = scallback() end
       local s = read_pipe(pulseaudio.cmd)
 
       volume_now = {}
-      volume_now.left  = tonumber(string.match(s, "left.-(%d+)%%"))
-      volume_now.right = tonumber(string.match(s, "right.-(%d+)%%"))
+      volume_now.left  = tonumber(string.match(s, ":.-(%d+)%%"))
+      volume_now.right = tonumber(string.match(s, ":.-(%d+)%%"))
       volume_now.muted = string.match(s, "muted: (%S+)")
 
       widget = pulseaudio.widget
