@@ -1,15 +1,16 @@
 
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013, Luke Bonham                     
-      * (c) 2010, Adrian C. <anrxc@sysphere.org>  
-                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2013, Luke Bonham
+      * (c) 2010, Adrian C. <anrxc@sysphere.org>
+
 --]]
 
 local newtimer        = require("lain.helpers").newtimer
 local read_pipe       = require("lain.helpers").read_pipe
 
+local awful           = require("awful")
 local wibox           = require("wibox")
 
 local string          = { match  = string.match,
@@ -27,12 +28,14 @@ local function worker(args)
     local settings = args.settings or function() end
 
     alsa.cmd     = args.cmd or "amixer"
+    alsa.card    = args.card or "0"
     alsa.channel = args.channel or "Master"
+    alsa.step     = args.step or "2%"
 
     alsa.widget = wibox.widget.textbox('')
 
     function alsa.update()
-        local mixer = read_pipe(string.format("%s get %s", alsa.cmd, alsa.channel))
+        local mixer = read_pipe(string.format("%s -c %s get %s", alsa.cmd, alsa.card, alsa.channel))
 
         volume_now = {}
 
@@ -57,6 +60,21 @@ local function worker(args)
         widget = alsa.widget
         settings()
     end
+
+    alsa.widget:buttons (awful.util.table.join (
+          awful.button ({}, 1, function()
+            awful.util.spawn(string.format("%s -c %s set %s toggle", alsa.cmd, alsa.card, alsa.channel))
+            alsa.update()
+          end),
+          awful.button ({}, 4, function()
+            awful.util.spawn(string.format("%s -c %s set %s %s+", alsa.cmd, alsa.card, alsa.channel, alsa.step))
+            alsa.update()
+          end),
+          awful.button ({}, 5, function()
+            awful.util.spawn(string.format("%s -c %s set %s %s-", alsa.cmd, alsa.card, alsa.channel, alsa.step))
+            alsa.update()
+          end)
+    ))
 
     timer_id = string.format("alsa-%s-%s", alsa.cmd, alsa.channel)
 
