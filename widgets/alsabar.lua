@@ -1,10 +1,10 @@
 
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013, Luke Bonham                     
-      * (c) 2013, Rman                            
-                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2013, Luke Bonham
+      * (c) 2013, Rman
+
 --]]
 
 local newtimer     = require("lain.helpers").newtimer
@@ -28,6 +28,7 @@ local setmetatable = setmetatable
 local alsabar = {
     channel = "Master",
     step    = "2%",
+    card    = "0",
 
     colors = {
         background = beautiful.bg_normal,
@@ -103,6 +104,7 @@ local function worker(args)
     local vertical   = args.vertical or false
 
     alsabar.cmd           = args.cmd or "amixer"
+    alsabar.card          = args.card or alsabar.card
     alsabar.channel       = args.channel or alsabar.channel
     alsabar.step          = args.step or alsabar.step
     alsabar.colors        = args.colors or alsabar.colors
@@ -122,7 +124,7 @@ local function worker(args)
 
     function alsabar.update()
         -- Get mixer control contents
-        local mixer = read_pipe(string.format("%s get %s", alsabar.cmd, alsabar.channel))
+        local mixer = read_pipe(string.format("%s -c %s get %s", alsabar.cmd, alsabar.card, alsabar.channel))
 
         -- Capture mixer control state:          [5%] ... ... [on]
         local volu, mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
@@ -156,15 +158,15 @@ local function worker(args)
             awful.util.spawn(alsabar.mixer)
           end),
           awful.button ({}, 3, function()
-            awful.util.spawn(string.format("%s set %s toggle", alsabar.cmd, alsabar.channel))
+            awful.util.spawn(string.format("%s -c %s set %s toggle", alsabar.cmd, alsabar.card, alsabar.channel))
             alsabar.update()
           end),
           awful.button ({}, 4, function()
-            awful.util.spawn(string.format("%s set %s %s+", alsabar.cmd, alsabar.channel, alsabar.step))
+            awful.util.spawn(string.format("%s -c %s set %s %s+", alsabar.cmd, alsabar.card, alsabar.channel, alsabar.step))
             alsabar.update()
           end),
           awful.button ({}, 5, function()
-            awful.util.spawn(string.format("%s set %s %s-", alsabar.cmd, alsabar.channel, alsabar.step))
+            awful.util.spawn(string.format("%s -c %s set %s %s-", alsabar.cmd, alsabar.card, alsabar.channel, alsabar.step))
             alsabar.update()
           end)
     ))
