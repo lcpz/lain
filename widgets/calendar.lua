@@ -59,18 +59,14 @@ function calendar:show(t_out, inc_offset, scr)
 
        month = month + calendar.offset
 
-       if month > 12 then
-           month = month % 12
-           year = year + 1
-           if month <= 0 then
-               month = 12
-           end
-       elseif month < 1 then
-           month = month + 12
-           year = year - 1
-           if month <= 0 then
-               month = 1
-           end
+       while month > 12 do
+	   month = month - 12
+	   year = year + 1
+       end
+
+       while month < 1 do
+	   month = month + 12
+	   year = year - 1
        end
 
        calendar.notify_icon = nil
