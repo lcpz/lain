@@ -41,8 +41,6 @@ function calendar:show(t_out, inc_offset, scr)
     local offs  = inc_offset or 0
     local tims  = t_out or 0
     local today = tonumber(os.date('%d'))
-    local init_t = string.format("%s %s | sed -e 's/[\b]\\{3\\}//g'",
-                   calendar.cal, calendar.post_cal)
 
     calendar.offset = calendar.offset + offs
 
@@ -52,8 +50,8 @@ function calendar:show(t_out, inc_offset, scr)
         calendar.notify_icon = calendar.icons .. today .. ".png"
 
         -- bg and fg inverted to highlight today
-        f = io.popen(string.format("%s -e '0,/%d $/ s/ %d /<b> <span foreground=\"%s\" background=\"%s\">%d<\\/span> <\\/b>/'",
-                     init_t, today, today, calendar.bg, calendar.fg, today))
+        f = io.popen(string.format("%s | sed -r -e 's/_\\x08//g' -e '0,/(^| )%d($| )/ s/(^| )%d($| )/\\1<b><span foreground=\"%s\" background=\"%s\">%d<\\/span><\\/b>\\2/'",
+                     calendar.cal, today, today, calendar.bg, calendar.fg, today))
 
     else -- no current month showing, no day to highlight
        local month = tonumber(os.date('%m'))
@@ -76,8 +74,7 @@ function calendar:show(t_out, inc_offset, scr)
        end
 
        calendar.notify_icon = nil
-
-       f = io.popen(string.format('%s %s %s %s', calendar.cal, month, year, calendar.post_cal))
+       f = io.popen(string.format('%s %s %s', calendar.cal, month, year))
     end
 
     c_text = "<tt><span font='" .. calendar.font .. " "
@@ -109,7 +106,6 @@ function calendar:attach(widget, args)
     local args = args or {}
 
     calendar.cal         = args.cal or "/usr/bin/cal"
-    calendar.post_cal    = args.post_cal or ""
     calendar.icons       = args.icons or icons_dir .. "cal/white/"
     calendar.font        = args.font or beautiful.font:gsub(" %d.*", "")
     calendar.font_size   = tonumber(args.font_size) or 11
