@@ -127,28 +127,26 @@ local function worker(args)
         -- Capture mixer control state:          [5%] ... ... [on]
         local volu, mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
 
-        if volu == nil then
-            volu = 0
-            mute = "off"
-        end
-
-        alsabar._current_level = tonumber(volu)
-        alsabar.bar:set_value(alsabar._current_level / 100)
-        if not mute and tonumber(volu) == 0 or mute == "off"
+        if tonumber(volu) ~= alsabar._current_level or string.match(mute, "on") ~= alsabar._muted
         then
-            alsabar._muted = true
-            alsabar.tooltip:set_text (" [Muted] ")
-            alsabar.bar:set_color(alsabar.colors.mute)
-        else
-            alsabar._muted = false
-            alsabar.tooltip:set_text(string.format(" %s:%s ", alsabar.channel, volu))
-            alsabar.bar:set_color(alsabar.colors.unmute)
-        end
+            alsabar._current_level = tonumber(volu)
+            alsabar.bar:set_value(alsabar._current_level / 100)
+            if not mute and tonumber(volu) == 0 or mute == "off"
+            then
+                alsabar._muted = true
+                alsabar.tooltip:set_text (" [Muted] ")
+                alsabar.bar:set_color(alsabar.colors.mute)
+            else
+                alsabar._muted = false
+                alsabar.tooltip:set_text(string.format(" %s:%s ", alsabar.channel, volu))
+                alsabar.bar:set_color(alsabar.colors.unmute)
+            end
 
-        volume_now = {}
-        volume_now.level = tonumber(volu)
-        volume_now.status = mute
-        settings()
+            volume_now = {}
+            volume_now.level = tonumber(volu)
+            volume_now.status = mute
+            settings()
+        end
     end
 
     alsabar.bar:buttons (awful.util.table.join (

@@ -28,8 +28,11 @@ local function worker(args)
     function abase.update()
         async.request(cmd, function(f)
             output = f
-            widget = abase.widget
-            settings()
+            if output ~= abase.prev then
+                widget = abase.widget
+                settings()
+                abase.prev = output
+            end
         end)
     end
 

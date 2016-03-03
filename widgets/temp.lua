@@ -42,6 +42,7 @@ local function worker(args)
     end
 
     newtimer("coretemp", timeout, update)
+
     return temp.widget
 end
 

@@ -19,7 +19,7 @@ local setmetatable    = setmetatable
 
 -- ALSA volume
 -- lain.widgets.alsa
-local alsa = {}
+local alsa = { last_level = "0", last_status = "off" }
 
 local function worker(args)
     local args     = args or {}
@@ -28,34 +28,20 @@ local function worker(args)
 
     alsa.cmd     = args.cmd or "amixer"
     alsa.channel = args.channel or "Master"
-
-    alsa.widget = wibox.widget.textbox('')
+    alsa.widget  = wibox.widget.textbox('')
 
     function alsa.update()
-        local mixer = read_pipe(string.format("%s get %s", alsa.cmd, alsa.channel))
+        mixer = read_pipe(string.format("%s get %s", alsa.cmd, alsa.channel))
+        l, s = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
 
-        volume_now = {}
+        if alsa.last_level ~= l or alsa.last_status ~= s then
+            volume_now = { level = l, status = s }
+            alsa.last_level = l
+            alsa.last_status = s
 
-        volume_now.level, volume_now.status = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
-
-        if volume_now.level == nil
-        then
-            volume_now.level  = "0"
-            volume_now.status = "off"
+            widget = alsa.widget
+            settings()
         end
-
-        if volume_now.status == ""
-        then
-            if volume_now.level == "0"
-            then
-                volume_now.status = "off"
-            else
-                volume_now.status = "on"
-            end
-        end
-
-        widget = alsa.widget
-        settings()
     end
 
     timer_id = string.format("alsa-%s-%s", alsa.cmd, alsa.channel)

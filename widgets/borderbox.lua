@@ -7,8 +7,7 @@
                                                   
 --]]
 
-local wibox        = require("awful.wibox")
-
+local wibox = require("awful.wibox")
 local setmetatable = setmetatable
 
 -- Creates a thin wibox at a position relative to another wibox
