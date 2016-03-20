@@ -19,7 +19,7 @@ local setmetatable    = setmetatable
 
 -- ALSA volume
 -- lain.widgets.alsa
-local alsa = { last_level = "0", last_status = "off" }
+local alsa = { last_level = "0", last_status = "" }
 
 local function worker(args)
     local args     = args or {}
