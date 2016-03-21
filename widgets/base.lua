@@ -26,11 +26,11 @@ local function worker(args)
     base.widget = wibox.widget.textbox('')
 
     function base.update()
-        if output ~= abase.prev then
+        if output ~= base.prev then
             output = read_pipe(cmd)
             widget = base.widget
             settings()
-            abase.prev = output
+            base.prev = output
         end
     end
 
