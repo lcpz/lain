@@ -63,14 +63,8 @@ local function worker(args)
 
         if present == "1"
         then
-            local rate = tonumber(first_line(bstr .. "/power_now"))
-            local current_now = false
-
-            if not rate then
-                rate = tonumber(first_line(bstr .. "/current_now"))
-                current_now = true
-            end
-
+            local ratep    = tonumber(first_line(bstr .. "/power_now"))
+            local ratec    = tonumber(first_line(bstr .. "/current_now"))
             local ratev    = tonumber(first_line(bstr .. "/voltage_now"))
 
             local rem      = tonumber(first_line(bstr .. "/energy_now") or
@@ -85,10 +79,10 @@ local function worker(args)
             local time_rat = 0
             if bat_now.status == "Charging"
             then
-                time_rat = (tot - rem) / rate
+                time_rat = (tot - rem) / (ratep or ratec)
             elseif bat_now.status == "Discharging"
             then
-                time_rat = rem / rate
+                time_rat = rem / (ratep or ratec)
             end
 
             local hrs = math.floor(time_rat)
@@ -109,10 +103,10 @@ local function worker(args)
                 bat_now.perc = "0"
             end
 
-            if current_now then
-                bat_now.watt = string.format("%.2fW", (rate * ratev) / 1e12)
+            if ratep then
+                bat_now.watt = string.format("%.2fW", ratep)
             else
-                bat_now.watt = string.format("%.2fW", rate)
+                bat_now.watt = string.format("%.2fW", (ratev * ratec) / 1e12)
             end
         end
 
