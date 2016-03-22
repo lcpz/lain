@@ -63,25 +63,24 @@ local function worker(args)
 
         if present == "1"
         then
-            local rate     = first_line(bstr .. "/power_now")
+            local rate = tonumber(first_line(bstr .. "/power_now"))
+            local current_now = false
 
-            local rate_alt = first_line(bstr .. "/current_now")
+            if not rate then
+                rate = tonumber(first_line(bstr .. "/current_now"))
+                current_now = true
+            end
 
-            local ratev    = first_line(bstr .. "/voltage_now")
+            local ratev    = tonumber(first_line(bstr .. "/voltage_now"))
 
-            local rem      = first_line(bstr .. "/energy_now") or
-                             first_line(bstr .. "/charge_now")
+            local rem      = tonumber(first_line(bstr .. "/energy_now") or
+                                      first_line(bstr .. "/charge_now"))
 
-            local tot      = first_line(bstr .. "/energy_full") or
-                             first_line(bstr .. "/charge_full")
+            local tot      = tonumber(first_line(bstr .. "/energy_full") or
+                                      first_line(bstr .. "/charge_full"))
 
             bat_now.status = first_line(bstr .. "/status") or "N/A"
             bat_now.ac     = first_line(string.format("/sys/class/power_supply/%s/online", ac)) or "N/A"
-
-            rate  = tonumber(rate)
-            ratev = tonumber(ratev)
-            rem   = tonumber(rem)
-            tot   = tonumber(tot)
 
             local time_rat = 0
             if bat_now.status == "Charging"
@@ -110,14 +109,11 @@ local function worker(args)
                 bat_now.perc = "0"
             end
 
-            if rate and ratev then
+            if current_now then
                 bat_now.watt = string.format("%.2fW", (rate * ratev) / 1e12)
-            elseif rate_alt then
-                bat_now.watt = string.format("%.2fW", rate_alt)
             else
-                bat_now.watt = "N/A"
+                bat_now.watt = string.format("%.2fW", rate)
             end
-
         end
 
         widget = bat.widget
