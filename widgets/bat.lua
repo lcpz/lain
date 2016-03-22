@@ -23,11 +23,12 @@ local setmetatable = setmetatable
 -- lain.widgets.bat
 
 local function worker(args)
-    local bat = {}
-    local args = args or {}
-    local timeout = args.timeout or 30
-    local battery = args.battery or "BAT0"
-    local notify = args.notify or "on"
+    local bat      = {}
+    local args     = args or {}
+    local timeout  = args.timeout or 30
+    local battery  = args.battery or "BAT0"
+    local ac       = args.ac or "AC0"
+    local notify   = args.notify or "on"
     local settings = args.settings or function() end
 
     bat.widget = wibox.widget.textbox('')
@@ -50,32 +51,34 @@ local function worker(args)
 
     function update()
         bat_now = {
-            status = "Not present",
-            perc   = "N/A",
-            time   = "N/A",
-            watt   = "N/A"
+            status    = "Not present",
+            ac_status = "N/A",
+            perc      = "N/A",
+            time      = "N/A",
+            watt      = "N/A"
         }
 
-        local bstr  = "/sys/class/power_supply/" .. battery
-
+        local bstr    = "/sys/class/power_supply/" .. battery
         local present = first_line(bstr .. "/present")
 
         if present == "1"
         then
-            local rate  = first_line(bstr .. "/power_now") or
-                          first_line(bstr .. "/current_now")
+            local rate     = first_line(bstr .. "/power_now")
 
-            local ratev = first_line(bstr .. "/voltage_now")
+            local rate_alt = first_line(bstr .. "/current_now")
 
-            local rem   = first_line(bstr .. "/energy_now") or
-                          first_line(bstr .. "/charge_now")
+            local ratev    = first_line(bstr .. "/voltage_now")
 
-            local tot   = first_line(bstr .. "/energy_full") or
-                          first_line(bstr .. "/charge_full")
+            local rem      = first_line(bstr .. "/energy_now") or
+                             first_line(bstr .. "/charge_now")
+
+            local tot      = first_line(bstr .. "/energy_full") or
+                             first_line(bstr .. "/charge_full")
 
             bat_now.status = first_line(bstr .. "/status") or "N/A"
+            bat_now.ac     = first_line(string.format("/sys/class/power_supply/%s/online", ac)) or "N/A"
 
-            rate  = tonumber(rate) or 1
+            rate  = tonumber(rate)
             ratev = tonumber(ratev)
             rem   = tonumber(rem)
             tot   = tonumber(tot)
@@ -107,8 +110,10 @@ local function worker(args)
                 bat_now.perc = "0"
             end
 
-            if rate ~= nil and ratev ~= nil then
+            if rate and ratev then
                 bat_now.watt = string.format("%.2fW", (rate * ratev) / 1e12)
+            elseif rate_alt then
+                bat_now.watt = string.format("%.2fW", rate_alt)
             else
                 bat_now.watt = "N/A"
             end
@@ -119,7 +124,7 @@ local function worker(args)
         settings()
 
         -- notifications for low and critical states
-        if bat_now.status == "Discharging" and notify == "on" and bat_now.perc ~= nil
+        if bat_now.status == "Discharging" and notify == "on" and bat_now.perc
         then
             local nperc = tonumber(bat_now.perc) or 100
             if nperc <= 5
