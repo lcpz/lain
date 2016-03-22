@@ -80,7 +80,7 @@ local function worker(args)
                                       first_line(bstr .. "/charge_full"))
 
             bat_now.status = first_line(bstr .. "/status") or "N/A"
-            bat_now.ac     = first_line(string.format("/sys/class/power_supply/%s/online", ac)) or "N/A"
+            bat_now.ac_status = first_line(string.format("/sys/class/power_supply/%s/online", ac)) or "N/A"
 
             local time_rat = 0
             if bat_now.status == "Charging"
