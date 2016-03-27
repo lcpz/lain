@@ -69,13 +69,6 @@ local function worker(args)
 			local rate_voltage      = tonumber(first_line(bstr .. "/voltage_now"))
 			local rate_power        = tonumber(first_line(bstr .. "/power_now"))
 
-			-- if rate = 0 or rate not defined skip the round
-			if not (rate_power and rate_power > 0) and 
-				not (rate_current and  rate_current > 0) 
-			then
-				return 
-			end
-
 			-- energy_now(P)[uWh], charge_now(I)[uAh] 
 			local energy_now        = tonumber(first_line(bstr .. "/energy_now") or
 										first_line(bstr .. "/charge_now"))
