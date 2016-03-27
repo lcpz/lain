@@ -91,6 +91,14 @@ local function worker(args)
 			bat_now.status = first_line(bstr .. "/status") or "N/A"
 			bat_now.ac_status     = first_line(astr .. "/online") or "N/A"
 
+			-- if rate = 0 or rate not defined skip the round
+			if 	not (rate_power and rate_power > 0) and 
+				not (rate_current and  rate_current > 0) and
+				not bat_now.status == "Full"
+			then
+				return 
+			end
+			
 			local rate_time = 0
 			if bat_now.status == "Charging"
 			then
