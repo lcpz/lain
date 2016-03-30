@@ -43,8 +43,13 @@ local function worker(args)
     local icons_path            = args.icons_path or lain_icons .. "openweathermap/"
     local notification_preset   = args.notification_preset or {}
     local notification_text_fun = args.notification_text_fun or
-                                  function (day, desc, tmin, tmax)
-                                      return string.format("<b>%s</b>: %s, %d - %d  ", day, desc, tmin, tmax)
+                                  function (wn)
+                                      local day = string.gsub(read_pipe(string.format(date_cmd, wn["dt"])), "\n", "")
+                                      local tmin = math.floor(wn["temp"]["min"])
+                                      local tmax = math.floor(wn["temp"]["max"])
+                                      local desc = wn["weather"][1]["description"]
+
+                                      return string.format("<b>%s</b>: %s, %d - %d ", day, desc, tmin, tmax)
                                   end
     local weather_na_markup     = args.weather_na_markup or " N/A "
     local followmouse           = args.followmouse or false
@@ -62,8 +67,7 @@ local function worker(args)
         end
 
         weather.notification = naughty.notify({
-            text    = weather.notification_text
-                      or "Waiting for the server to respond...",
+            text    = weather.notification_text,
             icon    = weather.icon_path,
             timeout = t_out,
             preset  = notification_preset
@@ -71,7 +75,7 @@ local function worker(args)
     end
 
     function weather.hide()
-        if weather.notification ~= nil then
+        if weather.notification then
             naughty.destroy(weather.notification)
             weather.notification = nil
         end
@@ -92,24 +96,18 @@ local function worker(args)
             local pos, err
             weather_now, pos, err = json.decode(f, 1, nil)
 
-            if not err and weather_now ~= nil and tonumber(weather_now["cod"]) == 200 then
+            if not err and weather_now and tonumber(weather_now["cod"]) == 200 then
                 weather.notification_text = ''
                 for i = 1, weather_now["cnt"] do
-                    local day = string.gsub(read_pipe(string.format(date_cmd, weather_now["list"][i]["dt"])), "\n", "")
-
-                    local tmin = math.floor(weather_now["list"][i]["temp"]["min"])
-                    local tmax = math.floor(weather_now["list"][i]["temp"]["max"])
-                    local desc = weather_now["list"][i]["weather"][1]["description"]
-
                     weather.notification_text = weather.notification_text ..
-                                                notification_text_fun(day, desc, tmin, tmax)
+                                                notification_text_fun(weather_now["list"][i])
 
                     if i < weather_now["cnt"] then
                         weather.notification_text = weather.notification_text .. "\n"
                     end
                 end
             else
-                weather.notification_text = "API/connection error or bad/not set city ID"
+                weather.notification_text = "API/connection error or invalid city ID"
             end
         end)
     end
@@ -136,7 +134,7 @@ local function worker(args)
     weather.attach(weather.widget)
 
     newtimer("weather-" .. city_id, timeout, weather.update)
-    newtimer("weather_forecast-" .. city_id, timeout, weather.forecast_update)
+    newtimer("weather_forecast-" .. city_id, timeout, weather.forecast_update, nil)
 
     return setmetatable(weather, { __index = weather.widget })
 end
