@@ -33,12 +33,12 @@ local function worker(args)
     local APPID                 = args.APPID or "3e321f9414eaedbfab34983bda77a66e" -- lain default
     local timeout               = args.timeout or 900   -- 15 min
     local timeout_forecast      = args.timeout or 86400 -- 24 hrs
-    local current_call          = "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
-    local forecast_call         = "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s&APPID=%s'"
+    local current_call          = args.current_call  or "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
+    local forecast_call         = args.forecast_call or "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s&APPID=%s'"
     local city_id               = args.city_id or 0 -- placeholder
     local units                 = args.units or "metric"
     local lang                  = args.lang or "en"
-    local cnt                   = args.cnt or 7
+    local cnt                   = args.cnt or 5
     local date_cmd              = args.date_cmd or "date -u -d @%d +'%%a %%d'"
     local icons_path            = args.icons_path or lain_icons .. "openweathermap/"
     local notification_preset   = args.notification_preset or {}
@@ -107,7 +107,7 @@ local function worker(args)
                     end
                 end
             else
-                weather.notification_text = "API/connection error or invalid city ID"
+                weather.notification_text = 0
             end
         end)
     end
@@ -118,7 +118,7 @@ local function worker(args)
             local pos, err
             weather_now, pos, err = json.decode(f, 1, nil)
 
-            if not err and weather_now ~= nil and tonumber(weather_now["cod"]) == 200 then
+            if not err and weather_now and tonumber(weather_now["cod"]) == 200 then
                 weather.icon_path = icons_path .. weather_now["weather"][1]["icon"] .. ".png"
                 widget = weather.widget
                 settings()
@@ -134,7 +134,7 @@ local function worker(args)
     weather.attach(weather.widget)
 
     newtimer("weather-" .. city_id, timeout, weather.update)
-    newtimer("weather_forecast-" .. city_id, timeout, weather.forecast_update, nil)
+    newtimer("weather_forecast-" .. city_id, timeout, weather.forecast_update)
 
     return setmetatable(weather, { __index = weather.widget })
 end
