@@ -66,6 +66,10 @@ local function worker(args)
             notification_preset.screen = mouse.screen
         end
 
+        if not weather.notification_text then
+            weather.forecast_update()
+        end
+
         weather.notification = naughty.notify({
             text    = weather.notification_text,
             icon    = weather.icon_path,
@@ -106,8 +110,6 @@ local function worker(args)
                         weather.notification_text = weather.notification_text .. "\n"
                     end
                 end
-            else
-                weather.notification_text = 0
             end
         end)
     end

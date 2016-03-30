@@ -49,11 +49,23 @@ end
 -- list/table if the file does not exist
 function helpers.lines_from(file)
   if not helpers.file_exists(file) then return {} end
-  lines = {}
+  local lines = {}
   for line in io.lines(file) do
     lines[#lines + 1] = line
   end
   return lines
+end
+
+-- match all lines from a file, returns an empty
+-- list/table if the file or match does not exist
+function helpers.lines_match(regexp, file)
+	local lines = {}
+	for index,line in pairs(helpers.lines_from(file)) do
+		if string.match(line, regexp) then 
+			lines[index] = line
+		end  
+	end
+	return lines
 end
 
 -- get first line of a file, return nil if
