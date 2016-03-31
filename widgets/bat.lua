@@ -34,19 +34,19 @@ local function worker(args)
 	bat.widget = wibox.widget.textbox('')
 
 	bat_notification_low_preset = {
-		title = "Battery low",
-		text = "Plug the cable!",
+        title   = "Battery low",
+		text    = "Plug the cable!",
 		timeout = 15,
-		fg = "#202020",
-		bg = "#CDCDCD"
+		fg      = "#202020",
+		bg      = "#CDCDCD"
 	}
 
 	bat_notification_critical_preset = {
-		title = "Battery exhausted",
-		text = "Shutdown imminent",
+		title   = "Battery exhausted",
+		text    = "Shutdown imminent",
 		timeout = 15,
-		fg = "#000000",
-		bg = "#FFFFFF"
+		fg      = "#000000",
+		bg      = "#FFFFFF"
 	}
 
 	function update()
@@ -69,20 +69,20 @@ local function worker(args)
 			local rate_voltage      = tonumber(first_line(bstr .. "/voltage_now"))
 			local rate_power        = tonumber(first_line(bstr .. "/power_now"))
 
-			-- energy_now(P)[uWh], charge_now(I)[uAh] 
+			-- energy_now(P)[uWh], charge_now(I)[uAh]
 			local energy_now        = tonumber(first_line(bstr .. "/energy_now") or
-										first_line(bstr .. "/charge_now"))
-						  
-			-- energy_full(P)[uWh], charge_full(I)[uAh],                       
+                                      first_line(bstr .. "/charge_now"))
+
+			-- energy_full(P)[uWh], charge_full(I)[uAh],
 			local energy_full       = tonumber(first_line(bstr .. "/energy_full") or
-										first_line(bstr .. "/charge_full"))
+                                      first_line(bstr .. "/charge_full"))
 
 
 			local energy_percentage = tonumber(first_line(bstr .. "/capacity")) or
-										math.floor((energy_now / energy_full) * 100)
+                                      math.floor((energy_now / energy_full) * 100)
 
-			bat_now.status = first_line(bstr .. "/status") or "N/A"
-			bat_now.ac_status     = first_line(astr .. "/online") or "N/A"
+			bat_now.status    = first_line(bstr .. "/status") or "N/A"
+			bat_now.ac_status = first_line(astr .. "/online") or "N/A"
 
 			-- if rate = 0 or rate not defined skip the round
 			if	not (rate_power and rate_power > 0) and
@@ -91,13 +91,11 @@ local function worker(args)
 			then
 				return
 			end
-			
+
 			local rate_time = 0
-			if bat_now.status == "Charging"
-			then
+			if bat_now.status == "Charging" then
 				rate_time = (energy_full - energy_now) / rate_power or rate_current
-			elseif bat_now.status == "Discharging"
-			then
+			elseif bat_now.status == "Discharging" then
 				rate_time = energy_now / rate_power or rate_current
 			end
 
@@ -107,23 +105,20 @@ local function worker(args)
 			bat_now.perc = string.format("%d", energy_percentage)
 			bat_now.time = string.format("%02d:%02d", hours, minutes)
 			bat_now.watt = string.format("%.2fW", rate_power / 1e6 or (rate_voltage * rate_current)  / 1e12)
-		
 		end
+
 		widget = bat.widget
 		settings()
 
 		-- notifications for low and critical states
-		if bat_now.status == "Discharging" and notify == "on" and bat_now.perc
-		then
+		if bat_now.status == "Discharging" and notify == "on" and bat_now.perc then
 			local nperc = tonumber(bat_now.perc) or 100
-			if nperc <= 5
-			then
+			if nperc <= 5 then
 				bat.id = naughty.notify({
 					preset = bat_notification_critical_preset,
 					replaces_id = bat.id,
 				}).id
-			elseif nperc <= 15
-			then
+			elseif nperc <= 15 then
 				bat.id = naughty.notify({
 					preset = bat_notification_low_preset,
 					replaces_id = bat.id,
