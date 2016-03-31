@@ -7,15 +7,15 @@
                                                   
 --]]
 
-local newtimer        = require("lain.helpers").newtimer
-local read_pipe       = require("lain.helpers").read_pipe
+local newtimer     = require("lain.helpers").newtimer
+local read_pipe    = require("lain.helpers").read_pipe
 
-local wibox           = require("wibox")
+local wibox        = require("wibox")
 
-local string          = { match  = string.match,
-                          format = string.format }
+local string       = { match  = string.match,
+                       format = string.format }
 
-local setmetatable    = setmetatable
+local setmetatable = setmetatable
 
 -- ALSA volume
 -- lain.widgets.alsa
@@ -32,11 +32,11 @@ local function worker(args)
 
     function alsa.update()
         mixer = read_pipe(string.format("%s get %s", alsa.cmd, alsa.channel))
-        l, s = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
+        l,s   = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
 
         if alsa.last_level ~= l or alsa.last_status ~= s then
             volume_now = { level = l, status = s }
-            alsa.last_level = l
+            alsa.last_level  = l
             alsa.last_status = s
 
             widget = alsa.widget
@@ -45,7 +45,6 @@ local function worker(args)
     end
 
     timer_id = string.format("alsa-%s-%s", alsa.cmd, alsa.channel)
-
     newtimer(timer_id, timeout, alsa.update)
 
     return setmetatable(alsa, { __index = alsa.widget })
