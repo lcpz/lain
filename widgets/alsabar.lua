@@ -127,7 +127,7 @@ local function worker(args)
         -- Capture mixer control state:          [5%] ... ... [on]
         local volu, mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
 
-        if (volu and tonumber(volu) ~= alsabar._current_level) or string.match(mute, "on") ~= alsabar._muted
+        if (volu and tonumber(volu) ~= alsabar._current_level) or (mute and string.match(mute, "on") ~= alsabar._muted)
         then
             alsabar._current_level = tonumber(volu)
             alsabar.bar:set_value(alsabar._current_level / 100)
