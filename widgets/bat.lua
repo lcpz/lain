@@ -94,7 +94,7 @@ local function worker(args)
 
 			local rate_time = 0
 			if bat_now.status == "Charging" then
-                           rate_time = (energy_full - energy_now) / rate_power or rate_current
+                           rate_time = (energy_full - energy_now) / (rate_power or rate_current)
 			elseif bat_now.status == "Discharging" then
                            rate_time = energy_now / (rate_power or rate_current)
 			end
