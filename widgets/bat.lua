@@ -1,10 +1,10 @@
 
 --[[
-												  
+												                        
 	 Licensed under GNU General Public License v2 
 	  * (c) 2013,      Luke Bonham                
 	  * (c) 2010-2012, Peter Hofmann              
-												  
+												                        
 --]]
 
 local newtimer     = require("lain.helpers").newtimer
@@ -71,39 +71,38 @@ local function worker(args)
 
 			-- energy_now(P)[uWh], charge_now(I)[uAh]
 			local energy_now        = tonumber(first_line(bstr .. "/energy_now") or
-                                      first_line(bstr .. "/charge_now"))
+                                first_line(bstr .. "/charge_now"))
 
 			-- energy_full(P)[uWh], charge_full(I)[uAh],
 			local energy_full       = tonumber(first_line(bstr .. "/energy_full") or
-                                      first_line(bstr .. "/charge_full"))
+                                first_line(bstr .. "/charge_full"))
 
 
 			local energy_percentage = tonumber(first_line(bstr .. "/capacity")) or
-                                      math.floor((energy_now / energy_full) * 100)
+                                math.floor((energy_now / energy_full) * 100)
 
 			bat_now.status    = first_line(bstr .. "/status") or "N/A"
 			bat_now.ac_status = first_line(astr .. "/online") or "N/A"
 
 			-- if rate = 0 or rate not defined skip the round
 			if	not (rate_power and rate_power > 0) and
-				not (rate_current and  rate_current > 0) and
-				not (bat_now.status == "Full")
+          not (rate_current and  rate_current > 0) and
+          not (bat_now.status == "Full")
 			then
-				return
+          return
 			end
 
 			local rate_time = 0
 			if bat_now.status == "Charging" then
-                           rate_time = (energy_full - energy_now) / (rate_power or rate_current)
+          rate_time = (energy_full - energy_now) / (rate_power or rate_current)
 			elseif bat_now.status == "Discharging" then
-                           rate_time = energy_now / (rate_power or rate_current)
+          rate_time = energy_now / (rate_power or rate_current)
 			end
 
 			local hours   = math.floor(rate_time)
 			local minutes = math.floor((rate_time - hours) * 60)
-                        
-                        local watt    = rate_power and (rate_power / 1e6) or (rate_voltage * rate_current) / 1e12
-                        
+      local watt    = rate_power and (rate_power / 1e6) or (rate_voltage * rate_current) / 1e12
+
 			bat_now.perc = string.format("%d", energy_percentage)
 			bat_now.time = string.format("%02d:%02d", hours, minutes)
 			bat_now.watt = string.format("%.2fW", watt)
@@ -129,7 +128,7 @@ local function worker(args)
 		end
 	end
 
-	newtimer(battery, timeout, update)
+  newtimer(battery, timeout, update)
 
 	return setmetatable(bat, { __index = bat.widget })
 end
