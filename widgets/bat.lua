@@ -94,17 +94,19 @@ local function worker(args)
 
 			local rate_time = 0
 			if bat_now.status == "Charging" then
-				rate_time = (energy_full - energy_now) / rate_power or rate_current
+                           rate_time = (energy_full - energy_now) / (rate_power or rate_current)
 			elseif bat_now.status == "Discharging" then
-				rate_time = energy_now / rate_power or rate_current
+                           rate_time = energy_now / (rate_power or rate_current)
 			end
 
 			local hours   = math.floor(rate_time)
 			local minutes = math.floor((rate_time - hours) * 60)
-
+                        
+                        local watt    = rate_power and (rate_power / 1e6) or (rate_voltage * rate_current) / 1e12
+                        
 			bat_now.perc = string.format("%d", energy_percentage)
 			bat_now.time = string.format("%02d:%02d", hours, minutes)
-			bat_now.watt = string.format("%.2fW", rate_power / 1e6 or (rate_voltage * rate_current)  / 1e12)
+			bat_now.watt = string.format("%.2fW", watt)
 		end
 
 		widget = bat.widget
