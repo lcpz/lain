@@ -50,9 +50,7 @@ function calendar:show(t_out, inc_offset, scr)
         calendar.notify_icon = calendar.icons .. today .. ".png"
 
         -- bg and fg inverted to highlight today
-        f = io.popen(string.format("%s | sed -r -e 's/_\\x08//g' -e '0,/(^| )%d($| )/ s/(^| )%d($| )/\\1<b><span foreground=\"%s\" background=\"%s\">%d<\\/span><\\/b>\\2/'",
-                     calendar.cal, today, today, calendar.bg, calendar.fg, today))
-
+		 	  f = io.popen(calendar.cal_format(today))
     else -- no current month showing, no day to highlight
        local month = tonumber(os.date('%m'))
        local year = tonumber(os.date('%Y'))
@@ -60,13 +58,13 @@ function calendar:show(t_out, inc_offset, scr)
        month = month + calendar.offset
 
        while month > 12 do
-	   month = month - 12
-	   year = year + 1
+			     month = month - 12
+	         year = year + 1
        end
 
        while month < 1 do
-	   month = month + 12
-	   year = year - 1
+           month = month + 12
+	         year = year - 1
        end
 
        calendar.notify_icon = nil
@@ -102,6 +100,10 @@ function calendar:attach(widget, args)
     local args = args or {}
 
     calendar.cal         = args.cal or "/usr/bin/cal"
+    calendar.cal_format  = args.ca_format or function(today)
+        return string.format("%s | sed -r -e 's/_\\x08//g' -e '0,/(^| )%d($| )/ s/(^| )%d($| )/\\1<b><span foreground=\"%s\" background=\"%s\">%d<\\/span><\\/b>\\2/'",
+                             calendar.cal, today, today, calendar.bg, calendar.fg, today)
+    end
     calendar.icons       = args.icons or icons_dir .. "cal/white/"
     calendar.font        = args.font or beautiful.font:gsub(" %d.*", "")
     calendar.font_size   = tonumber(args.font_size) or 11
@@ -110,9 +112,6 @@ function calendar:attach(widget, args)
     calendar.position    = args.position or "top_right"
     calendar.scr_pos     = args.scr_pos or 1
     calendar.followmouse = args.followmouse or false
-
-    calendar.fg = string.sub(calendar.fg, 1, 7)
-    calendar.bg = string.sub(calendar.bg, 1, 7)
 
     calendar.offset      = 0
     calendar.notify_icon = nil
