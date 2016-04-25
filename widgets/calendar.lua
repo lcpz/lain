@@ -50,7 +50,7 @@ function calendar:show(t_out, inc_offset, scr)
         calendar.notify_icon = calendar.icons .. today .. ".png"
 
         -- bg and fg inverted to highlight today
-		 	  f = io.popen(calendar.cal_format(today))
+        f = io.popen(calendar.cal_format(today))
     else -- no current month showing, no day to highlight
        local month = tonumber(os.date('%m'))
        local year = tonumber(os.date('%Y'))
