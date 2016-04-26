@@ -100,7 +100,7 @@ function calendar:attach(widget, args)
     local args = args or {}
 
     calendar.cal         = args.cal or "/usr/bin/cal"
-    calendar.cal_format  = args.ca_format or function(today)
+    calendar.cal_format  = args.cal_format or function(today)
         return string.format("%s | sed -r -e 's/_\\x08//g' -e '0,/(^| )%d($| )/ s/(^| )%d($| )/\\1<b><span foreground=\"%s\" background=\"%s\">%d<\\/span><\\/b>\\2/'",
                              calendar.cal, today, today, calendar.bg, calendar.fg, today)
     end
