@@ -21,7 +21,7 @@ local setmetatable = setmetatable
 -- lain.widgets.net
 
 local function worker(args)
-    local net = { last_t = 0, last_r = 0 }
+    local net = { last_t = 0, last_r = 0, devices = {} }
 
     function net.get_first_device()
         local ws = helpers.read_pipe("ip link show | cut -d' ' -f2,9")
@@ -53,8 +53,17 @@ local function worker(args)
     end
 
     function update()
+        -- This check is required to ensure we keep looking for one device if
+        -- none is found by net.get_first_device() at startup (i.e. iftable = {})
+        if next(iftable) == nil then
+            iftable = net.get_first_device()
+        end
+
         -- These are the totals over all specified interfaces
         net_now = {
+            -- New api - Current state of requested devices
+            devices  = {},
+            -- Bytes since last iteration
             sent     = 0,
             received = 0
         }
@@ -65,7 +74,7 @@ local function worker(args)
 
         for i, dev in ipairs(iftable) do
             local dev_now = {}
-            local dev_before = net_now[dev] or net
+            local dev_before = net.devices[dev] or { last_t = 0, last_r = 0 }
 
             dev_now.carrier  = helpers.first_line(string.format('/sys/class/net/%s/carrier', dev)) or '0'
             dev_now.state    = helpers.first_line(string.format('/sys/class/net/%s/operstate', dev)) or 'down'
@@ -73,20 +82,25 @@ local function worker(args)
             local now_t      = tonumber(helpers.first_line(string.format('/sys/class/net/%s/statistics/tx_bytes', dev)) or 0)
             local now_r      = tonumber(helpers.first_line(string.format('/sys/class/net/%s/statistics/rx_bytes', dev)) or 0)
 
-            if now_t ~= dev_before.last_t or now_r ~= dev_before.last_r then
-                dev_now.sent     = (now_t - (dev_before.last_t or 0)) / timeout / units
-                net_now.sent     = net_now.sent + dev_now.sent
-                dev_now.sent     = string.gsub(string.format('%.1f', dev_now.sent), ',', '.')
-                dev_now.received = (now_r - (dev_before.last_r or 0)) / timeout / units
-                net_now.received = net_now.received + dev_now.received
-                dev_now.received = string.gsub(string.format('%.1f', dev_now.received), ',', '.')
-            end
+            dev_now.sent     = (now_t - dev_before.last_t) / timeout / units
+            dev_now.received = (now_r - dev_before.last_r) / timeout / units
+
+            net_now.sent     = net_now.sent     + dev_now.sent
+            net_now.received = net_now.received + dev_now.received
+
+            dev_now.sent     = string.gsub(string.format('%.1f', dev_now.sent), ',', '.')
+            dev_now.received = string.gsub(string.format('%.1f', dev_now.received), ',', '.')
+
+            dev_now.last_t   = now_t
+            dev_now.last_r   = now_r
+
+            -- This will become dev_before in the next update/iteration
+            net.devices[dev] = dev_now
 
             total_t  = total_t + now_t
             total_r  = total_r + now_r
 
-            net_now[dev] = dev_now
-
+            -- Notify only once when connection is loss
             if string.match(dev_now.carrier, "0") and notify == "on" and helpers.get_map(dev) then
                 naughty.notify({
                     title    = dev,
@@ -95,12 +109,22 @@ local function worker(args)
                     screen   = screen
                 })
                 helpers.set_map(dev, false)
-            else
+            elseif string.match(dev_now.carrier, "1") then
                 helpers.set_map(dev, true)
             end
+
+            -- Old api compatibility
+            net_now.carrier      = dev_now.carrier
+            net_now.state        = dev_now.state
+            -- And new api
+            net_now.devices[dev] = dev_now
+            -- With the new api new_now.sent and net_now.received will be the
+            -- totals across all specified devices
+
         end
 
         if total_t ~= net.last_t or total_r ~= net.last_r then
+            -- Convert to a string to round the digits after the float point
             net_now.sent     = string.gsub(string.format('%.1f', net_now.sent), ',', '.')
             net_now.received = string.gsub(string.format('%.1f', net_now.received), ',', '.')
 
