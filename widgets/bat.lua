@@ -13,7 +13,7 @@ local first_line   = require("lain.helpers").first_line
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
-local math         = { floor  = math.floor }
+local math         = { floor  = math.floor, min = math.min }
 local string       = { format = string.format }
 local tonumber     = tonumber
 
@@ -98,7 +98,7 @@ local function worker(args)
                 local minutes = math.floor((rate_time - hours) * 60)
                 local watt    = rate_power and (rate_power / 1e6) or (rate_voltage * rate_current) / 1e12
 
-                bat_now.perc = string.format("%d", energy_percentage)
+                bat_now.perc = string.format("%d", math.min(100, energy_percentage))
                 bat_now.time = string.format("%02d:%02d", hours, minutes)
                 bat_now.watt = string.format("%.2fW", watt)
             end
