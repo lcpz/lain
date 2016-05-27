@@ -117,11 +117,20 @@ local function worker(args)
     function weather.update()
         local cmd = string.format(current_call, city_id, units, lang, APPID)
         async.request(cmd, function(f)
-            local pos, err
+            local pos, err, sunrise, sunset, current_dt, datetime, icon
             weather_now, pos, err = json.decode(f, 1, nil)
 
             if not err and weather_now and tonumber(weather_now["cod"]) == 200 then
-                weather.icon_path = icons_path .. weather_now["weather"][1]["icon"] .. ".png"
+                current_dt = os.time()
+                sunrise = weather_now["sys"]["sunrise"]
+                sunset  = weather_now["sys"]["sunset"]
+                if current_dt > sunrise and current_dt < sunset then 
+                    datetime="d"
+                else
+                    datetime="n"
+                end
+                icon = weather_now["weather"][1]["icon"]
+                weather.icon_path = icons_path .. icon:sub(1,2) .. datetime .. ".png"
                 widget = weather.widget
                 settings()
             else
