@@ -128,11 +128,13 @@ local function worker(args)
                 current_dt = os.time()
                 sunrise = weather_now["sys"]["sunrise"]
                 sunset  = weather_now["sys"]["sunset"]
+                if current_dt> sunrise and current_dt> sunset then current_dt = current_dt - 86400 end
                 if current_dt > sunrise and current_dt < sunset then 
                     datetime="d"
                 else
                     datetime="n"
                 end
+                -- error("dt sr:" .. sunrise .. "ss: " .. sunset .. "dt: " .. current_dt .. "d/n: " .. datetime .. "hehe")
                 icon = weather_now["weather"][1]["icon"]
                 weather.icon_path = icons_path .. icon:sub(1,2) .. datetime .. ".png"
                 widget = weather.widget
