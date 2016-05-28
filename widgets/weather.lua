@@ -70,8 +70,12 @@ local function worker(args)
             weather.forecast_update()
         end
 
+        if not weather.current_text then
+            weather.update()
+        end
+
         weather.notification = naughty.notify({
-            text    = weather.notification_text,
+            text    = weather.current_text .. weather.notification_text,
             icon    = weather.icon_path,
             timeout = t_out,
             preset  = notification_preset
@@ -117,12 +121,24 @@ local function worker(args)
     function weather.update()
         local cmd = string.format(current_call, city_id, units, lang, APPID)
         async.request(cmd, function(f)
-            local pos, err
+            local pos, err, sunrise, sunset, current_dt, datetime, icon
             weather_now, pos, err = json.decode(f, 1, nil)
-
+            weather.current_text=''
             if not err and weather_now and tonumber(weather_now["cod"]) == 200 then
-                weather.icon_path = icons_path .. weather_now["weather"][1]["icon"] .. ".png"
+                current_dt = os.time()
+                sunrise = weather_now["sys"]["sunrise"]
+                sunset  = weather_now["sys"]["sunset"]
+                if current_dt> sunrise and current_dt> sunset then current_dt = current_dt - 86400 end
+                if current_dt > sunrise and current_dt < sunset then 
+                    datetime="d"
+                else
+                    datetime="n"
+                end
+                -- error("dt sr:" .. sunrise .. "ss: " .. sunset .. "dt: " .. current_dt .. "d/n: " .. datetime .. "hehe")
+                icon = weather_now["weather"][1]["icon"]
+                weather.icon_path = icons_path .. icon:sub(1,2) .. datetime .. ".png"
                 widget = weather.widget
+                weather.current_text = "Now:" .. weather_now["weather"][1]["description"] .. "\n"
                 settings()
             else
                 weather.icon_path = icons_path .. "na.png"
