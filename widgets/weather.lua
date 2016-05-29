@@ -18,9 +18,11 @@ local wibox        = require("wibox")
 
 local math         = { floor  = math.floor }
 local mouse        = mouse
+local os           = { time   = os.time }
 local string       = { format = string.format,
                        gsub   = string.gsub }
 
+local tonumber     = tonumber
 local setmetatable = setmetatable
 
 -- OpenWeatherMap
@@ -36,6 +38,7 @@ local function worker(args)
     local current_call          = args.current_call  or "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
     local forecast_call         = args.forecast_call or "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s&APPID=%s'"
     local city_id               = args.city_id or 0 -- placeholder
+    local utc                   = args.utc or 0
     local units                 = args.units or "metric"
     local lang                  = args.lang or "en"
     local cnt                   = args.cnt or 5
@@ -68,10 +71,6 @@ local function worker(args)
 
         if not weather.notification_text then
             weather.forecast_update()
-        end
-
-        if not weather.current_text then
-            weather.update()
         end
 
         weather.notification = naughty.notify({
@@ -121,20 +120,24 @@ local function worker(args)
     function weather.update()
         local cmd = string.format(current_call, city_id, units, lang, APPID)
         async.request(cmd, function(f)
-            local pos, err, sunrise, sunset, current_dt, datetime, icon
+            local pos, err, icon
             weather_now, pos, err = json.decode(f, 1, nil)
             weather.current_text=''
             if not err and weather_now and tonumber(weather_now["cod"]) == 200 then
-                current_dt = os.time()
-                sunrise = weather_now["sys"]["sunrise"]
-                sunset  = weather_now["sys"]["sunset"]
-                if current_dt > sunrise and current_dt < sunset then 
-                    datetime="d"
+                -- weather icon based on localtime
+                now     = os.time() - (utc * 3600)
+                sunrise = tonumber(weather_now["sys"]["sunrise"])
+                sunset  = tonumber(weather_now["sys"]["sunset"])
+                icon    = weather_now["weather"][1]["icon"]
+
+                if sunrise <= now and now <= sunset then
+                    icon = string.gsub(icon, "n", "d")
                 else
-                    datetime="n"
+                    icon = string.gsub(icon, "d", "n")
                 end
-                icon = weather_now["weather"][1]["icon"]
-                weather.icon_path = icons_path .. icon:sub(1,2) .. datetime .. ".png"
+
+                weather.icon_path = icons_path .. icon .. ".png"
+
                 widget = weather.widget
                 weather.current_text = "Now:" .. weather_now["weather"][1]["description"] .. "\n"
                 settings()
