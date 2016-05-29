@@ -124,6 +124,7 @@ local function worker(args)
             weather_now, pos, err = json.decode(f, 1, nil)
             weather.current_text=''
             if not err and weather_now and tonumber(weather_now["cod"]) == 200 then
+<<<<<<< HEAD
                 -- weather icon based on localtime
                 now     = os.time() - (utc * 3600)
                 sunrise = tonumber(weather_now["sys"]["sunrise"])
@@ -132,12 +133,26 @@ local function worker(args)
 
                 if sunrise <= now and now <= sunset then
                     icon = string.gsub(icon, "n", "d")
+=======
+                current_dt = os.time()
+                sunrise = weather_now["sys"]["sunrise"]
+                sunset  = weather_now["sys"]["sunset"]
+                if current_dt> sunrise and current_dt> sunset then current_dt = current_dt - 86400 end
+                if current_dt > sunrise and current_dt < sunset then 
+                    datetime="d"
+>>>>>>> e3a5dd623700b2cad423c8179141124e6e9b9027
                 else
                     icon = string.gsub(icon, "d", "n")
                 end
+<<<<<<< HEAD
 
                 weather.icon_path = icons_path .. icon .. ".png"
 
+=======
+                -- error("dt sr:" .. sunrise .. "ss: " .. sunset .. "dt: " .. current_dt .. "d/n: " .. datetime .. "hehe")
+                icon = weather_now["weather"][1]["icon"]
+                weather.icon_path = icons_path .. icon:sub(1,2) .. datetime .. ".png"
+>>>>>>> e3a5dd623700b2cad423c8179141124e6e9b9027
                 widget = weather.widget
                 weather.current_text = "Now:" .. weather_now["weather"][1]["description"] .. "\n"
                 settings()
