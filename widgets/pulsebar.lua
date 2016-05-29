@@ -1,10 +1,10 @@
 
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013, Luke Bonham                     
-      * (c) 2013, Rman                            
-                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2013, Luke Bonham
+      * (c) 2013, Rman
+
 --]]
 
 local newtimer     = require("lain.helpers").newtimer
@@ -134,7 +134,7 @@ local function worker(args)
         then
             pulsebar._current_level = volu
             pulsebar.bar:set_value(pulsebar._current_level / 100)
-            if not mute and volu == 0 or mute == "no"
+            if not mute and volu == 0 or mute == "yes"
             then
                 pulsebar._muted = true
                 pulsebar.tooltip:set_text (" [Muted] ")
