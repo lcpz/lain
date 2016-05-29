@@ -15,14 +15,11 @@ local setmetatable = setmetatable
 local borderbox = {}
 
 local function worker(relbox, s, args)
-    local where = args.position or 'top'
-    local color = args.color or '#FFFFFF'
-    local size = args.size or 1
-    local box = nil
-    local wiboxarg = {
-        position = nil,
-        bg = color
-    }
+    local where    = args.position or 'top'
+    local color    = args.color or '#FFFFFF'
+    local size     = args.size or 1
+    local box      = nil
+    local wiboxarg = { position = nil, bg = color }
 
     if where == 'top'
     then
