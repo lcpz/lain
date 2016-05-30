@@ -126,9 +126,9 @@ local function worker(args)
 
             if not err and weather_now and tonumber(weather_now["cod"]) == 200 then
                 -- weather icon based on localtime
-                now     = os.time() - (utc * 3600)
-                sunrise = tonumber(weather_now["sys"]["sunrise"])
-                sunset  = tonumber(weather_now["sys"]["sunset"])
+                now     = os.time()
+                sunrise = tonumber(weather_now["sys"]["sunrise"]) + (utc * 3600)
+                sunset  = tonumber(weather_now["sys"]["sunset"]) + (utc * 3600)
                 icon    = weather_now["weather"][1]["icon"]
 
                 if sunrise <= now and now <= sunset then
