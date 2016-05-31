@@ -21,7 +21,7 @@ local mouse        = mouse
 local os           = { time   = os.time }
 local string       = { format = string.format,
                        gsub   = string.gsub }
-
+local naughty = require("naughty")
 local tonumber     = tonumber
 local setmetatable = setmetatable
 
@@ -39,7 +39,6 @@ local function worker(args)
     local forecast_call         = args.forecast_call or "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s&APPID=%s'"
     local city_id               = args.city_id or 0 -- placeholder
     local utc                   = args.utc or 0
-
     local units                 = args.units or "metric"
     local lang                  = args.lang or "en"
     local cnt                   = args.cnt or 5
@@ -121,7 +120,8 @@ local function worker(args)
 
     function weather.update()
         local cmd = string.format(current_call, city_id, units, lang, APPID)
-        local utc_midnight_cmd   = ("date -u -d 'today 00:00:00' +'%%s'")
+        local utc_midnight_cmd   = string.format("date -u -d 'today 00:00:00' +'%%s'")
+        local local_midnight_cmd = string.format("date -d 'today 00:00:00' +'%%s'")
 
         async.request(cmd, function(f)
             local pos, err, icon
@@ -129,22 +129,25 @@ local function worker(args)
 
             if not err and weather_now and tonumber(weather_now["cod"]) == 200 then
                 -- weather icon based on localtime
-
-                now     = os.time()
-                utc_midnight   = string.gsub(read_pipe(string.format(utc_midnight_cmd)), "\n", "")
-
-                if utc > 0 then
-                    if (now  - (utc * 3600)) >= tonumber(utc_midnight) then 
+                now                  = os.time()
+                local utc_midnight   = string.gsub(read_pipe(utc_midnight_cmd), "\n", "")
+                local local_midnight = string.gsub(read_pipe(local_midnight_cmd), "\n", "")
+             
+                if utc > 0 then -- we are to the East from GMT
+                    if tonumber(local_midnight) >= tonumber(utc_midnight) then -- we are 1 day after the GMT, so have to return 1 day back
                        now = now - 86400
                     end
-                else
-                    if (now  - (utc * 3600)) <= tonumber(utc_midnight) then 
+                end
+
+                if utc < 0 then -- we are to the West from GMT
+                    if tonumber(local_midnight) <= tonumber(utc_midnight) then -- we are 1 day before the GMT
                        now = now + 86400
                     end
                 end
-                sunrise = tonumber(weather_now["sys"]["sunrise"])
-                sunset  = tonumber(weather_now["sys"]["sunset"])
-                icon    = weather_now["weather"][1]["icon"]
+                -- if utc==0 leave it as is
+                local sunrise = tonumber(weather_now["sys"]["sunrise"])
+                local sunset  = tonumber(weather_now["sys"]["sunset"])
+                local icon    = weather_now["weather"][1]["icon"]
 
                 if sunrise <= now and now <= sunset then
                     icon = string.gsub(icon, "n", "d")
