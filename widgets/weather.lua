@@ -21,7 +21,7 @@ local mouse        = mouse
 local os           = { time   = os.time }
 local string       = { format = string.format,
                        gsub   = string.gsub }
-
+local naughty = require("naughty")
 local tonumber     = tonumber
 local setmetatable = setmetatable
 
@@ -126,10 +126,15 @@ local function worker(args)
 
             if not err and weather_now and tonumber(weather_now["cod"]) == 200 then
                 -- weather icon based on localtime
-                now     = os.time()
-                sunrise = tonumber(weather_now["sys"]["sunrise"]) + (utc * 3600)
-                sunset  = tonumber(weather_now["sys"]["sunset"]) + (utc * 3600)
-                icon    = weather_now["weather"][1]["icon"]
+                local now     = os.time()
+                local sunrise = tonumber(weather_now["sys"]["sunrise"])
+                local sunset  = tonumber(weather_now["sys"]["sunset"])
+                local icon    = weather_now["weather"][1]["icon"]
+                local utc_m   = string.gsub(read_pipe(string.format("date -u -d 'today 00:00:00' +'%%s'")), "\n", "")
+
+                if now > tonumber(utc_m) then
+                    now = now - (utc * 3600)
+                end
 
                 if sunrise <= now and now <= sunset then
                     icon = string.gsub(icon, "n", "d")
