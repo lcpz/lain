@@ -49,20 +49,20 @@ local function worker(args)
         bg      = "#FFFFFF"
     }
 
+    bat_now = {
+        status    = "Not present",
+        ac_status = "N/A",
+        perc      = "N/A",
+        time      = "N/A",
+        watt      = "N/A"
+    }
+
+    bat_now.n_status = {}
+    for i = 1, #batteries do
+        bat_now.n_status[i] = "Not present"
+    end
+
     function update()
-        bat_now = {
-            status    = "Not present",
-            ac_status = "N/A",
-            perc      = "N/A",
-            time      = "N/A",
-            watt      = "N/A"
-        }
-
-        bat_now.n_status = {}
-        for i = 1, #batteries do
-            bat_now.n_status[i] = "Not present"
-        end
-
         local sum_rate_current = 0
         local sum_rate_voltage = 0
         local sum_rate_power = 0
