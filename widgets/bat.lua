@@ -110,8 +110,7 @@ local function worker(args)
         bat_now.ac_status = first_line(string.format("/sys/class/power_supply/%s/online", ac)) or "N/A"
 
         -- update {perc,time,watt} iff rate > 0 and battery not full
-        if (sum_rate_current > 0 or sum_rate_power > 0)
-           and bat_now.status ~= "N/A" and bat_now.status ~= "Full"
+        if (sum_rate_current > 0 or sum_rate_power > 0) and not (bat_now.status == "Full")
         then
             local rate_time = 0
 
