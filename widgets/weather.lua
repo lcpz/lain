@@ -16,12 +16,14 @@ local lain_icons   = require("lain.helpers").icons_dir
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
-local math         = { floor  = math.floor }
+local math         = { floor    = math.floor }
+local os           = { time     = os.time,
+                       date     = os.date,
+                       difftime = os.difftime }
+local string       = { format   = string.format,
+                       gsub     = string.gsub }
+
 local mouse        = mouse
-local os           = { time   = os.time }
-local string       = { format = string.format,
-                       gsub   = string.gsub }
-local naughty = require("naughty")
 local tonumber     = tonumber
 local setmetatable = setmetatable
 
@@ -38,7 +40,11 @@ local function worker(args)
     local current_call          = args.current_call  or "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
     local forecast_call         = args.forecast_call or "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s&APPID=%s'"
     local city_id               = args.city_id or 0 -- placeholder
-    local utc                   = args.utc or 0
+    local utc_offset            = args.utc_offset or
+                                  function ()
+                                      local now = os.time()
+                                      return os.difftime(now, os.time(os.date("!*t", now))) + (os.date("*t").isdst and 3600)
+                                  end
     local units                 = args.units or "metric"
     local lang                  = args.lang or "en"
     local cnt                   = args.cnt or 5
@@ -51,7 +57,6 @@ local function worker(args)
                                       local tmin = math.floor(wn["temp"]["min"])
                                       local tmax = math.floor(wn["temp"]["max"])
                                       local desc = wn["weather"][1]["description"]
-
                                       return string.format("<b>%s</b>: %s, %d - %d ", day, desc, tmin, tmax)
                                   end
     local weather_na_markup     = args.weather_na_markup or " N/A "
@@ -72,7 +77,6 @@ local function worker(args)
         if not weather.notification_text then
             weather.forecast_update()
         end
-
 
         weather.notification = naughty.notify({
             text    = weather.notification_text,
@@ -131,9 +135,17 @@ local function worker(args)
                 local sunset  = tonumber(weather_now["sys"]["sunset"])
                 local icon    = weather_now["weather"][1]["icon"]
                 local utc_m   = string.gsub(read_pipe(string.format("date -u -d 'today 00:00:00' +'%%s'")), "\n", "")
+                local loc_m   = string.gsub(read_pipe(string.format("date -d 'today 00:00:00' +'%%s'")), "\n", "")
 
-                if now > tonumber(utc_m) then
-                    now = now - (utc * 3600)
+                loc_m  = tonumber(loc_m)
+                utc_m  = tonumber(utc_m)
+                offset = utc_offset()
+
+                -- if we are 1 day after the GMT, return 1 day back, and viceversa
+                if offset > 0 and loc_m >= utc_m then
+                    now = now - 86400
+                elseif offset < 0 and loc_m <= utc_m then
+                    now = now + 86400
                 end
 
                 if sunrise <= now and now <= sunset then
@@ -143,7 +155,6 @@ local function worker(args)
                 end
 
                 weather.icon_path = icons_path .. icon .. ".png"
-
                 widget = weather.widget
                 settings()
             else
