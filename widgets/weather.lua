@@ -43,7 +43,7 @@ local function worker(args)
     local utc_offset            = args.utc_offset or
                                   function ()
                                       local now = os.time()
-                                      return os.difftime(now, os.time(os.date("!*t", now))) + (os.date("*t").isdst and 3600)
+                                      return os.difftime(now, os.time(os.date("!*t", now))) + ((os.date("*t").isdst and 1 or 0) * 3600)
                                   end
     local units                 = args.units or "metric"
     local lang                  = args.lang or "en"
