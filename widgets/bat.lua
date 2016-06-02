@@ -23,13 +23,13 @@ local setmetatable = setmetatable
 -- lain.widgets.bat
 
 local function worker(args)
-    local bat      = {}
-    local args     = args or {}
-    local timeout  = args.timeout or 30
-    local battery  = args.battery or "BAT0"
-    local ac       = args.ac or "AC0"
-    local notify   = args.notify or "on"
-    local settings = args.settings or function() end
+    local bat       = {}
+    local args      = args or {}
+    local timeout   = args.timeout or 30
+    local batteries = args.batteries or (args.battery and {args.battery}) or {"BAT0"}
+    local ac        = args.ac or "AC0"
+    local notify    = args.notify or "on"
+    local settings  = args.settings or function() end
 
     bat.widget = wibox.widget.textbox('')
 
@@ -49,59 +49,84 @@ local function worker(args)
         bg      = "#FFFFFF"
     }
 
+    bat_now = {
+        status    = "Not present",
+        ac_status = "N/A",
+        perc      = "N/A",
+        time      = "N/A",
+        watt      = "N/A"
+    }
+
+    bat_now.n_status = {}
+    for i = 1, #batteries do
+        bat_now.n_status[i] = "Not present"
+    end
+
     function update()
-        bat_now = {
-            status    = "Not present",
-            ac_status = "N/A",
-            perc      = "N/A",
-            time      = "N/A",
-            watt      = "N/A"
-        }
+        local sum_rate_current = 0
+        local sum_rate_voltage = 0
+        local sum_rate_power = 0
+        local sum_energy_now = 0
+        local sum_energy_full = 0
+        local sum_energy_percentage = 0
 
-        local bstr    = "/sys/class/power_supply/" .. battery
-        local astr    = "/sys/class/power_supply/" .. ac
-        local present = first_line(bstr .. "/present")
+        for i, battery in ipairs(batteries) do
+            local bstr    = "/sys/class/power_supply/" .. battery
+            local present = first_line(bstr .. "/present")
 
-        if present == "1"
-        then
-            -- current_now(I)[uA], voltage_now(U)[uV], power_now(P)[uW]
-            local rate_current      = tonumber(first_line(bstr .. "/current_now"))
-            local rate_voltage      = tonumber(first_line(bstr .. "/voltage_now"))
-            local rate_power        = tonumber(first_line(bstr .. "/power_now"))
-
-            -- energy_now(P)[uWh], charge_now(I)[uAh]
-            local energy_now        = tonumber(first_line(bstr .. "/energy_now") or
-                                      first_line(bstr .. "/charge_now"))
-
-            -- energy_full(P)[uWh], charge_full(I)[uAh]
-            local energy_full       = tonumber(first_line(bstr .. "/energy_full") or
-                                      first_line(bstr .. "/charge_full"))
-
-            local energy_percentage = tonumber(first_line(bstr .. "/capacity")) or
-                                      math.floor((energy_now / energy_full) * 100)
-
-            bat_now.status    = first_line(bstr .. "/status") or "N/A"
-            bat_now.ac_status = first_line(astr .. "/online") or "N/A"
-
-            -- update {perc,time,watt} iff rate > 0 and battery not full
-            if ((rate_current and rate_current > 0) or (rate_power and rate_power > 0))
-                and bat_now.status ~= "N/A" and bat_now.status ~= "Full"
+            if present == "1"
             then
-                local rate_time = 0
-                if bat_now.status == "Charging" then
-                    rate_time = (energy_full - energy_now) / (rate_power or rate_current)
-                elseif bat_now.status == "Discharging" then
-                    rate_time = energy_now / (rate_power or rate_current)
+                -- current_now(I)[uA], voltage_now(U)[uV], power_now(P)[uW]
+                local rate_current      = tonumber(first_line(bstr .. "/current_now"))
+                local rate_voltage      = tonumber(first_line(bstr .. "/voltage_now"))
+                local rate_power        = tonumber(first_line(bstr .. "/power_now"))
+
+                -- energy_now(P)[uWh], charge_now(I)[uAh]
+                local energy_now        = tonumber(first_line(bstr .. "/energy_now") or
+                                          first_line(bstr .. "/charge_now"))
+
+                -- energy_full(P)[uWh], charge_full(I)[uAh]
+                local energy_full       = tonumber(first_line(bstr .. "/energy_full") or
+                                          first_line(bstr .. "/charge_full"))
+
+                local energy_percentage = tonumber(first_line(bstr .. "/capacity")) or
+                                          math.floor((energy_now / energy_full) * 100)
+
+                if bat_now.n_status[i] ~= "Charging" and bat_now.n_status[i] ~= "Discharging"
+                then
+                    bat_now.n_status[i] = first_line(bstr .. "/status") or "N/A"
                 end
 
-                local hours   = math.floor(rate_time)
-                local minutes = math.floor((rate_time - hours) * 60)
-                local watt    = rate_power and (rate_power / 1e6) or (rate_voltage * rate_current) / 1e12
-
-                bat_now.perc = string.format("%d", math.min(100, energy_percentage))
-                bat_now.time = string.format("%02d:%02d", hours, minutes)
-                bat_now.watt = string.format("%.2fW", watt)
+                sum_rate_current      = sum_rate_current + (rate_current or 0)
+                sum_rate_voltage      = sum_rate_voltage + rate_voltage
+                sum_rate_power        = sum_rate_power + (rate_power or ((rate_voltage * rate_current) / 1e6))
+                sum_energy_now        = sum_energy_now + energy_now
+                sum_energy_full       = sum_energy_full + energy_full
+                sum_energy_percentage = sum_energy_percentage + energy_percentage
             end
+        end
+
+        bat_now.status = bat_now.n_status[1]
+        bat_now.ac_status = first_line(string.format("/sys/class/power_supply/%s/online", ac)) or "N/A"
+
+        -- update {perc,time,watt} iff rate > 0 and battery not full
+        if (sum_rate_current > 0 or sum_rate_power > 0) and not (bat_now.status == "Full")
+        then
+            local rate_time = 0
+
+            if bat_now.status == "Charging" then
+                rate_time = (sum_energy_full - sum_energy_now) / (sum_rate_power or sum_rate_current)
+            elseif bat_now.status == "Discharging" then
+                rate_time = sum_energy_now / (sum_rate_power or sum_rate_current)
+            end
+
+            local hours   = math.floor(rate_time)
+            local minutes = math.floor((rate_time - hours) * 60)
+            local watt    = sum_rate_power / 1e6
+
+            bat_now.perc  = string.format("%d", math.min(100, sum_energy_percentage / #batteries))
+            bat_now.time  = string.format("%02d:%02d", hours, minutes)
+            bat_now.watt  = string.format("%.2fW", watt)
         end
 
         widget = bat.widget
