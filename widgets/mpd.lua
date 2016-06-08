@@ -37,7 +37,7 @@ local function worker(args)
     local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
     local cover_size  = args.cover_size or 100
     local default_art = args.default_art or ""
-    local notify      = args.notify or true
+    local notify      = args.notify or "on"
     local followmouse = args.followmouse or false
     local echo_cmd    = args.echo_cmd or "echo"
     local settings    = args.settings or function() end
@@ -91,7 +91,7 @@ local function worker(args)
 
             if mpd_now.state == "play"
             then
-                if notify and mpd_now.title ~= helpers.get_map("current mpd track")
+                if notify == "on" and mpd_now.title ~= helpers.get_map("current mpd track")
                 then
                     helpers.set_map("current mpd track", mpd_now.title)
 
