@@ -28,7 +28,7 @@ local function worker(args)
     local timeout   = args.timeout or 30
     local batteries = args.batteries or (args.battery and {args.battery}) or {"BAT0"}
     local ac        = args.ac or "AC0"
-    local notify    = args.notify or "on"
+    local notify    = args.notify or true
     local settings  = args.settings or function() end
 
     bat.widget = wibox.widget.textbox('')
@@ -133,7 +133,7 @@ local function worker(args)
         settings()
 
         -- notifications for low and critical states
-        if bat_now.status == "Discharging" and notify == "on" and bat_now.perc then
+        if notify and bat_now.perc and bat_now.status == "Discharging" then
             local nperc = tonumber(bat_now.perc) or 100
             if nperc <= 5 then
                 bat.id = naughty.notify({
