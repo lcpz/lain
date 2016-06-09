@@ -131,12 +131,12 @@ local function worker(args)
 
         -- notifications for low and critical states
         if notify == "on" and bat_now.perc and bat_now.status == "Discharging" then
-            if perc <= 5 then
+            if bat_now.perc <= 5 then
                 bat.id = naughty.notify({
                     preset = bat_notification_critical_preset,
                     replaces_id = bat.id
                 }).id
-            elseif perc <= 15 then
+            elseif bat_now.perc <= 15 then
                 bat.id = naughty.notify({
                     preset = bat_notification_low_preset,
                     replaces_id = bat.id
