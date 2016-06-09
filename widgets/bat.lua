@@ -92,10 +92,7 @@ local function worker(args)
                 local energy_percentage = tonumber(first_line(bstr .. "/capacity")) or
                                           math.floor((energy_now / energy_full) * 100)
 
-                if bat_now.n_status[i] ~= "Charging" and bat_now.n_status[i] ~= "Discharging"
-                then
-                    bat_now.n_status[i] = first_line(bstr .. "/status") or "N/A"
-                end
+                bat_now.n_status[i] = first_line(bstr .. "/status") or "N/A"
 
                 sum_rate_current      = sum_rate_current + (rate_current or 0)
                 sum_rate_voltage      = sum_rate_voltage + rate_voltage
@@ -109,8 +106,8 @@ local function worker(args)
         bat_now.status = bat_now.n_status[1]
         bat_now.ac_status = first_line(string.format("/sys/class/power_supply/%s/online", ac)) or "N/A"
 
-        -- update {perc,time,watt} iff rate > 0 and battery not full
-        if (sum_rate_current > 0 or sum_rate_power > 0) and not (bat_now.status == "Full")
+        -- update {perc,time,watt} iff battery not full and rate > 0
+        if bat_now.status ~= "Full" and (sum_rate_current > 0 or sum_rate_power > 0)
         then
             local rate_time = 0
 
@@ -124,9 +121,9 @@ local function worker(args)
             local minutes = math.floor((rate_time - hours) * 60)
             local watt    = sum_rate_power / 1e6
 
-            bat_now.perc  = string.format("%d", math.min(100, sum_energy_percentage / #batteries))
+            bat_now.perc  = tonumber(string.format("%d", math.min(100, sum_energy_percentage / #batteries)))
             bat_now.time  = string.format("%02d:%02d", hours, minutes)
-            bat_now.watt  = string.format("%.2fW", watt)
+            bat_now.watt  = tonumber(string.format("%.2fW", watt))
         end
 
         widget = bat.widget
@@ -134,16 +131,15 @@ local function worker(args)
 
         -- notifications for low and critical states
         if notify == "on" and bat_now.perc and bat_now.status == "Discharging" then
-            local nperc = tonumber(bat_now.perc) or 100
-            if nperc <= 5 then
+            if perc <= 5 then
                 bat.id = naughty.notify({
                     preset = bat_notification_critical_preset,
-                    replaces_id = bat.id,
+                    replaces_id = bat.id
                 }).id
-            elseif nperc <= 15 then
+            elseif perc <= 15 then
                 bat.id = naughty.notify({
                     preset = bat_notification_low_preset,
-                    replaces_id = bat.id,
+                    replaces_id = bat.id
                 }).id
             end
         end
