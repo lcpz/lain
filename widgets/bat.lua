@@ -50,7 +50,7 @@ local function worker(args)
     }
 
     bat_now = {
-        status    = "Not present",
+        status    = "N/A",
         ac_status = "N/A",
         perc      = "N/A",
         time      = "N/A",
@@ -59,7 +59,7 @@ local function worker(args)
 
     bat_now.n_status = {}
     for i = 1, #batteries do
-        bat_now.n_status[i] = "Not present"
+        bat_now.n_status[i] = "N/A"
     end
 
     function update()
@@ -104,26 +104,30 @@ local function worker(args)
         end
 
         bat_now.status = bat_now.n_status[1]
-        bat_now.ac_status = first_line(string.format("/sys/class/power_supply/%s/online", ac)) or "N/A"
+        bat_now.ac_status = tonumber(first_line(string.format("/sys/class/power_supply/%s/online", ac))) or "N/A"
 
-        -- update {perc,time,watt} iff battery not full and rate > 0
-        if bat_now.status ~= "Full" and (sum_rate_current > 0 or sum_rate_power > 0)
-        then
-            local rate_time = 0
+        if bat_now.status ~= "N/A" then
+            -- update {perc,time,watt} iff battery not full and rate > 0
+            if bat_now.status ~= "Full" and (sum_rate_current > 0 or sum_rate_power > 0) then
+                local rate_time = 0
 
-            if bat_now.status == "Charging" then
-                rate_time = (sum_energy_full - sum_energy_now) / (sum_rate_power or sum_rate_current)
-            elseif bat_now.status == "Discharging" then
-                rate_time = sum_energy_now / (sum_rate_power or sum_rate_current)
+                if bat_now.status == "Charging" then
+                    rate_time = (sum_energy_full - sum_energy_now) / (sum_rate_power or sum_rate_current)
+                elseif bat_now.status == "Discharging" then
+                    rate_time = sum_energy_now / (sum_rate_power or sum_rate_current)
+                end
+
+                local hours   = math.floor(rate_time)
+                local minutes = math.floor((rate_time - hours) * 60)
+                local watt    = (sum_rate_power / 1e6)
+
+                bat_now.perc  = tonumber(string.format("%d", math.min(100, sum_energy_percentage / #batteries)))
+                bat_now.time  = string.format("%02d:%02d", hours, minutes)
+                bat_now.watt  = tonumber(string.format("%.2f", watt))
+            -- consistency check
+            elseif bat_now.status == "Full" then
+                bat_now.perc = 100
             end
-
-            local hours   = math.floor(rate_time)
-            local minutes = math.floor((rate_time - hours) * 60)
-            local watt    = sum_rate_power / 1e6
-
-            bat_now.perc  = tonumber(string.format("%d", math.min(100, sum_energy_percentage / #batteries)))
-            bat_now.time  = string.format("%02d:%02d", hours, minutes)
-            bat_now.watt  = tonumber(string.format("%.2fW", watt))
         end
 
         widget = bat.widget
