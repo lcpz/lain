@@ -58,6 +58,12 @@ local function worker(args)
     function mpd.update()
         async.request(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh, function (f)
             mpd_now = {
+                random_mode  = false,
+                single_mode  = false,
+                repeat_mode  = false,
+                consume_mode = false,
+                pls_pos      = "N/A",
+                pls_len      = "N/A",
                 state        = "N/A",
                 file         = "N/A",
                 name         = "N/A",
@@ -80,6 +86,12 @@ local function worker(args)
                     elseif k == "Date"           then mpd_now.date         = escape_f(v)
                     elseif k == "Time"           then mpd_now.time         = v
                     elseif k == "elapsed"        then mpd_now.elapsed      = string.match(v, "%d+")
+                    elseif k == "song"           then mpd_now.pls_pos      = v
+                    elseif k == "playlistlength" then mpd_now.pls_len      = v
+                    elseif k == "repeat"         then mpd_now.repeat_mode  = v ~= "0"
+                    elseif k == "single"         then mpd_now.single_mode  = v ~= "0"
+                    elseif k == "random"         then mpd_now.random_mode  = v ~= "0"
+                    elseif k == "consume"        then mpd_now.consume_mode = v ~= "0"
                     end
                 end
             end
