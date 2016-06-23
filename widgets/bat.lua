@@ -63,24 +63,24 @@ local function worker(args)
     end
 
     function update()
-        local sum_rate_current = 0
-        local sum_rate_voltage = 0
-        local sum_rate_power = 0
-        local sum_energy_now = 0
-        local sum_energy_full = 0
+        local sum_rate_current      = 0
+        local sum_rate_voltage      = 0
+        local sum_rate_power        = 0
+        local sum_energy_now        = 0
+        local sum_energy_full       = 0
         local sum_energy_percentage = 0
+        local pspath                = "/sys/class/power_supply/"
+  --      local pspath = "/home/luke/Download/"
 
         for i, battery in ipairs(batteries) do
-            local bstr    = "/sys/class/power_supply/" .. battery
+            local bstr    = pspath .. battery
             local present = first_line(bstr .. "/present")
 
-            if tonumber(present) == 1
-            then
+            if tonumber(present) == 1 then
                 -- current_now(I)[uA], voltage_now(U)[uV], power_now(P)[uW]
                 local rate_current      = tonumber(first_line(bstr .. "/current_now"))
                 local rate_voltage      = tonumber(first_line(bstr .. "/voltage_now"))
                 local rate_power        = tonumber(first_line(bstr .. "/power_now"))
-
 
                 -- energy_now(P)[uWh], charge_now(I)[uAh]
                 local energy_now        = tonumber(first_line(bstr .. "/energy_now") or
@@ -105,17 +105,19 @@ local function worker(args)
         end
 
         bat_now.status = bat_now.n_status[1]
-        bat_now.ac_status = tonumber(first_line(string.format("/sys/class/power_supply/%s/online", ac))) or "N/A"
+        bat_now.ac_status = tonumber(first_line(string.format("%s%s/online", pspath, ac))) or "N/A"
 
         if bat_now.status ~= "N/A" then
             -- update {perc,time,watt} iff battery not full and rate > 0
             if bat_now.status ~= "Full" and (sum_rate_current > 0 or sum_rate_power > 0) then
                 local rate_time = 0
+                local sum_rpc   = sum_rate_power or sum_rate_current
+                if sum_rpc >= 1e8 then sum_rpc = sum_rpc / 10 end
 
                 if bat_now.status == "Charging" then
-                    rate_time = (sum_energy_full - sum_energy_now) / (sum_rate_power or sum_rate_current)
+                    rate_time = (sum_energy_full - sum_energy_now) / sum_rpc
                 elseif bat_now.status == "Discharging" then
-                    rate_time = sum_energy_now / (sum_rate_power or sum_rate_current)
+                    rate_time = sum_energy_now / sum_rpc
                 end
 
                 local hours   = math.floor(rate_time)
