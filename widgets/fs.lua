@@ -92,6 +92,7 @@ local function worker(args)
         fs_now.size_mb   = tonumber(fs_info[partition .. " size_mb"]) or 0
         fs_now.size_gb   = tonumber(fs_info[partition .. " size_gb"]) or 0
 
+        notification_preset = fs.notification_preset
         widget = fs.widget
         settings()
 

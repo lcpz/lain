@@ -70,7 +70,6 @@ local function worker(args)
         local sum_energy_full       = 0
         local sum_energy_percentage = 0
         local pspath                = "/sys/class/power_supply/"
-  --      local pspath = "/home/luke/Download/"
 
         for i, battery in ipairs(batteries) do
             local bstr    = pspath .. battery
