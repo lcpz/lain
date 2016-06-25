@@ -1,20 +1,18 @@
 
 --[[
-
-        Licensed under GNU General Public License v2
-        * (c) 2016, Alexandre Terrien
-
+                                                     
+        Licensed under GNU General Public License v2 
+        * (c) 2016, Alexandre Terrien                
+                                                     
 --]]
 
-local helpers       = require("lain.helpers")
-local json          = require("lain.util.dkjson")
-
-local pread         = require("awful.util").pread
-
-local naughty       = require("naughty")
-local wibox         = require("wibox")
-
-local mouse         = mouse
+local helpers = require("lain.helpers")
+local json    = require("lain.util.dkjson")
+local pread   = require("awful.util").pread
+local naughty = require("naughty")
+local wibox   = require("wibox")
+local mouse   = mouse
+local os      = { getenv = os.getenv }
 
 local setmetatable = setmetatable
 
@@ -28,7 +26,7 @@ local function worker(args)
     local notify        = args.notify or "off"
     local followmouse   = args.followmouse or false
     local file_location = args.file_location or
-        os.getenv("HOME") .. "/.config/Google Play Music Desktop Player/json_store/playback.json"
+                          os.getenv("HOME") .. "/.config/Google Play Music Desktop Player/json_store/playback.json"
     local settings      = args.settings or function() end
 
     gpmdp.widget = wibox.widget.textbox('')
@@ -38,48 +36,40 @@ local function worker(args)
         timeout = 6
     }
 
-    helpers.set_map("gpmpd_current", nil)
+    helpers.set_map("gpmdp_current", nil)
 
     function gpmdp.update()
         file, err = io.open(file_location, "r")
         if not file
         then
-            gpm_now = {
-                running = false,
-                playing = false
-            }
+            gpm_now = { running = false, playing = false }
         else
             dict, pos, err = json.decode(file:read "*a", 1, nil)
             file:close()
             gpm_now = {}
-            gpm_now.artist      = dict.song.artist
-            gpm_now.album       = dict.song.album
-            gpm_now.title       = dict.song.title
-            gpm_now.cover_url   = dict.song.albumArt
-            gpm_now.playing     = dict.playing
+            gpm_now.artist    = dict.song.artist
+            gpm_now.album     = dict.song.album
+            gpm_now.title     = dict.song.title
+            gpm_now.cover_url = dict.song.albumArt
+            gpm_now.playing   = dict.playing
         end
+
         if (pread("pidof 'Google Play Music Desktop Player'") ~= '') then
             gpm_now.running = true
         else
             gpm_now.running = false
         end
 
-        gpmdp_notification_preset.text = string.format(
-                                        "%s (%s) - %s",
-                                        gpm_now.artist,
-                                        gpm_now.album,
-                                        gpm_now.title)
+        gpmdp_notification_preset.text = string.format("%s (%s) - %s", gpm_now.artist, gpm_now.album, gpm_now.title)
         widget = gpmdp.widget
         settings()
 
         if gpm_now.playing
         then
-            if notify == "on" and gpm_now.title ~= helpers.get_map("gpmpd_current")
+            if notify == "on" and gpm_now.title ~= helpers.get_map("gpmdp_current")
             then
-                helpers.set_map("gpmpd_current", gpm_now.title)
-
-                current_icon = "/tmp/gpmcover.png"
-                os.execute("curl " .. gpm_now.cover_url .. " -o " .. current_icon)
+                helpers.set_map("gpmdp_current", gpm_now.title)
+                os.execute("curl " .. gpm_now.cover_url .. " -o /tmp/gpmcover.png")
 
                 if followmouse then
                     gpmdp_notification_preset.screen = mouse.screen
@@ -87,13 +77,13 @@ local function worker(args)
 
                 gpmdp.id = naughty.notify({
                     preset = gpmdp_notification_preset,
-                    icon = current_icon,
+                    icon = "/tmp/gpmcover.png",
                     replaces_id = gpmdp.id,
                 }).id
             end
-        elseif (not gpm_now.running)
+        elseif not gpm_now.running
         then
-            helpers.set_map("current mpd track", nil)
+            helpers.set_map("gpmdp_current", nil)
         end
     end
 
