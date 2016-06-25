@@ -13,11 +13,13 @@ local first_line   = require("lain.helpers").first_line
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
-local math         = { floor  = math.floor, min = math.min }
+local math         = { abs    = math.abs,
+                       floor  = math.floor,
+                       log10  = math.log10,
+                       min    = math.min }
 local string       = { format = string.format }
-local tonumber     = tonumber
-local tostring     = tostring
 
+local tonumber     = tonumber
 local setmetatable = setmetatable
 
 -- Battery infos
@@ -110,32 +112,21 @@ local function worker(args)
         if bat_now.status ~= "N/A" then
             -- update {perc,time,watt} iff battery not full and rate > 0
             if bat_now.status ~= "Full" and (sum_rate_current > 0 or sum_rate_power > 0) then
-                local sum_rpc = sum_rate_power or sum_rate_current
-                local enr = 0
-                local m1 = tostring(sum_rpc):len()
-                local m2 = 0
+                local rate_time = 0
 
                 if bat_now.status == "Charging" then
-                    enr = sum_energy_full - sum_energy_now
-                    m2 = tostring(sum_energy_full):len()
+                    rate_time = (sum_energy_full - sum_energy_now) / (sum_rate_power or sum_rate_current)
                 else -- Discharging
-                    enr = sum_energy_now
-                    m2 = tostring(enr):len()
+                    rate_time = sum_energy_now / (sum_rate_power or sum_rate_current)
                 end
 
-                -- solve magnitude differences, which may be caused
-                -- by file discrepancies
-                magnitude_diff = m1 - m2
-                if magnitude_diff > 0 then
-                    sum_rpc = sum_rpc / 10^magnitude_diff
-                elseif magnitude_diff < 0 then
-                    enr = enr / 10^(magnitude_diff * -1)
+                if rate_time < 0.01 then -- check for magnitude discrepancies
+                    rate_time_magnitude = math.abs(math.floor(math.log10(rate_time)))
+                    rate_time = rate_time * 10^(rate_time_magnitude - 2)
                 end
 
-                local rate_time = enr / sum_rpc
                 local hours     = math.floor(rate_time)
                 local minutes   = math.floor((rate_time - hours) * 60)
-
                 bat_now.perc    = tonumber(string.format("%d", math.min(100, sum_energy_percentage / #batteries)))
                 bat_now.time    = string.format("%02d:%02d", hours, minutes)
                 bat_now.watt    = tonumber(string.format("%.2f", sum_rate_power / 1e6))
