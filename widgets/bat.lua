@@ -16,6 +16,7 @@ local wibox        = require("wibox")
 local math         = { floor  = math.floor, min = math.min }
 local string       = { format = string.format }
 local tonumber     = tonumber
+local tostring     = tostring
 
 local setmetatable = setmetatable
 
@@ -69,7 +70,8 @@ local function worker(args)
         local sum_energy_now        = 0
         local sum_energy_full       = 0
         local sum_energy_percentage = 0
-        local pspath                = "/sys/class/power_supply/"
+        --local pspath                = "/sys/class/power_supply/"
+        local pspath = "/home/luke/Download/"
 
         for i, battery in ipairs(batteries) do
             local bstr    = pspath .. battery
@@ -109,25 +111,39 @@ local function worker(args)
         if bat_now.status ~= "N/A" then
             -- update {perc,time,watt} iff battery not full and rate > 0
             if bat_now.status ~= "Full" and (sum_rate_current > 0 or sum_rate_power > 0) then
-                local rate_time = 0
-                local sum_rpc   = sum_rate_power or sum_rate_current
-                if sum_rpc >= 1e8 then sum_rpc = sum_rpc / 10 end
+                local sum_rpc = sum_rate_power or sum_rate_current
+                local enr = 0
+                local m1 = tostring(sum_rpc):len()
+                local m2 = 0
 
                 if bat_now.status == "Charging" then
-                    rate_time = (sum_energy_full - sum_energy_now) / sum_rpc
-                elseif bat_now.status == "Discharging" then
-                    rate_time = sum_energy_now / sum_rpc
+                    enr = sum_energy_full - sum_energy_now
+                    m2 = tostring(sum_energy_full):len()
+                else -- Discharging
+                    enr = sum_energy_now
+                    m2 = tostring(enr):len()
                 end
 
-                local hours   = math.floor(rate_time)
-                local minutes = math.floor((rate_time - hours) * 60)
-                bat_now.perc  = tonumber(string.format("%d", math.min(100, sum_energy_percentage / #batteries)))
-                bat_now.time  = string.format("%02d:%02d", hours, minutes)
-                bat_now.watt  = tonumber(string.format("%.2f", sum_rate_power / 1e6))
+                -- solve magnitude differences, which may be caused
+                -- by file discrepancies
+                magnitude_diff = m1 - m2
+                if magnitude_diff > 0 then
+                    sum_rpc = sum_rpc / 10^magnitude_diff
+                elseif magnitude_diff < 0 then
+                    enr = enr / 10^(magnitude_diff * -1)
+                end
+
+                local rate_time = enr / sum_rpc
+                local hours     = math.floor(rate_time)
+                local minutes   = math.floor((rate_time - hours) * 60)
+
+                bat_now.perc    = tonumber(string.format("%d", math.min(100, sum_energy_percentage / #batteries)))
+                bat_now.time    = string.format("%02d:%02d", hours, minutes)
+                bat_now.watt    = tonumber(string.format("%.2f", sum_rate_power / 1e6))
             elseif bat_now.status == "Full" then
-                bat_now.perc  = 100
-                bat_now.time  = "00:00"
-                bat_now.watt  = 0
+                bat_now.perc    = 100
+                bat_now.time    = "00:00"
+                bat_now.watt    = 0
             end
         end
 
