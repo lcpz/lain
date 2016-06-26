@@ -99,12 +99,12 @@ local function worker(args)
                 bat_now.n_status[i] = first_line(bstr .. "/status") or "N/A"
 
                 sum_rate_current      = sum_rate_current + (rate_current or 0)
-                sum_rate_voltage      = sum_rate_voltage + rate_voltage
+                sum_rate_voltage      = sum_rate_voltage + (rate_voltage or 0)
                 sum_rate_power        = sum_rate_power + (rate_power or 0)
-                sum_rate_energy       = sum_rate_energy + (rate_power or ((rate_voltage * rate_current) / 1e6))
+                sum_rate_energy       = sum_rate_energy + (rate_power or (((rate_voltage or 0) * (rate_current or 0)) / 1e6))
                 sum_energy_now        = sum_energy_now + (energy_now or 0)
-                sum_energy_full       = sum_energy_full + energy_full
-                sum_energy_percentage = sum_energy_percentage + energy_percentage
+                sum_energy_full       = sum_energy_full + (energy_full or 0)
+                sum_energy_percentage = sum_energy_percentage + (energy_percentage or 0)
             end
         end
 
