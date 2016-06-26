@@ -69,6 +69,7 @@ local function worker(args)
         local sum_rate_current      = 0
         local sum_rate_voltage      = 0
         local sum_rate_power        = 0
+        local sum_rate_energy       = 0
         local sum_energy_now        = 0
         local sum_energy_full       = 0
         local sum_energy_percentage = 0
@@ -99,7 +100,8 @@ local function worker(args)
 
                 sum_rate_current      = sum_rate_current + (rate_current or 0)
                 sum_rate_voltage      = sum_rate_voltage + rate_voltage
-                sum_rate_power        = sum_rate_power + (rate_power or ((rate_voltage * rate_current) / 1e6))
+                sum_rate_power        = sum_rate_power + (rate_power or 0)
+                sum_rate_energy       = sum_rate_energy + (rate_power or ((rate_voltage * rate_current) / 1e6))
                 sum_energy_now        = sum_energy_now + (energy_now or 0)
                 sum_energy_full       = sum_energy_full + energy_full
                 sum_energy_percentage = sum_energy_percentage + energy_percentage
@@ -111,16 +113,17 @@ local function worker(args)
 
         if bat_now.status ~= "N/A" then
             -- update {perc,time,watt} iff battery not full and rate > 0
-            if bat_now.status ~= "Full" and (sum_rate_current > 0 or sum_rate_power > 0) then
+            if bat_now.status ~= "Full" and (sum_rate_power > 0 or sum_rate_current > 0) then
                 local rate_time = 0
+                local div = (sum_rate_power > 0 and sum_rate_power) or sum_rate_current
 
                 if bat_now.status == "Charging" then
-                    rate_time = (sum_energy_full - sum_energy_now) / (sum_rate_power or sum_rate_current)
+                    rate_time = (sum_energy_full - sum_energy_now) / div
                 else -- Discharging
-                    rate_time = sum_energy_now / (sum_rate_power or sum_rate_current)
+                    rate_time = sum_energy_now / div
                 end
 
-                if rate_time < 0.01 then -- check for magnitude discrepancies
+                if rate_time < 0.01 then -- check for magnitude discrepancies (#199)
                     rate_time_magnitude = math.abs(math.floor(math.log10(rate_time)))
                     rate_time = rate_time * 10^(rate_time_magnitude - 2)
                 end
@@ -129,7 +132,7 @@ local function worker(args)
                 local minutes   = math.floor((rate_time - hours) * 60)
                 bat_now.perc    = tonumber(string.format("%d", math.min(100, sum_energy_percentage / #batteries)))
                 bat_now.time    = string.format("%02d:%02d", hours, minutes)
-                bat_now.watt    = tonumber(string.format("%.2f", sum_rate_power / 1e6))
+                bat_now.watt    = tonumber(string.format("%.2f", sum_rate_energy / 1e6))
             elseif bat_now.status == "Full" then
                 bat_now.perc    = 100
                 bat_now.time    = "00:00"
