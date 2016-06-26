@@ -69,10 +69,6 @@ function quake:display()
    client.skip_taskbar = true
    client.sticky = false
 
-   -- This is not a normal window, don't apply any specific keyboard stuff
-   client:buttons({})
-   client:keys({})
-
    -- Toggle display
    if self.visible then
        client.hidden = false
