@@ -19,6 +19,7 @@ local math         = { abs    = math.abs,
                        min    = math.min }
 local string       = { format = string.format }
 
+local type         = type
 local tonumber     = tonumber
 local setmetatable = setmetatable
 
@@ -74,6 +75,7 @@ local function worker(args)
         local sum_energy_full       = 0
         local sum_energy_percentage = 0
         local pspath                = "/sys/class/power_supply/"
+        pspath = "/home/luke/Download/"
 
         for i, battery in ipairs(batteries) do
             local bstr    = pspath .. battery
@@ -144,7 +146,7 @@ local function worker(args)
         settings()
 
         -- notifications for low and critical states
-        if notify == "on" and bat_now.perc and bat_now.status == "Discharging" then
+        if notify == "on" and type(bat_now.perc) == "number" and bat_now.status == "Discharging" then
             if bat_now.perc <= 5 then
                 bat.id = naughty.notify({
                     preset = bat_notification_critical_preset,
