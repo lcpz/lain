@@ -128,12 +128,12 @@ local function worker(args)
             net_now.sent     = string.gsub(string.format('%.1f', net_now.sent), ',', '.')
             net_now.received = string.gsub(string.format('%.1f', net_now.received), ',', '.')
 
-            widget = net.widget
-            settings()
-
             net.last_t = total_t
             net.last_r = total_r
         end
+
+        widget = net.widget
+        settings()
     end
 
     helpers.newtimer(iface, timeout, update)
