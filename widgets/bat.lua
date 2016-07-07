@@ -131,7 +131,7 @@ local function worker(args)
 
                 local hours     = math.floor(rate_time)
                 local minutes   = math.floor((rate_time - hours) * 60)
-                bat_now.perc    = tonumber(string.format("%d", math.min(100, sum_energy_percentage / #batteries)))
+                bat_now.perc    = tonumber(string.format("%d", math.floor(math.min(100, sum_energy_percentage / #batteries))))
                 bat_now.time    = string.format("%02d:%02d", hours, minutes)
                 bat_now.watt    = tonumber(string.format("%.2f", sum_rate_energy / 1e6))
             elseif bat_now.status == "Full" then
