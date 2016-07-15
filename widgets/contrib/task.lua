@@ -43,7 +43,7 @@ function task:show(scr_pos)
         local scrp = scr_pos or task.scr_pos
     end
 
-    f = io.popen('task')
+    f = io.popen('task ' .. task.cmdline)
     c_text = "<span font='"
              .. task.font .. " "
              .. task.font_size .. "'>"
@@ -133,6 +133,7 @@ function task:attach(widget, args)
     task.timeout     = args.timeout or 7
     task.scr_pos     = args.scr_pos or 1
     task.followmouse = args.followmouse or false
+    task.cmdline     = args.cmdline or "next"
 
     task.notify_icon = icons_dir .. "/taskwarrior/task.png"
     task.notify_icon_small = icons_dir .. "/taskwarrior/tasksmall.png"
