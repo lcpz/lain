@@ -58,6 +58,8 @@ local function worker(args)
     local args             = args or {}
     local timeout          = args.timeout or 600
     local partition        = args.partition or "/"
+    local showpopup        = args.showpopup or "on"
+    local notify           = args.notify or "on"
     local settings         = args.settings or function() end
 
     fs.followmouse         = args.followmouse or false
@@ -96,7 +98,7 @@ local function worker(args)
         widget = fs.widget
         settings()
 
-        if fs_now.used >= 99 and not helpers.get_map(partition)
+        if notify == "on" and fs_now.used >= 99 and not helpers.get_map(partition)
         then
             naughty.notify({
                 title = "warning",
@@ -111,8 +113,10 @@ local function worker(args)
         end
     end
 
-    fs.widget:connect_signal('mouse::enter', function () fs:show(0) end)
-    fs.widget:connect_signal('mouse::leave', function () fs:hide() end)
+    if showpopup == "on" then
+        fs.widget:connect_signal('mouse::enter', function () fs:show(0) end)
+        fs.widget:connect_signal('mouse::leave', function () fs:hide() end)
+    end
 
     helpers.newtimer(partition, timeout, update)
 
