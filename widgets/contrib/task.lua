@@ -25,6 +25,11 @@ local task = {}
 
 local task_notification = nil
 
+function findLast(haystack, needle)
+    local i=haystack:match(".*"..needle.."()")
+    if i==nil then return nil else return i-1 end
+end
+
 function task:hide()
     if task_notification ~= nil then
         naughty.destroy(task_notification)
@@ -125,8 +130,8 @@ function task:attach(widget, args)
     local args       = args or {}
 
     task.font_size   = tonumber(args.font_size) or 12
-    task.font        = beautiful.font:sub(beautiful.font:find(""),
-                       beautiful.font:find(" "))
+    task.font        = args.font or beautiful.font:sub(beautiful.font:find(""),
+                       findLast(beautiful.font, " "))
     task.fg          = args.fg or beautiful.fg_normal or "#FFFFFF"
     task.bg          = args.bg or beautiful.bg_normal or "#FFFFFF"
     task.position    = args.position or "top_right"
