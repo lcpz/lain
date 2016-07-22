@@ -52,7 +52,7 @@ function task:show(scr_pos)
     c_text = "<span font='"
              .. task.font .. " "
              .. task.font_size .. "'>"
-             .. f:read("*all"):gsub("\n*$", "")
+             .. awful.util.escape(f:read("*all"):gsub("\n*$", ""))
              .. "</span>"
     f:close()
 
@@ -75,7 +75,7 @@ function task:prompt_add()
           c_text = "\n<span font='"
                    .. task.font .. " "
                    .. task.font_size .. "'>"
-                   .. f:read("*all")
+                   .. awful.util.escape(f:read("*all"))
                    .. "</span>"
           f:close()
 
@@ -107,7 +107,7 @@ function task:prompt_search()
               c_text = "<span font='"
                        .. task.font .. " "
                        .. task.font_size .. "'>"
-                       .. c_text
+                       .. awful.util.escape(c_text)
                        .. "</span>"
           end
 
