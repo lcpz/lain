@@ -46,7 +46,7 @@ local function worker(args)
 
         mem_now.used = mem_now.total - (mem_now.free + mem_now.buf + mem_now.cache)
         mem_now.swapused = mem_now.swap - mem_now.swapf
-	mem_now.perc = math.floor(mem_now.used / mem_now.total * 100)
+        mem_now.perc = math.floor(mem_now.used / mem_now.total * 100)
 
         widget = mem.widget
         settings()
