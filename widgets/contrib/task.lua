@@ -40,12 +40,12 @@ end
 function task:show(scr_pos)
     task:hide()
 
-    local f, c_text
+    local f, c_text, scrp
 
     if task.followmouse then
-        local scrp = mouse.screen
+        scrp = mouse.screen
     else
-        local scrp = scr_pos or task.scr_pos
+        scrp = scr_pos or task.scr_pos
     end
 
     f = io.popen('task ' .. task.cmdline)
