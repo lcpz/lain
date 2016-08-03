@@ -51,17 +51,22 @@ function quake:display()
    if not client and not self.visible then return end
 
    if not client then
-      -- The client does not exist, we spawn it
-      awful.util.spawn(self.app .. " " .. string.format(self.argname, self.name),
-      false, self.screen)
-      return
+       -- The client does not exist, we spawn it
+       awful.util.spawn(self.app .. " " .. string.format(self.argname, self.name),
+       false, self.screen)
+       self.exist = true
+       return
    end
 
    -- Resize
    awful.client.floating.set(client, true)
    client.border_width = 0
    client.size_hints_honor = false
-   client:geometry(self.geometry)
+   if self.notexist then
+       -- set default geometry only on first spawn
+       client:geometry(self.geometry)
+       self.notexist = false
+   end
 
    -- Not sticky and on top
    client.ontop = true

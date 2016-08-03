@@ -14,13 +14,13 @@ local escape_f     = require("awful.util").escape
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
-local os           = { execute  = os.execute,
-                       getenv   = os.getenv }
-local math         = { floor    = math.floor }
+local os           = { execute = os.execute,
+                       getenv  = os.getenv }
+local math         = { floor   = math.floor }
 local mouse        = mouse
-local string       = { format   = string.format,
-                       match    = string.match,
-                       gmatch   = string.gmatch }
+local string       = { format  = string.format,
+                       match   = string.match,
+                       gmatch  = string.gmatch }
 
 local setmetatable = setmetatable
 

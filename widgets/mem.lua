@@ -7,15 +7,15 @@
                                                   
 --]]
 
-local newtimer        = require("lain.helpers").newtimer
+local newtimer     = require("lain.helpers").newtimer
 
-local wibox           = require("wibox")
+local wibox        = require("wibox")
 
-local io              = { lines  = io.lines }
-local math            = { floor  = math.floor }
-local string          = { gmatch = string.gmatch }
+local io           = { lines  = io.lines }
+local math         = { floor  = math.floor }
+local string       = { gmatch = string.gmatch }
 
-local setmetatable    = setmetatable
+local setmetatable = setmetatable
 
 -- Memory usage (ignoring caches)
 -- lain.widgets.mem

@@ -6,14 +6,14 @@
                                                   
 --]]
 
-local read_pipe       = require("lain.helpers").read_pipe
-local newtimer        = require("lain.helpers").newtimer
-local wibox           = require("wibox")
+local read_pipe    = require("lain.helpers").read_pipe
+local newtimer     = require("lain.helpers").newtimer
+local wibox        = require("wibox")
 
-local string          = { match  = string.match,
-                          format = string.format }
+local string       = { match  = string.match,
+                       format = string.format }
 
-local setmetatable    = setmetatable
+local setmetatable = setmetatable
 
 -- PulseAudio volume
 -- lain.widgets.pulseaudio
