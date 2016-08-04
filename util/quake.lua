@@ -54,7 +54,7 @@ function quake:display()
        -- The client does not exist, we spawn it
        awful.util.spawn(self.app .. " " .. string.format(self.argname, self.name),
        false, self.screen)
-       self.exist = true
+       self.notexist = true
        return
    end
 
@@ -63,7 +63,6 @@ function quake:display()
    client.border_width = 0
    client.size_hints_honor = false
    if self.notexist then
-       -- set default geometry only on first spawn
        client:geometry(self.geometry)
        self.notexist = false
    end
