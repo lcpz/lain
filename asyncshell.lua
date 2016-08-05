@@ -52,7 +52,7 @@ function asyncshell.request(command, callback, timeout)
         id, formatted_command
     )
 
-    if type(awful.spawn) == 'table' then
+    if type(awful.spawn) == 'table' and awful.spawn.with_shell then
         awful.spawn.with_shell(req)
     else
         awful.util.spawn_with_shell(req)
