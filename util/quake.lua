@@ -31,7 +31,7 @@ function quake:display()
    local i = 0
    for c in awful.client.iterate(function (c)
        -- c.name may be changed!
-			 return c.instance == self.name
+       return c.instance == self.name
    end, nil, self.screen)
    do
        i = i + 1
@@ -52,8 +52,8 @@ function quake:display()
 
    if not client then
        -- The client does not exist, we spawn it
-       awful.util.spawn(self.app .. " " .. string.format(self.argname, self.name),
-       false, self.screen)
+       awful.util.spawn(self.app .. " " .. string.format(self.argname, self.name) ..
+                        " " .. self.extra, false, self.screen)
        self.notexist = true
        return
    end
@@ -95,17 +95,18 @@ end
 function quake:new(config)
    local conf = config or {}
 
-   conf.app     = conf.app     or "xterm"    -- application to spawn
-   conf.name    = conf.name    or "QuakeDD"  -- window name
-   conf.argname = conf.argname or "-name %s" -- how to specify window name
-   conf.visible = conf.visible or false      -- initially not visible
-   conf.screen  = conf.screen  or capi.mouse.screen
+   conf.app      = conf.app      or "xterm"    -- application to spawn
+   conf.name     = conf.name     or "QuakeDD"  -- window name
+   conf.argname  = conf.argname  or "-name %s" -- how to specify window name
+   conf.extra    = conf.extra    or ""         -- extra arguments
+   conf.visible  = conf.visible  or false      -- initially not visible
+   conf.screen   = conf.screen   or capi.mouse.screen
 
    -- If width or height <= 1 this is a proportion of the workspace
    wibox_height = conf.wibox_height or 18       -- statusbar weight
-   height       = conf.height       or 0.25	    -- height
-   width        = conf.width        or 1	      -- width
-   vert         = conf.vert         or "top"	  -- top, bottom or center
+   height       = conf.height       or 0.25     -- height
+   width        = conf.width        or 1        -- width
+   vert         = conf.vert         or "top"    -- top, bottom or center
    horiz        = conf.horiz        or "center" -- left, right or center
 
    -- Compute size
@@ -125,19 +126,19 @@ function quake:new(config)
    capi.client.connect_signal("manage", function(c)
        if c.instance == console.name and c.screen == console.screen then
            console:display()
-			 end
+       end
    end)
    capi.client.connect_signal("unmanage", function(c)
        if c.instance == console.name and c.screen == console.screen then
            console.visible = false
-		   end
-		end)
+       end
+    end)
 
    -- "Reattach" currently running quake application. This is in case awesome is restarted.
    local reattach = capi.timer { timeout = 0 }
    reattach:connect_signal("timeout", function()
        reattach:stop()
-			 console:display()
+       console:display()
    end)
    reattach:start()
 
