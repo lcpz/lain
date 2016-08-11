@@ -60,7 +60,7 @@ function quake:display()
 
    -- Resize
    awful.client.floating.set(client, true)
-   client.border_width = 0
+   client.border_width = self.border
    client.size_hints_honor = false
    if self.notexist then
        client:geometry(self.geometry)
@@ -101,6 +101,7 @@ function quake:new(config)
    conf.extra    = conf.extra    or ""         -- extra arguments
    conf.visible  = conf.visible  or false      -- initially not visible
    conf.screen   = conf.screen   or capi.mouse.screen
+   conf.border   = conf.border   or 1
 
    -- If width or height <= 1 this is a proportion of the workspace
    wibox_height = conf.wibox_height or 18       -- statusbar weight
