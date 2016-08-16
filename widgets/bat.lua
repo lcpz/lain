@@ -98,7 +98,7 @@ local function worker(args)
                                           math.floor((energy_now / energy_full) * 100)
 
                 bat_now.n_status[i] = first_line(bstr .. "/status") or "N/A"
-                bat_now.perc[i]     = energy_percentage or bat_now.perc[i]
+                bat_now.n_perc[i]   = energy_percentage or bat_now.n_perc[i]
 
                 sum_rate_current = sum_rate_current + (rate_current or 0)
                 sum_rate_voltage = sum_rate_voltage + (rate_voltage or 0)
