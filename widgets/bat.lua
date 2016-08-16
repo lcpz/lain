@@ -64,17 +64,17 @@ local function worker(args)
     bat_now.n_status = {}
     for i = 1, #batteries do
         bat_now.n_status[i] = "N/A"
+        bat_now.perc[i] = 0
     end
 
     function update()
-        local sum_rate_current      = 0
-        local sum_rate_voltage      = 0
-        local sum_rate_power        = 0
-        local sum_rate_energy       = 0
-        local sum_energy_now        = 0
-        local sum_energy_full       = 0
-        local sum_energy_percentage = 0
-        local pspath                = "/sys/class/power_supply/"
+        local sum_rate_current = 0
+        local sum_rate_voltage = 0
+        local sum_rate_power   = 0
+        local sum_rate_energy  = 0
+        local sum_energy_now   = 0
+        local sum_energy_full  = 0
+        local pspath           = "/sys/class/power_supply/"
 
         for i, battery in ipairs(batteries) do
             local bstr    = pspath .. battery
@@ -82,9 +82,9 @@ local function worker(args)
 
             if tonumber(present) == 1 then
                 -- current_now(I)[uA], voltage_now(U)[uV], power_now(P)[uW]
-                local rate_current      = tonumber(first_line(bstr .. "/current_now"))
-                local rate_voltage      = tonumber(first_line(bstr .. "/voltage_now"))
-                local rate_power        = tonumber(first_line(bstr .. "/power_now"))
+                local rate_current = tonumber(first_line(bstr .. "/current_now"))
+                local rate_voltage = tonumber(first_line(bstr .. "/voltage_now"))
+                local rate_power   = tonumber(first_line(bstr .. "/power_now"))
 
                 -- energy_now(P)[uWh], charge_now(I)[uAh]
                 local energy_now        = tonumber(first_line(bstr .. "/energy_now") or
@@ -98,14 +98,14 @@ local function worker(args)
                                           math.floor((energy_now / energy_full) * 100)
 
                 bat_now.n_status[i] = first_line(bstr .. "/status") or "N/A"
+                bat_now.perc[i]     = energy_percentage or bat_now.perc[i]
 
-                sum_rate_current      = sum_rate_current + (rate_current or 0)
-                sum_rate_voltage      = sum_rate_voltage + (rate_voltage or 0)
-                sum_rate_power        = sum_rate_power + (rate_power or 0)
-                sum_rate_energy       = sum_rate_energy + (rate_power or (((rate_voltage or 0) * (rate_current or 0)) / 1e6))
-                sum_energy_now        = sum_energy_now + (energy_now or 0)
-                sum_energy_full       = sum_energy_full + (energy_full or 0)
-                sum_energy_percentage = sum_energy_percentage + (energy_percentage or 0)
+                sum_rate_current = sum_rate_current + (rate_current or 0)
+                sum_rate_voltage = sum_rate_voltage + (rate_voltage or 0)
+                sum_rate_power   = sum_rate_power + (rate_power or 0)
+                sum_rate_energy  = sum_rate_energy + (rate_power or (((rate_voltage or 0) * (rate_current or 0)) / 1e6))
+                sum_energy_now   = sum_energy_now + (energy_now or 0)
+                sum_energy_full  = sum_energy_full + (energy_full or 0)
             end
         end
 
@@ -129,15 +129,15 @@ local function worker(args)
                     rate_time = rate_time * 10^(rate_time_magnitude - 2)
                 end
 
-                local hours     = math.floor(rate_time)
-                local minutes   = math.floor((rate_time - hours) * 60)
-                bat_now.perc    = math.floor(math.min(100, (sum_energy_now / sum_energy_full) * 100))
-                bat_now.time    = string.format("%02d:%02d", hours, minutes)
-                bat_now.watt    = tonumber(string.format("%.2f", sum_rate_energy / 1e6))
+                local hours   = math.floor(rate_time)
+                local minutes = math.floor((rate_time - hours) * 60)
+                bat_now.perc  = math.floor(math.min(100, (sum_energy_now / sum_energy_full) * 100))
+                bat_now.time  = string.format("%02d:%02d", hours, minutes)
+                bat_now.watt  = tonumber(string.format("%.2f", sum_rate_energy / 1e6))
             elseif bat_now.status == "Full" then
-                bat_now.perc    = 100
-                bat_now.time    = "00:00"
-                bat_now.watt    = 0
+                bat_now.perc  = 100
+                bat_now.time  = "00:00"
+                bat_now.watt  = 0
             end
         end
 
