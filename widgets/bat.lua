@@ -62,6 +62,7 @@ local function worker(args)
     }
 
     bat_now.n_status = {}
+    bat_now.n_perc   = {}
     for i = 1, #batteries do
         bat_now.n_status[i] = "N/A"
         bat_now.n_perc[i] = 0
