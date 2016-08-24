@@ -125,7 +125,7 @@ local function worker(args)
                     rate_time = sum_energy_now / div
                 end
 
-                if rate_time < 0.01 then -- check for magnitude discrepancies (#199)
+                if 0 < rate_time and rate_time < 0.01 then -- check for magnitude discrepancies (#199)
                     rate_time_magnitude = math.abs(math.floor(math.log10(rate_time)))
                     rate_time = rate_time * 10^(rate_time_magnitude - 2)
                 end
