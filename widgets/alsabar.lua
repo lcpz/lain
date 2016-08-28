@@ -27,7 +27,7 @@ local setmetatable = setmetatable
 -- lain.widgets.alsabar
 local alsabar = {
     channel = "Master",
-    step    = "2%",
+    step    = "1%",
 
     colors = {
         background = beautiful.bg_normal,
@@ -104,6 +104,7 @@ local function worker(args)
 
     alsabar.cmd           = args.cmd or "amixer"
     alsabar.channel       = args.channel or alsabar.channel
+    alsabar.togglechannel = args.togglechannel
     alsabar.step          = args.step or alsabar.step
     alsabar.colors        = args.colors or alsabar.colors
     alsabar.notifications = args.notifications or alsabar.notifications
@@ -126,6 +127,11 @@ local function worker(args)
 
         -- Capture mixer control state:          [5%] ... ... [on]
         local volu, mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
+
+        -- HDMIs can have a channel different from Master for toggling mute
+        if alsabar.togglechannel then
+            mute = string.match(read_pipe(string.format("%s get %s", alsabar.cmd, alsabar.togglechannel)), "%[(%a+)%]")
+        end
 
         if (volu and tonumber(volu) ~= alsabar._current_level) or (mute and string.match(mute, "on") ~= alsabar._muted)
         then

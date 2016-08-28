@@ -26,13 +26,19 @@ local function worker(args)
     local timeout  = args.timeout or 5
     local settings = args.settings or function() end
 
-    alsa.cmd     = args.cmd or "amixer"
-    alsa.channel = args.channel or "Master"
-    alsa.widget  = wibox.widget.textbox('')
+    alsa.cmd           = args.cmd or "amixer"
+    alsa.channel       = args.channel or "Master"
+    alsa.togglechannel = args.togglechannel
+    alsa.widget        = wibox.widget.textbox('')
 
     function alsa.update()
         mixer = read_pipe(string.format("%s get %s", alsa.cmd, alsa.channel))
         l,s   = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
+
+        -- HDMIs can have a channel different from Master for toggling mute
+        if alsa.togglechannel then
+            s = string.match(read_pipe(string.format("%s get %s", alsa.cmd, alsa.togglechannel)), "%[(%a+)%]")
+        end
 
         if alsa.last_level ~= l or alsa.last_status ~= s then
             volume_now = { level = l, status = s }
