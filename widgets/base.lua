@@ -26,8 +26,8 @@ local function worker(args)
     base.widget = wibox.widget.textbox('')
 
     function base.update()
+        output = read_pipe(cmd)
         if output ~= base.prev then
-            output = read_pipe(cmd)
             widget = base.widget
             settings()
             base.prev = output
