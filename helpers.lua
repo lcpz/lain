@@ -8,6 +8,7 @@
 
 local debug  = require("debug")
 
+local assert = assert
 local capi   = { timer = (type(timer) == 'table' and timer or require ("gears.timer")) }
 local io     = { open  = io.open,
                  lines = io.lines,
@@ -61,9 +62,9 @@ end
 function helpers.lines_match(regexp, file)
 	local lines = {}
 	for index,line in pairs(helpers.lines_from(file)) do
-		if string.match(line, regexp) then 
+		if string.match(line, regexp) then
 			lines[index] = line
-		end  
+		end
 	end
 	return lines
 end

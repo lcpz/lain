@@ -24,7 +24,7 @@ local function worker(args)
     local net = { last_t = 0, last_r = 0, devices = {} }
 
     function net.get_first_device()
-        local ws = helpers.read_pipe("ip link show | cut -d' ' -f2,9")
+        local ws = helpers.read_pipe("/usr/sbin/ip link show | cut -d' ' -f2,9")
         ws = ws:match("%w+: UP") or ws:match("ppp%w+: UNKNOWN")
         if ws then return { ws:match("(%w+):") }
         else return {} end
