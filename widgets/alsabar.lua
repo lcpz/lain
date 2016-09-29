@@ -135,7 +135,7 @@ local function worker(args)
 
         if (volu and tonumber(volu) ~= alsabar._current_level) or (mute and string.match(mute, "on") ~= alsabar._muted)
         then
-            alsabar._current_level = tonumber(volu)
+            alsabar._current_level = tonumber(volu) or alsabar._current_level
             alsabar.bar:set_value(alsabar._current_level / 100)
             if not mute and tonumber(volu) == 0 or mute == "off"
             then
