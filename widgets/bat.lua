@@ -135,6 +135,10 @@ local function worker(args)
                 bat_now.perc  = math.floor(math.min(100, (sum_energy_now / sum_energy_full) * 100))
                 bat_now.time  = string.format("%02d:%02d", hours, minutes)
                 bat_now.watt  = tonumber(string.format("%.2f", sum_rate_energy / 1e6))
+            elseif bat_now.status ~= "Full" and sum_rate_power == 0 and bat_now.ac_status == 1 then
+								bat_now.perc  = math.floor(math.min(100, (sum_energy_now / sum_energy_full) * 100))
+								bat_now.time  = "00:00"
+								bat_now.watt  = 0
             elseif bat_now.status == "Full" then
                 bat_now.perc  = 100
                 bat_now.time  = "00:00"
