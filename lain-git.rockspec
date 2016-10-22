@@ -16,7 +16,10 @@ description = {
 }
 dependencies = {
    "lua >= 5.1",
-   "awesome >= 3.5"
+   "awesome >= 3.5",
+   "alsa-utils",
+   "curl",
+   "imagemagick"
 }
 supported_platforms = { "linux" }
 build = {
