@@ -1,8 +1,8 @@
 package = "lain"
-version = "1.0.0"
+version = "git"
 source = {
    url = "https://github.com/copycat-killer/lain",
-   tag = "v.1.0.0"
+   tag = "git"
 }
 description = {
    summary = "A layoutm widget and utilities library for the Awesome Window Manager",
@@ -13,7 +13,8 @@ description = {
    license = "GPL v2"
 }
 dependencies = {
-   "lua >= 5.1"
+   "lua >= 5.1",
+   "awesome >= 3.5"
 }
 supported_platforms = { "linux" }
 build = {
