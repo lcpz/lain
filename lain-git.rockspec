@@ -5,11 +5,11 @@ source = {
    tag = "git"
 }
 description = {
-   summary = "Layout, Widget and Utilities library for the Awesome Window Manager",
+   summary = "Layout, widgets and utilities for Awesome WM",
    detailed = [[
         Successor of awesome-vain, this module provides new layouts, a set of widgets and utility functions, in order to improve Awesome usability and configurability.
 
-        Optional dependencies: alsa-utils, curl, imagemagick
+        Optional dependencies: alsa-utils (for alsamixer); curl; imagemagick.
     ]],
    homepage = "https://github.com/copycat-killer/lain",
    license = "GPL v2"
