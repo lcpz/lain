@@ -26,16 +26,19 @@ local function worker(args)
    local scallback   = args.scallback
 
    pulseaudio.cmd    = args.cmd or string.format("pacmd list-sinks | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p'")
+   pulseaudio.sink_cmd = args.sink_cmd or string.format("pacmd list-sinks | gawk \'{\nif ($0 ~ /\\*\\ index/) {\nwhile ($0 !~ /device\\.string/) {\ngetline\n}\nprint gensub(/\\\"/,\"\",\"g\",$3)\nnext\n}\n}\'")
    pulseaudio.widget = wibox.widget.textbox('')
 
    function pulseaudio.update()
       if scallback then pulseaudio.cmd = scallback() end
       local s = read_pipe(pulseaudio.cmd)
+      local sink = read_pipe(pulseaudio.sink_cmd)
 
       volume_now = {}
       volume_now.left  = tonumber(string.match(s, ":.-(%d+)%%"))
       volume_now.right = tonumber(string.match(s, ":.-(%d+)%%"))
       volume_now.muted = string.match(s, "muted: (%S+)")
+      volume_now.sink = sink
 
       widget = pulseaudio.widget
       settings()
