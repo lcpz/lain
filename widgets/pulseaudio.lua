@@ -10,7 +10,8 @@ local read_pipe    = require("lain.helpers").read_pipe
 local newtimer     = require("lain.helpers").newtimer
 local wibox        = require("wibox")
 
-local string       = { match  = string.match,
+local string       = { gmatch = string.gmatch,
+                       match  = string.match,
                        format = string.format }
 
 local setmetatable = setmetatable
@@ -33,9 +34,18 @@ local function worker(args)
       local s = read_pipe(pulseaudio.cmd)
 
       volume_now = {}
-      volume_now.left  = tonumber(string.match(s, ":.-(%d+)%%"))
-      volume_now.right = tonumber(string.match(s, ":.-(%d+)%%"))
-      volume_now.muted = string.match(s, "muted: (%S+)")
+      volume.now.index = string.match(s, "index: (%S+)") or "N/A"
+      volume_now.muted = string.match(s, "muted: (%S+)") or "N/A"
+
+      local ch = 1
+      volume_now.channel = {}
+      for v in string.gmatch(s, ":.-(%d+)%%") do
+          volume_now.channel[ch] = v
+          ch = ch + 1
+      end
+
+      volume_now.left  = volume_now.channel[1] or "N/A"
+      volume_now.right = volume_now.channel[2] or "N/A"
 
       widget = pulseaudio.widget
       settings()
