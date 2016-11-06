@@ -106,12 +106,22 @@ end
 
 -- {{{ Pipe operations
 
--- read the full output of a pipe (command)
+-- read the full output of a command output
 function helpers.read_pipe(cmd)
    local f = assert(io.popen(cmd))
    local output = f:read("*all")
    f:close()
    return output
+end
+
+-- return line iterator of a command output
+function helpers.pipelines(...)
+    local f = assert(io.popen(...))
+    return function () -- iterator
+        local data = f:read()
+        if data == nil then f:close() end
+        return data
+    end
 end
 
 -- }}}
@@ -148,5 +158,6 @@ function helpers.spairs(t)
     end
 end
 --}}}
+
 
 return helpers
