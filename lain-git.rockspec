@@ -24,5 +24,5 @@ dependencies = {
 supported_platforms = { "linux" }
 build = {
    type = "builtin",
-   modules = { lain = "init.lua" },
+   modules = { lain = "init.lua" }
 }

@@ -68,7 +68,7 @@ local function worker(args)
         bat_now.n_perc[i] = 0
     end
 
-    function update()
+    function bat.update()
         local sum_rate_current = 0
         local sum_rate_voltage = 0
         local sum_rate_power   = 0
@@ -165,7 +165,7 @@ local function worker(args)
         end
     end
 
-    newtimer(battery, timeout, update)
+    newtimer(battery, timeout, bat.update)
 
     return setmetatable(bat, { __index = bat.widget })
 end
