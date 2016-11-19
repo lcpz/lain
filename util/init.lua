@@ -98,7 +98,7 @@ function util.mc(c)
     g.height = math.sqrt(mwfact) * mg.height
     g.x = mg.x + (mg.width - g.width) / 2
     g.y = mg.y + (mg.height - g.height) / 2
-    c:geometry(g)
+    if c then c:geometry(g) end -- if c is still a valid object
 end
 
 -- Read the nice value of pid from /proc.
