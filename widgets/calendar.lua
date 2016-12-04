@@ -116,8 +116,8 @@ function calendar.attach(widget, args)
     calendar.offset      = 0
     calendar.notify_icon = nil
 
-    widget:connect_signal("mouse::enter", function () calendar:show(0, 0, calendar.scr_pos) end)
-    widget:connect_signal("mouse::leave", function () calendar:hide() end)
+    widget:connect_signal("mouse::enter", function () calendar.show(0, 0, calendar.scr_pos) end)
+    widget:connect_signal("mouse::leave", function () calendar.hide() end)
     widget:buttons(awful.util.table.join(awful.button({ }, 1, function ()
                                              calendar.show(0, -1, calendar.scr_pos) end),
                                          awful.button({ }, 3, function ()
@@ -125,7 +125,7 @@ function calendar.attach(widget, args)
                                          awful.button({ }, 4, function ()
                                              calendar.show(0, -1, calendar.scr_pos) end),
                                          awful.button({ }, 5, function ()
-                                             calendar:show(0, 1, calendar.scr_pos) end)))
+                                             calendar.show(0, 1, calendar.scr_pos) end)))
 end
 
 return setmetatable(calendar, { __call = function(_, ...) return create(...) end })
