@@ -38,7 +38,15 @@ end
 function fs:show(t_out)
     fs:hide()
 
-    local ws = helpers.read_pipe(helpers.scripts_dir .. "dfs"):gsub("\n*$", "")
+    local cmd = "dfs"
+    if fs.fstype then
+      cmd = cmd .. " --type=" .. fs.fstype
+    end
+    if fs.exclude_fstype then
+      cmd = cmd .. " --exclude-type=" .. fs.exclude_fstype
+    end
+
+    local ws = helpers.read_pipe(helpers.scripts_dir .. cmd):gsub("\n*$", "")
 
     if fs.followmouse then
         fs.notification_preset.screen = mouse.screen
@@ -62,6 +70,8 @@ local function worker(args)
     local notify           = args.notify or "on"
     local settings         = args.settings or function() end
 
+    fs.fstype              = args.fstype or false
+    fs.exclude_fstype      = args.exclude_fstype or false
     fs.followmouse         = args.followmouse or false
     fs.notification_preset = args.notification_preset or { fg = beautiful.fg_normal }
 
