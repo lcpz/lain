@@ -155,8 +155,7 @@ local function worker(args)
             awful.util.spawn(pulsebar.mixer)
           end),
           awful.button({}, 2, function()
-						awful.util.spawn(string.format("pactl set-sink-lolume %d 100%%", pulsebar.sink))
-            pulsebar.update()
+						awful.util.spawn(string.format("pactl set-sink-volume %d 100%%", pulsebar.sink))
           end),
           awful.button({}, 3, function()
 						awful.util.spawn(string.format("pactl set-sink-mute %d toggle", pulsebar.sink))
