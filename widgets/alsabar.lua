@@ -155,23 +155,23 @@ local function worker(args)
         end
     end
 
-    alsabar.bar:buttons (awful.util.table.join (
-          awful.button ({}, 1, function()
+    alsabar.bar:buttons(awful.util.table.join (
+          awful.button({}, 1, function()
             awful.util.spawn(alsabar.mixer)
           end),
-          awful.button ({}, 2, function()
+          awful.button({}, 2, function()
 						awful.util.spawn(string.format("%s set %s 100%%", alsabar.cmd, alsabar.channel))
             pulsebar.update()
           end),
-          awful.button ({}, 3, function()
+          awful.button({}, 3, function()
             awful.util.spawn(string.format("%s set %s toggle", alsabar.cmd, alsabar.channel))
             alsabar.update()
           end),
-          awful.button ({}, 4, function()
+          awful.button({}, 4, function()
             awful.util.spawn(string.format("%s set %s %s+", alsabar.cmd, alsabar.channel, alsabar.step))
             alsabar.update()
           end),
-          awful.button ({}, 5, function()
+          awful.button({}, 5, function()
             awful.util.spawn(string.format("%s set %s %s-", alsabar.cmd, alsabar.channel, alsabar.step))
             alsabar.update()
           end)

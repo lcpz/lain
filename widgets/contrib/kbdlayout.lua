@@ -19,7 +19,7 @@ local setmetatable = setmetatable
 -- Keyboard layout switcher
 -- lain.widgets.contrib.kblayout
 
-local function worker (args)
+local function worker(args)
    local kbdlayout    = {}
    kbdlayout.widget   = wibox.widget.textbox('')
 
@@ -36,21 +36,21 @@ local function worker (args)
                               awful.button({ }, 1, function () kbdlayout.next() end),
                               awful.button({ }, 3, function () kbdlayout.prev() end)))
 
-   local function run_settings (layout, variant)
+   local function run_settings(layout, variant)
       widget = kbdlayout.widget
       kbdlayout_now = { layout=string.match(layout, "[^,]+"), -- Make sure to match the primary layout only.
 			variant=variant }
       settings()
    end
 
-   function kbdlayout.update ()
+   function kbdlayout.update()
       local status = read_pipe('setxkbmap -query')
 
       run_settings(string.match(status, "layout:%s*([^\n]*)"),
                    string.match(status, "variant:%s*([^\n]*)"))
    end
 
-   function kbdlayout.set (i)
+   function kbdlayout.set(i)
       idx = ((i - 1) % #layouts) + 1 -- Make sure to wrap around as needed.
       local to_execute = 'setxkbmap ' .. layouts[idx].layout
 
@@ -67,11 +67,11 @@ local function worker (args)
       end
    end
 
-   function kbdlayout.next ()
+   function kbdlayout.next()
       kbdlayout.set(idx + 1)
    end
 
-   function kbdlayout.prev ()
+   function kbdlayout.prev()
       kbdlayout.set(idx - 1)
    end
 

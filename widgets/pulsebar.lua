@@ -150,23 +150,23 @@ local function worker(args)
         end
     end
 
-    pulsebar.bar:buttons (awful.util.table.join (
-          awful.button ({}, 1, function()
+    pulsebar.bar:buttons(awful.util.table.join (
+          awful.button({}, 1, function()
             awful.util.spawn(pulsebar.mixer)
           end),
-          awful.button ({}, 2, function()
+          awful.button({}, 2, function()
 						awful.util.spawn(string.format("pactl set-sink-lolume %d 100%%", pulsebar.sink))
             pulsebar.update()
           end),
-          awful.button ({}, 3, function()
+          awful.button({}, 3, function()
 						awful.util.spawn(string.format("pactl set-sink-mute %d toggle", pulsebar.sink))
             pulsebar.update()
           end),
-          awful.button ({}, 4, function()
+          awful.button({}, 4, function()
 						awful.util.spawn(string.format("pactl set-sink-volume %d +%s", pulsebar.sink, pulsebar.step))
             pulsebar.update()
           end),
-          awful.button ({}, 5, function()
+          awful.button({}, 5, function()
 						awful.util.spawn(string.format("pactl set-sink-volume %d -%s", pulsebar.sink, pulsebar.step))
             pulsebar.update()
 					end)

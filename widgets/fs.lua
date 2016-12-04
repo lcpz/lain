@@ -28,17 +28,18 @@ local setmetatable = setmetatable
 local fs = {}
 local fs_notification  = nil
 
-function fs:hide()
+function fs.hide()
     if fs_notification ~= nil then
         naughty.destroy(fs_notification)
         fs_notification = nil
     end
 end
 
-function fs:show(t_out)
-    fs:hide()
+function fs.show(t_out, fs_args)
+    fs.hide()
 
-    local ws = helpers.read_pipe(helpers.scripts_dir .. "dfs"):gsub("\n*$", "")
+    local cmd = (fs_args and string.format("dfs %s", fs_args)) or "dfs"
+    local ws = helpers.read_pipe(helpers.scripts_dir .. cmd):gsub("\n*$", "")
 
     if fs.followmouse then
         fs.notification_preset.screen = mouse.screen

@@ -27,15 +27,15 @@ local setmetatable = setmetatable
 local calendar = {}
 local cal_notification = nil
 
-function calendar:hide()
+function calendar.hide()
     if cal_notification ~= nil then
         naughty.destroy(cal_notification)
         cal_notification = nil
     end
 end
 
-function calendar:show(t_out, inc_offset, scr)
-    calendar:hide()
+function calendar.show(t_out, inc_offset, scr)
+    calendar.hide()
 
     local f, c_text
     local offs  = inc_offset or 0
@@ -96,7 +96,7 @@ function calendar:show(t_out, inc_offset, scr)
     })
 end
 
-function calendar:attach(widget, args)
+function calendar.attach(widget, args)
     local args = args or {}
 
     calendar.cal         = args.cal or "/usr/bin/cal"
@@ -119,11 +119,11 @@ function calendar:attach(widget, args)
     widget:connect_signal("mouse::enter", function () calendar:show(0, 0, calendar.scr_pos) end)
     widget:connect_signal("mouse::leave", function () calendar:hide() end)
     widget:buttons(awful.util.table.join(awful.button({ }, 1, function ()
-                                             calendar:show(0, -1, calendar.scr_pos) end),
+                                             calendar.show(0, -1, calendar.scr_pos) end),
                                          awful.button({ }, 3, function ()
-                                             calendar:show(0, 1, calendar.scr_pos) end),
+                                             calendar.show(0, 1, calendar.scr_pos) end),
                                          awful.button({ }, 4, function ()
-                                             calendar:show(0, -1, calendar.scr_pos) end),
+                                             calendar.show(0, -1, calendar.scr_pos) end),
                                          awful.button({ }, 5, function ()
                                              calendar:show(0, 1, calendar.scr_pos) end)))
 end
