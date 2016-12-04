@@ -11,10 +11,11 @@
 # -------------------------------------------------------------------------
 #   Decoding options
 # -------------------------------------------------------------------------
-USAGE="Usage: $0 [-h(elp)] | [-n(arrow mode)] | [-w(eb output)]"
+USAGE="Usage: $0 [-h(elp)] | [-n(arrow mode)] | [-w(eb output) | --type=<fstype> | --exclude-type=<fstype>]"
 
 NARROW_MODE=0
 WEB_OUTPUT=0
+DF_OPTIONS=""
 
 while [ $# -gt 0 ]; do
 case "$1" in
@@ -30,6 +31,12 @@ NARROW_MODE=1
 ;;
 "-w" )
 WEB_OUTPUT=1
+;;
+--type=*)
+DF_OPTIONS+=" $1"
+;;
+--exclude-type=*)
+DF_OPTIONS+=" $1"
 ;;
 * )
 echo $USAGE
@@ -57,6 +64,9 @@ SORT_COMMAND="/usr/bin/sort -k6"
 AWK_COMMAND="/usr/bin/env gawk"
 ;;
 esac
+
+# Add additional df options
+DF_COMMAND+=$DF_OPTIONS
 
 # -------------------------------------------------------------------------
 #   Grabbing "df" result
