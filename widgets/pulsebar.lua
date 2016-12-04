@@ -27,7 +27,7 @@ local setmetatable = setmetatable
 -- lain.widgets.pulsebar
 local pulsebar = {
     sink = 0,
-    step = "5%",
+    step = "1%",
 
     colors = {
         background = beautiful.bg_normal,

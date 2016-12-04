@@ -159,6 +159,10 @@ local function worker(args)
           awful.button ({}, 1, function()
             awful.util.spawn(alsabar.mixer)
           end),
+          awful.button ({}, 2, function()
+						awful.util.spawn(string.format("%s set %s 100%%", alsabar.cmd, alsabar.channel))
+            pulsebar.update()
+          end),
           awful.button ({}, 3, function()
             awful.util.spawn(string.format("%s set %s toggle", alsabar.cmd, alsabar.channel))
             alsabar.update()
