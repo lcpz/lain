@@ -28,6 +28,7 @@ local function worker(args)
 
    pulseaudio.cmd    = args.cmd or string.format("pacmd list-sinks | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'")
    pulseaudio.widget = wibox.widget.textbox('')
+   pulseaudio.sink = 'autodetected'
 
    function pulseaudio.update()
       if scallback then pulseaudio.cmd = scallback() end
