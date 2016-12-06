@@ -156,6 +156,7 @@ local function worker(args)
           end),
           awful.button({}, 2, function()
 						awful.util.spawn(string.format("pactl set-sink-volume %d 100%%", pulsebar.sink))
+            pulsebar.update()
           end),
           awful.button({}, 3, function()
 						awful.util.spawn(string.format("pactl set-sink-mute %d toggle", pulsebar.sink))
@@ -178,4 +179,4 @@ local function worker(args)
     return pulsebar
 end
 
-eturn setmetatable(pulsebar, { __call = function(_, ...) return worker(...) end })
+return setmetatable(pulsebar, { __call = function(_, ...) return worker(...) end })
