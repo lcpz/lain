@@ -178,4 +178,4 @@ local function worker(args)
     return pulsebar
 end
 
-eturn setmetatable(pulsebar, { __call = function(_, ...) return worker(...) end })
+return setmetatable(pulsebar, { __call = function(_, ...) return worker(...) end })
