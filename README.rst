@@ -43,5 +43,5 @@ Screenshots
 
 .. _GNU-GPL2: http://www.gnu.org/licenses/gpl-2.0.html
 .. _awesome-vain: https://github.com/vain/awesome-vain
-.. _Awesome: http://awesome.naquadah.org/
+.. _Awesome: https://github.com/awesomeWM/awesome
 .. _wiki: https://github.com/copycat-killer/lain/wiki

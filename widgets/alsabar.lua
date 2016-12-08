@@ -27,7 +27,7 @@ local setmetatable = setmetatable
 -- lain.widgets.alsabar
 local alsabar = {
     channel = "Master",
-    step    = "2%",
+    step    = "1%",
 
     colors = {
         background = beautiful.bg_normal,
@@ -104,6 +104,7 @@ local function worker(args)
 
     alsabar.cmd           = args.cmd or "amixer"
     alsabar.channel       = args.channel or alsabar.channel
+    alsabar.togglechannel = args.togglechannel
     alsabar.step          = args.step or alsabar.step
     alsabar.colors        = args.colors or alsabar.colors
     alsabar.notifications = args.notifications or alsabar.notifications
@@ -127,9 +128,14 @@ local function worker(args)
         -- Capture mixer control state:          [5%] ... ... [on]
         local volu, mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
 
+        -- HDMIs can have a channel different from Master for toggling mute
+        if alsabar.togglechannel then
+            mute = string.match(read_pipe(string.format("%s get %s", alsabar.cmd, alsabar.togglechannel)), "%[(%a+)%]")
+        end
+
         if (volu and tonumber(volu) ~= alsabar._current_level) or (mute and string.match(mute, "on") ~= alsabar._muted)
         then
-            alsabar._current_level = tonumber(volu)
+            alsabar._current_level = tonumber(volu) or alsabar._current_level
             alsabar.bar:set_value(alsabar._current_level / 100)
             if not mute and tonumber(volu) == 0 or mute == "off"
             then
@@ -149,19 +155,23 @@ local function worker(args)
         end
     end
 
-    alsabar.bar:buttons (awful.util.table.join (
-          awful.button ({}, 1, function()
+    alsabar.bar:buttons(awful.util.table.join (
+          awful.button({}, 1, function()
             awful.util.spawn(alsabar.mixer)
           end),
-          awful.button ({}, 3, function()
+          awful.button({}, 2, function()
+						awful.util.spawn(string.format("%s set %s 100%%", alsabar.cmd, alsabar.channel))
+            pulsebar.update()
+          end),
+          awful.button({}, 3, function()
             awful.util.spawn(string.format("%s set %s toggle", alsabar.cmd, alsabar.channel))
             alsabar.update()
           end),
-          awful.button ({}, 4, function()
+          awful.button({}, 4, function()
             awful.util.spawn(string.format("%s set %s %s+", alsabar.cmd, alsabar.channel, alsabar.step))
             alsabar.update()
           end),
-          awful.button ({}, 5, function()
+          awful.button({}, 5, function()
             awful.util.spawn(string.format("%s set %s %s-", alsabar.cmd, alsabar.channel, alsabar.step))
             alsabar.update()
           end)

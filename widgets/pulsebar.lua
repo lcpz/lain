@@ -27,6 +27,7 @@ local setmetatable = setmetatable
 -- lain.widgets.pulsebar
 local pulsebar = {
     sink = 0,
+    step = "1%",
 
     colors = {
         background = beautiful.bg_normal,
@@ -105,6 +106,7 @@ local function worker(args)
     pulsebar.colors        = args.colors or pulsebar.colors
     pulsebar.notifications = args.notifications or pulsebar.notifications
     pulsebar.sink          = args.sink or 0
+    pulsebar.step          = args.step or pulsebar.step
     pulsebar.followmouse   = args.followmouse or false
 
     pulsebar.bar = awful.widget.progressbar()
@@ -148,10 +150,26 @@ local function worker(args)
         end
     end
 
-    pulsebar.bar:buttons (awful.util.table.join (
-          awful.button ({}, 1, function()
+    pulsebar.bar:buttons(awful.util.table.join (
+          awful.button({}, 1, function()
             awful.util.spawn(pulsebar.mixer)
-          end)
+          end),
+          awful.button({}, 2, function()
+						awful.util.spawn(string.format("pactl set-sink-volume %d 100%%", pulsebar.sink))
+            pulsebar.update()
+          end),
+          awful.button({}, 3, function()
+						awful.util.spawn(string.format("pactl set-sink-mute %d toggle", pulsebar.sink))
+            pulsebar.update()
+          end),
+          awful.button({}, 4, function()
+						awful.util.spawn(string.format("pactl set-sink-volume %d +%s", pulsebar.sink, pulsebar.step))
+            pulsebar.update()
+          end),
+          awful.button({}, 5, function()
+						awful.util.spawn(string.format("pactl set-sink-volume %d -%s", pulsebar.sink, pulsebar.step))
+            pulsebar.update()
+					end)
     ))
 
     timer_id = string.format("pulsebar-%s", pulsebar.sink)

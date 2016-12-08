@@ -16,11 +16,10 @@ local setmetatable = setmetatable
 -- lain.widgets.contrib.redshift
 local redshift = {}
 
-local attached = false             -- true if attached to a widget
-local active = false               -- true if redshift is active
-local running = false              -- true if redshift was initialized
-local update_fnct = function() end -- Function that is run each time redshift is toggled. See redshift:attach().
-
+local attached    = false           -- true if attached to a widget
+local active      = false           -- true if redshift is active
+local running     = false           -- true if redshift was initialized
+local update_fnct = function() end  -- Function that is run each time redshift is toggled. See redshift:attach().
 
 local function init()
     -- As there is no way to determine if redshift was previously

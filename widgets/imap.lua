@@ -41,8 +41,7 @@ local function worker(args)
 
     helpers.set_map(mail, 0)
 
-    if not is_plain
-    then
+    if not is_plain then
         password = helpers.read_pipe(password):gsub("\n", "")
     end
 

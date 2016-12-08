@@ -16,7 +16,6 @@ local tonumber     = tonumber
 local setmetatable = setmetatable
 
 local smapi = {}
-
 local apipath = "/sys/devices/platform/smapi"
 
 -- Most are readable values, but some can be written to (not implemented, yet?)

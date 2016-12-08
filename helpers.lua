@@ -8,6 +8,7 @@
 
 local debug  = require("debug")
 
+local assert = assert
 local capi   = { timer = (type(timer) == 'table' and timer or require ("gears.timer")) }
 local io     = { open  = io.open,
                  lines = io.lines,
@@ -61,9 +62,9 @@ end
 function helpers.lines_match(regexp, file)
 	local lines = {}
 	for index,line in pairs(helpers.lines_from(file)) do
-		if string.match(line, regexp) then 
+		if string.match(line, regexp) then
 			lines[index] = line
-		end  
+		end
 	end
 	return lines
 end
@@ -93,9 +94,9 @@ function helpers.newtimer(_name, timeout, fun, nostart)
     local name = timeout
     if not helpers.timer_table[name] then
         helpers.timer_table[name] = capi.timer({ timeout = timeout })
+        helpers.timer_table[name]:start()
     end
     helpers.timer_table[name]:connect_signal("timeout", fun)
-    helpers.timer_table[name]:start()
     if not nostart then
         helpers.timer_table[name]:emit_signal("timeout")
     end
@@ -105,12 +106,22 @@ end
 
 -- {{{ Pipe operations
 
--- read the full output of a pipe (command)
+-- read the full output of a command output
 function helpers.read_pipe(cmd)
    local f = assert(io.popen(cmd))
    local output = f:read("*all")
    f:close()
    return output
+end
+
+-- return line iterator of a command output
+function helpers.pipelines(...)
+    local f = assert(io.popen(...))
+    return function () -- iterator
+        local data = f:read()
+        if data == nil then f:close() end
+        return data
+    end
 end
 
 -- }}}
@@ -147,5 +158,6 @@ function helpers.spairs(t)
     end
 end
 --}}}
+
 
 return helpers

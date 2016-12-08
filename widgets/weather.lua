@@ -108,7 +108,7 @@ local function worker(args)
             local pos, err
             weather_now, pos, err = json.decode(f, 1, nil)
 
-            if not err and weather_now and tonumber(weather_now["cod"]) == 200 then
+            if not err and type(weather_now) == "table" and tonumber(weather_now["cod"]) == 200 then
                 weather.notification_text = ''
                 for i = 1, weather_now["cnt"] do
                     weather.notification_text = weather.notification_text ..
@@ -128,7 +128,7 @@ local function worker(args)
             local pos, err, icon
             weather_now, pos, err = json.decode(f, 1, nil)
 
-            if not err and weather_now and tonumber(weather_now["cod"]) == 200 then
+            if not err and type(weather_now) == "table" and tonumber(weather_now["cod"]) == 200 then
                 -- weather icon based on localtime
                 local now     = os.time()
                 local sunrise = tonumber(weather_now["sys"]["sunrise"])

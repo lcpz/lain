@@ -39,8 +39,7 @@ local function worker(args)
     maildir.widget = wibox.widget.textbox('')
 
     function update()
-        if ext_mail_cmd ~= nil
-        then
+        if ext_mail_cmd then
             awful.util.spawn(ext_mail_cmd)
         end
 
@@ -75,6 +74,7 @@ local function worker(args)
         p:close()
 
         newmail = "no mail"
+
         -- Count the total number of mails irrespective of where it was found
         total = 0
 
