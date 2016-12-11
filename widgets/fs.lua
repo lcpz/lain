@@ -44,7 +44,7 @@ function fs.show(seconds, options, scr)
     if fs.followmouse then
         fs.notification_preset.screen = mouse.screen
     elseif scr then
-			  fs.notification_preset.screen = scr
+	    fs.notification_preset.screen = scr
     end
 
     fs_notification = naughty.notify({
@@ -117,8 +117,8 @@ local function worker(args)
     end
 
     if showpopup == "on" then
-        fs.widget:connect_signal('mouse::enter', function () fs:show(0) end)
-        fs.widget:connect_signal('mouse::leave', function () fs:hide() end)
+        fs.widget:connect_signal('mouse::enter', function () fs.show(0) end)
+        fs.widget:connect_signal('mouse::leave', function () fs.hide() end)
     end
 
     helpers.newtimer(partition, timeout, update)
