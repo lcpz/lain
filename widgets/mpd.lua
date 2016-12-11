@@ -70,6 +70,8 @@ local function worker(args)
                 artist       = "N/A",
                 title        = "N/A",
                 album        = "N/A",
+                genre        = "N/A",
+                track        = "N/A",
                 date         = "N/A",
                 time         = "N/A",
                 elapsed      = "N/A"
@@ -83,6 +85,8 @@ local function worker(args)
                     elseif k == "Artist"         then mpd_now.artist       = escape_f(v)
                     elseif k == "Title"          then mpd_now.title        = escape_f(v)
                     elseif k == "Album"          then mpd_now.album        = escape_f(v)
+                    elseif k == "Genre"          then mpd_now.genre        = escape_f(v)
+                    elseif k == "Track"          then mpd_now.track        = escape_f(v)
                     elseif k == "Date"           then mpd_now.date         = escape_f(v)
                     elseif k == "Time"           then mpd_now.time         = v
                     elseif k == "elapsed"        then mpd_now.elapsed      = string.match(v, "%d+")
