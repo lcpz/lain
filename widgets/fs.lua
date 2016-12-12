@@ -44,7 +44,7 @@ function fs.show(seconds, options, scr)
     if fs.followmouse then
         fs.notification_preset.screen = mouse.screen
     elseif scr then
-			  fs.notification_preset.screen = scr
+        fs.notification_preset.screen = scr
     end
 
     fs_notification = naughty.notify({
