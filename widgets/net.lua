@@ -21,7 +21,10 @@ local setmetatable = setmetatable
 -- lain.widgets.net
 
 local function worker(args)
-    local net = { last_t = 0, last_r = 0, devices = {} }
+    local net = helpers.make_widget_textbox()
+    net.last_t = 0
+    net.last_r = 0
+    net.devices = {}
 
     function net.get_first_device()
         local ws = helpers.read_pipe("ip link show | cut -d' ' -f2,9")
@@ -37,8 +40,6 @@ local function worker(args)
     local screen   = args.screen or 1
     local settings = args.settings or function() end
     local iface    = args.iface or net.get_first_device()
-
-    net.widget = wibox.widget.textbox('')
 
     -- Compatibility with old API where iface was a string corresponding to 1 interface
     if type(iface) == "string" then
@@ -138,7 +139,7 @@ local function worker(args)
 
     helpers.newtimer(iface, timeout, update)
 
-    return setmetatable(net, { __index = net.widget })
+    return net
 end
 
 return setmetatable({}, { __call = function(_, ...) return worker(...) end })

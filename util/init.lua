@@ -162,29 +162,30 @@ end
 -- {{{ Dynamic tagging
 --
 -- Add a new tag
-function util.add_tag(mypromptbox)
-    awful.prompt.run({prompt="New tag name: "}, mypromptbox[mouse.screen].widget,
-    function(text)
-        if text:len() > 0 then
-            props = { selected = true }
-            tag = awful.tag.add(new_name, props)
-            tag.name = text
-            tag:emit_signal("property::name")
+function util.add_tag()
+    awful.prompt.run {
+        prompt       = "New tag name: ",
+        textbox      = awful.screen.focused().mypromptbox.widget,
+        exe_callback = function(name)
+            if not name or #name == 0 then return end
+            awful.tag.add(name, { screen = awful.screen.focused() }):view_only()
         end
-    end)
+    }
 end
 
 -- Rename current tag
--- @author: minism
-function util.rename_tag(mypromptbox)
-    local tag = awful.tag.selected(mouse.screen)
-    awful.prompt.run({prompt="Rename tag: "}, mypromptbox[mouse.screen].widget,
-    function(text)
-        if text:len() > 0 then
-            tag.name = text
-            tag:emit_signal("property::name")
+function util.rename_tag()
+    awful.prompt.run {
+        prompt       = "Rename tag: ",
+        textbox      = awful.screen.focused().mypromptbox.widget,
+        exe_callback = function(new_name)
+            if not new_name or #new_name == 0 then return end
+            local t = awful.screen.focused().selected_tag
+            if t then
+                t.name = new_name
+            end
         end
-    end)
+    }
 end
 
 -- Move current tag
@@ -199,14 +200,13 @@ function util.move_tag(pos)
     end
 end
 
--- Remove current tag (if empty)
+-- Delete current tag
 -- Any rule set on the tag shall be broken
-function util.remove_tag()
-    local tag = awful.tag.selected(mouse.screen)
-    local prevtag = awful.tag.gettags(mouse.screen)[awful.tag.getidx(tag) - 1]
-    awful.tag.delete(tag, prevtag)
+function util.delete_tag()
+    local t = awful.screen.focused().selected_tag
+    if not t then return end
+    t:delete()
 end
---
 -- }}}
 
 -- On the fly useless gaps change

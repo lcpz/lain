@@ -13,6 +13,7 @@ local read_pipe    = require("lain.helpers").read_pipe
 local awful        = require("awful")
 local beautiful    = require("beautiful")
 local naughty      = require("naughty")
+local wibox        = require("wibox")
 
 local math         = { modf   = math.modf }
 local mouse        = mouse
@@ -110,7 +111,7 @@ local function worker(args)
     alsabar.notifications = args.notifications or alsabar.notifications
     alsabar.followmouse   = args.followmouse or false
 
-    alsabar.bar = awful.widget.progressbar()
+    alsabar.bar = wibox.widget.progressbar()
 
     alsabar.bar:set_background_color(alsabar.colors.background)
     alsabar.bar:set_color(alsabar.colors.unmute)

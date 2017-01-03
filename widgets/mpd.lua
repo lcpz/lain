@@ -26,7 +26,7 @@ local setmetatable = setmetatable
 
 -- MPD infos
 -- lain.widgets.mpd
-local mpd = {}
+local mpd = helpers.make_widget_textbox()
 
 local function worker(args)
     local args        = args or {}
@@ -45,8 +45,6 @@ local function worker(args)
     local mpdcover = helpers.scripts_dir .. "mpdcover"
     local mpdh = "telnet://" .. host .. ":" .. port
     local echo = echo_cmd .. " 'password " .. password .. "\nstatus\ncurrentsong\nclose'"
-
-    mpd.widget = wibox.widget.textbox('')
 
     mpd_notification_preset = {
         title   = "Now playing",
@@ -139,7 +137,7 @@ local function worker(args)
 
     helpers.newtimer("mpd", timeout, mpd.update)
 
-    return setmetatable(mpd, { __index = mpd.widget })
+    return mpd
 end
 
 return setmetatable(mpd, { __call = function(_, ...) return worker(...) end })

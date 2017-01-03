@@ -13,6 +13,7 @@ local read_pipe    = require("lain.helpers").read_pipe
 local awful        = require("awful")
 local beautiful    = require("beautiful")
 local naughty      = require("naughty")
+local wibox        = require("wibox")
 
 local math         = { modf   = math.modf }
 local mouse        = mouse
@@ -109,7 +110,7 @@ local function worker(args)
     pulsebar.step          = args.step or pulsebar.step
     pulsebar.followmouse   = args.followmouse or false
 
-    pulsebar.bar = awful.widget.progressbar()
+    pulsebar.bar = wibox.widget.progressbar()
 
     pulsebar.bar:set_background_color(pulsebar.colors.background)
     pulsebar.bar:set_color(pulsebar.colors.unmute)

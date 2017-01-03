@@ -11,6 +11,7 @@ local capi   = { client = client,
                  mouse  = mouse,
                  screen = screen,
                  timer  = timer }
+local math   = { floor = math.floor }
 local string = string
 
 local pairs        = pairs
@@ -61,7 +62,7 @@ function quake:display()
 
    -- Resize
    awful.client.floating.set(client, true)
-   client.border_width = self.border
+   --client.border_width = self.border
    client.size_hints_honor = false
    if self.notexist then
        client:geometry(self.geometry)
@@ -113,8 +114,8 @@ function quake:new(config)
 
    -- Compute size
    local geom = capi.screen[conf.screen].workarea
-   if width  <= 1 then width = geom.width * width end
-   if height <= 1 then height = geom.height * height end
+   if width  <= 1 then width = math.floor(geom.width * width) end
+   if height <= 1 then height = math.floor(geom.height * height) end
    local x, y
    if     horiz == "left"  then x = geom.x
    elseif horiz == "right" then x = geom.width + geom.x - width

@@ -16,6 +16,8 @@ local io     = { open  = io.open,
 local rawget = rawget
 local table  = { sort   = table.sort }
 
+local wibox  = require("wibox")
+
 -- Lain helper functions for internal use
 -- lain.helpers
 local helpers = {}
@@ -140,7 +142,9 @@ end
 
 -- }}}
 
---{{{ Iterate over table of records sorted by keys
+-- {{{ Misc
+
+-- iterate over table of records sorted by keys
 function helpers.spairs(t)
     -- collect the keys
     local keys = {}
@@ -157,7 +161,15 @@ function helpers.spairs(t)
         end
     end
 end
---}}}
 
+-- create a lain textbox widget
+function helpers.make_widget_textbox()
+    local w = wibox.widget.textbox('')
+    local t = wibox.widget.base.make_widget(w)
+    t.widget = w
+    return t
+end
+
+-- }}}
 
 return helpers
