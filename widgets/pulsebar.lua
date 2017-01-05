@@ -58,23 +58,21 @@ function pulsebar.notify()
         text    = "",
         timeout = 5,
         screen  = pulsebar.notifications.screen,
-        font    = pulsebar.notifications.font .. " " ..
-                  pulsebar.notifications.font_size,
+        font    = string.format("%s %s", alsabar.notifications.font,
+                  alsabar.notifications.font_size),
         fg      = pulsebar.notifications.color
     }
 
     if pulsebar._muted
     then
-        preset.title = "Sink " .. pulsebar.sink .. " - Muted"
+        preset.title = string.format("Sink %s - Muted", pulsebar.sink)
     else
-        preset.title = "Sink " .. pulsebar.sink .. " - " .. pulsebar._current_level .. "%"
+        preset.title = string.format("%s - %s%%", pulsebar.sink, pulsebar._current_level)
     end
 
     int = math.modf((pulsebar._current_level / 100) * pulsebar.notifications.bar_size)
-    preset.text = "["
-                .. string.rep("|", int)
-                .. string.rep(" ", pulsebar.notifications.bar_size - int)
-                .. "]"
+    preset.text = string.format("[%s%s]", string.rep("|", int),
+                  string.rep(" ", pulsebar.notifications.bar_size - int))
 
     if pulsebar.followmouse then
         preset.screen = mouse.screen
@@ -110,16 +108,20 @@ local function worker(args)
     pulsebar.step          = args.step or pulsebar.step
     pulsebar.followmouse   = args.followmouse or false
 
-    pulsebar.bar = wibox.widget.progressbar()
+    pulsebar.bar = wibox.widget {
+        forced_height    = height,
+        forced_width     = width,
+        color            = pulsebar.colors.unmute,
+        background_color = pulsebar.colors.background,
+        margins          = 1,
+        paddings         = 1,
+        ticks            = ticks,
+        ticks_size       = ticks_size,
+        widget           = wibox.widget.progressbar,
+        layout           = vertical and wibox.container.rotate
+    }
 
-    pulsebar.bar:set_background_color(pulsebar.colors.background)
-    pulsebar.bar:set_color(pulsebar.colors.unmute)
     pulsebar.tooltip = awful.tooltip({ objects = { pulsebar.bar } })
-    pulsebar.bar:set_width(width)
-    pulsebar.bar:set_height(height)
-    pulsebar.bar:set_ticks(ticks)
-    pulsebar.bar:set_ticks_size(ticks_size)
-    pulsebar.bar:set_vertical(vertical)
 
     function pulsebar.update()
         if scallback then pulseaudio.cmd = scallback() end
@@ -137,15 +139,15 @@ local function worker(args)
         then
             pulsebar._current_level = volu
             pulsebar.bar:set_value(pulsebar._current_level / 100)
-            if not mute and volu == 0 or mute == "yes"
+            if (not mute and volu == 0) or mute == "yes"
             then
                 pulsebar._muted = true
-                pulsebar.tooltip:set_text (" [Muted] ")
-                pulsebar.bar:set_color(pulsebar.colors.mute)
+                pulsebar.tooltip:set_text ("[Muted]")
+                pulsebar.bar.color(pulsebar.colors.mute)
             else
                 pulsebar._muted = false
-                pulsebar.tooltip:set_text(string.format(" %s:%s ", pulsebar.sink, volu))
-                pulsebar.bar:set_color(pulsebar.colors.unmute)
+                pulsebar.tooltip:set_text(string.format("%s: %s", pulsebar.sink, volu))
+                pulsebar.bar.color(pulsebar.colors.unmute)
             end
             settings()
         end

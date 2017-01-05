@@ -10,7 +10,7 @@ local awful  = require("awful")
 local capi   = { client = client,
                  mouse  = mouse,
                  screen = screen,
-                 timer  = timer }
+                 timer  = timer or require("gears.timer") }
 local math   = { floor = math.floor }
 local string = string
 
