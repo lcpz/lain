@@ -15,7 +15,7 @@ local gears     = require("gears")
 -- lain.util.separators
 local separators = {}
 
-local height = beautiful.awful_widget_height or 0
+local height = beautiful.separators_height or 0
 local width  = beautiful.separators_width or 9
 
 -- [[ Arrow

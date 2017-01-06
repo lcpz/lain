@@ -211,13 +211,7 @@ end
 
 -- On the fly useless gaps change
 function util.useless_gaps_resize(thatmuch)
-    beautiful.useless_gap_width = tonumber(beautiful.useless_gap_width) + thatmuch
-    awful.layout.arrange(mouse.screen)
-end
-
--- On the fly global border change
-function util.global_border_resize(thatmuch)
-    beautiful.global_border_width = tonumber(beautiful.global_border_width) + thatmuch
+    beautiful.useless_gap = tonumber(beautiful.useless_gap) + thatmuch
     awful.layout.arrange(mouse.screen)
 end
 

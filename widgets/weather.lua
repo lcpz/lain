@@ -13,6 +13,7 @@ local async        = require("lain.asyncshell")
 local json         = require("lain.util").dkjson
 local lain_icons   = require("lain.helpers").icons_dir
 
+local focused      = require("awful.screen").focused
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
@@ -60,7 +61,7 @@ local function worker(args)
                                       return string.format("<b>%s</b>: %s, %d - %d ", day, desc, tmin, tmax)
                                   end
     local weather_na_markup     = args.weather_na_markup or " N/A "
-    local followmouse           = args.followmouse or false
+    local followtag           = args.followtag or false
     local settings              = args.settings or function() end
 
     weather.widget    = wibox.widget.textbox(weather_na_markup)
@@ -70,8 +71,8 @@ local function worker(args)
     function weather.show(t_out)
         weather.hide()
 
-        if followmouse then
-            notification_preset.screen = mouse.screen
+        if followtag then
+            notification_preset.screen = focused()
         end
 
         if not weather.notification_text then

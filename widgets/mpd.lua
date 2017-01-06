@@ -17,7 +17,6 @@ local wibox        = require("wibox")
 local os           = { execute = os.execute,
                        getenv  = os.getenv }
 local math         = { floor   = math.floor }
-local mouse        = mouse
 local string       = { format  = string.format,
                        match   = string.match,
                        gmatch  = string.gmatch }
@@ -38,7 +37,7 @@ local function worker(args)
     local cover_size  = args.cover_size or 100
     local default_art = args.default_art or ""
     local notify      = args.notify or "on"
-    local followmouse = args.followmouse or false
+    local followtag   = args.followtag or false
     local echo_cmd    = args.echo_cmd or "echo"
     local settings    = args.settings or function() end
 
@@ -118,8 +117,8 @@ local function worker(args)
                         current_icon = default_art
                     end
 
-                    if followmouse then
-                        mpd_notification_preset.screen = mouse.screen
+                    if followtag then
+                        mpd_notification_preset.screen = awful.screen.focused()
                     end
 
                     mpd.id = naughty.notify({

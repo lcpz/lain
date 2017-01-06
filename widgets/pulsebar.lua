@@ -41,9 +41,7 @@ local pulsebar = {
     notifications = {
         font      = beautiful.font:sub(beautiful.font:find(""), beautiful.font:find(" ")),
         font_size = "11",
-        color     = beautiful.fg_normal,
-        bar_size  = 18,
-        screen    = 1
+        color     = beautiful.fg_normal
     },
 
     _current_level = 0,
@@ -57,7 +55,6 @@ function pulsebar.notify()
         title   = "",
         text    = "",
         timeout = 5,
-        screen  = pulsebar.notifications.screen,
         font    = string.format("%s %s", alsabar.notifications.font,
                   alsabar.notifications.font_size),
         fg      = pulsebar.notifications.color
@@ -70,12 +67,12 @@ function pulsebar.notify()
         preset.title = string.format("%s - %s%%", pulsebar.sink, pulsebar._current_level)
     end
 
-    int = math.modf((pulsebar._current_level / 100) * pulsebar.notifications.bar_size)
+    int = math.modf((pulsebar._current_level / 100) * awful.screen.focused().mywibox.height)
     preset.text = string.format("[%s%s]", string.rep("|", int),
-                  string.rep(" ", pulsebar.notifications.bar_size - int))
+                  string.rep(" ", awful.screen.focused().mywibox.height - int))
 
-    if pulsebar.followmouse then
-        preset.screen = mouse.screen
+    if pulsebar.followtag then
+        preset.screen = awful.screen.focused()
     end
 
     if pulsebar._notify ~= nil then
@@ -106,7 +103,7 @@ local function worker(args)
     pulsebar.notifications = args.notifications or pulsebar.notifications
     pulsebar.sink          = args.sink or 0
     pulsebar.step          = args.step or pulsebar.step
-    pulsebar.followmouse   = args.followmouse or false
+    pulsebar.followtag   = args.followtag or false
 
     pulsebar.bar = wibox.widget {
         forced_height    = height,
@@ -143,11 +140,11 @@ local function worker(args)
             then
                 pulsebar._muted = true
                 pulsebar.tooltip:set_text ("[Muted]")
-                pulsebar.bar.color(pulsebar.colors.mute)
+                pulsebar.bar.color = pulsebar.colors.mute
             else
                 pulsebar._muted = false
                 pulsebar.tooltip:set_text(string.format("%s: %s", pulsebar.sink, volu))
-                pulsebar.bar.color(pulsebar.colors.unmute)
+                pulsebar.bar.color = pulsebar.colors.unmute
             end
             settings()
         end

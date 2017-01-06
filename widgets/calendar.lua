@@ -14,7 +14,6 @@ local naughty      = require("naughty")
 
 local io           = { popen = io.popen }
 local os           = { date = os.date }
-local mouse        = mouse
 local string       = { format = string.format,
                        sub    = string.sub,
                        gsub   = string.gsub }
@@ -47,13 +46,13 @@ function calendar.show(t_out, inc_offset, scr)
     if offs == 0 or calendar.offset == 0
     then -- current month showing, today highlighted
         calendar.offset = 0
-        calendar.notify_icon = calendar.icons .. today .. ".png"
+        calendar.notify_icon = string.format("%s%s.png", calendar.icons, today)
 
         -- bg and fg inverted to highlight today
         f = io.popen(calendar.cal_format(today))
     else -- no current month showing, no day to highlight
        local month = tonumber(os.date('%m'))
-       local year = tonumber(os.date('%Y'))
+       local year  = tonumber(os.date('%Y'))
 
        month = month + calendar.offset
 
@@ -79,8 +78,8 @@ function calendar.show(t_out, inc_offset, scr)
              .. "</span></tt>"
     f:close()
 
-    if calendar.followmouse then
-        scrp = mouse.screen
+    if calendar.followtag then
+        scrp = awful.screen.focused()
     else
         scrp = scr or calendar.scr_pos
     end
@@ -111,7 +110,7 @@ function calendar.attach(widget, args)
     calendar.bg          = args.bg or beautiful.bg_normal or "#000000"
     calendar.position    = args.position or "top_right"
     calendar.scr_pos     = args.scr_pos or 1
-    calendar.followmouse = args.followmouse or false
+    calendar.followtag   = args.followtag or false
 
     calendar.offset      = 0
     calendar.notify_icon = nil

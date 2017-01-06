@@ -16,7 +16,6 @@ local naughty      = require("naughty")
 local wibox        = require("wibox")
 
 local math         = { modf   = math.modf }
-local mouse        = mouse
 local string       = { format = string.format,
                        match  = string.match,
                        rep    = string.rep }
@@ -43,7 +42,6 @@ local alsabar = {
         font      = beautiful.font:sub(beautiful.font:find(""), beautiful.font:find(" ")),
         font_size = "11",
         color     = beautiful.fg_normal,
-        bar_size  = 18,
         screen    = 1
     },
 
@@ -71,12 +69,12 @@ function alsabar.notify()
         preset.title = string.format("%s - %s%%", alsabar.channel, alsabar._current_level)
     end
 
-    int = math.modf((alsabar._current_level / 100) * alsabar.notifications.bar_size)
+    int = math.modf((alsabar._current_level / 100) * awful.screen.focused().mywibox.height)
     preset.text = string.format("[%s%s]", string.rep("|", int),
-                  string.rep(" ", alsabar.notifications.bar_size - int))
+                  string.rep(" ", awful.screen.focused().mywibox.height - int))
 
-    if alsabar.followmouse then
-        preset.screen = mouse.screen
+    if alsabar.followtag then
+        preset.screen = awful.screen.focused()
     end
 
     if alsabar._notify ~= nil then
@@ -107,7 +105,7 @@ local function worker(args)
     alsabar.step          = args.step or alsabar.step
     alsabar.colors        = args.colors or alsabar.colors
     alsabar.notifications = args.notifications or alsabar.notifications
-    alsabar.followmouse   = args.followmouse or false
+    alsabar.followtag     = args.followtag or false
 
     alsabar.bar = wibox.widget {
         forced_height    = height,

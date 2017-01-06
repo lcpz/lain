@@ -6,18 +6,19 @@
                                                                   
 --]]
 
-local helpers = require("lain.helpers")
-local async   = require("lain.asyncshell")
+local helpers  = require("lain.helpers")
+local async    = require("lain.asyncshell")
 
+local focused  = require("awful.screen").focused
 local escape_f = require("awful.util").escape
 local naughty  = require("naughty")
 local wibox    = require("wibox")
 
-local io     = { popen   = io.popen }
-local os     = { execute = os.execute,
-                 getenv  = os.getenv }
-local string = { format  = string.format,
-                 gmatch  = string.gmatch }
+local io       = { popen   = io.popen }
+local os       = { execute = os.execute,
+                   getenv  = os.getenv }
+local string   = { format  = string.format,
+                   gmatch  = string.gmatch }
 
 local setmetatable = setmetatable
 
@@ -31,7 +32,7 @@ local function worker(args)
     local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
     local cover_size  = args.cover_size or 100
     local default_art = args.default_art or ""
-    local followmouse = args.followmouse or false
+    local followtag    = args.followtag or false
     local settings    = args.settings or function() end
 
     local mpdcover = helpers.scripts_dir .. "mpdcover"
@@ -85,8 +86,8 @@ local function worker(args)
                     os.execute(string.format("%s %q %q %d %q", mpdcover, "",
                                moc_now.file, cover_size, default_art))
 
-                    if followmouse then
-                        moc_notification_preset.screen = mouse.screen
+                    if followtag then
+                        moc_notification_preset.screen = focused()
                     end
 
                     moc.id = naughty.notify({
