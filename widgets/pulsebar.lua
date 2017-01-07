@@ -24,7 +24,7 @@ local tonumber     = tonumber
 
 local setmetatable = setmetatable
 
--- ALSA volume bar
+-- Pulseaudio volume bar
 -- lain.widgets.pulsebar
 local pulsebar = {
     sink = 0,
@@ -55,8 +55,8 @@ function pulsebar.notify()
         title   = "",
         text    = "",
         timeout = 5,
-        font    = string.format("%s %s", alsabar.notifications.font,
-                  alsabar.notifications.font_size),
+        font    = string.format("%s %s", pulsebar.notifications.font,
+                  pulsebar.notifications.font_size),
         fg      = pulsebar.notifications.color
     }
 
