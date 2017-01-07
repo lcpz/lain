@@ -54,9 +54,9 @@ function quake:display()
 
     if not client then
         -- The client does not exist, we spawn it
-        awful.util.spawn(string.format("%s %s %s", self.app,
-                         string.format(self.argname, self.name), self.extra),
-                         false, self.screen)
+        awful.spawn(string.format("%s %s %s", self.app,
+                    string.format(self.argname, self.name), self.extra),
+                    false, self.screen)
         self.notexist = true
         return
     end
@@ -81,8 +81,8 @@ function quake:display()
     if self.visible then
         client.hidden = false
         client:raise()
-        self.last_tag = awful.tag.selected(self.screen)
-        client:tags({awful.tag.selected(self.screen)})
+        self.last_tag = self.screen.selected_tag
+        client:tags({self.screen.selected_tag})
         capi.client.focus = client
    else
         client.hidden = true
@@ -155,15 +155,13 @@ end
 
 function quake:toggle()
      if self.followtag then self.screen = awful.screen.focused() end
-     local current_tag = awful.tag.selected(self.screen)
-     if self.last_tag ~= current_tag and self.visible then
-         awful.client.movetotag(current_tag, self:display())
+     local current_tag = self.screen.selected_tag
+     if current_tag and self.last_tag ~= current_tag and self.visible then
+         self:display():move_to_tag(current_tag)
      else
          self.visible = not self.visible
          self:display()
      end
 end
 
-setmetatable(quake, { __call = function(_, ...) return quake:new(...) end })
-
-return quake
+return setmetatable(quake, { __call = function(_, ...) return quake:new(...) end })
