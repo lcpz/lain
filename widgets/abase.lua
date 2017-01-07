@@ -12,8 +12,7 @@ local wibox        = require("wibox")
 
 local setmetatable = setmetatable
 
--- Basic template for custom widgets
--- Asynchronous version
+-- Basic template for custom widgets (asynchronous version)
 -- lain.widgets.abase
 
 local function worker(args)

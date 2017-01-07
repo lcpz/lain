@@ -7,7 +7,7 @@
                                                   
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
+local helpers      = require("lain.helpers")
 local read_pipe    = require("lain.helpers").read_pipe
 
 local wibox        = require("wibox")
@@ -19,7 +19,7 @@ local setmetatable = setmetatable
 
 -- ALSA volume
 -- lain.widgets.alsa
-local alsa = { last_level = "0", last_status = "" }
+local alsa = helpers.make_widget_textbox()
 
 local function worker(args)
     local args     = args or {}
@@ -29,11 +29,12 @@ local function worker(args)
     alsa.cmd           = args.cmd or "amixer"
     alsa.channel       = args.channel or "Master"
     alsa.togglechannel = args.togglechannel
-    alsa.widget        = wibox.widget.textbox('')
+    alsa.last_level    = "0"
+    alsa.last_status   = ""
 
     function alsa.update()
         mixer = read_pipe(string.format("%s get %s", alsa.cmd, alsa.channel))
-        l,s   = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
+        l, s  = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
 
         -- HDMIs can have a channel different from Master for toggling mute
         if alsa.togglechannel then
@@ -51,9 +52,9 @@ local function worker(args)
     end
 
     timer_id = string.format("alsa-%s-%s", alsa.cmd, alsa.channel)
-    newtimer(timer_id, timeout, alsa.update)
+    helpers.newtimer(timer_id, timeout, alsa.update)
 
-    return setmetatable(alsa, { __index = alsa.widget })
+    return alsa
 end
 
 return setmetatable(alsa, { __call = function(_, ...) return worker(...) end })

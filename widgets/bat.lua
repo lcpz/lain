@@ -7,7 +7,7 @@
 												                        
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
+local helpers      = require("lain.helpers")
 local first_line   = require("lain.helpers").first_line
 
 local naughty      = require("naughty")
@@ -27,15 +27,13 @@ local setmetatable = setmetatable
 -- lain.widgets.bat
 
 local function worker(args)
-    local bat       = {}
+    local bat       = helpers.make_widget_textbox()
     local args      = args or {}
     local timeout   = args.timeout or 30
     local batteries = args.batteries or (args.battery and {args.battery}) or {"BAT0"}
     local ac        = args.ac or "AC0"
     local notify    = args.notify or "on"
     local settings  = args.settings or function() end
-
-    bat.widget = wibox.widget.textbox('')
 
     bat_notification_low_preset = {
         title   = "Battery low",
@@ -165,9 +163,9 @@ local function worker(args)
         end
     end
 
-    newtimer(battery, timeout, bat.update)
+    helpers.newtimer(battery, timeout, bat.update)
 
-    return setmetatable(bat, { __index = bat.widget })
+    return bat
 end
 
 return setmetatable({}, { __call = function(_, ...) return worker(...) end })
