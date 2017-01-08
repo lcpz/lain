@@ -11,6 +11,7 @@ local helpers      = require("lain.helpers")
 local async        = require("lain.asyncshell")
 
 local escape_f     = require("awful.util").escape
+local focused      = require("awful.screen").focused
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
@@ -118,7 +119,7 @@ local function worker(args)
                     end
 
                     if followtag then
-                        mpd_notification_preset.screen = awful.screen.focused()
+                        mpd_notification_preset.screen = focused()
                     end
 
                     mpd.id = naughty.notify({

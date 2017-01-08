@@ -11,12 +11,12 @@
 local helpers      = require("lain.helpers")
 
 local beautiful    = require("beautiful")
+local focused      = require("awful.screen").focused
 local wibox        = require("wibox")
 local naughty      = require("naughty")
 
 local io           = { popen  = io.popen }
 local pairs        = pairs
-local mouse        = mouse
 local string       = { match  = string.match,
                        format = string.format }
 local tonumber     = tonumber
@@ -41,8 +41,8 @@ function fs.show(seconds, options, scr)
     local cmd = (options and string.format("dfs %s", options)) or "dfs"
     local ws = helpers.read_pipe(helpers.scripts_dir .. cmd):gsub("\n*$", "")
 
-    if fs.followmouse then
-        fs.notification_preset.screen = mouse.screen
+    if fs.followtag then
+        fs.notification_preset.screen = focused()
     elseif scr then
         fs.notification_preset.screen = scr
     end
@@ -65,7 +65,7 @@ local function worker(args)
     local notify           = args.notify or "on"
     local settings         = args.settings or function() end
 
-    fs.followmouse         = args.followmouse or false
+    fs.followta  g         = args.followtag or false
     fs.notification_preset = args.notification_preset or { fg = beautiful.fg_normal }
 
     fs.widget = wibox.widget.textbox('')
@@ -94,11 +94,11 @@ local function worker(args)
 
         f:close()
 
-        fs_now.used      = tonumber(fs_info[partition .. " used_p"])  or 0
         fs_now.available = tonumber(fs_info[partition .. " avail_p"]) or 0
         fs_now.size_mb   = tonumber(fs_info[partition .. " size_mb"]) or 0
         fs_now.size_gb   = tonumber(fs_info[partition .. " size_gb"]) or 0
-        fs_now.used_mb   = tonumber(fs_info[partition .. " used_mb"]) or 0                                                                                                                    
+        fs_now.used      = tonumber(fs_info[partition .. " used_p"])  or 0
+        fs_now.used_mb   = tonumber(fs_info[partition .. " used_mb"]) or 0
         fs_now.used_gb   = tonumber(fs_info[partition .. " used_gb"]) or 0
 
         notification_preset = fs.notification_preset

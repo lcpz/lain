@@ -9,7 +9,7 @@
 local debug  = require("debug")
 
 local assert = assert
-local capi   = { timer = (type(timer) == 'table' and timer or require ("gears.timer")) }
+local capi   = { timer = require ("gears.timer") }
 local io     = { open  = io.open,
                  lines = io.lines,
                  popen = io.popen }

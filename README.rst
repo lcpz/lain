@@ -10,10 +10,13 @@ Layouts, widgets and utilities for Awesome WM 4.x
 :License: GNU-GPL2_
 :Source: https://github.com/copycat-killer/lain
 
+Warning
+-------
+
+The update to 4.x is still in progress: if you experience issues, please report them in order to speed up the process.
+
 Description
 -----------
-
-**Note:** the update to 4.x is still in progress: if you experience issues, please report them in order to speed up the process.
 
 Successor of awesome-vain_, this module provides new layouts, a set of widgets and utility functions, with the aim of improving Awesome_ usability and configurability.
 

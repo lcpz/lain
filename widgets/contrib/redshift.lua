@@ -8,7 +8,6 @@
 
 local awful        = require("awful")
 local os           = os
-local spawn        = awful.util.spawn_with_shell
 
 local setmetatable = setmetatable
 
@@ -26,9 +25,9 @@ local function init()
     -- toggled off (i.e Awesome on-the-fly restart), kill redshift to make sure
     os.execute("pkill redshift")
     -- Remove existing color adjustment
-    spawn("redshift -x")
+    awful.spawn_with_shell("redshift -x")
     -- (Re)start redshift
-    spawn("redshift")
+    awful.spawn_with_shell("redshift")
     running = true
     active = true
 end
