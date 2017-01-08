@@ -85,6 +85,8 @@ local function worker(args)
             if u and m then -- Handle 1st line and broken regexp
                 fs_info[m .. " size_mb"]  = string.format("%.1f", tonumber(s) / unit["mb"])
                 fs_info[m .. " size_gb"]  = string.format("%.1f", tonumber(s) / unit["gb"])
+                fs_info[m .. " used_mb"]  = string.format("%.1f", tonumber(u) / unit["mb"])
+                fs_info[m .. " used_gb"]  = string.format("%.1f", tonumber(u) / unit["gb"])
                 fs_info[m .. " used_p"]   = tonumber(p)
                 fs_info[m .. " avail_p"]  = 100 - tonumber(p)
             end
@@ -96,6 +98,8 @@ local function worker(args)
         fs_now.available = tonumber(fs_info[partition .. " avail_p"]) or 0
         fs_now.size_mb   = tonumber(fs_info[partition .. " size_mb"]) or 0
         fs_now.size_gb   = tonumber(fs_info[partition .. " size_gb"]) or 0
+        fs_now.used_mb   = tonumber(fs_info[partition .. " used_mb"]) or 0                                                                                                                    
+        fs_now.used_gb   = tonumber(fs_info[partition .. " used_gb"]) or 0
 
         notification_preset = fs.notification_preset
         widget = fs.widget
