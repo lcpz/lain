@@ -62,7 +62,7 @@ function quake:display()
     end
 
     -- Resize
-    awful.client.floating.set(client, true)
+    client.floating = true
     client.border_width = self.border
     client.size_hints_honor = false
     if self.notexist then
