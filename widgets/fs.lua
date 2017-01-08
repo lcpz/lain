@@ -65,7 +65,7 @@ local function worker(args)
     local notify           = args.notify or "on"
     local settings         = args.settings or function() end
 
-    fs.followta  g         = args.followtag or false
+    fs.followtag           = args.followtag or false
     fs.notification_preset = args.notification_preset or { fg = beautiful.fg_normal }
 
     fs.widget = wibox.widget.textbox('')
