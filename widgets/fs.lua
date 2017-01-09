@@ -35,10 +35,10 @@ function fs.hide()
     end
 end
 
-function fs.show(seconds, options, scr)
+function fs.show(seconds, scr)
     fs.hide()
 
-    local cmd = (options and string.format("dfs %s", options)) or "dfs"
+    local cmd = (fs.options and string.format("dfs %s", fs.options)) or "dfs"
     local ws = helpers.read_pipe(helpers.scripts_dir .. cmd):gsub("\n*$", "")
 
     if fs.followtag then
@@ -65,6 +65,7 @@ local function worker(args)
     local notify           = args.notify or "on"
     local settings         = args.settings or function() end
 
+    fs.options             = args.options
     fs.followtag           = args.followtag or false
     fs.notification_preset = args.notification_preset or { fg = beautiful.fg_normal }
 

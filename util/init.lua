@@ -33,7 +33,7 @@ local util = { _NAME = "lain.util" }
 -- tags.
 function util.menu_clients_current_tags(menu, args)
     -- List of currently selected tags.
-    local cls_tags = awful.tag.selectedlist(mouse.screen)
+    local cls_tags = awful.screen.focused().selected_tags
 
     -- Final list of menu items.
     local cls_t = {}
@@ -89,15 +89,18 @@ end
 function util.mc(c)
     c = c or magnified_client
     if not c then return end
-    awful.client.floating.set(c, true)
-    local mg = screen[mouse.screen].geometry
-    local tag = awful.tag.selected(mouse.screen)
-    local mwfact = awful.tag.getmwfact(tag)
-    local g = {}
-    g.width = math.sqrt(mwfact) * mg.width
-    g.height = math.sqrt(mwfact) * mg.height
-    g.x = mg.x + (mg.width - g.width) / 2
-    g.y = mg.y + (mg.height - g.height) / 2
+
+    c.floating   = true
+    local s      = awful.screen.selected()
+    local mg     = s.geometry
+    local tag    = s.selected_tag
+    local mwfact = beautiful.master_width_factor or 0.5
+    local g      = {}
+    g.width      = math.sqrt(mwfact) * mg.width
+    g.height     = math.sqrt(mwfact) * mg.height
+    g.x          = mg.x + (mg.width - g.width) / 2
+    g.y          = mg.y + (mg.height - g.height) / 2
+
     if c then c:geometry(g) end -- if c is still a valid object
 end
 
@@ -148,12 +151,12 @@ end
 -- Non-empty tag browsing
 -- direction in {-1, 1} <-> {previous, next} non-empty tag
 function util.tag_view_nonempty(direction, sc)
-   local s = sc or mouse.screen or 1
+   local s = sc or awful.screen.focused()
    local scr = screen[s]
 
-   for i = 1, #awful.tag.gettags(s) do
-       awful.tag.viewidx(direction,s)
-       if #awful.client.visible(s) > 0 then
+   for i = 1, #s.tags do
+       awful.tag.viewidx(direction, s)
+       if #s.clients > 0 then
            return
        end
    end
@@ -191,7 +194,7 @@ end
 -- Move current tag
 -- pos in {-1, 1} <-> {previous, next} tag position
 function util.move_tag(pos)
-    local tag = awful.tag.selected(mouse.screen)
+    local tag = awful.screen.focused().selected_tag
     local idx = awful.tag.getidx(tag)
     if tonumber(pos) <= -1 then
         awful.tag.move(idx - 1, tag)

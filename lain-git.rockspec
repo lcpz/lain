@@ -15,8 +15,8 @@ description = {
    license = "GPL v2"
 }
 dependencies = {
-   "lua >= 5.1",
-   "awesome >= 3.5",
+   "lua >= 5.3",
+   "awesome >= 4.0",
    "alsa-utils",
    "curl",
    "imagemagick"
