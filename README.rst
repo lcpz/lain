@@ -10,11 +10,6 @@ Layouts, widgets and utilities for Awesome WM 4.x
 :License: GNU-GPL2_
 :Source: https://github.com/copycat-killer/lain
 
-Warning
--------
-
-The update to 4.x is still in progress: if you experience issues, please report them in order to speed up the process.
-
 Description
 -----------
 
