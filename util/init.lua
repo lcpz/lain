@@ -15,7 +15,6 @@
 local awful        = require("awful")
 local beautiful    = require("beautiful")
 local math         = { sqrt = math.sqrt }
-local mouse        = mouse
 local pairs        = pairs
 local string       = { gsub = string.gsub }
 local client       = client
@@ -29,26 +28,23 @@ local setmetatable = setmetatable
 -- lain.util
 local util = { _NAME = "lain.util" }
 
--- Like awful.menu.clients, but only show clients of currently selected
--- tags.
+-- Like awful.menu.clients, but only show clients of currently selected tags
 function util.menu_clients_current_tags(menu, args)
     -- List of currently selected tags.
     local cls_tags = awful.screen.focused().selected_tags
 
+    if cls_tags == nil then return nil end
+
     -- Final list of menu items.
     local cls_t = {}
 
-    if cls_tags == nil then return nil end
-
     -- For each selected tag get all clients of that tag and add them to
     -- the menu. A click on a menu item will raise that client.
-    for i = 1,#cls_tags
-    do
-        local t = cls_tags[i]
+    for i = 1,#cls_tags do
+        local t   = cls_tags[i]
         local cls = t:clients()
 
-        for k, c in pairs(cls)
-        do
+        for k, c in pairs(cls) do
             cls_t[#cls_t + 1] = { awful.util.escape(c.name) or "",
                                   function ()
                                       c.minimized = false
@@ -68,30 +64,30 @@ function util.menu_clients_current_tags(menu, args)
 
     -- Set the list of items and show the menu.
     menu.items = cls_t
-    local m = awful.menu.new(menu)
+    local m = awful.menu(menu)
     m:show(args)
+
     return m
 end
 
--- Magnify a client: Set it to "float" and resize it.
-local magnified_client = nil
+-- Magnify a client: set it to "float" and resize it.
 function util.magnify_client(c)
-    if c and not awful.client.floating.get(c) then
+    if c and not c.floating then
         util.mc(c)
-        magnified_client = c
+        util.magnified_client = c
     else
-        awful.client.floating.set(c, false)
-        magnified_client = nil
+        c.floating = false
+        util.magnified_client = nil
     end
 end
 
 -- https://github.com/copycat-killer/lain/issues/195
 function util.mc(c)
-    c = c or magnified_client
+    c = c or util.magnified_client
     if not c then return end
 
     c.floating   = true
-    local s      = awful.screen.selected()
+    local s      = awful.screen.focused()
     local mg     = s.geometry
     local tag    = s.selected_tag
     local mwfact = beautiful.master_width_factor or 0.5
@@ -104,55 +100,10 @@ function util.mc(c)
     if c then c:geometry(g) end -- if c is still a valid object
 end
 
--- Read the nice value of pid from /proc.
-local function get_nice_value(pid)
-    local n = first_line('/proc/' .. pid .. '/stat')
-    if not n then return 0 end
-
-    -- Remove pid and tcomm. This is necessary because tcomm may contain
-    -- nasty stuff such as whitespace or additional parentheses...
-    n = string.gsub(n, '.*%) ', '')
-
-    -- Field number 17 now is the nice value.
-    fields = split(n, ' ')
-    return tonumber(fields[17])
-end
-
--- To be used as a signal handler for "focus"
--- This requires beautiful.border_focus{,_highprio,_lowprio}.
-function util.niceborder_focus(c)
-    local n = get_nice_value(c.pid)
-    if n == 0
-    then
-        c.border_color = beautiful.border_focus
-    elseif n < 0
-    then
-        c.border_color = beautiful.border_focus_highprio
-    else
-        c.border_color = beautiful.border_focus_lowprio
-    end
-end
-
--- To be used as a signal handler for "unfocus"
--- This requires beautiful.border_normal{,_highprio,_lowprio}.
-function util.niceborder_unfocus(c)
-    local n = get_nice_value(c.pid)
-    if n == 0
-    then
-        c.border_color = beautiful.border_normal
-    elseif n < 0
-    then
-        c.border_color = beautiful.border_normal_highprio
-    else
-        c.border_color = beautiful.border_normal_lowprio
-    end
-end
-
 -- Non-empty tag browsing
 -- direction in {-1, 1} <-> {previous, next} non-empty tag
 function util.tag_view_nonempty(direction, sc)
    local s = sc or awful.screen.focused()
-   local scr = screen[s]
 
    for i = 1, #s.tags do
        awful.tag.viewidx(direction, s)
@@ -163,7 +114,7 @@ function util.tag_view_nonempty(direction, sc)
 end
 
 -- {{{ Dynamic tagging
---
+
 -- Add a new tag
 function util.add_tag()
     awful.prompt.run {
@@ -210,22 +161,13 @@ function util.delete_tag()
     if not t then return end
     t:delete()
 end
+
 -- }}}
 
 -- On the fly useless gaps change
 function util.useless_gaps_resize(thatmuch)
     beautiful.useless_gap = tonumber(beautiful.useless_gap) + thatmuch
-    awful.layout.arrange(mouse.screen)
-end
-
--- Check if an element exist on a table
-function util.element_in_table(element, tbl)
-    for _, i in pairs(tbl) do
-        if i == element then
-            return true
-        end
-    end
-    return false
+    awful.layout.arrange(awful.screen.focused())
 end
 
 return setmetatable(util, { __index = wrequire })

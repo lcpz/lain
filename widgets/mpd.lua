@@ -124,7 +124,8 @@ local function worker(args)
 
                     mpd.id = naughty.notify({
                         preset = mpd_notification_preset,
-                        icon = current_icon,
+                        icon = os.execute(string.format("ls %s &> /dev/null", current_icon))
+                               and current_icon,
                         replaces_id = mpd.id,
                     }).id
                 end

@@ -144,6 +144,16 @@ end
 
 -- {{{ Misc
 
+-- check if an element exist on a table
+function helpers.element_in_table(element, tbl)
+    for _, i in pairs(tbl) do
+        if i == element then
+            return true
+        end
+    end
+    return false
+end
+
 -- iterate over table of records sorted by keys
 function helpers.spairs(t)
     -- collect the keys
