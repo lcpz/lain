@@ -47,7 +47,7 @@ Screenshots
 .. image:: http://i.imgur.com/STCPcaJ.png
 
 .. _GNU-GPL2: http://www.gnu.org/licenses/gpl-2.0.html
-.. _201faf5: https://github.com/copycat-killer/lain/tree/301faf5370d045e94c9c344acb0fdac84a2f25a6
+.. _301faf5: https://github.com/copycat-killer/lain/tree/301faf5370d045e94c9c344acb0fdac84a2f25a6
 .. _awesome-vain: https://github.com/vain/awesome-vain
 .. _Awesome: https://github.com/awesomeWM/awesome
 .. _wiki: https://github.com/copycat-killer/lain/wiki
