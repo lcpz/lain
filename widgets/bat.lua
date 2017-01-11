@@ -108,7 +108,16 @@ local function worker(args)
             end
         end
 
+        -- When one of the battery is charging, others' status are either
+        -- "Full", "Unknown" or "Charging". When the laptop is not plugged in,
+        -- one or more of the batteries may be full, but only one battery
+        -- discharging suffices to set global status to "Discharging".
         bat_now.status = bat_now.n_status[1]
+        for _,status in ipairs(bat_now.n_status) do
+            if status == "Discharging" or status == "Charging" then
+                bat_now.status = status
+            end
+        end
         bat_now.ac_status = tonumber(first_line(string.format("%s%s/online", pspath, ac))) or "N/A"
 
         if bat_now.status ~= "N/A" then
