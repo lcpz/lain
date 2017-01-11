@@ -7,8 +7,9 @@
 												                        
 --]]
 
-local helpers      = require("lain.helpers")
 local first_line   = require("lain.helpers").first_line
+local make_widget  = require("lain.helpers").make_widget_textbox
+local newtimer     = require("lain.helpers").newtimer
 
 local naughty      = require("naughty")
 local wibox        = require("wibox")
@@ -19,6 +20,7 @@ local math         = { abs    = math.abs,
                        min    = math.min }
 local string       = { format = string.format }
 
+local ipairs       = ipairs
 local type         = type
 local tonumber     = tonumber
 local setmetatable = setmetatable
@@ -27,7 +29,7 @@ local setmetatable = setmetatable
 -- lain.widgets.bat
 
 local function worker(args)
-    local bat       = helpers.make_widget_textbox()
+    local bat       = make_widget()
     local args      = args or {}
     local timeout   = args.timeout or 30
     local batteries = args.batteries or (args.battery and {args.battery}) or {"BAT0"}
@@ -172,7 +174,7 @@ local function worker(args)
         end
     end
 
-    helpers.newtimer(battery, timeout, bat.update)
+    newtimer(battery, timeout, bat.update)
 
     return bat
 end
