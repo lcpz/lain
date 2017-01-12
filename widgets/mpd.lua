@@ -7,20 +7,18 @@
                                                   
 --]]
 
-local helpers      = require("lain.helpers")
 local async        = require("lain.asyncshell")
+local helpers      = require("lain.helpers")
 
 local escape_f     = require("awful.util").escape
 local focused      = require("awful.screen").focused
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
-local os           = { execute = os.execute,
-                       getenv  = os.getenv }
-local math         = { floor   = math.floor }
-local string       = { format  = string.format,
-                       match   = string.match,
-                       gmatch  = string.gmatch }
+local os           = { getenv = os.getenv }
+local string       = { format = string.format,
+                       gmatch = string.gmatch,
+                       match  = string.match }
 
 local setmetatable = setmetatable
 
@@ -29,22 +27,22 @@ local setmetatable = setmetatable
 local mpd = helpers.make_widget_textbox()
 
 local function worker(args)
-    local args        = args or {}
-    local timeout     = args.timeout or 2
-    local password    = args.password or ""
-    local host        = args.host or "127.0.0.1"
-    local port        = args.port or "6600"
-    local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
-    local cover_size  = args.cover_size or 100
-    local default_art = args.default_art or ""
-    local notify      = args.notify or "on"
-    local followtag   = args.followtag or false
-    local echo_cmd    = args.echo_cmd or "echo"
-    local settings    = args.settings or function() end
+    local args          = args or {}
+    local timeout       = args.timeout or 2
+    local password      = args.password or ""
+    local host          = args.host or "127.0.0.1"
+    local port          = args.port or "6600"
+    local music_dir     = args.music_dir or os.getenv("HOME") .. "/Music"
+    local cover_pattern = args.cover_pattern or "*\\.(jpg|jpeg|png|gif)$"
+    local cover_size    = args.cover_size or 100
+    local default_art   = args.default_art or ""
+    local notify        = args.notify or "on"
+    local followtag     = args.followtag or false
+    local echo_cmd      = args.echo_cmd or "echo"
+    local settings      = args.settings or function() end
 
-    local mpdcover = helpers.scripts_dir .. "mpdcover"
-    local mpdh = "telnet://" .. host .. ":" .. port
-    local echo = echo_cmd .. " 'password " .. password .. "\nstatus\ncurrentsong\nclose'"
+    local mpdh = string.format("telnet://%s:%s", host, port)
+    local echo = string.format("%s 'password %s\nstatus\ncurrentsong\nclose'", echo_cmd, password)
 
     mpd_notification_preset = {
         title   = "Now playing",
@@ -54,7 +52,7 @@ local function worker(args)
     helpers.set_map("current mpd track", nil)
 
     function mpd.update()
-        async.request(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh, function (f)
+        async.request(string.format("%s | curl --connect-timeout 1 -fsm 3 %s", echo, mpdh), function (f)
             mpd_now = {
                 random_mode  = false,
                 single_mode  = false,
@@ -103,34 +101,28 @@ local function worker(args)
             widget = mpd.widget
             settings()
 
-            if mpd_now.state == "play"
-            then
-                if notify == "on" and mpd_now.title ~= helpers.get_map("current mpd track")
-                then
+            if mpd_now.state == "play" then
+                if notify == "on" and mpd_now.title ~= helpers.get_map("current mpd track") then
                     helpers.set_map("current mpd track", mpd_now.title)
 
-                    if string.match(mpd_now.file, "http.*://") == nil
-                    then -- local file
-                        os.execute(string.format("%s %q %q %d %q", mpdcover, music_dir,
-                                   mpd_now.file, cover_size, default_art))
-                        current_icon = "/tmp/mpdcover.png"
-                    else -- http stream
-                        current_icon = default_art
+                    local current icon = default_art
+
+                    if not string.match(mpd_now.file, "http.*://") then -- local file instead of http stream
+                        local path   = string.format("%s/%s", music_dir, string.match(mpd_now.file, ".*/"))
+                        local cover  = string.format("find '%s' -maxdepth 1 -type f | egrep -i -m1 '%s'", path, cover_pattern)
+                        current_icon = helpers.read_pipe(cover):gsub("\n", "")
                     end
 
-                    if followtag then
-                        mpd_notification_preset.screen = focused()
-                    end
+                    if followtag then mpd_notification_preset.screen = focused() end
 
                     mpd.id = naughty.notify({
-                        preset = mpd_notification_preset,
-                        icon = os.execute(string.format("ls %s &> /dev/null", current_icon))
-                               and current_icon,
+                        preset      = mpd_notification_preset,
+                        icon        = current_icon,
+                        icon_size   = cover_size,
                         replaces_id = mpd.id,
                     }).id
                 end
-            elseif mpd_now.state ~= "pause"
-            then
+            elseif mpd_now.state ~= "pause" then
                 helpers.set_map("current mpd track", nil)
             end
         end)

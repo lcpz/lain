@@ -97,7 +97,12 @@ function quake:display()
 end
 
 function quake:compute_size()
-    local geom = screen[self.screen].workarea
+    local geom
+    if self.skip_wibox then
+        geom = screen[self.screen].workarea
+    else
+        geom = screen[self.screen].geometry
+    end
     local width, height = self.width, self.height
     if width  <= 1 then width = math.floor(geom.width * width) - 2 * self.border end
     if height <= 1 then height = math.floor(geom.height * height) end
@@ -114,14 +119,15 @@ end
 function quake:new(config)
     local conf = config or {}
 
-    conf.app       = conf.app       or "xterm"    -- application to spawn
-    conf.name      = conf.name      or "QuakeDD"  -- window name
-    conf.argname   = conf.argname   or "-name %s" -- how to specify window name
-    conf.extra     = conf.extra     or ""         -- extra arguments
-    conf.visible   = conf.visible   or false      -- initially not visible
-    conf.border    = conf.border    or 1          -- client border width
-    conf.followtag = conf.followtag or true       -- spawn on currently focused screen
-    conf.screen    = conf.screen    or awful.screen.focused()
+    conf.app        = conf.app        or "xterm"    -- application to spawn
+    conf.name       = conf.name       or "QuakeDD"  -- window name
+    conf.argname    = conf.argname    or "-name %s" -- how to specify window name
+    conf.extra      = conf.extra      or ""         -- extra arguments
+    conf.visible    = conf.visible    or false      -- initially not visible
+    conf.border     = conf.border     or 1          -- client border width
+    conf.followtag  = conf.followtag  or true       -- spawn on currently focused screen
+    conf.skip_wibox = conf.skip_wibox or true       -- skip the wibox (defaut) or overlap it
+    conf.screen     = conf.screen     or awful.screen.focused()
 
     -- If width or height <= 1 this is a proportion of the workspace
     conf.height       = conf.height       or 0.25     -- height
