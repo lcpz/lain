@@ -7,7 +7,7 @@ source = {
 description = {
    summary = "Layout, widgets and utilities for Awesome WM",
    detailed = [[
-        Successor of awesome-vain, this module provides new layouts, a set of widgets and utility functions, with the aim of Awesome usability and configurability.
+        Successor of awesome-vain, this module provides new layouts, a set of widgets and utility functions, with the aim of improving Awesome usability and configurability.
 
         Optional dependency: curl (for IMAP and weather widgets).
     ]],
