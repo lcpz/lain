@@ -120,7 +120,7 @@ function quake:new(config)
     conf.extra     = conf.extra     or ""         -- extra arguments
     conf.visible   = conf.visible   or false      -- initially not visible
     conf.border    = conf.border    or 1          -- client border width
-    conf.followtag = conf.followtag or false      -- spawn on currently focused screen
+    conf.followtag = conf.followtag or true       -- spawn on currently focused screen
     conf.screen    = conf.screen    or awful.screen.focused()
 
     -- If width or height <= 1 this is a proportion of the workspace
