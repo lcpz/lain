@@ -25,9 +25,9 @@ local function init()
     -- toggled off (i.e Awesome on-the-fly restart), kill redshift to make sure
     os.execute("pkill redshift")
     -- Remove existing color adjustment
-    awful.spawn_with_shell("redshift -x")
+    awful.util.spawn_with_shell("redshift -x")
     -- (Re)start redshift
-    awful.spawn_with_shell("redshift")
+    awful.util.spawn_with_shell("redshift")
     running = true
     active = true
 end
