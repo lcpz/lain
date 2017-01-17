@@ -13,7 +13,7 @@ Layouts, widgets and utilities for Awesome WM 4.x
 Warning
 -------
 
-If you still have to use branch 3.5.x, you can refer to the commit 301faf5_. Be aware that it's no longer supported, so update to 4.x ASAP.
+If you still have to use branch 3.5.x, you can refer to the commit 301faf5_, but be aware that it's no longer supported.
 
 Description
 -----------
