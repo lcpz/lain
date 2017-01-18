@@ -9,11 +9,11 @@
                                                   
 --]]
 
-local tag         = require("awful.tag")
-local math        = { ceil  = math.ceil,
-                      floor = math.floor,
-                      max   = math.max }
-local tonumber    = tonumber
+local tag      = require("awful.tag")
+local math     = { ceil  = math.ceil,
+                   floor = math.floor,
+                   max   = math.max }
+local tonumber = tonumber
 
 local termfair  = { name = "termfair" }
 termfair.center = { name = "centerfair" }

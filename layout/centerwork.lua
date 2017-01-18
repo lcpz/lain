@@ -10,9 +10,9 @@
                                                   
 --]]
 
-local tag         = require("awful.tag")
-local tonumber    = tonumber
-local math        = { floor = math.floor }
+local tag      = require("awful.tag")
+local tonumber = tonumber
+local math     = { floor = math.floor }
 
 local centerwork = {
     name         = "centerwork",

@@ -8,8 +8,8 @@
                                                   
 --]]
 
-local tag         = require("awful.tag")
-local tonumber    = tonumber
+local tag      = require("awful.tag")
+local tonumber = tonumber
 
 local cascade = {
     name     = "cascade",
