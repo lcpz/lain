@@ -10,9 +10,9 @@
                                                   
 --]]
 
-local tag       = require("awful.tag")
-local tonumber  = tonumber
-local math      = { floor = math.floor }
+local tag         = require("awful.tag")
+local tonumber    = tonumber
+local math        = { floor = math.floor }
 
 local centerwork = {
     name         = "centerwork",
@@ -27,7 +27,7 @@ local function do_centerwork(p, orientation)
     if #cls <= 0 then return end
 
     -- Useless gaps.
-    local useless_gap = tag.gap or 0
+    local useless_gap = p.useless_gap or 0
 
     local c = cls[1]
     local g = {}

@@ -8,14 +8,14 @@
                                                   
 --]]
 
-local tag      = require("awful.tag")
-local tonumber = tonumber
+local tag         = require("awful.tag")
+local tonumber    = tonumber
 
 local cascade = {
     name     = "cascade",
     nmaster  = 0,
     offset_x = 32,
-    offset_y = 8, 
+    offset_y = 8,
     tile     = {
         name          = "cascadetile",
         nmaster       = 0,
@@ -35,7 +35,7 @@ local function do_cascade(p, tiling)
     if #cls <= 0 then return end
 
     -- Useless gaps.
-    local useless_gap = tag.gap or 0
+    local useless_gap = p.useless_gap or 0
 
     if not tiling then
         -- Cascade windows.

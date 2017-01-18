@@ -9,11 +9,11 @@
                                                   
 --]]
 
-local tag       = require("awful.tag")
-local math      = { ceil  = math.ceil,
-                    floor = math.floor,
-                    max   = math.max }
-local tonumber  = tonumber
+local tag         = require("awful.tag")
+local math        = { ceil  = math.ceil,
+                      floor = math.floor,
+                      max   = math.max }
+local tonumber    = tonumber
 
 local termfair  = { name = "termfair" }
 termfair.center = { name = "centerfair" }
@@ -26,7 +26,7 @@ local function do_fair(p, orientation)
     if #cls <= 0 then return end
 
     -- Useless gaps.
-    local useless_gap = tag.gap or 0
+    local useless_gap = p.useless_gap or 0
 
     if orientation == "west" then
         -- Layout with fixed number of vertical columns (read from nmaster).
