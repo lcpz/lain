@@ -8,6 +8,7 @@
 
 local helpers      = require("lain.helpers")
 
+local shell        = require("awful.util").shell
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
@@ -38,7 +39,9 @@ local function worker(args                           )
     helpers.set_map(mail, 0)
 
     if not is_plain then
-        helpers.async(password, function(f) password = f:gsub("\n", "") end)
+        helpers.async(string.format("%s -s '%s'", shell, password), function(f)
+            password = f:gsub("\n", "")
+        end)
     end
 
     function update()
@@ -51,8 +54,8 @@ local function worker(args                           )
             mail_notification_preset.screen = awful.screen.focused()
         end
 
-        curl = string.format("%s --url imaps://%s:%s/INBOX -u %s:%q %s -k",
-               head_command, server, port, mail, password, request)
+        curl = string.format("%s -c '%s --url imaps://%s:%s/INBOX -u %s:%q %s -k'",
+               shell, head_command, server, port, mail, password, request)
 
         helpers.async(curl, function(f)
             _, mailcount = string.gsub(f, "%d+", "")
