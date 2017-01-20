@@ -7,8 +7,7 @@
                                                   
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
-local read_pipe    = require("lain.helpers").read_pipe
+local helpers      = require("lain.helpers")
 
 local awful        = require("awful")
 local beautiful    = require("beautiful")
@@ -35,9 +34,6 @@ local alsabar = {
         unmute     = "#A4CE8A"
     },
 
-    terminal = terminal or "xterm",
-    mixer    = string.format("%s -e alsamixer", terminal),
-
     notifications = {
         font      = beautiful.font:sub(beautiful.font:find(""), beautiful.font:find(" ")),
         font_size = "11",
@@ -48,46 +44,6 @@ local alsabar = {
     _current_level = 0,
     _muted         = false
 }
-
-function alsabar.notify()
-    alsabar.update()
-
-    local preset = {
-        title   = "",
-        text    = "",
-        timeout = 5,
-        screen  = alsabar.notifications.screen,
-        font    = string.format("%s %s", alsabar.notifications.font,
-                  alsabar.notifications.font_size),
-        fg      = alsabar.notifications.color
-    }
-
-    if alsabar._muted
-    then
-        preset.title = string.format("%s - Muted", alsabar.channel)
-    else
-        preset.title = string.format("%s - %s%%", alsabar.channel, alsabar._current_level)
-    end
-
-    int = math.modf((alsabar._current_level / 100) * awful.screen.focused().mywibox.height)
-    preset.text = string.format("[%s%s]", string.rep("|", int),
-                  string.rep(" ", awful.screen.focused().mywibox.height - int))
-
-    if alsabar.followtag then
-        preset.screen = awful.screen.focused()
-    end
-
-    if alsabar._notify ~= nil then
-        alsabar._notify = naughty.notify ({
-            replaces_id = alsabar._notify.id,
-            preset      = preset,
-        })
-    else
-        alsabar._notify = naughty.notify ({
-            preset = preset,
-        })
-    end
-end
 
 local function worker(args)
     local args         = args or {}
@@ -101,7 +57,6 @@ local function worker(args)
 
     alsabar.cmd           = args.cmd or "amixer"
     alsabar.channel       = args.channel or alsabar.channel
-    alsabar.togglechannel = args.togglechannel
     alsabar.step          = args.step or alsabar.step
     alsabar.colors        = args.colors or alsabar.colors
     alsabar.notifications = args.notifications or alsabar.notifications
@@ -122,66 +77,72 @@ local function worker(args)
 
     alsabar.tooltip = awful.tooltip({ objects = { alsabar.bar } })
 
-    function alsabar.update()
-        -- Get mixer control contents
-        local mixer = read_pipe(string.format("%s get %s", alsabar.cmd, alsabar.channel))
-
-        -- Capture mixer control state:          [5%] ... ... [on]
-        local volu, mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
-
-        -- HDMIs can have a channel different from Master for toggling mute
-        if alsabar.togglechannel then
-            mute = string.match(read_pipe(string.format("%s get %s", alsabar.cmd, alsabar.togglechannel)), "%[(%a+)%]")
-        end
-
-        if (volu and tonumber(volu) ~= alsabar._current_level) or (mute and string.match(mute, "on") ~= alsabar._muted)
-        then
-            alsabar._current_level = tonumber(volu) or alsabar._current_level
-            alsabar.bar:set_value(alsabar._current_level / 100)
-            if (not mute and tonumber(volu) == 0) or mute == "off"
+    function alsabar.update(callback)
+        helpers.async(alsabar.cmd, function(mixer)
+            local volu,mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
+            if (volu and tonumber(volu) ~= alsabar._current_level) or (mute and string.match(mute, "on") ~= alsabar._muted)
             then
-                alsabar._muted = true
-                alsabar.tooltip:set_text ("[Muted]")
-                alsabar.bar.color = alsabar.colors.mute
-            else
-                alsabar._muted = false
-                alsabar.tooltip:set_text(string.format("%s: %s", alsabar.channel, volu))
-                alsabar.bar.color = alsabar.colors.unmute
+                alsabar._current_level = tonumber(volu) or alsabar._current_level
+                alsabar.bar:set_value(alsabar._current_level / 100)
+                if (not mute and tonumber(volu) == 0) or mute == "off"
+                then
+                    alsabar._muted = true
+                    alsabar.tooltip:set_text ("[Muted]")
+                    alsabar.bar.color = alsabar.colors.mute
+                else
+                    alsabar._muted = false
+                    alsabar.tooltip:set_text(string.format("%s: %s", alsabar.channel, volu))
+                    alsabar.bar.color = alsabar.colors.unmute
+                end
+
+                volume_now = {}
+                volume_now.level = tonumber(volu)
+                volume_now.status = mute
+
+                settings()
+
+                if callback then callback() end
             end
-
-            volume_now = {}
-            volume_now.level = tonumber(volu)
-            volume_now.status = mute
-
-            settings()
-        end
+        end)
     end
 
-    alsabar.bar:buttons(awful.util.table.join (
-          awful.button({}, 1, function()
-            awful.util.spawn(alsabar.mixer)
-          end),
-          awful.button({}, 2, function()
-						awful.util.spawn(string.format("%s set %s 100%%", alsabar.cmd, alsabar.channel))
-            alsabar.update()
-          end),
-          awful.button({}, 3, function()
-            awful.util.spawn(string.format("%s set %s toggle", alsabar.cmd, alsabar.togglechannel or alsabar.channel))
-            alsabar.update()
-          end),
-          awful.button({}, 4, function()
-            awful.util.spawn(string.format("%s set %s %s+", alsabar.cmd, alsabar.channel, alsabar.step))
-            alsabar.update()
-          end),
-          awful.button({}, 5, function()
-            awful.util.spawn(string.format("%s set %s %s-", alsabar.cmd, alsabar.channel, alsabar.step))
-            alsabar.update()
-          end)
-    ))
+    function alsabar.notify()
+        alsabar.update(function()
+            local preset = {
+                title   = "",
+                text    = "",
+                timeout = 5,
+                screen  = alsabar.notifications.screen,
+                font    = string.format("%s %s", alsabar.notifications.font,
+                          alsabar.notifications.font_size),
+                fg      = alsabar.notifications.color
+            }
+
+            if alsabar._muted then
+                preset.title = string.format("%s - Muted", alsabar.channel)
+            else
+                preset.title = string.format("%s - %s%%", alsabar.channel, alsabar._current_level)
+            end
+
+            int = math.modf((alsabar._current_level / 100) * awful.screen.focused().mywibox.height)
+            preset.text = string.format("[%s%s]", string.rep("|", int),
+                          string.rep(" ", awful.screen.focused().mywibox.height - int))
+
+            if alsabar.followtag then preset.screen = awful.screen.focused() end
+
+            if alsabar._notify then
+                alsabar._notify = naughty.notify ({
+                    replaces_id = alsabar._notify.id,
+                    preset      = preset,
+                })
+            else
+                alsabar._notify = naughty.notify ({ preset = preset })
+            end
+        end)
+    end
 
     timer_id = string.format("alsabar-%s-%s", alsabar.cmd, alsabar.channel)
-
-    newtimer(timer_id, timeout, alsabar.update)
+    helpers.newtimer(timer_id, timeout, alsabar.update)
 
     return alsabar
 end

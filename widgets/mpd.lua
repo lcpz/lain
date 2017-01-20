@@ -7,9 +7,9 @@
                                                   
 --]]
 
-local async        = require("lain.asyncshell")
 local helpers      = require("lain.helpers")
 
+local shell        = require("awful.util").shell
 local escape_f     = require("awful.util").escape
 local focused      = require("awful.screen").focused
 local naughty      = require("naughty")
@@ -29,7 +29,7 @@ local mpd = helpers.make_widget_textbox()
 local function worker(args)
     local args          = args or {}
     local timeout       = args.timeout or 2
-    local password      = args.password or ""
+    local password      = (args.password and #args.password > 0 and string.format("password %s\\n", args.password)) or ""
     local host          = args.host or "127.0.0.1"
     local port          = args.port or "6600"
     local music_dir     = args.music_dir or os.getenv("HOME") .. "/Music"
@@ -38,21 +38,18 @@ local function worker(args)
     local default_art   = args.default_art or ""
     local notify        = args.notify or "on"
     local followtag     = args.followtag or false
-    local echo_cmd      = args.echo_cmd or "echo"
     local settings      = args.settings or function() end
 
     local mpdh = string.format("telnet://%s:%s", host, port)
-    local echo = string.format("%s 'password %s\nstatus\ncurrentsong\nclose'", echo_cmd, password)
+    local echo = string.format("printf \"%sstatus\\ncurrentsong\\nclose\\n\"", password)
+    local cmd  = string.format("%s -c '%s | curl --connect-timeout 1 -fsm 3 %s'", shell, echo, mpdh)
 
-    mpd_notification_preset = {
-        title   = "Now playing",
-        timeout = 6
-    }
+    mpd_notification_preset = { title = "Now playing", timeout = 6 }
 
     helpers.set_map("current mpd track", nil)
 
     function mpd.update()
-        async.request(string.format("%s | curl --connect-timeout 1 -fsm 3 %s", echo, mpdh), function (f)
+        helpers.async(cmd, function(f)
             mpd_now = {
                 random_mode  = false,
                 single_mode  = false,
@@ -105,22 +102,26 @@ local function worker(args)
                 if notify == "on" and mpd_now.title ~= helpers.get_map("current mpd track") then
                     helpers.set_map("current mpd track", mpd_now.title)
 
-                    local current icon = default_art
+                    if followtag then mpd_notification_preset.screen = focused() end
+
+                    local common =  {
+                        preset      = mpd_notification_preset,
+                        icon        = default_art,
+                        icon_size   = cover_size,
+                        replaces_id = mpd.id,
+                    }
 
                     if not string.match(mpd_now.file, "http.*://") then -- local file instead of http stream
                         local path   = string.format("%s/%s", music_dir, string.match(mpd_now.file, ".*/"))
-                        local cover  = string.format("find '%s' -maxdepth 1 -type f | egrep -i -m1 '%s'", path, cover_pattern)
-                        current_icon = helpers.read_pipe(cover):gsub("\n", "")
+                        local cover  = string.format("%s -c \"find '%s' -maxdepth 1 -type f | egrep -i -m1 '%s'\"", shell, path, cover_pattern)
+                        helpers.async(cover, function(current_icon)
+                            common.icon = current_icon:gsub("\n", "")
+                            mpd.id = naughty.notify(common).id
+                        end)
+                    else
+                        mpd.id = naughty.notify(common).id
                     end
 
-                    if followtag then mpd_notification_preset.screen = focused() end
-
-                    mpd.id = naughty.notify({
-                        preset      = mpd_notification_preset,
-                        icon        = current_icon,
-                        icon_size   = cover_size,
-                        replaces_id = mpd.id,
-                    }).id
                 end
             elseif mpd_now.state ~= "pause" then
                 helpers.set_map("current mpd track", nil)

@@ -6,17 +6,17 @@
                                                   
 --]]
 
-local debug  = require("debug")
 
-local assert = assert
-local capi   = { timer = require("gears.timer") }
-local io     = { open  = io.open,
-                 lines = io.lines,
-                 popen = io.popen }
-local rawget = rawget
-local table  = { sort   = table.sort }
+local debug      = require("debug")
+local io         = { lines = io.lines,
+                     open  = io.open,
+                     popen = io.popen }
+local rawget     = rawget
+local table      = { sort  = table.sort }
 
-local wibox  = require("wibox")
+local easy_async = require("awful.spawn").easy_async
+local timer      = require("gears.timer")
+local wibox      = require("wibox")
 
 -- Lain helper functions for internal use
 -- lain.helpers
@@ -95,7 +95,7 @@ helpers.timer_table = {}
 function helpers.newtimer(_name, timeout, fun, nostart)
     local name = timeout
     if not helpers.timer_table[name] then
-        helpers.timer_table[name] = capi.timer({ timeout = timeout })
+        helpers.timer_table[name] = timer({ timeout = timeout })
         helpers.timer_table[name]:start()
     end
     helpers.timer_table[name]:connect_signal("timeout", fun)
@@ -108,22 +108,25 @@ end
 
 -- {{{ Pipe operations
 
--- read the full output of a command output
+-- return the full output of an input command (synchronous pipe)
+-- @param cmd the input command
+-- @return command output (string)
 function helpers.read_pipe(cmd)
-   local f = assert(io.popen(cmd))
+   local f = io.popen(cmd)
    local output = f:read("*all")
    f:close()
    return output
 end
 
--- return line iterator of a command output
-function helpers.pipelines(...)
-    local f = assert(io.popen(...))
-    return function () -- iterator
-        local data = f:read()
-        if data == nil then f:close() end
-        return data
-    end
+-- run a command and execute a function on its output (asynchronous pipe)
+-- @param cmd the input command
+-- @param callback function to execute on cmd output
+-- @return cmd PID
+function helpers.async(cmd, callback)
+    return easy_async(cmd,
+    function (stdout, stderr, reason, exit_code)
+        callback(stdout)
+    end)
 end
 
 -- }}}

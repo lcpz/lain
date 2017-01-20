@@ -12,7 +12,6 @@ local awful        = require("awful")
 local beautiful    = require("beautiful")
 local naughty      = require("naughty")
 
-local mouse        = mouse
 local io           = io
 local string       = { len = string.len }
 local tonumber     = tonumber

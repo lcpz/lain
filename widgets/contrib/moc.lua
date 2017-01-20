@@ -6,52 +6,40 @@
                                                                   
 --]]
 
-local helpers  = require("lain.helpers")
-local async    = require("lain.asyncshell")
+local helpers      = require("lain.helpers")
 
-local focused  = require("awful.screen").focused
-local escape_f = require("awful.util").escape
-local naughty  = require("naughty")
-local wibox    = require("wibox")
+local shell        = require("awful.util").shell
+local focused      = require("awful.screen").focused
+local escape_f     = require("awful.util").escape
+local naughty      = require("naughty")
+local wibox        = require("wibox")
 
-local io       = { popen   = io.popen }
-local os       = { execute = os.execute,
-                   getenv  = os.getenv }
-local string   = { format  = string.format,
-                   gmatch  = string.gmatch }
+local os           = { getenv = os.getenv }
+local string       = { format = string.format,
+                       gmatch = string.gmatch }
 
 local setmetatable = setmetatable
 
 -- MOC audio player
 -- lain.widgets.contrib.moc
-local moc = {}
+local moc = helpers.make_widget_textbox()
 
 local function worker(args)
-    local args        = args or {}
-    local timeout     = args.timeout or 2
-    local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
-    local cover_size  = args.cover_size or 100
-    local default_art = args.default_art or ""
-    local followtag    = args.followtag or false
-    local settings    = args.settings or function() end
+    local args          = args or {}
+    local timeout       = args.timeout or 2
+    local music_dir     = args.music_dir or os.getenv("HOME") .. "/Music"
+    local cover_pattern = args.cover_pattern or "*\\.(jpg|jpeg|png|gif)$"
+    local cover_size    = args.cover_size or 100
+    local default_art   = args.default_art or ""
+    local followtag     = args.followtag or false
+    local settings      = args.settings or function() end
 
-    local mpdcover = helpers.scripts_dir .. "mpdcover"
-
-    moc.widget = wibox.widget.textbox('')
-
-    moc_notification_preset = {
-        title   = "Now playing",
-        timeout = 6
-    }
+    moc_notification_preset = { title = "Now playing", timeout = 6 }
 
     helpers.set_map("current moc track", nil)
 
     function moc.update()
-        -- mocp -i will produce output like:
-        -- Artist: Travis
-        -- Album: The Man Who
-        -- etc.
-        async.request("mocp -i", function(f)
+        helpers.async("mocp -i", function(f)
             moc_now = {
                 state   = "N/A",
                 file    = "N/A",
@@ -64,13 +52,13 @@ local function worker(args)
 
             for line in string.gmatch(f, "[^\n]+") do
                 for k, v in string.gmatch(line, "([%w]+):[%s](.*)$") do
-                    if k == "State" then moc_now.state = v
-                    elseif k == "File" then moc_now.file = v
-                    elseif k == "Artist" then moc_now.artist = escape_f(v)
-                    elseif k == "SongTitle" then moc_now.title = escape_f(v)
-                    elseif k == "Album" then moc_now.album = escape_f(v)
+                    if     k == "State"       then moc_now.state   = v
+                    elseif k == "File"        then moc_now.file    = v
+                    elseif k == "Artist"      then moc_now.artist  = escape_f(v)
+                    elseif k == "SongTitle"   then moc_now.title   = escape_f(v)
+                    elseif k == "Album"       then moc_now.album   = escape_f(v)
                     elseif k == "CurrentTime" then moc_now.elapsed = escape_f(v)
-                    elseif k == "TotalTime" then moc_now.total = escape_f(v)
+                    elseif k == "TotalTime"   then moc_now.total   = escape_f(v)
                     end
                 end
             end
@@ -83,18 +71,22 @@ local function worker(args)
             if moc_now.state == "PLAY" then
                 if moc_now.title ~= helpers.get_map("current moc track") then
                     helpers.set_map("current moc track", moc_now.title)
-                    os.execute(string.format("%s %q %q %d %q", mpdcover, "",
-                               moc_now.file, cover_size, default_art))
 
-                    if followtag then
-                        moc_notification_preset.screen = focused()
-                    end
+                    if followtag then moc_notification_preset.screen = focused() end
 
-                    moc.id = naughty.notify({
-                        preset = moc_notification_preset,
-                        icon = "/tmp/mpdcover.png",
+                    local common =  {
+                        preset      = moc_notification_preset,
+                        icon        = default_art,
+                        icon_size   = cover_size,
                         replaces_id = moc.id,
-                    }).id
+                    }
+
+                    local path   = string.format("%s/%s", music_dir, string.match(moc_now.file, ".*/"))
+                    local cover  = string.format("%s -c \"find '%s' -maxdepth 1 -type f | egrep -i -m1 '%s'\"", shell, path, cover_pattern)
+                    helpers.async(cover, function(current_icon)
+                        common.icon = current_icon:gsub("\n", "")
+                        moc.id = naughty.notify(common).id
+                    end)
                 end
             elseif  moc_now.state ~= "PAUSE" then
                 helpers.set_map("current moc track", nil)

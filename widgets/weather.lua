@@ -6,12 +6,10 @@
                                                   
 --]]
 
+local async        = require("lain.helpers").async
 local newtimer     = require("lain.helpers").newtimer
-local read_pipe    = require("lain.helpers").read_pipe
-
-local async        = require("lain.asyncshell")
-local json         = require("lain.util").dkjson
 local lain_icons   = require("lain.helpers").icons_dir
+local json         = require("lain.util").dkjson
 
 local focused      = require("awful.screen").focused
 local naughty      = require("naughty")
@@ -54,14 +52,14 @@ local function worker(args)
     local notification_preset   = args.notification_preset or {}
     local notification_text_fun = args.notification_text_fun or
                                   function (wn)
-                                      local day = string.gsub(read_pipe(string.format(date_cmd, wn["dt"])), "\n", "")
+                                      local day = os.date("%a %d", wn["dt"])
                                       local tmin = math.floor(wn["temp"]["min"])
                                       local tmax = math.floor(wn["temp"]["max"])
                                       local desc = wn["weather"][1]["description"]
                                       return string.format("<b>%s</b>: %s, %d - %d ", day, desc, tmin, tmax)
                                   end
     local weather_na_markup     = args.weather_na_markup or " N/A "
-    local followtag           = args.followtag or false
+    local followtag             = args.followtag or false
     local settings              = args.settings or function() end
 
     weather.widget    = wibox.widget.textbox(weather_na_markup)
@@ -105,7 +103,7 @@ local function worker(args)
 
     function weather.forecast_update()
         local cmd = string.format(forecast_call, city_id, units, lang, cnt, APPID)
-        async.request(cmd, function(f)
+        async(cmd, function(f)
             local pos, err
             weather_now, pos, err = json.decode(f, 1, nil)
 
@@ -125,7 +123,7 @@ local function worker(args)
 
     function weather.update()
         local cmd = string.format(current_call, city_id, units, lang, APPID)
-        async.request(cmd, function(f)
+        async(cmd, function(f)
             local pos, err, icon
             weather_now, pos, err = json.decode(f, 1, nil)
 
@@ -135,12 +133,9 @@ local function worker(args)
                 local sunrise = tonumber(weather_now["sys"]["sunrise"])
                 local sunset  = tonumber(weather_now["sys"]["sunset"])
                 local icon    = weather_now["weather"][1]["icon"]
-                local utc_m   = string.gsub(read_pipe(string.format("date -u -d 'today 00:00:00' +'%%s'")), "\n", "")
-                local loc_m   = string.gsub(read_pipe(string.format("date -d 'today 00:00:00' +'%%s'")), "\n", "")
-
-                loc_m  = tonumber(loc_m)
-                utc_m  = tonumber(utc_m)
-                offset = utc_offset()
+                local loc_m   = os.time { year = os.date("%Y"), month = os.date("%m"), day = os.date("%d"), hour = 0 }
+                local offset  = utc_offset()
+                local utc_m   = loc_m + offset
 
                 -- if we are 1 day after the GMT, return 1 day back, and viceversa
                 if offset > 0 and loc_m >= utc_m then

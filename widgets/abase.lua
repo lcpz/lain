@@ -6,10 +6,8 @@
                                                   
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
-local async        = require("lain.asyncshell")
+local helpers      = require("lain.helpers")
 local wibox        = require("wibox")
-
 local setmetatable = setmetatable
 
 -- Basic template for custom widgets (asynchronous version)
@@ -22,10 +20,10 @@ local function worker(args)
     local cmd      = args.cmd or ""
     local settings = args.settings or function() end
 
-    abase.widget = wibox.widget.textbox('')
+    abase.widget = wibox.widget.textbox()
 
     function abase.update()
-        async.request(cmd, function(f)
+        helpers.async(cmd, function(f)
             output = f
             if output ~= abase.prev then
                 widget = abase.widget
@@ -35,7 +33,7 @@ local function worker(args)
         end)
     end
 
-    newtimer(cmd, timeout, abase.update)
+    helpers.newtimer(cmd, timeout, abase.update)
 
     return setmetatable(abase, { __index = abase.widget })
 end

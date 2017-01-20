@@ -44,8 +44,7 @@ local function worker(args)
     function gpmdp.update()
         local filelines = helpers.lines_from(file_location)
 
-        if not next(filelines)
-        then
+        if not next(filelines) then
             local gpm_now = { running = false, playing = false }
         else
             dict, pos, err = json.decode(table.concat(filelines), 1, nil)
@@ -67,16 +66,12 @@ local function worker(args)
         widget = gpmdp.widget
         settings()
 
-        if gpm_now.playing
-        then
-            if notify == "on" and gpm_now.title ~= helpers.get_map("gpmdp_current")
-            then
+        if gpm_now.playing then
+            if notify == "on" and gpm_now.title ~= helpers.get_map("gpmdp_current") then
                 helpers.set_map("gpmdp_current", gpm_now.title)
                 os.execute(string.format("curl %d -o /tmp/gpmcover.png", gpm_now.cover_url))
 
-                if followtag then
-                    gpmdp_notification_preset.screen = focused()
-                end
+                if followtag then gpmdp_notification_preset.screen = focused() end
 
                 gpmdp.id = naughty.notify({
                     preset = gpmdp_notification_preset,

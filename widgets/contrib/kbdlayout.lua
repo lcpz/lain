@@ -38,8 +38,10 @@ local function worker(args)
 
    local function run_settings(layout, variant)
       widget = kbdlayout.widget
-      kbdlayout_now = { layout=string.match(layout, "[^,]+"), -- Make sure to match the primary layout only.
-			variant=variant }
+      kbdlayout_now = { 
+          layout=string.match(layout, "[^,]+"), -- Make sure to match the primary layout only.
+          variant=variant
+      }
       settings()
    end
 
