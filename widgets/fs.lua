@@ -26,13 +26,13 @@ local fs = {}
 -- Unit definitions
 fs.unit = { ["mb"] = 1024, ["gb"] = 1024^2 }
 
-function fs.hide() naughty.destroy(fs.notification) end
+function fs.hide()
+    naughty.destroy(fs.notification)
+    fs.notification = nil
+end
 
 function fs.show(seconds, scr)
     fs.hide()
-
-    local cmd = (fs.options and string.format("dfs %s", fs.options)) or "dfs"
-    local ws = helpers.read_pipe(helpers.scripts_dir .. cmd):gsub("\n*$", "")
 
     if fs.followtag then
         fs.notification_preset.screen = focused()
@@ -40,11 +40,15 @@ function fs.show(seconds, scr)
         fs.notification_preset.screen = scr
     end
 
-    fs.notification = naughty.notify({
-        preset      = fs.notification_preset,
-        text        = ws,
-        timeout     = seconds or 5,
-    })
+    local cmd = (fs.options and string.format("dfs %s", fs.options)) or "dfs"
+
+    helpers.async(helpers.scripts_dir .. cmd, function(ws)
+        fs.notification = naughty.notify({
+            preset      = fs.notification_preset,
+            text        = ws:gsub("\n*$", ""),
+            timeout     = seconds or 5,
+        })
+    end)
 end
 
 local function worker(args)

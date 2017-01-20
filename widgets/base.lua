@@ -22,7 +22,7 @@ local function worker(args)
     local cmd      = args.cmd or ""
     local settings = args.settings or function() end
 
-    base.widget = wibox.widget.textbox('')
+    base.widget = wibox.widget.textbox()
 
     function base.update()
         output = read_pipe(cmd)
