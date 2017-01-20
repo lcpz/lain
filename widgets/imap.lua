@@ -20,30 +20,26 @@ local setmetatable = setmetatable
 -- Mail IMAP check
 -- lain.widgets.imap
 
-local function worker(args)
-    local imap        = {}
-    local args        = args or {}
+local function worker(args                           )
+    local imap      = helpers.make_widget_textbox()
+    local args      = args or {}
+    local server    = args.server
+    local mail      = args.mail
+    local password  = args.password
+    local port      = args.port or 993
+    local timeout   = args.timeout or 60
+    local is_plain  = args.is_plain or false
+    local followtag = args.followtag or false
+    local settings  = args.settings or function() end
 
-    local server      = args.server
-    local mail        = args.mail
-    local password    = args.password
-
-    local port        = args.port or 993
-    local timeout     = args.timeout or 60
-    local is_plain    = args.is_plain or false
-    local followtag   = args.followtag or false
-    local settings    = args.settings or function() end
-
-    local head_command  = "curl --connect-timeout 3 -fsm 3"
+    local head_command = "curl --connect-timeout 3 -fsm 3"
     local request = "-X 'SEARCH (UNSEEN)'"
 
     helpers.set_map(mail, 0)
 
     if not is_plain then
-        password = helpers.read_pipe(password):gsub("\n", "")
+        helpers.async(password, function(f) password = f:gsub("\n", "") end)
     end
-
-    imap.widget = wibox.widget.textbox('')
 
     function update()
         mail_notification_preset = {
@@ -78,7 +74,7 @@ local function worker(args)
 
     end
 
-    helpers.newtimer(mail, timeout, update, true)
+    helpers.newtimer(mail, timeout, update)
 
     return setmetatable(imap, { __index = imap.widget })
 end
