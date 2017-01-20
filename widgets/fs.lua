@@ -1,24 +1,20 @@
 
 --[[
-                                                      
-     Licensed under GNU General Public License v2     
-      * (c) 2013, Luke Bonham                         
-      * (c) 2010, Adrian C.      <anrxc@sysphere.org> 
-      * (c) 2009, Lucas de Vries <lucas@glacicle.com> 
-                                                      
+                                                  
+     Licensed under GNU General Public License v2 
+      * (c) 2013, Luke Bonham                     
+                                                  
 --]]
 
 local helpers      = require("lain.helpers")
 
+local shell        = require("awful.util").shell
 local beautiful    = require("beautiful")
 local focused      = require("awful.screen").focused
 local wibox        = require("wibox")
 local naughty      = require("naughty")
 
-local io           = { popen  = io.popen }
-local pairs        = pairs
-local string       = { match  = string.match,
-                       format = string.format }
+local string       = string
 local tonumber     = tonumber
 
 local setmetatable = setmetatable
@@ -26,14 +22,11 @@ local setmetatable = setmetatable
 -- File system disk space usage
 -- lain.widgets.fs
 local fs = {}
-local fs_notification  = nil
 
-function fs.hide()
-    if fs_notification ~= nil then
-        naughty.destroy(fs_notification)
-        fs_notification = nil
-    end
-end
+-- Unit definitions
+fs.unit = { ["mb"] = 1024, ["gb"] = 1024^2 }
+
+function fs.hide() naughty.destroy(fs.notification) end
 
 function fs.show(seconds, scr)
     fs.hide()
@@ -47,15 +40,12 @@ function fs.show(seconds, scr)
         fs.notification_preset.screen = scr
     end
 
-    fs_notification = naughty.notify({
-        preset  = fs.notification_preset,
-        text    = ws,
-        timeout = seconds or 5
+    fs.notification = naughty.notify({
+        preset      = fs.notification_preset,
+        text        = ws,
+        timeout     = seconds or 5,
     })
 end
-
--- Unit definitions
-local unit = { ["mb"] = 1024, ["gb"] = 1024^2 }
 
 local function worker(args)
     local args             = args or {}
@@ -69,56 +59,54 @@ local function worker(args)
     fs.followtag           = args.followtag or false
     fs.notification_preset = args.notification_preset or { fg = beautiful.fg_normal }
 
-    fs.widget = wibox.widget.textbox('')
+    fs.widget = wibox.widget.textbox()
 
     helpers.set_map(partition, false)
 
+
     function update()
-        fs_info = {}
-        fs_now  = {}
-        local f = assert(io.popen("LC_ALL=C df -kP"))
+        fs_info, fs_now  = {}, {}
+        helpers.async(string.format("%s -c 'LC_ALL=C df -k --output=target,size,used,avail,pcent'", shell), function(f)
+            for line in string.gmatch(f, "\n[^\n]+") do
+                local m,s,u,a,p = string.match(line, "(/.-%s).-(%d+).-(%d+).-(%d+).-([%d]+)%%")
+                m = m:gsub(" ", "") -- clean target from any whitespace
 
-        for line in f:lines() do -- Match: (size) (used)(avail)(use%) (mount)
-            local s     = string.match(line, "^.-[%s]([%d]+)")
-            local u,a,p = string.match(line, "([%d]+)[%D]+([%d]+)[%D]+([%d]+)%%")
-            local m     = string.match(line, "%%[%s]([%p%w]+)")
-
-            if u and m then -- Handle 1st line and broken regexp
-                fs_info[m .. " size_mb"]  = string.format("%.1f", tonumber(s) / unit["mb"])
-                fs_info[m .. " size_gb"]  = string.format("%.1f", tonumber(s) / unit["gb"])
-                fs_info[m .. " used_mb"]  = string.format("%.1f", tonumber(u) / unit["mb"])
-                fs_info[m .. " used_gb"]  = string.format("%.1f", tonumber(u) / unit["gb"])
-                fs_info[m .. " used_p"]   = tonumber(p)
-                fs_info[m .. " avail_p"]  = 100 - tonumber(p)
+                fs_info[m .. " size_mb"]  = string.format("%.1f", tonumber(s) / fs.unit["mb"])
+                fs_info[m .. " size_gb"]  = string.format("%.1f", tonumber(s) / fs.unit["gb"])
+                fs_info[m .. " used_mb"]  = string.format("%.1f", tonumber(u) / fs.unit["mb"])
+                fs_info[m .. " used_gb"]  = string.format("%.1f", tonumber(u) / fs.unit["gb"])
+                fs_info[m .. " used_p"]   = p
+                fs_info[m .. " avail_mb"] = string.format("%.1f", tonumber(a) / fs.unit["mb"])
+                fs_info[m .. " avail_gb"] = string.format("%.1f", tonumber(a) / fs.unit["gb"])
+                fs_info[m .. " avail_p"]  = string.format("%d", 100 - tonumber(p))
             end
-        end
 
-        f:close()
+            fs_now.size_mb      = fs_info[partition .. " size_mb"]  or "N/A"
+            fs_now.size_gb      = fs_info[partition .. " size_gb"]  or "N/A"
+            fs_now.used         = fs_info[partition .. " used_p"]   or "N/A"
+            fs_now.used_mb      = fs_info[partition .. " used_mb"]  or "N/A"
+            fs_now.used_gb      = fs_info[partition .. " used_gb"]  or "N/A"
+            fs_now.available    = fs_info[partition .. " avail_p"]  or "N/A"
+            fs_now.available_mb = fs_info[partition .. " avail_mb"] or "N/A"
+            fs_now.available_gb = fs_info[partition .. " avail_gb"] or "N/A"
 
-        fs_now.available = tonumber(fs_info[partition .. " avail_p"]) or 0
-        fs_now.size_mb   = tonumber(fs_info[partition .. " size_mb"]) or 0
-        fs_now.size_gb   = tonumber(fs_info[partition .. " size_gb"]) or 0
-        fs_now.used      = tonumber(fs_info[partition .. " used_p"])  or 0
-        fs_now.used_mb   = tonumber(fs_info[partition .. " used_mb"]) or 0
-        fs_now.used_gb   = tonumber(fs_info[partition .. " used_gb"]) or 0
+            notification_preset = fs.notification_preset
+            widget = fs.widget
+            settings()
 
-        notification_preset = fs.notification_preset
-        widget = fs.widget
-        settings()
-
-        if notify == "on" and fs_now.used >= 99 and not helpers.get_map(partition)
-        then
-            naughty.notify({
-                title = "warning",
-                text = partition .. " ran out!\nmake some room",
-                timeout = 8,
-                fg = "#000000",
-                bg = "#FFFFFF",
-            })
-            helpers.set_map(partition, true)
-        else
-            helpers.set_map(partition, false)
-        end
+            if notify == "on" and fs_now.used >= 99 and not helpers.get_map(partition) then
+                naughty.notify({
+                    title   = "warning",
+                    text    = partition .. " is empty!",
+                    timeout = 8,
+                    fg      = "#000000",
+                    bg      = "#FFFFFF"
+                })
+                helpers.set_map(partition, true)
+            else
+                helpers.set_map(partition, false)
+            end
+        end)
     end
 
     if showpopup == "on" then
