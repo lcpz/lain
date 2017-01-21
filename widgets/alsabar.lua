@@ -19,6 +19,7 @@ local string       = { format = string.format,
                        match  = string.match,
                        rep    = string.rep }
 local tonumber     = tonumber
+local type         = type
 
 local setmetatable = setmetatable
 
@@ -101,7 +102,7 @@ local function worker(args)
 
                 settings()
 
-                if callback then callback() end
+                if type(callback) == "function" then callback() end
             end
         end)
     end

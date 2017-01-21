@@ -98,7 +98,7 @@ local function worker(args)
             widget = fs.widget
             settings()
 
-            if notify == "on" and fs_now.used >= 99 and not helpers.get_map(partition) then
+            if notify == "on" and tonumber(fs_now.used) >= 99 and not helpers.get_map(partition) then
                 naughty.notify({
                     title   = "warning",
                     text    = partition .. " is empty!",
