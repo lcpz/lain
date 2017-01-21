@@ -11,8 +11,9 @@ local helpers      = require("lain.helpers")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
+local shell        = require("awful.util").shell
+
 local string       = { format = string.format,
-                       gsub   = string.gsub,
                        match  = string.match }
 
 local setmetatable = setmetatable
@@ -26,40 +27,26 @@ local function worker(args)
     net.last_r = 0
     net.devices = {}
 
-    function net.get_first_device()
-        local ws = helpers.read_pipe("ip link show | cut -d' ' -f2,9")
-        ws = ws:match("%w+: UP") or ws:match("ppp%w+: UNKNOWN")
-        if ws then return { ws:match("(%w+):") }
-        else return {} end
-    end
-
-    local args     = args or {}
-    local timeout  = args.timeout or 2
-    local units    = args.units or 1024 --kb
-    local notify   = args.notify or "on"
-    local screen   = args.screen or 1
-    local settings = args.settings or function() end
-    local iface    = args.iface or net.get_first_device()
+    local args       = args or {}
+    local timeout    = args.timeout or 2
+    local units      = args.units or 1024 --kb
+    local notify     = args.notify or "on"
+    local screen     = args.screen or 1
+    local settings   = args.settings or function() end
 
     -- Compatibility with old API where iface was a string corresponding to 1 interface
-    if type(iface) == "string" then
-        iftable = {iface}
-    else
-        iftable = iface
+    net.iface = (args.iface and type(args.iface) == "string" and {args.iface}) or {}
+
+    function net.get_device()
+        helpers.async(string.format("%s -c 'ip link show'", shell, device_cmd), function(ws)
+            ws = ws:match("(%w+): <BROADCAST,MULTICAST,.-,UP,LOWER_UP>")
+            net.iface = ws and { ws } or {}
+        end)
     end
 
-    -- Mark all devices as initially online/active
-    for i, dev in ipairs(iftable) do
-        helpers.set_map(dev, true)
-    end
+    if #net.iface == 0 then net.get_device() end
 
     function update()
-        -- This check is required to ensure we keep looking for one device if
-        -- none is found by net.get_first_device() at startup (i.e. iftable = {})
-        if next(iftable) == nil then
-            iftable = net.get_first_device()
-        end
-
         -- These are the totals over all specified interfaces
         net_now = {
             -- New api - Current state of requested devices
@@ -73,15 +60,14 @@ local function worker(args)
         local total_t = 0
         local total_r = 0
 
-        for i, dev in ipairs(iftable) do
-            local dev_now = {}
+        for i, dev in ipairs(net.iface) do
+            local dev_now    = {}
             local dev_before = net.devices[dev] or { last_t = 0, last_r = 0 }
+            local now_t      = tonumber(helpers.first_line(string.format("/sys/class/net/%s/statistics/tx_bytes", dev)) or 0)
+            local now_r      = tonumber(helpers.first_line(string.format("/sys/class/net/%s/statistics/rx_bytes", dev)) or 0)
 
-            dev_now.carrier  = helpers.first_line(string.format('/sys/class/net/%s/carrier', dev)) or '0'
-            dev_now.state    = helpers.first_line(string.format('/sys/class/net/%s/operstate', dev)) or 'down'
-
-            local now_t      = tonumber(helpers.first_line(string.format('/sys/class/net/%s/statistics/tx_bytes', dev)) or 0)
-            local now_r      = tonumber(helpers.first_line(string.format('/sys/class/net/%s/statistics/rx_bytes', dev)) or 0)
+            dev_now.carrier  = helpers.first_line(string.format("/sys/class/net/%s/carrier", dev)) or "0"
+            dev_now.state    = helpers.first_line(string.format("/sys/class/net/%s/operstate", dev)) or "down"
 
             dev_now.sent     = (now_t - dev_before.last_t) / timeout / units
             dev_now.received = (now_r - dev_before.last_r) / timeout / units
@@ -89,8 +75,8 @@ local function worker(args)
             net_now.sent     = net_now.sent     + dev_now.sent
             net_now.received = net_now.received + dev_now.received
 
-            dev_now.sent     = string.gsub(string.format('%.1f', dev_now.sent), ',', '.')
-            dev_now.received = string.gsub(string.format('%.1f', dev_now.received), ',', '.')
+            dev_now.sent     = string.format('%.1f', dev_now.sent)
+            dev_now.received = string.format('%.1f', dev_now.received)
 
             dev_now.last_t   = now_t
             dev_now.last_r   = now_r
@@ -121,23 +107,20 @@ local function worker(args)
             net_now.devices[dev] = dev_now
             -- With the new api new_now.sent and net_now.received will be the
             -- totals across all specified devices
-
         end
 
         if total_t ~= net.last_t or total_r ~= net.last_r then
-            -- Convert to a string to round the digits after the float point
-            net_now.sent     = string.gsub(string.format('%.1f', net_now.sent), ',', '.')
-            net_now.received = string.gsub(string.format('%.1f', net_now.received), ',', '.')
-
-            net.last_t = total_t
-            net.last_r = total_r
+            net_now.sent     = string.format('%.1f', net_now.sent)
+            net_now.received = string.format('%.1f', net_now.received)
+            net.last_t       = total_t
+            net.last_r       = total_r
         end
 
         widget = net.widget
         settings()
     end
 
-    helpers.newtimer(iface, timeout, update)
+    helpers.newtimer(net.iface, timeout, update)
 
     return net
 end
