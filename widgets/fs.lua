@@ -61,7 +61,14 @@ local function worker(args)
 
     fs.options             = args.options
     fs.followtag           = args.followtag or false
-    fs.notification_preset = args.notification_preset or naughty.config.defaults
+    fs.notification_preset = args.notification_preset
+
+    if not fs.notification_preset then
+        fs.notification_preset      = naughty.config.defaults
+        fs.notification_preset.font = "Monospace 10"
+        fs.notification_preset.fg   = "#FFFFFF"
+        fs.notification_preset.bg   = "#000000"
+    end
 
     fs.widget = wibox.widget.textbox()
 

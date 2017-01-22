@@ -34,22 +34,20 @@ local smapi        = require("smapi")
 local tpbat = { }
 local tpbat_notification = nil
 
-function tpbat:hide()
-    if tpbat_notification ~= nil
-    then
-        naughty.destroy(tpbat_notification)
-        tpbat_notification = nil
-    end
+function tpbat.hide()
+    if not tpbat.notification then return end
+    naughty.destroy(tpbat.notification)
+    tpbat.notification = nil
 end
 
-function tpbat:show(t_out)
-    tpbat:hide()
+function tpbat.show(t_out)
+    tpbat.hide()
 
     local bat   = self.bat
-    local t_out = t_out or 0
 
     if bat == nil or not bat:installed() then return end
 
+    local t_out = t_out or 0
     local mfgr   = bat:get('manufacturer') or "no_mfgr"
     local model  = bat:get('model') or "no_model"
     local chem   = bat:get('chemistry') or "no_chem"
@@ -73,7 +71,7 @@ function tpbat:show(t_out)
                 .. string.format("\n%s \t\t\t %s", status:upper(), msg)
 
     tpbat_notification = naughty.notify({
-        preset = { fg = beautiful.fg_normal },
+        preset = naughty.config.defaults,
         text = str,
         timeout = t_out,
         screen = client.focus and client.focus.screen or 1
@@ -161,8 +159,8 @@ function tpbat.register(args)
 
     newtimer("tpbat-" .. bat.name, timeout, update)
 
-    widget:connect_signal('mouse::enter', function () tpbat:show() end)
-    widget:connect_signal('mouse::leave', function () tpbat:hide() end)
+    widget:connect_signal('mouse::enter', function () tpbat.show() end)
+    widget:connect_signal('mouse::leave', function () tpbat.hide() end)
 
     return tpbat.widget
 end

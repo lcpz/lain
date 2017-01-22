@@ -166,6 +166,7 @@ end
 
 -- On the fly useless gaps change
 function util.useless_gaps_resize(thatmuch)
+    beautiful.useless_gap = beautiful.useless_gap or 0
     beautiful.useless_gap = tonumber(beautiful.useless_gap) + thatmuch
     awful.layout.arrange(awful.screen.focused())
 end
