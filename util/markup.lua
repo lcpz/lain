@@ -13,7 +13,7 @@ local setmetatable = setmetatable
 
 -- Lain markup util submodule
 -- lain.util.markup
-local markup = {}
+local markup = { fg = {}, bg = {} }
 
 -- Convenience tags.
 function markup.bold(text)      return '<b>'     .. text .. '</b>'     end
@@ -30,12 +30,12 @@ function markup.font(font, text)
 end
 
 -- Set the foreground.
-function markup.fgcolor(color, text)
+function markup.fg.color(color, text)
   return '<span foreground="' .. color .. '">' .. text .. '</span>'
 end
 
 -- Set the background.
-function markup.bgcolor(color, text)
+function markup.bg.color(color, text)
   return '<span background="' .. color .. '">' .. text .. '</span>'
 end
 
@@ -48,6 +48,10 @@ end
 function markup.fontcolor(font, fg, bg, text)
   return string.format('<span font="%s" foreground="%s" background="%s">%s</span>', font, fg, bg, text)
 end
+
+-- link markup.{fg,bg}(...) calls to markup.{fg,bg}.color(...)
+setmetatable(markup.fg, { __call = function(_, ...) return markup.fg.color(...) end })
+setmetatable(markup.bg, { __call = function(_, ...) return markup.bg.color(...) end })
 
 -- link markup(...) calls to markup.fg.color(...)
 return setmetatable(markup, { __call = function(_, ...) return markup.fg.color(...) end })

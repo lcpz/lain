@@ -25,7 +25,7 @@ local function worker(args)
     local timeout  = args.timeout or 2
     local settings = args.settings or function() end
 
-    cpu.widget = wibox.widget.textbox('')
+    cpu.widget = wibox.widget.textbox()
 
     function update()
         -- Read the amount of time the CPUs have spent performing
