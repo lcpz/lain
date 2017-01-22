@@ -9,14 +9,11 @@
 
 local lines_match  = require("lain.helpers").lines_match
 local newtimer     = require("lain.helpers").newtimer
-
 local wibox        = require("wibox")
-
 local math         = { ceil   = math.ceil }
 local string       = { format = string.format,
                        gmatch = string.gmatch }
 local tostring     = tostring
-
 local setmetatable = setmetatable
 
 -- CPU usage

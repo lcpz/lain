@@ -7,15 +7,12 @@
 --]]
 
 local helpers      = require("lain.helpers")
-
 local shell        = require("awful.util").shell
 local naughty      = require("naughty")
 local wibox        = require("wibox")
-
 local string       = { format = string.format,
                        gsub   = string.gsub }
 local tonumber     = tonumber
-
 local setmetatable = setmetatable
 
 -- Mail IMAP check
@@ -59,6 +56,7 @@ local function worker(args                           )
 
         helpers.async(curl, function(f)
             _, mailcount = string.gsub(f, "%d+", "")
+            _ = nil
 
             widget = imap.widget
             settings()

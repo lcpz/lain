@@ -8,18 +8,15 @@
 --]]
 
 local helpers      = require("lain.helpers")
-
 local shell        = require("awful.util").shell
 local escape_f     = require("awful.util").escape
 local focused      = require("awful.screen").focused
 local naughty      = require("naughty")
 local wibox        = require("wibox")
-
 local os           = { getenv = os.getenv }
 local string       = { format = string.format,
                        gmatch = string.gmatch,
                        match  = string.match }
-
 local setmetatable = setmetatable
 
 -- MPD infos

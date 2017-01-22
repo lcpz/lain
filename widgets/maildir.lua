@@ -10,12 +10,10 @@
 local awful        = require("awful")
 local wibox        = require("wibox")
 local helpers      = require("lain.helpers")
-
 local io           = { popen  = io.popen }
 local os           = { getenv = os.getenv }
 local string       = { format = string.format,
                        match  = string.match }
-
 local setmetatable = setmetatable
 
 -- Maildir check (synchronous)

@@ -10,12 +10,9 @@
 local helpers      = require("lain.helpers")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
-
 local shell        = require("awful.util").shell
-
 local string       = { format = string.format,
                        match  = string.match }
-
 local setmetatable = setmetatable
 
 -- Network infos

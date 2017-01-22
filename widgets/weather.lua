@@ -10,19 +10,15 @@ local async        = require("lain.helpers").async
 local newtimer     = require("lain.helpers").newtimer
 local lain_icons   = require("lain.helpers").icons_dir
 local json         = require("lain.util").dkjson
-
 local focused      = require("awful.screen").focused
 local naughty      = require("naughty")
 local wibox        = require("wibox")
-
 local math         = { floor    = math.floor }
 local os           = { time     = os.time,
                        date     = os.date,
                        difftime = os.difftime }
 local string       = { format   = string.format,
                        gsub     = string.gsub }
-
-local mouse        = mouse
 local tonumber     = tonumber
 local setmetatable = setmetatable
 

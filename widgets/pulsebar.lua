@@ -9,19 +9,16 @@
 
 local newtimer     = require("lain.helpers").newtimer
 local read_pipe    = require("lain.helpers").read_pipe
-
 local awful        = require("awful")
 local beautiful    = require("beautiful")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
-
 local math         = { modf   = math.modf }
 local mouse        = mouse
 local string       = { format = string.format,
                        match  = string.match,
                        rep    = string.rep }
 local tonumber     = tonumber
-
 local setmetatable = setmetatable
 
 -- Pulseaudio volume bar

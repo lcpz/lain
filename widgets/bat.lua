@@ -10,16 +10,13 @@
 local first_line   = require("lain.helpers").first_line
 local make_widget  = require("lain.helpers").make_widget_textbox
 local newtimer     = require("lain.helpers").newtimer
-
 local naughty      = require("naughty")
 local wibox        = require("wibox")
-
 local math         = { abs    = math.abs,
                        floor  = math.floor,
                        log10  = math.log10,
                        min    = math.min }
 local string       = { format = string.format }
-
 local ipairs       = ipairs
 local type         = type
 local tonumber     = tonumber

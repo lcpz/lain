@@ -9,7 +9,6 @@
 local helpers      = require("lain.helpers")
 
 local shell        = require("awful.util").shell
-local beautiful    = require("beautiful")
 local focused      = require("awful.screen").focused
 local wibox        = require("wibox")
 local naughty      = require("naughty")
@@ -62,7 +61,7 @@ local function worker(args)
 
     fs.options             = args.options
     fs.followtag           = args.followtag or false
-    fs.notification_preset = args.notification_preset or { fg = beautiful.fg_normal }
+    fs.notification_preset = args.notification_preset or naughty.config.defaults
 
     fs.widget = wibox.widget.textbox()
 
@@ -101,7 +100,7 @@ local function worker(args)
 
             if notify == "on" and tonumber(fs_now.used) >= 99 and not helpers.get_map(partition) then
                 naughty.notify({
-                    title   = "warning",
+                    title   = "Warning",
                     text    = partition .. " is empty!",
                     timeout = 8,
                     fg      = "#000000",

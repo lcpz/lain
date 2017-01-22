@@ -6,53 +6,45 @@
                                                   
 --]]
 
+local async        = require("lain.helpers").async
 local icons_dir    = require("lain.helpers").icons_dir
-
+local markup       = require("lain.util.markup")
 local awful        = require("awful")
-local beautiful    = require("beautiful")
 local naughty      = require("naughty")
-
-local io           = { popen = io.popen }
-local os           = { date = os.date }
+local os           = { date   = os.date }
 local string       = { format = string.format,
-                       sub    = string.sub,
                        gsub   = string.gsub }
 local tonumber     = tonumber
-
 local setmetatable = setmetatable
 
 -- Calendar notification
 -- lain.widgets.calendar
-local calendar = {}
-local cal_notification = nil
+local calendar = { offset = 0 }
 
 function calendar.hide()
-    if cal_notification ~= nil then
-        naughty.destroy(cal_notification)
-        cal_notification = nil
-    end
+    if not calendar.notification then return end
+    naughty.destroy(calendar.notification)
+    calendar.notification = nil
 end
 
 function calendar.show(t_out, inc_offset, scr)
     calendar.hide()
 
-    local f, c_text
-    local offs  = inc_offset or 0
-    local tims  = t_out or 0
-    local today = tonumber(os.date('%d'))
+    local today = os.date("%d")
+    local offs = inc_offset or 0
+    local f
 
     calendar.offset = calendar.offset + offs
 
-    if offs == 0 or calendar.offset == 0
-    then -- current month showing, today highlighted
+    local current_month = (offs == 0 or calendar.offset == 0)
+
+    if current_month then -- today highlighted
         calendar.offset = 0
         calendar.notify_icon = string.format("%s%s.png", calendar.icons, today)
-
-        -- bg and fg inverted to highlight today
-        f = io.popen(calendar.cal_format(today))
+        f = calendar.cal
     else -- no current month showing, no day to highlight
-       local month = tonumber(os.date('%m'))
-       local year  = tonumber(os.date('%Y'))
+       local month = tonumber(os.date("%m"))
+       local year  = tonumber(os.date("%Y"))
 
        month = month + calendar.offset
 
@@ -67,53 +59,40 @@ function calendar.show(t_out, inc_offset, scr)
        end
 
        calendar.notify_icon = nil
-       f = io.popen(string.format('%s %s %s', calendar.cal, month, year))
+       f = string.format("%s %s %s", calendar.cal, month, year)
     end
-
-    c_text = "<tt><span font='" .. calendar.font .. " "
-             .. calendar.font_size .. "'><b>"
-             .. f:read() .. "</b>\n\n"
-             .. f:read() .. "\n"
-             .. f:read("*all"):gsub("\n*$", "")
-             .. "</span></tt>"
-    f:close()
 
     if calendar.followtag then
-        scrp = awful.screen.focused()
+        calendar.notification_preset.screen = awful.screen.focused()
     else
-        scrp = scr or calendar.scr_pos
+        calendar.notification_preset.screen = src or 1
     end
 
-    cal_notification = naughty.notify({
-        text = c_text,
-        icon = calendar.notify_icon,
-        position = calendar.position,
-        fg = calendar.fg,
-        bg = calendar.bg,
-        timeout = tims,
-        screen = scrp
-    })
+    async(string.format("%s -c '%s'", awful.util.shell, f), function(ws)
+        fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
+        ws = ws:gsub("%c%[7m%d+%c%[27m", markup.bold(markup.color(bg, fg, today)))
+        calendar.notification = naughty.notify({
+            preset  = calendar.notification_preset,
+            text    = ws:gsub("\n*$", ""),
+            icon    = calendar.notify_icon,
+            timeout = t_out or calendar.notification.preset.timeout or 5
+        })
+    end)
 end
 
 function calendar.attach(widget, args)
-    local args = args or {}
+    local args                   = args or {}
+    calendar.cal                 = args.cal or "/usr/bin/cal --color=always"
+    calendar.followtag           = args.followtag or false
+    calendar.icons               = args.icons or icons_dir .. "cal/white/"
+    calendar.notification_preset = args.notification_preset
 
-    calendar.cal         = args.cal or "/usr/bin/cal"
-    calendar.cal_format  = args.cal_format or function(today)
-        return string.format("%s | sed -r -e 's/_\\x08//g' -e '0,/(^| )%d($| )/ s/(^| )%d($| )/\\1<b><span foreground=\"%s\" background=\"%s\">%d<\\/span><\\/b>\\2/'",
-                             calendar.cal, today, today, calendar.bg, calendar.fg, today)
+    if not calendar.notification_preset then
+        calendar.notification_preset      = naughty.config.defaults
+        calendar.notification_preset.font = "Monospace 10"
+        calendar.notification_preset.fg   = "#FFFFFF"
+        calendar.notification_preset.bg   = "#000000"
     end
-    calendar.icons       = args.icons or icons_dir .. "cal/white/"
-    calendar.font        = args.font or beautiful.font:gsub(" %d.*", "")
-    calendar.font_size   = tonumber(args.font_size) or 11
-    calendar.fg          = args.fg or beautiful.fg_normal or "#FFFFFF"
-    calendar.bg          = args.bg or beautiful.bg_normal or "#000000"
-    calendar.position    = args.position or "top_right"
-    calendar.scr_pos     = args.scr_pos or 1
-    calendar.followtag   = args.followtag or false
-
-    calendar.offset      = 0
-    calendar.notify_icon = nil
 
     widget:connect_signal("mouse::enter", function () calendar.show(0, 0, calendar.scr_pos) end)
     widget:connect_signal("mouse::leave", function () calendar.hide() end)

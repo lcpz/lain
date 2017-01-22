@@ -9,7 +9,6 @@
 local newtimer     = require("lain.helpers").newtimer
 local read_pipe    = require("lain.helpers").read_pipe
 local wibox        = require("wibox")
-
 local setmetatable = setmetatable
 
 -- Basic template for custom widgets

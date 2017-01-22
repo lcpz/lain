@@ -8,13 +8,10 @@
 --]]
 
 local newtimer     = require("lain.helpers").newtimer
-
 local wibox        = require("wibox")
-
 local io           = { lines  = io.lines }
 local math         = { floor  = math.floor }
 local string       = { gmatch = string.gmatch }
-
 local setmetatable = setmetatable
 
 -- Memory usage (ignoring caches)
@@ -26,14 +23,12 @@ local function worker(args)
     local timeout  = args.timeout or 2
     local settings = args.settings or function() end
 
-    mem.widget = wibox.widget.textbox('')
+    mem.widget = wibox.widget.textbox()
 
     function update()
         mem_now = {}
-        for line in io.lines("/proc/meminfo")
-        do
-            for k, v in string.gmatch(line, "([%a]+):[%s]+([%d]+).+")
-            do
+        for line in io.lines("/proc/meminfo") do
+            for k, v in string.gmatch(line, "([%a]+):[%s]+([%d]+).+") do
                 if     k == "MemTotal"  then mem_now.total = math.floor(v / 1024)
                 elseif k == "MemFree"   then mem_now.free  = math.floor(v / 1024)
                 elseif k == "Buffers"   then mem_now.buf   = math.floor(v / 1024)

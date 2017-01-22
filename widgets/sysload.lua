@@ -8,12 +8,9 @@
 --]]
 
 local newtimer     = require("lain.helpers").newtimer
-
 local wibox        = require("wibox")
-
 local io           = { open = io.open }
 local string       = { match  = string.match }
-
 local setmetatable = setmetatable
 
 -- System load
@@ -25,7 +22,7 @@ local function worker(args)
     local timeout = args.timeout or 2
     local settings = args.settings or function() end
 
-    sysload.widget = wibox.widget.textbox('')
+    sysload.widget = wibox.widget.textbox()
 
     function update()
         local f = io.open("/proc/loadavg")

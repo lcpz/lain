@@ -6,72 +6,47 @@
                                                         
 --]]
 
-local awful        = require("awful")
-local os           = os
-
-local setmetatable = setmetatable
+local async   = require("lain.helpers").async
+local awful   = require("awful")
+local execute = os.execute
+local type    = type
 
 -- Redshift
 -- lain.widgets.contrib.redshift
-local redshift = {}
+local redshift = { active = false, pid = nil }
 
-local attached    = false           -- true if attached to a widget
-local active      = false           -- true if redshift is active
-local running     = false           -- true if redshift was initialized
-local update_fnct = function() end  -- Function that is run each time redshift is toggled. See redshift:attach().
-
-local function init()
-    -- As there is no way to determine if redshift was previously
-    -- toggled off (i.e Awesome on-the-fly restart), kill redshift to make sure
-    os.execute("pkill redshift")
-    -- Remove existing color adjustment
-    awful.spawn.with_shell("redshift -x")
-    -- (Re)start redshift
-    awful.spawn.with_shell("redshift")
-    running = true
-    active = true
+function redshift:start()
+    execute("pkill redshift")
+    awful.spawn.with_shell("redshift -x") -- clear adjustments
+    redshift.pid = awful.spawn.with_shell("redshift")
+    redshift.active = true
+    if type(redshift.update_fun) == "function" then
+        redshift.update_fun(redshift.active)
+    end
 end
 
 function redshift:toggle()
-    if running then
-        -- Sending -USR1 toggles redshift (See project website)
-        os.execute("pkill -USR1 redshift")
-        active = not active
-    else
-        init()
-    end
-    update_fnct()
-end
-
-function redshift:off()
-    if running and active then
-        redshift:toggle()
-    end
-end
-
-function redshift:on()
-    if not active then
-        redshift:toggle()
-    end
-end
-
-function redshift:is_active()
-    return active
+    async(string.format("%s -c 'ps -p %d -o pid='", awful.util.shell, redshift.pid), function(f)
+        if f and #f > 0 then -- redshift is running
+            -- Sending -USR1 toggles redshift (See project website)
+            execute("pkill -USR1 redshift")
+            redshift.active = not redshift.active
+        else -- not started or killed, (re)start it
+            redshift:start()
+        end
+        redshift.update_fun(redshift.active)
+    end)
 end
 
 -- Attach to a widget
 -- Provides a button which toggles redshift on/off on click
 -- @param widget:  Widget to attach to.
--- @param fnct:    Function to be run each time redshift is toggled (optional).
+-- @param fun:     Function to be run each time redshift is toggled (optional).
 --                 Use it to update widget text or icons on status change.
-function redshift:attach(widget, fnct)
-    update_fnct  = fnct or function() end
-    if not attached then
-        init()
-        attached = true
-        update_fnct()
-    end
-    widget:buttons(awful.util.table.join( awful.button({}, 1, function () redshift:toggle() end) ))
+function redshift:attach(widget, fun)
+    redshift.update_fun = fun or function() end
+    if not redshift.pid then redshift:start() end
+    widget:buttons(awful.util.table.join(awful.button({}, 1, function () redshift:toggle() end)))
 end
 
-return setmetatable(redshift, { _call = function(_, ...) return create(...) end })
+return redshift

@@ -8,16 +8,14 @@
 
 local helpers      = require("lain.helpers")
 local json         = require("lain.util.dkjson")
-
 local focused      = require("awful.screen").focused
 local pread        = require("awful.util").pread
 local naughty      = require("naughty")
 local wibox        = require("wibox")
-
 local next         = next
 local os           = { getenv = os.getenv }
-local setmetatable = setmetatable
 local table        = table
+local setmetatable = setmetatable
 
 -- Google Play Music Desktop infos
 -- lain.widget.contrib.gpmdp

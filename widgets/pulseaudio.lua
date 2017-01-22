@@ -9,11 +9,9 @@
 local read_pipe    = require("lain.helpers").read_pipe
 local newtimer     = require("lain.helpers").newtimer
 local wibox        = require("wibox")
-
 local string       = { gmatch = string.gmatch,
                        match  = string.match,
                        format = string.format }
-
 local setmetatable = setmetatable
 
 -- PulseAudio volume
@@ -27,7 +25,7 @@ local function worker(args)
    local scallback   = args.scallback
 
    pulseaudio.cmd    = args.cmd or string.format("pacmd list-sinks | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'")
-   pulseaudio.widget = wibox.widget.textbox('')
+   pulseaudio.widget = wibox.widget.textbox()
 
    function pulseaudio.update()
       if scallback then pulseaudio.cmd = scallback() end
