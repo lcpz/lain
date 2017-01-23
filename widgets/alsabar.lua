@@ -1,10 +1,7 @@
-
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013, Luke Bonham                     
-      * (c) 2013, Rman                            
-                                                  
+     Licensed under GNU General Public License v2
+      * (c) 2013, Luke Bonham
+      * (c) 2013, Rman
 --]]
 
 local helpers      = require("lain.helpers")
@@ -18,10 +15,18 @@ local string       = { format = string.format,
 local tonumber     = tonumber
 local type         = type
 local setmetatable = setmetatable
+local terminal     = "urxvtc" or "xterm"
 
 -- ALSA volume bar
 -- lain.widgets.alsabar
 local alsabar = {
+<<<<<<< HEAD
+=======
+    channel = "Master",
+    step    = "1%",
+    mixer   = "amixer",
+
+>>>>>>> 09c0a3f27b6c0b61a55e7875b9a967e98cd3daf8
     colors = {
         background = "#000000",
         mute       = "#EB8F8F",
@@ -42,6 +47,7 @@ local function worker(args)
     local ticks_size   = args.ticks_size or 7
     local vertical     = args.vertical or false
 
+<<<<<<< HEAD
     alsabar.cmd                 = args.cmd or "amixer"
     alsabar.channel             = args.channel or "Master"
     alsabar.colors              = args.colors or alsabar.colors
@@ -52,6 +58,18 @@ local function worker(args)
     if not alsabar.notification_preset then
         alsabar.notification_preset      = naughty.config.defaults
         alsabar.notification_preset.font = "Monospace 11"
+=======
+    alsabar.mixer         = args.mixer or alsabar.mixer
+    alsabar.channel       = args.channel or alsabar.channel
+    alsabar.togglechannel = args.togglechannel or alsabar.togglechannel
+    alsabar.cmd           = args.cmd or {"bash", "-c", string.format("%s get %s", alsabar.mixer, alsabar.channel)}
+    alsabar.step          = args.step or alsabar.step
+    alsabar.colors        = args.colors or alsabar.colors
+    alsabar.notifications = args.notifications or alsabar.notifications
+    alsabar.followtag     = args.followtag or false
+    if alsabar.togglechannel then
+            alsabar.cmd   = args.cmd or { "bash", "-c", string.format("%s get %s; %s get %s", alsabar.mixer, alsabar.channel, alsabar.mixer, alsabar.togglechannel)}
+>>>>>>> 09c0a3f27b6c0b61a55e7875b9a967e98cd3daf8
     end
 
     alsabar.bar = wibox.widget {
@@ -66,6 +84,27 @@ local function worker(args)
         widget           = wibox.widget.progressbar,
         layout           = vertical and wibox.container.rotate
     }
+
+    alsabar.bar:buttons (awful.util.table.join(
+        awful.button({}, 1, function()
+                awful.spawn(string.format('%s -e alsamixer', terminal))
+        end),
+        awful.button({}, 2, function()
+                awful.spawn(string.format("%s set %s 100%%", alsabar.mixer, alsabar.channel))
+                alsabar.update()
+        end),
+        awful.button({}, 3, function()
+                awful.spawn(string.format("%s set %s toggle", alsabar.mixer, alsabar.togglechannel or alsabar.channel))
+                alsabar.update()
+        end),
+        awful.button({}, 4, function()
+                awful.spawn(string.format("%s set %s %s+", alsabar.mixer, alsabar.channel, alsabar.step))
+                alsabar.update()
+        end),
+        awful.button({}, 5, function()
+                awful.spawn(string.format("%s set %s %s-", alsabar.mixer, alsabar.channel, alsabar.step))
+                alsabar.update()
+        end)))
 
     alsabar.tooltip = awful.tooltip({ objects = { alsabar.bar } })
 
