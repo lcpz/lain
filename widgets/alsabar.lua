@@ -9,7 +9,6 @@
 
 local helpers      = require("lain.helpers")
 local awful        = require("awful")
-local beautiful    = require("beautiful")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 local math         = { modf   = math.modf }
@@ -23,20 +22,10 @@ local setmetatable = setmetatable
 -- ALSA volume bar
 -- lain.widgets.alsabar
 local alsabar = {
-    channel = "Master",
-    step    = "1%",
-
     colors = {
-        background = beautiful.bg_normal,
+        background = "#000000",
         mute       = "#EB8F8F",
         unmute     = "#A4CE8A"
-    },
-
-    notifications = {
-        font      = beautiful.font:sub(beautiful.font:find(""), beautiful.font:find(" ")),
-        font_size = "11",
-        color     = beautiful.fg_normal,
-        screen    = 1
     },
 
     _current_level = 0,
@@ -48,17 +37,22 @@ local function worker(args)
     local timeout      = args.timeout or 5
     local settings     = args.settings or function() end
     local width        = args.width or 63
-    local height       = args.heigth or 1
+    local height       = args.height or 1
     local ticks        = args.ticks or false
     local ticks_size   = args.ticks_size or 7
     local vertical     = args.vertical or false
 
-    alsabar.cmd           = args.cmd or "amixer"
-    alsabar.channel       = args.channel or alsabar.channel
-    alsabar.step          = args.step or alsabar.step
-    alsabar.colors        = args.colors or alsabar.colors
-    alsabar.notifications = args.notifications or alsabar.notifications
-    alsabar.followtag     = args.followtag or false
+    alsabar.cmd                 = args.cmd or "amixer"
+    alsabar.channel             = args.channel or "Master"
+    alsabar.colors              = args.colors or alsabar.colors
+    alsabar.followtag           = args.followtag or false
+    alsabar._notify             = args.notify or "on"
+    alsabar.notification_preset = args.notification_preset
+
+    if not alsabar.notification_preset then
+        alsabar.notification_preset      = naughty.config.defaults
+        alsabar.notification_preset.font = "Monospace 11"
+    end
 
     alsabar.bar = wibox.widget {
         forced_height    = height,
@@ -82,8 +76,7 @@ local function worker(args)
             then
                 alsabar._current_level = tonumber(volu) or alsabar._current_level
                 alsabar.bar:set_value(alsabar._current_level / 100)
-                if (not mute and tonumber(volu) == 0) or mute == "off"
-                then
+                if (not mute and tonumber(volu) == 0) or mute == "off" then
                     alsabar._muted = true
                     alsabar.tooltip:set_text ("[Muted]")
                     alsabar.bar.color = alsabar.colors.mute
@@ -106,15 +99,7 @@ local function worker(args)
 
     function alsabar.notify()
         alsabar.update(function()
-            local preset = {
-                title   = "",
-                text    = "",
-                timeout = 5,
-                screen  = alsabar.notifications.screen,
-                font    = string.format("%s %s", alsabar.notifications.font,
-                          alsabar.notifications.font_size),
-                fg      = alsabar.notifications.color
-            }
+            local preset = alsabar.notification_preset
 
             if alsabar._muted then
                 preset.title = string.format("%s - Muted", alsabar.channel)
@@ -128,18 +113,17 @@ local function worker(args)
 
             if alsabar.followtag then preset.screen = awful.screen.focused() end
 
-            if alsabar._notify then
-                alsabar._notify = naughty.notify ({
-                    replaces_id = alsabar._notify.id,
-                    preset      = preset,
-                })
-            else
-                alsabar._notify = naughty.notify ({ preset = preset })
+            if alsabar._notify == "on" then
+                alsabar.id = naughty.notify ({
+                    replaces_id = alsabar.id,
+                    preset      = preset
+                }).id
             end
         end)
     end
 
     timer_id = string.format("alsabar-%s-%s", alsabar.cmd, alsabar.channel)
+
     helpers.newtimer(timer_id, timeout, alsabar.update)
 
     return alsabar
