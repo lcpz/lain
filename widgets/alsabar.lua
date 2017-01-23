@@ -15,6 +15,7 @@ local math         = { modf   = math.modf }
 local string       = { format = string.format,
                        match  = string.match,
                        rep    = string.rep }
+local type         = type
 local tonumber     = tonumber
 local setmetatable = setmetatable
 
@@ -68,7 +69,7 @@ local function worker(args)
 
     alsabar.tooltip = awful.tooltip({ objects = { alsabar.bar } })
 
-    function alsabar.update()
+    function alsabar.update(callback)
         helpers.async(alsabar.cmd, function(mixer)
             local volu,mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
             if (volu and tonumber(volu) ~= alsabar._current_level) or (mute and string.match(mute, "on") ~= alsabar._muted) then
@@ -89,6 +90,8 @@ local function worker(args)
                 volume_now.status = mute
 
                 settings()
+
+                if type(callback) == "function" then callback() end
             end
         end)
     end
