@@ -30,11 +30,10 @@ function task.show(scr)
         task.notification_preset.screen = scr
     end
 
-    helpers.async(string.format("%s -c '%s'", awful.util.shell, task.cmd),
-    function(f)
+    helpers.async(task.show_cmd, function(f)
         task.notification = naughty.notify({
             preset = task_notification_preset,
-            title  = task.cmd,
+            title  = task.show_cmd,
             text   = markup.font(task.notification_preset.font,
                      awful.util.escape(f:gsub("\n*$", "")))
         })
@@ -46,10 +45,9 @@ function task.prompt()
         prompt       = task.prompt_text,
         textbox      = awful.screen.focused().mypromptbox.widget,
         exe_callback = function(t)
-            helpers.async(string.format("%s -c '%s'", awful.util.shell, t),
-            function(f)
+            helpers.async(t, function(f)
                 naughty.notify {
-                    preset = task_notification_preset,
+                    preset = task.notification_preset,
                     title    = t,
                     text     = markup.font(task.notification_preset.font,
                                awful.util.escape(f:gsub("\n*$", "")))
@@ -62,7 +60,7 @@ end
 
 function task.attach(widget, args)
     local args               = args or {}
-    task.show_cmd            = args.cmd or "task"
+    task.show_cmd            = args.show_cmd or "task next"
     task.prompt_text         = args.prompt_text or "Enter task command: "
     task.followtag           = args.followtag or false
     task.notification_preset = args.notification_preset

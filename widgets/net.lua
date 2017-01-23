@@ -10,7 +10,6 @@
 local helpers      = require("lain.helpers")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
-local shell        = require("awful.util").shell
 local string       = { format = string.format,
                        match  = string.match }
 local setmetatable = setmetatable
@@ -35,7 +34,7 @@ local function worker(args)
     net.iface = (args.iface and type(args.iface) == "string" and {args.iface}) or {}
 
     function net.get_device()
-        helpers.async(string.format("%s -c 'ip link show'", shell, device_cmd), function(ws)
+        helpers.async(string.format("ip link show", device_cmd), function(ws)
             ws = ws:match("(%w+): <BROADCAST,MULTICAST,.-,UP,LOWER_UP>")
             net.iface = ws and { ws } or {}
         end)

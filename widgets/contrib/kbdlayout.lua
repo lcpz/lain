@@ -38,8 +38,7 @@ local function worker(args)
    end
 
    function kbdlayout.update()
-      helpers.async(string.format("%s -c 'setxkbmap -query'", awful.util.shell),
-      function(status)
+      helpers.async("setxkbmap -query", function(status)
           kbd_run_settings(string.match(status, "layout:%s*([^\n]*)"),
           string.match(status, "variant:%s*([^\n]*)"))
       end)

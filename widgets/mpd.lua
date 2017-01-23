@@ -39,14 +39,14 @@ local function worker(args)
 
     local mpdh = string.format("telnet://%s:%s", host, port)
     local echo = string.format("printf \"%sstatus\\ncurrentsong\\nclose\\n\"", password)
-    local cmd  = string.format("%s -c '%s | curl --connect-timeout 1 -fsm 3 %s'", shell, echo, mpdh)
+    local cmd  = string.format("%s | curl --connect-timeout 1 -fsm 3 %s", echo, mpdh)
 
     mpd_notification_preset = { title = "Now playing", timeout = 6 }
 
     helpers.set_map("current mpd track", nil)
 
     function mpd.update()
-        helpers.async(cmd, function(f)
+        helpers.async({ shell, "-c", cmd }, function(f)
             mpd_now = {
                 random_mode  = false,
                 single_mode  = false,
@@ -110,8 +110,8 @@ local function worker(args)
 
                     if not string.match(mpd_now.file, "http.*://") then -- local file instead of http stream
                         local path   = string.format("%s/%s", music_dir, string.match(mpd_now.file, ".*/"))
-                        local cover  = string.format("%s -c \"find '%s' -maxdepth 1 -type f | egrep -i -m1 '%s'\"", shell, path, cover_pattern)
-                        helpers.async(cover, function(current_icon)
+                        local cover  = string.format("find '%s' -maxdepth 1 -type f | egrep -i -m1 '%s'", path, cover_pattern)
+                        helpers.async({ shell, "-c", cover }, function(current_icon)
                             common.icon = current_icon:gsub("\n", "")
                             mpd.id = naughty.notify(common).id
                         end)

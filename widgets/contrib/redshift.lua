@@ -26,7 +26,7 @@ function redshift:start()
 end
 
 function redshift:toggle()
-    async(string.format("%s -c 'ps -p %d -o pid='", awful.util.shell, redshift.pid), function(f)
+    async({ awful.util.shell, "-c", string.format("ps -p %d -o pid=", redshift.pid) }, function(f)
         if f and #f > 0 then -- redshift is running
             -- Sending -USR1 toggles redshift (See project website)
             execute("pkill -USR1 redshift")

@@ -76,7 +76,7 @@ local function worker(args)
 
     function update()
         fs_info, fs_now  = {}, {}
-        helpers.async(string.format("%s -c 'LC_ALL=C df -k --output=target,size,used,avail,pcent'", shell), function(f)
+        helpers.async({ shell, "-c", "LC_ALL=C df -k --output=target,size,used,avail,pcent" }, function(f)
             for line in string.gmatch(f, "\n[^\n]+") do
                 local m,s,u,a,p = string.match(line, "(/.-%s).-(%d+).-(%d+).-(%d+).-([%d]+)%%")
                 m = m:gsub(" ", "") -- clean target from any whitespace

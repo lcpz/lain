@@ -67,7 +67,7 @@ function calendar.show(t_out, inc_offset, scr)
         calendar.notification_preset.screen = src or 1
     end
 
-    async(string.format("%s -c '%s'", awful.util.shell, f), function(ws)
+    async(f, function(ws)
         fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
         ws = ws:gsub("%c%[7m%d+%c%[27m", markup.bold(markup.color(bg, fg, today)))
         calendar.notification = naughty.notify({
@@ -94,7 +94,7 @@ function calendar.attach(widget, args)
     end
 
     if widget then
-        widget:connect_signal("mouse::enter", function () calendar.show() end)
+        widget:connect_signal("mouse::enter", function () calendar.show(0) end)
         widget:connect_signal("mouse::leave", function () calendar.hide() end)
         widget:buttons(awful.util.table.join(awful.button({ }, 1, function ()
                                                  calendar.show(0, -1, calendar.scr_pos) end),
