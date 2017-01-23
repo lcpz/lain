@@ -47,7 +47,6 @@ local function worker(args)
     alsabar.togglechannel       = args.togglechannel
     alsabar.colors              = args.colors or alsabar.colors
     alsabar.followtag           = args.followtag or false
-    alsabar._notify             = args.notify or "on"
     alsabar.notification_preset = args.notification_preset
 
     if not alsabar.notification_preset then

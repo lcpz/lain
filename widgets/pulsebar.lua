@@ -7,82 +7,30 @@
                                                   
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
-local read_pipe    = require("lain.helpers").read_pipe
+local helpers      = require("lain.helpers")
 local awful        = require("awful")
-local beautiful    = require("beautiful")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 local math         = { modf   = math.modf }
-local mouse        = mouse
 local string       = { format = string.format,
                        match  = string.match,
                        rep    = string.rep }
+local type         = type
 local tonumber     = tonumber
 local setmetatable = setmetatable
 
 -- Pulseaudio volume bar
 -- lain.widgets.pulsebar
 local pulsebar = {
-    sink = 0,
-    step = "1%",
-
     colors = {
-        background = beautiful.bg_normal,
+        background = "#000000",
         mute       = "#EB8F8F",
         unmute     = "#A4CE8A"
-    },
-
-    mixer = "pavucontrol",
-
-    notifications = {
-        font      = beautiful.font:sub(beautiful.font:find(""), beautiful.font:find(" ")),
-        font_size = "11",
-        color     = beautiful.fg_normal
     },
 
     _current_level = 0,
     _muted         = false
 }
-
-function pulsebar.notify()
-    pulsebar.update()
-
-    local preset = {
-        title   = "",
-        text    = "",
-        timeout = 5,
-        font    = string.format("%s %s", pulsebar.notifications.font,
-                  pulsebar.notifications.font_size),
-        fg      = pulsebar.notifications.color
-    }
-
-    if pulsebar._muted
-    then
-        preset.title = string.format("Sink %s - Muted", pulsebar.sink)
-    else
-        preset.title = string.format("%s - %s%%", pulsebar.sink, pulsebar._current_level)
-    end
-
-    int = math.modf((pulsebar._current_level / 100) * awful.screen.focused().mywibox.height)
-    preset.text = string.format("[%s%s]", string.rep("|", int),
-                  string.rep(" ", awful.screen.focused().mywibox.height - int))
-
-    if pulsebar.followtag then
-        preset.screen = awful.screen.focused()
-    end
-
-    if pulsebar._notify ~= nil then
-        pulsebar._notify = naughty.notify ({
-            replaces_id = pulsebar._notify.id,
-            preset      = preset,
-        })
-    else
-        pulsebar._notify = naughty.notify ({
-            preset = preset,
-        })
-    end
-end
 
 local function worker(args)
     local args       = args or {}
@@ -95,12 +43,16 @@ local function worker(args)
     local vertical   = args.vertical or false
     local scallback  = args.scallback
 
-    pulsebar.cmd           = args.cmd or string.format("pacmd list-sinks | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p'")
-    pulsebar.colors        = args.colors or pulsebar.colors
-    pulsebar.notifications = args.notifications or pulsebar.notifications
+    pulsebar.cmd           = args.cmd or "pacmd list-sinks | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'"
     pulsebar.sink          = args.sink or 0
-    pulsebar.step          = args.step or pulsebar.step
-    pulsebar.followtag   = args.followtag or false
+    pulsebar.colors        = args.colors or pulsebar.colors
+    pulsebar.followtag     = args.followtag or false
+    pulsebar.notifications = args.notification_preset
+
+    if not pulsebar.notification_preset then
+        pulsebar.notification_preset      = naughty.config.defaults
+        pulsebar.notification_preset.font = "Monospace 11"
+    end
 
     pulsebar.bar = wibox.widget {
         forced_height    = height,
@@ -117,61 +69,76 @@ local function worker(args)
 
     pulsebar.tooltip = awful.tooltip({ objects = { pulsebar.bar } })
 
-    function pulsebar.update()
+    function pulsebar.update(callback)
         if scallback then pulseaudio.cmd = scallback() end
-        local s = read_pipe(pulsebar.cmd)
 
-        volume_now = {}
-        volume_now.left  = tonumber(string.match(s, ":.-(%d+)%%"))
-        volume_now.right = tonumber(string.match(s, ":.-(%d+)%%"))
-        volume_now.muted = string.match(s, "muted: (%S+)")
+        helpers.async({ awful.util.shell, "-c", pulsebar.cmd }, function(s)
+            volume_now = {
+                index = string.match(s, "index: (%S+)") or "N/A",
+                sink  = string.match(s, "device.string = \"(%S+)\"") or "N/A",
+                muted = string.match(s, "muted: (%S+)") or "N/A"
+            }
 
-        local volu = volume_now.left
-        local mute = volume_now.muted
-
-        if (volu and volu ~= pulsebar._current_level) or (mute and mute ~= pulsebar._muted)
-        then
-            pulsebar._current_level = volu
-            pulsebar.bar:set_value(pulsebar._current_level / 100)
-            if (not mute and volu == 0) or mute == "yes"
-            then
-                pulsebar._muted = true
-                pulsebar.tooltip:set_text ("[Muted]")
-                pulsebar.bar.color = pulsebar.colors.mute
-            else
-                pulsebar._muted = false
-                pulsebar.tooltip:set_text(string.format("%s: %s", pulsebar.sink, volu))
-                pulsebar.bar.color = pulsebar.colors.unmute
+            local ch = 1
+            volume_now.channel = {}
+            for v in string.gmatch(s, ":.-(%d+)%%") do
+              volume_now.channel[ch] = v
+              ch = ch + 1
             end
-            settings()
-        end
+
+            volume_now.left  = volume_now.channel[1] or "N/A"
+            volume_now.right = volume_now.channel[2] or "N/A"
+
+            local volu = volume_now.left
+            local mute = volume_now.muted
+
+            if (volu and volu ~= pulsebar._current_level) or (mute and mute ~= pulsebar._muted) then
+                pulsebar._current_level = volu
+                pulsebar.bar:set_value(pulsebar._current_level / 100)
+                if (not mute and volu == 0) or mute == "yes" then
+                    pulsebar._muted = true
+                    pulsebar.tooltip:set_text ("[Muted]")
+                    pulsebar.bar.color = pulsebar.colors.mute
+                else
+                    pulsebar._muted = false
+                    pulsebar.tooltip:set_text(string.format("%s: %s", pulsebar.sink, volu))
+                    pulsebar.bar.color = pulsebar.colors.unmute
+                end
+
+                settings()
+
+                if type(callback) == "function" then callback() end
+            end
+        end)
     end
 
-    pulsebar.bar:buttons(awful.util.table.join (
-          awful.button({}, 1, function()
-            awful.util.spawn(pulsebar.mixer)
-          end),
-          awful.button({}, 2, function()
-						awful.util.spawn(string.format("pactl set-sink-volume %d 100%%", pulsebar.sink))
-            pulsebar.update()
-          end),
-          awful.button({}, 3, function()
-						awful.util.spawn(string.format("pactl set-sink-mute %d toggle", pulsebar.sink))
-            pulsebar.update()
-          end),
-          awful.button({}, 4, function()
-						awful.util.spawn(string.format("pactl set-sink-volume %d +%s", pulsebar.sink, pulsebar.step))
-            pulsebar.update()
-          end),
-          awful.button({}, 5, function()
-						awful.util.spawn(string.format("pactl set-sink-volume %d -%s", pulsebar.sink, pulsebar.step))
-            pulsebar.update()
-					end)
-    ))
+    function pulsebar.notify()
+        pulsebar.update(function()
+            local preset = pulsebar.notification_preset
+
+            if pulsebar._muted then
+                preset.title = string.format("Sink %s - Muted", pulsebar.sink)
+            else
+                preset.title = string.format("%s - %s%%", pulsebar.sink, pulsebar._current_level)
+            end
+
+            int = math.modf((pulsebar._current_level / 100) * awful.screen.focused().mywibox.height)
+            preset.text = string.format("[%s%s]", string.rep("|", int),
+                          string.rep(" ", awful.screen.focused().mywibox.height - int))
+
+            if pulsebar.followtag then preset.screen = awful.screen.focused() end
+
+            pulsebar.id = naughty.notify ({
+                replaces_id = pulsebar.id,
+                preset      = preset
+            }).id
+        end)
+    end
+
 
     timer_id = string.format("pulsebar-%s", pulsebar.sink)
 
-    newtimer(timer_id, timeout, pulsebar.update)
+    helpers.newtimer(timer_id, timeout, pulsebar.update)
 
     return pulsebar
 end

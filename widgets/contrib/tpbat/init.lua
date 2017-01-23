@@ -17,7 +17,6 @@
 local debug        = { getinfo = debug.getinfo }
 local newtimer     = require("lain.helpers").newtimer
 local first_line   = require("lain.helpers").first_line
-local beautiful    = require("beautiful")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
 
