@@ -37,7 +37,7 @@ function fs.show(seconds, scr)
     if fs.followtag then
         fs.notification_preset.screen = focused()
     elseif scr then
-        fs.notification_preset.screen = scr
+        fs.notification_preset.screen = scr or 1
     end
 
     local cmd = (fs.options and string.format("dfs %s", fs.options)) or "dfs"
@@ -74,7 +74,6 @@ local function worker(args)
 
     helpers.set_map(partition, false)
 
-
     function update()
         fs_info, fs_now  = {}, {}
         helpers.async(string.format("%s -c 'LC_ALL=C df -k --output=target,size,used,avail,pcent'", shell), function(f)
@@ -107,11 +106,9 @@ local function worker(args)
 
             if notify == "on" and tonumber(fs_now.used) >= 99 and not helpers.get_map(partition) then
                 naughty.notify({
-                    title   = "Warning",
-                    text    = partition .. " is empty!",
-                    timeout = 8,
-                    fg      = "#000000",
-                    bg      = "#FFFFFF"
+                    preset = naughty.config.presets.critical,
+                    title  = "Warning",
+                    text   = partition .. " is empty",
                 })
                 helpers.set_map(partition, true)
             else

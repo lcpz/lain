@@ -46,7 +46,9 @@ end
 function redshift:attach(widget, fun)
     redshift.update_fun = fun or function() end
     if not redshift.pid then redshift:start() end
-    widget:buttons(awful.util.table.join(awful.button({}, 1, function () redshift:toggle() end)))
+    if widget then
+        widget:buttons(awful.util.table.join(awful.button({}, 1, function () redshift:toggle() end)))
+    end
 end
 
 return redshift

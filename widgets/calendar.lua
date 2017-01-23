@@ -15,7 +15,6 @@ local os           = { date   = os.date }
 local string       = { format = string.format,
                        gsub   = string.gsub }
 local tonumber     = tonumber
-local setmetatable = setmetatable
 
 -- Calendar notification
 -- lain.widgets.calendar
@@ -94,16 +93,18 @@ function calendar.attach(widget, args)
         calendar.notification_preset.bg   = "#000000"
     end
 
-    widget:connect_signal("mouse::enter", function () calendar.show(0, 0, calendar.scr_pos) end)
-    widget:connect_signal("mouse::leave", function () calendar.hide() end)
-    widget:buttons(awful.util.table.join(awful.button({ }, 1, function ()
-                                             calendar.show(0, -1, calendar.scr_pos) end),
-                                         awful.button({ }, 3, function ()
-                                             calendar.show(0, 1, calendar.scr_pos) end),
-                                         awful.button({ }, 4, function ()
-                                             calendar.show(0, -1, calendar.scr_pos) end),
-                                         awful.button({ }, 5, function ()
-                                             calendar.show(0, 1, calendar.scr_pos) end)))
+    if widget then
+        widget:connect_signal("mouse::enter", function () calendar.show() end)
+        widget:connect_signal("mouse::leave", function () calendar.hide() end)
+        widget:buttons(awful.util.table.join(awful.button({ }, 1, function ()
+                                                 calendar.show(0, -1, calendar.scr_pos) end),
+                                             awful.button({ }, 3, function ()
+                                                 calendar.show(0, 1, calendar.scr_pos) end),
+                                             awful.button({ }, 4, function ()
+                                                 calendar.show(0, -1, calendar.scr_pos) end),
+                                             awful.button({ }, 5, function ()
+                                                 calendar.show(0, 1, calendar.scr_pos) end)))
+    end
 end
 
-return setmetatable(calendar, { __call = function(_, ...) return create(...) end })
+return calendar
