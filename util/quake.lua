@@ -72,6 +72,9 @@ function quake:display()
     client.above = true
     client.skip_taskbar = true
 
+    -- Additional user settings
+    if self.settings then self.settings(client) end
+
     -- Toggle display
     if self.visible then
         client.hidden = false
@@ -127,6 +130,7 @@ function quake:new(config)
     conf.followtag  = conf.followtag or false      -- spawn on currently focused screen
     conf.overlap    = conf.overlap   or false      -- overlap wibox
     conf.screen     = conf.screen    or awful.screen.focused()
+    conf.settings   = conf.settings
 
     -- If width or height <= 1 this is a proportion of the workspace
     conf.height     = conf.height    or 0.25       -- height
