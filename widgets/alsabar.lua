@@ -44,6 +44,7 @@ local function worker(args)
 
     alsabar.cmd                 = args.cmd or "amixer"
     alsabar.channel             = args.channel or "Master"
+    alsabar.togglechannel       = args.togglechannel
     alsabar.colors              = args.colors or alsabar.colors
     alsabar.followtag           = args.followtag or false
     alsabar._notify             = args.notify or "on"
@@ -52,6 +53,11 @@ local function worker(args)
     if not alsabar.notification_preset then
         alsabar.notification_preset      = naughty.config.defaults
         alsabar.notification_preset.font = "Monospace 11"
+    end
+
+    if alsabar.togglechannel then
+        alsabar.cmd = { awful.util.shell, "-c", string.format("%s get %s; %s get %s",
+        alsabar.cmd, alsabar.channel, alsabar.cmd, alsabar.togglechannel) }
     end
 
     alsabar.bar = wibox.widget {

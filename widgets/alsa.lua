@@ -8,6 +8,7 @@
 --]]
 
 local helpers      = require("lain.helpers")
+local shell        = require("awful.util").shell
 local wibox        = require("wibox")
 local string       = { match  = string.match,
                        format = string.format }
@@ -22,9 +23,16 @@ local function worker(args)
     local timeout  = args.timeout or 5
     local settings = args.settings or function() end
 
-    alsa.cmd     = args.cmd or "amixer"
-    alsa.channel = args.channel or "Master"
-    alsa.last    = {}
+    alsa.cmd           = args.cmd or "amixer"
+    alsa.channel       = args.channel or "Master"
+    alsa.togglechannel = args.togglechannel
+
+    if alsa.togglechannel then
+        alsa.cmd = { shell, "-c", string.format("%s get %s; %s get %s",
+        alsa.cmd, alsa.channel, alsa.cmd, alsa.togglechannel) }
+    end
+
+    alsa.last = {}
 
     function alsa.update()
         helpers.async(alsa.cmd, function(mixer)
@@ -39,6 +47,7 @@ local function worker(args)
     end
 
     timer_id = string.format("alsa-%s-%s", alsa.cmd, alsa.channel)
+
     helpers.newtimer(timer_id, timeout, alsa.update)
 
     return alsa
