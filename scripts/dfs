@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 #
 #   Adapted from Eridan's "fs" (cleanup, enhancements and switch to bash/Linux)
 #   JM,  10/12/2004

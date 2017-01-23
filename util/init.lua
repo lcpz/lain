@@ -89,7 +89,6 @@ function util.mc(c)
     c.floating   = true
     local s      = awful.screen.focused()
     local mg     = s.geometry
-    local tag    = s.selected_tag
     local mwfact = beautiful.master_width_factor or 0.5
     local g      = {}
     g.width      = math.sqrt(mwfact) * mg.width
