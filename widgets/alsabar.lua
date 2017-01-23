@@ -77,27 +77,6 @@ local function worker(args)
         layout           = vertical and wibox.container.rotate
     }
 
-    alsabar.bar:buttons (awful.util.table.join(
-        awful.button({}, 1, function()
-                awful.spawn(string.format('%s -e alsamixer', terminal))
-        end),
-        awful.button({}, 2, function()
-                awful.spawn(string.format("%s set %s 100%%", alsabar.mixer, alsabar.channel))
-                alsabar.update()
-        end),
-        awful.button({}, 3, function()
-                awful.spawn(string.format("%s set %s toggle", alsabar.mixer, alsabar.togglechannel or alsabar.channel))
-                alsabar.update()
-        end),
-        awful.button({}, 4, function()
-                awful.spawn(string.format("%s set %s %s+", alsabar.mixer, alsabar.channel, alsabar.step))
-                alsabar.update()
-        end),
-        awful.button({}, 5, function()
-                awful.spawn(string.format("%s set %s %s-", alsabar.mixer, alsabar.channel, alsabar.step))
-                alsabar.update()
-        end)))
-
     alsabar.tooltip = awful.tooltip({ objects = { alsabar.bar } })
 
     function alsabar.update(callback)
