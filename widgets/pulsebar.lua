@@ -13,6 +13,7 @@ local naughty      = require("naughty")
 local wibox        = require("wibox")
 local math         = { modf   = math.modf }
 local string       = { format = string.format,
+                       gmatch = string.gmatch,
                        match  = string.match,
                        rep    = string.rep }
 local type         = type
