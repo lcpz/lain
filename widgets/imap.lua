@@ -74,7 +74,7 @@ local function worker(args                           )
 
     end
 
-    helpers.newtimer(mail, timeout, update)
+    imap.timer = helpers.newtimer(mail, timeout, update, true, true)
 
     return setmetatable(imap, { __index = imap.widget })
 end

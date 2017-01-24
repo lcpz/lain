@@ -30,7 +30,7 @@ local function worker(args)
 
     maildir.widget = wibox.widget.textbox()
 
-    function update()
+    function maildir.update()
         if ext_mail_cmd then awful.spawn(ext_mail_cmd) end
 
         -- Find pathes to mailboxes.
@@ -76,7 +76,7 @@ local function worker(args)
         settings()
     end
 
-    helpers.newtimer(mailpath, timeout, update, true)
+    maildir.timer = helpers.newtimer(mailpath, timeout, maildir.update, true, true)
 
     return setmetatable(maildir, { __index = maildir.widget })
 end

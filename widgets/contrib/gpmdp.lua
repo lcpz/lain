@@ -67,23 +67,24 @@ local function worker(args)
         if gpm_now.playing then
             if notify == "on" and gpm_now.title ~= helpers.get_map("gpmdp_current") then
                 helpers.set_map("gpmdp_current", gpm_now.title)
-                os.execute(string.format("curl %d -o /tmp/gpmcover.png", gpm_now.cover_url))
 
                 if followtag then gpmdp_notification_preset.screen = focused() end
 
-                gpmdp.id = naughty.notify({
-                    preset = gpmdp_notification_preset,
-                    icon = "/tmp/gpmcover.png",
-                    replaces_id = gpmdp.id,
-                }).id
+                helpers.async(string.format("curl %d -o /tmp/gpmcover.png", gpm_now.cover_url),
+                function(f)
+                    gpmdp.id = naughty.notify({
+                        preset = gpmdp_notification_preset,
+                        icon = "/tmp/gpmcover.png",
+                        replaces_id = gpmdp.id
+                    }).id
+                end)
             end
-        elseif not gpm_now.running
-        then
+        elseif not gpm_now.running then
             helpers.set_map("gpmdp_current", nil)
         end
     end
 
-    helpers.newtimer("gpmdp", timeout, gpmdp.update)
+    gpmdp.timer = helpers.newtimer("gpmdp", timeout, gpmdp.update, true, true)
 
     return setmetatable(gpmdp, { __index = gpmdp.widget })
 end

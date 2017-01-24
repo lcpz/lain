@@ -91,7 +91,7 @@ local function worker(args)
         end)
     end
 
-    helpers.newtimer("moc", timeout, moc.update)
+    moc.timer = helpers.newtimer("moc", timeout, moc.update, true, true)
 
     return setmetatable(moc, { __index = moc.widget })
 end

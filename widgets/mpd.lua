@@ -126,7 +126,7 @@ local function worker(args)
         end)
     end
 
-    helpers.newtimer("mpd", timeout, mpd.update)
+    mpd.timer = helpers.newtimer("mpd", timeout, mpd.update, true, true)
 
     return mpd
 end

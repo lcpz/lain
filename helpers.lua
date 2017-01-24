@@ -92,8 +92,9 @@ end
 
 helpers.timer_table = {}
 
-function helpers.newtimer(_name, timeout, fun, nostart)
-    local name = timeout
+function helpers.newtimer(name, timeout, fun, nostart, stoppable)
+    if not name or #name == 0 then return end
+    name = (stoppable and name) or timeout
     if not helpers.timer_table[name] then
         helpers.timer_table[name] = timer({ timeout = timeout })
         helpers.timer_table[name]:start()
@@ -102,6 +103,7 @@ function helpers.newtimer(_name, timeout, fun, nostart)
     if not nostart then
         helpers.timer_table[name]:emit_signal("timeout")
     end
+    return stoppable and helpers.timer_table[name]
 end
 
 -- }}}
@@ -175,9 +177,9 @@ function helpers.spairs(t)
     end
 end
 
--- create a lain textbox widget
+-- create a textbox with no spacing issues
 function helpers.make_widget_textbox()
-    local w = wibox.widget.textbox('')
+    local w = wibox.widget.textbox()
     local t = wibox.widget.base.make_widget(w)
     t.widget = w
     return t
