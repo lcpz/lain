@@ -23,8 +23,8 @@ local function worker(args)
     local timeout  = args.timeout or 5
     local settings = args.settings or function() end
 
-    alsa.cmd           = args.cmd or "amixer"
     alsa.channel       = args.channel or "Master"
+    alsa.cmd           = args.cmd or "amixer sget " .. alsa.channel
     alsa.togglechannel = args.togglechannel
 
     if alsa.togglechannel then
