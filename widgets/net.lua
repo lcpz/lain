@@ -37,7 +37,7 @@ local function worker(args)
 
     function net.get_device()
         helpers.async(string.format("ip link show", device_cmd), function(ws)
-            ws = ws:match("(%w+): <BROADCAST,MULTICAST,.-,UP,LOWER_UP>")
+            ws = ws:match("(%w+): <BROADCAST,MULTICAST,.-UP,LOWER_UP>")
             net.iface = ws and { ws } or {}
         end)
     end
