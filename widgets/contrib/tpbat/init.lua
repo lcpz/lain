@@ -42,7 +42,7 @@ end
 function tpbat.show(t_out)
     tpbat.hide()
 
-    local bat   = self.bat
+    local bat   = tpbat.bat
 
     if bat == nil or not bat:installed() then return end
 
