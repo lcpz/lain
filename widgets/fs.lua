@@ -20,7 +20,7 @@ local setmetatable = setmetatable
 
 -- File system disk space usage
 -- lain.widgets.fs
-local fs = {}
+local fs = helpers.make_widget_textbox()
 
 -- Unit definitions
 fs.unit = { ["mb"] = 1024, ["gb"] = 1024^2 }
@@ -32,6 +32,8 @@ function fs.hide()
 end
 
 function fs.show(seconds, scr)
+    fs.update()
+
     fs.hide()
 
     if fs.followtag then
@@ -40,15 +42,10 @@ function fs.show(seconds, scr)
         fs.notification_preset.screen = scr or 1
     end
 
-    local cmd = (fs.options and string.format("dfs %s", fs.options)) or "dfs"
-
-    helpers.async(helpers.scripts_dir .. cmd, function(ws)
-        fs.notification = naughty.notify({
-            preset      = fs.notification_preset,
-            text        = ws:gsub("\n*$", ""),
-            timeout     = seconds or 5,
-        })
-    end)
+    fs.notification = naughty.notify({
+        preset      = fs.notification_preset,
+        timeout     = seconds or 5
+    })
 end
 
 local function worker(args)
@@ -70,11 +67,9 @@ local function worker(args)
         fs.notification_preset.bg   = "#000000"
     end
 
-    fs.widget = wibox.widget.textbox()
-
     helpers.set_map(partition, false)
 
-    function update()
+    function fs.update()
         fs_info, fs_now  = {}, {}
         helpers.async({ shell, "-c", "LC_ALL=C df -k --output=target,size,used,avail,pcent" }, function(f)
             for line in string.gmatch(f, "\n[^\n]+") do
@@ -115,6 +110,11 @@ local function worker(args)
                 helpers.set_map(partition, false)
             end
         end)
+
+        local notifycmd = (fs.options and string.format("dfs %s", fs.options)) or "dfs"
+        helpers.async(helpers.scripts_dir .. notifycmd, function(ws)
+            fs.notification_preset.text = ws:gsub("\n*$", "")
+        end)
     end
 
     if showpopup == "on" then
@@ -122,7 +122,7 @@ local function worker(args)
        fs.widget:connect_signal('mouse::leave', function () fs.hide() end)
     end
 
-    helpers.newtimer(partition, timeout, update)
+    helpers.newtimer(partition, timeout, fs.update)
 
     return setmetatable(fs, { __index = fs.widget })
 end
