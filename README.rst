@@ -18,7 +18,7 @@ If you still have to use branch 3.5.x, you can refer to the commit 301faf5_, but
 Description
 -----------
 
-Successor of awesome-vain_, this module provides new layouts, **asynchronous** widgets and utility functions, with the aim of improving Awesome_ usability and configurability.
+Successor of awesome-vain_, this module provides new layouts, asynchronous widgets and utility functions, with the aim of improving Awesome_ usability and configurability.
 
 Read the wiki_ for all the info.
 
