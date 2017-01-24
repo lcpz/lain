@@ -23,19 +23,21 @@ local function worker(args)
     local timeout  = args.timeout or 5
     local settings = args.settings or function() end
 
+    alsa.cmd           = args.cmd or "amixer"
     alsa.channel       = args.channel or "Master"
-    alsa.cmd           = args.cmd or "amixer sget " .. alsa.channel
     alsa.togglechannel = args.togglechannel
 
+    local format_cmd = string.format("%s get %s", alsa.cmd, alsa.channel)
+
     if alsa.togglechannel then
-        alsa.cmd = { shell, "-c", string.format("%s get %s; %s get %s",
+        format_cmd = { shell, "-c", string.format("%s get %s; %s get %s",
         alsa.cmd, alsa.channel, alsa.cmd, alsa.togglechannel) }
     end
 
     alsa.last = {}
 
     function alsa.update()
-        helpers.async(alsa.cmd, function(mixer)
+        helpers.async(format_cmd, function(mixer)
             local l,s = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
             if alsa.last.level ~= l or alsa.last.status ~= s then
                 volume_now = { level = l, status = s }

@@ -54,8 +54,10 @@ local function worker(args)
         alsabar.notification_preset.font = "Monospace 11"
     end
 
+    local format_cmd = string.format("%s get %s", alsabar.cmd, alsabar.channel)
+
     if alsabar.togglechannel then
-        alsabar.cmd = { awful.util.shell, "-c", string.format("%s get %s; %s get %s",
+        format_cmd = { awful.util.shell, "-c", string.format("%s get %s; %s get %s",
         alsabar.cmd, alsabar.channel, alsabar.cmd, alsabar.togglechannel) }
     end
 
@@ -75,7 +77,7 @@ local function worker(args)
     alsabar.tooltip = awful.tooltip({ objects = { alsabar.bar } })
 
     function alsabar.update(callback)
-        helpers.async(alsabar.cmd, function(mixer)
+        helpers.async(format_cmd, function(mixer)
             local volu,mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
             if (volu and tonumber(volu) ~= alsabar._current_level) or (mute and string.match(mute, "on") ~= alsabar._muted) then
                 alsabar._current_level = tonumber(volu) or alsabar._current_level
