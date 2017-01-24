@@ -52,7 +52,7 @@ local function worker(args)
       end)
    end
 
-   helpers.newtimer(string.format("pulseaudio-%s", timeout), timeout, pulseaudio.update)
+   helpers.newtimer("pulseaudio", timeout, pulseaudio.update)
 
    return setmetatable(pulseaudio, { __index = pulseaudio.widget })
 end

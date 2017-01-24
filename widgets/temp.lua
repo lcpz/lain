@@ -39,7 +39,7 @@ local function worker(args)
 
     newtimer("coretemp", timeout, update)
 
-    return temp.widget
+    return setmetatable(temp, { __index = temp.widget })
 end
 
 return setmetatable(temp, { __call = function(_, ...) return worker(...) end })

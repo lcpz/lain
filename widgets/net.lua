@@ -12,7 +12,6 @@ local naughty      = require("naughty")
 local wibox        = require("wibox")
 local string       = { format = string.format,
                        match  = string.match }
-local tostring     = tostring
 local setmetatable = setmetatable
 
 -- Network infos
@@ -118,9 +117,9 @@ local function worker(args)
         settings()
     end
 
-    helpers.newtimer("net-" .. tostring(net.iface), timeout, update)
+    helpers.newtimer("network", timeout, update)
 
-    return net
+    return setmetatable(net, { __index = net.widget })
 end
 
 return setmetatable({}, { __call = function(_, ...) return worker(...) end })

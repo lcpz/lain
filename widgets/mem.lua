@@ -50,7 +50,7 @@ local function worker(args)
 
     newtimer("mem", timeout, update)
 
-    return mem.widget
+    return setmetatable(mem, { __index = mem.widget })
 end
 
 return setmetatable(mem, { __call = function(_, ...) return worker(...) end })

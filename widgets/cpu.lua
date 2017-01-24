@@ -77,7 +77,7 @@ local function worker(args)
 
     newtimer("cpu", timeout, update)
 
-    return cpu.widget
+    return setmetatable(cpu, { __index = cpu.widget })
 end
 
 return setmetatable(cpu, { __call = function(_, ...) return worker(...) end })

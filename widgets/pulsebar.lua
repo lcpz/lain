@@ -136,10 +136,7 @@ local function worker(args)
         end)
     end
 
-
-    timer_id = string.format("pulsebar-%s", pulsebar.sink)
-
-    helpers.newtimer(timer_id, timeout, pulsebar.update)
+    helpers.newtimer(string.format("pulsebar-%s", pulsebar.sink), timeout, pulsebar.update)
 
     return pulsebar
 end

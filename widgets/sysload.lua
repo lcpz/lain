@@ -36,7 +36,8 @@ local function worker(args)
     end
 
     newtimer("sysload", timeout, update)
-    return sysload.widget
+
+    return setmetatable(sysload, { __index = sysload.widget })
 end
 
 return setmetatable(sysload, { __call = function(_, ...) return worker(...) end })

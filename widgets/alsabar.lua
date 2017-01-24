@@ -124,9 +124,7 @@ local function worker(args)
         end)
     end
 
-    timer_id = string.format("alsabar-%s-%s", alsabar.cmd, alsabar.channel)
-
-    helpers.newtimer(timer_id, timeout, alsabar.update)
+    helpers.newtimer(string.format("alsabar-%s-%s", alsabar.cmd, alsabar.channel), timeout, alsabar.update)
 
     return alsabar
 end
