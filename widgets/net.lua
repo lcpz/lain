@@ -32,7 +32,8 @@ local function worker(args)
     local settings   = args.settings or function() end
 
     -- Compatibility with old API where iface was a string corresponding to 1 interface
-    net.iface = (args.iface and type(args.iface) == "string" and {args.iface}) or {}
+    net.iface = (args.iface and (type(args.iface) == "string" and {args.iface}) or (type(args.iface) == "table" and args.iface)) or {}
+
 
     function net.get_device()
         helpers.async(string.format("ip link show", device_cmd), function(ws)
