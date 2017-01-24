@@ -11,7 +11,7 @@ local newtimer     = require("lain.helpers").newtimer
 local wibox        = require("wibox")
 local gmatch       = string.gmatch
 local lines        = io.lines
-local math         = { ceil = math.ceil, floor = math.floor }
+local floor        = math.floor
 local setmetatable = setmetatable
 
 -- Memory usage (ignoring caches)
@@ -29,13 +29,13 @@ local function worker(args)
         mem_now = {}
         for line in lines("/proc/meminfo") do
             for k, v in gmatch(line, "([%a]+):[%s]+([%d]+).+") do
-                if     k == "MemTotal"     then mem_now.total = math.ceil(v / 1024)
-                elseif k == "MemFree"      then mem_now.free  = math.ceil(v / 1024)
-                elseif k == "Buffers"      then mem_now.buf   = math.ceil(v / 1024)
-                elseif k == "Cached"       then mem_now.cache = math.ceil(v / 1024)
-                elseif k == "SwapTotal"    then mem_now.swap  = math.ceil(v / 1024)
-                elseif k == "SwapFree"     then mem_now.swapf = math.ceil(v / 1024)
-                elseif k == "SReclaimable" then mem_now.srec  = math.ceil(v / 1024)
+                if     k == "MemTotal"     then mem_now.total = floor(v / 1024 + 0.5)
+                elseif k == "MemFree"      then mem_now.free  = floor(v / 1024 + 0.5)
+                elseif k == "Buffers"      then mem_now.buf   = floor(v / 1024 + 0.5)
+                elseif k == "Cached"       then mem_now.cache = floor(v / 1024 + 0.5)
+                elseif k == "SwapTotal"    then mem_now.swap  = floor(v / 1024 + 0.5)
+                elseif k == "SwapFree"     then mem_now.swapf = floor(v / 1024 + 0.5)
+                elseif k == "SReclaimable" then mem_now.srec  = floor(v / 1024 + 0.5)
                 end
             end
         end
