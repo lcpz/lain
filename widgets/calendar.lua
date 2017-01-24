@@ -69,7 +69,7 @@ function calendar.show(t_out, inc_offset, scr)
 
     async(f, function(ws)
         fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
-        ws = ws:gsub("%c%[7m%d+%c%[27m", markup.bold(markup.color(bg, fg, today)))
+        ws = ws:gsub("%c%[%d+[m]?%d+%c%[%d+[m]?", markup.bold(markup.color(bg, fg, today)))
         calendar.notification = naughty.notify({
             preset  = calendar.notification_preset,
             text    = ws:gsub("\n*$", ""),
