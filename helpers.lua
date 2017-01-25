@@ -180,9 +180,6 @@ end
 -- create a textbox with no spacing issues
 function helpers.make_widget_textbox()
     local w = wibox.widget.textbox()
-    --local t = wibox.widget.base.make_widget(w)
-    --t.widget = w
-    --return t
     return setmetatable({ widget = w }, { __index = w })
 end
 
