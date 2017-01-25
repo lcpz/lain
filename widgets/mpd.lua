@@ -32,7 +32,7 @@ local function worker(args)
     local music_dir     = args.music_dir or os.getenv("HOME") .. "/Music"
     local cover_pattern = args.cover_pattern or "*\\.(jpg|jpeg|png|gif)$"
     local cover_size    = args.cover_size or 100
-    local default_art   = args.default_art or ""
+    local default_art   = args.default_art
     local notify        = args.notify or "on"
     local followtag     = args.followtag or false
     local settings      = args.settings or function() end
@@ -105,7 +105,7 @@ local function worker(args)
                         preset      = mpd_notification_preset,
                         icon        = default_art,
                         icon_size   = cover_size,
-                        replaces_id = mpd.id,
+                        replaces_id = mpd.id
                     }
 
                     if not string.match(mpd_now.file, "http.*://") then -- local file instead of http stream
@@ -113,6 +113,7 @@ local function worker(args)
                         local cover  = string.format("find '%s' -maxdepth 1 -type f | egrep -i -m1 '%s'", path, cover_pattern)
                         helpers.async({ shell, "-c", cover }, function(current_icon)
                             common.icon = current_icon:gsub("\n", "")
+                            if #common.icon == 0 then common.icon = nil end
                             mpd.id = naughty.notify(common).id
                         end)
                     else
