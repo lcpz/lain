@@ -20,14 +20,10 @@ local tonumber     = tonumber
 local calendar = { offset = 0 }
 
 function calendar.hide()
-    if not calendar.notification then return end
-    naughty.destroy(calendar.notification)
-    calendar.notification = nil
+    naughty.destroy(naughty.getById(calendar.id))
 end
 
 function calendar.show(t_out, inc_offset, scr)
-    calendar.hide()
-
     local today = os.date("%d")
     local offs = inc_offset or 0
     local f
@@ -69,12 +65,13 @@ function calendar.show(t_out, inc_offset, scr)
     helpers.async(f, function(ws)
         fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
         ws = ws:gsub("%c%[%d+[m]?%d+%c%[%d+[m]?", markup.bold(markup.color(bg, fg, today)))
-        calendar.notification = naughty.notify({
-            preset  = calendar.notification_preset,
-            text    = ws:gsub("\n*$", ""),
-            icon    = calendar.notify_icon,
-            timeout = t_out or calendar.notification.preset.timeout or 5
-        })
+        calendar.id = naughty.notify({
+            replaces_id = calendar.id,
+            preset      = calendar.notification_preset,
+            text        = ws:gsub("\n*$", ""),
+            icon        = calendar.notify_icon,
+            timeout     = t_out or calendar.notification.preset.timeout or 5
+        }).id
     end)
 end
 

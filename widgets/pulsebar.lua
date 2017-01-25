@@ -129,10 +129,15 @@ local function worker(args)
 
             if pulsebar.followtag then preset.screen = awful.screen.focused() end
 
-            pulsebar.id = naughty.notify ({
-                replaces_id = pulsebar.id,
-                preset      = preset
-            }).id
+            if not pulsebar.notification then
+                pulsebar.notification = naughty.notify {
+                    preset  = preset,
+                    destroy = function() pulsebar.notification = nil end
+                }
+            else
+                naughty.replace_text(pulsebar.notification, preset.title, preset.text)
+                naughty.reset_timeout(pulsebar.notification, preset.timeout)
+            end
         end)
     end
 

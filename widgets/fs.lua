@@ -61,11 +61,10 @@ local function worker(args)
     fs.notification_preset = args.notification_preset
 
     if not fs.notification_preset then
-        fs.notification_preset = {
-            font = "Monospace 10",
-            fg   = "#FFFFFF",
-            bg   = "#000000"
-        }
+        fs.notification_preset      = naughty.config.defaults
+        fs.notification_preset.font = "Monospace 10"
+        fs.notification_preset.fg   = "#FFFFFF"
+        fs.notification_preset.bg   = "#000000"
     end
 
     helpers.set_map(partition, false)
@@ -125,7 +124,7 @@ local function worker(args)
 
     helpers.newtimer(partition, timeout, fs.update)
 
-    return fs
+    return setmetatable(fs, { __index = fs.widget })
 end
 
 return setmetatable(fs, { __call = function(_, ...) return worker(...) end })

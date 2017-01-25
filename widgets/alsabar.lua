@@ -119,10 +119,15 @@ local function worker(args)
 
             if alsabar.followtag then preset.screen = awful.screen.focused() end
 
-            alsabar.id = naughty.notify ({
-                replaces_id = alsabar.id,
-                preset      = preset
-            }).id
+            if not alsabar.notification then
+                alsabar.notification = naughty.notify {
+                    preset  = preset,
+                    destroy = function() alsabar.notification = nil end
+                }
+            else
+                naughty.replace_text(alsabar.notification, preset.title, preset.text)
+                naughty.reset_timeout(alsabar.notification, preset.timeout)
+            end
         end)
     end
 
