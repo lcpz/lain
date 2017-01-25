@@ -10,9 +10,9 @@
                                                   
 --]]
 
-local tag      = require("awful.tag")
 local tonumber = tonumber
 local math     = { floor = math.floor }
+local scr      = require("awful.screen")
 
 local centerwork = {
     name         = "centerwork",
@@ -23,6 +23,9 @@ local function do_centerwork(p, orientation)
     -- Screen.
     local wa  = p.workarea
     local cls = p.clients
+    local ta = scr.focused().selected_tag
+
+    if not ta then return end
 
     if #cls <= 0 then return end
 
@@ -33,7 +36,7 @@ local function do_centerwork(p, orientation)
     local g = {}
 
     -- Main column, fixed width and height.
-    local mwfact          = tag.object.get_master_width_factor(t)
+    local mwfact          = ta.master_width_factor
     local mainhei         = math.floor(wa.height * mwfact)
     local mainwid         = math.floor(wa.width * mwfact)
     local slavewid        = wa.width - mainwid
