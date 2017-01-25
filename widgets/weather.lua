@@ -6,9 +6,7 @@
                                                   
 --]]
 
-local async        = require("lain.helpers").async
-local newtimer     = require("lain.helpers").newtimer
-local lain_icons   = require("lain.helpers").icons_dir
+local helpers      = require("lain.helpers")
 local json         = require("lain.util").dkjson
 local focused      = require("awful.screen").focused
 local naughty      = require("naughty")
@@ -27,7 +25,7 @@ local setmetatable = setmetatable
 -- lain.widgets.weather
 
 local function worker(args)
-    local weather               = {}
+    local weather               = helpers.make_widget_textbox()
     local args                  = args or {}
     local APPID                 = args.APPID or "3e321f9414eaedbfab34983bda77a66e" -- lain default
     local timeout               = args.timeout or 900   -- 15 min
@@ -44,7 +42,7 @@ local function worker(args)
     local lang                  = args.lang or "en"
     local cnt                   = args.cnt or 5
     local date_cmd              = args.date_cmd or "date -u -d @%d +'%%a %%d'"
-    local icons_path            = args.icons_path or lain_icons .. "openweathermap/"
+    local icons_path            = args.icons_path or helpers.icons_dir .. "openweathermap/"
     local notification_preset   = args.notification_preset or {}
     local notification_text_fun = args.notification_text_fun or
                                   function (wn)
@@ -58,9 +56,9 @@ local function worker(args)
     local followtag             = args.followtag or false
     local settings              = args.settings or function() end
 
-    weather.widget    = wibox.widget.textbox(weather_na_markup)
+    weather.widget:set_markup(weather_na_markup)
     weather.icon_path = icons_path .. "na.png"
-    weather.icon      = wibox.widget.imagebox(weather.icon_path)
+    weather.icon = wibox.widget.imagebox(weather.icon_path)
 
     function weather.show(t_out)
         weather.hide()
@@ -99,7 +97,7 @@ local function worker(args)
 
     function weather.forecast_update()
         local cmd = string.format(forecast_call, city_id, units, lang, cnt, APPID)
-        async(cmd, function(f)
+        helpers.async(cmd, function(f)
             local pos, err
             weather_now, pos, err = json.decode(f, 1, nil)
 
@@ -119,7 +117,7 @@ local function worker(args)
 
     function weather.update()
         local cmd = string.format(current_call, city_id, units, lang, APPID)
-        async(cmd, function(f)
+        helpers.async(cmd, function(f)
             local pos, err, icon
             weather_now, pos, err = json.decode(f, 1, nil)
 
@@ -160,10 +158,10 @@ local function worker(args)
 
     weather.attach(weather.widget)
 
-    weather.timer = newtimer("weather-" .. city_id, timeout, weather.update, false, true)
-    weather.timer_forecast = newtimer("weather_forecast-" .. city_id, timeout, weather.forecast_update, false, true)
+    weather.timer = helpers.newtimer("weather-" .. city_id, timeout, weather.update, false, true)
+    weather.timer_forecast = helpers.newtimer("weather_forecast-" .. city_id, timeout, weather.forecast_update, false, true)
 
-    return setmetatable(weather, { __index = weather.widget })
+    return weather
 end
 
 return setmetatable({}, { __call = function(_, ...) return worker(...) end })

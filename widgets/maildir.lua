@@ -18,7 +18,7 @@ local setmetatable = setmetatable
 
 -- Maildir check (synchronous)
 -- lain.widgets.maildir
-local maildir = {}
+local maildir = helpers.make_widget_textbox()
 
 local function worker(args)
     local args         = args or {}
@@ -26,12 +26,10 @@ local function worker(args)
     local mailpath     = args.mailpath or os.getenv("HOME") .. "/Mail"
     local ignore_boxes = args.ignore_boxes or {}
     local settings     = args.settings or function() end
-    local ext_mail_cmd = args.external_mail_cmd
-
-    maildir.widget = wibox.widget.textbox()
+    local cmd          = args.cmd
 
     function maildir.update()
-        if ext_mail_cmd then awful.spawn(ext_mail_cmd) end
+        if cmd then helpers.async({ awful.util.shell, "-c", cmd }, function() end) end
 
         -- Find pathes to mailboxes.
         local p = io.popen(string.format("find %s -mindepth 1 -maxdepth 2 -type d -not -name .git", mailpath))
@@ -78,7 +76,7 @@ local function worker(args)
 
     maildir.timer = helpers.newtimer(mailpath, timeout, maildir.update, true, true)
 
-    return setmetatable(maildir, { __index = maildir.widget })
+    return maildir
 end
 
 return setmetatable(maildir, { __call = function(_, ...) return worker(...) end })

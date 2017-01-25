@@ -19,19 +19,16 @@ local newtimer     = require("lain.helpers").newtimer
 local first_line   = require("lain.helpers").first_line
 local naughty      = require("naughty")
 local wibox        = require("wibox")
-
 local string       = { format = string.format }
 local math         = { floor = math.floor }
 local tostring     = tostring
 local setmetatable = setmetatable
-
 package.path       = debug.getinfo(1,"S").source:match[[^@?(.*[\/])[^\/]-$]] .. "?.lua;" .. package.path
 local smapi        = require("smapi")
 
 -- ThinkPad SMAPI-enabled battery info widget
 -- lain.widgets.contrib.tpbat
 local tpbat = { }
-local tpbat_notification = nil
 
 function tpbat.hide()
     if not tpbat.notification then return end
@@ -69,7 +66,7 @@ function tpbat.show(t_out)
     local str = string.format("%s : %s %s (%s)\n", bat.name, mfgr, model, chem)
                 .. string.format("\n%s \t\t\t %s", status:upper(), msg)
 
-    tpbat_notification = naughty.notify({
+    tpbat.notification = naughty.notify({
         preset = naughty.config.defaults,
         text = str,
         timeout = t_out,
@@ -86,7 +83,7 @@ function tpbat.register(args)
     tpbat.bat = smapi:battery(battery) -- Create a new battery
     local bat = tpbat.bat
 
-    tpbat.widget = wibox.widget.textbox('')
+    tpbat.widget = wibox.widget.textbox()
 
     bat_notification_low_preset = {
         title = "Battery low",

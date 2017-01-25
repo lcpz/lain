@@ -35,7 +35,7 @@ local function worker(args)
 
     abase.timer = helpers.newtimer(cmd, timeout, abase.update, nostart, stoppable)
 
-    return setmetatable(abase, { __index = abase.widget })
+    return abase
 end
 
 return setmetatable({}, { __call = function(_, ...) return worker(...) end })

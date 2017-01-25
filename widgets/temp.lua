@@ -6,7 +6,7 @@
                                                   
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
+local helpers      = require("lain.helpers")
 local wibox        = require("wibox")
 local io           = { open = io.open }
 local tonumber     = tonumber
@@ -14,15 +14,13 @@ local setmetatable = setmetatable
 
 -- coretemp
 -- lain.widgets.temp
-local temp = {}
+local temp = helpers.make_widget_textbox()
 
 local function worker(args)
     local args     = args or {}
     local timeout  = args.timeout or 2
     local tempfile = args.tempfile or "/sys/class/thermal/thermal_zone0/temp"
     local settings = args.settings or function() end
-
-    temp.widget = wibox.widget.textbox()
 
     function update()
         local f = io.open(tempfile)
@@ -37,9 +35,9 @@ local function worker(args)
         settings()
     end
 
-    newtimer("coretemp", timeout, update)
+    helpers.newtimer("coretemp", timeout, update)
 
-    return setmetatable(temp, { __index = temp.widget })
+    return temp
 end
 
 return setmetatable(temp, { __call = function(_, ...) return worker(...) end })

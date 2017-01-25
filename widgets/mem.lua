@@ -7,7 +7,7 @@
                                                   
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
+local helpers      = require("lain.helpers")
 local wibox        = require("wibox")
 local gmatch       = string.gmatch
 local lines        = io.lines
@@ -16,14 +16,12 @@ local setmetatable = setmetatable
 
 -- Memory usage (ignoring caches)
 -- lain.widgets.mem
-local mem = {}
+local mem = helpers.make_widget_textbox()
 
 local function worker(args)
     local args     = args or {}
     local timeout  = args.timeout or 2
     local settings = args.settings or function() end
-
-    mem.widget = wibox.widget.textbox()
 
     function update()
         mem_now = {}
@@ -48,9 +46,9 @@ local function worker(args)
         settings()
     end
 
-    newtimer("mem", timeout, update)
+    helpers.newtimer("mem", timeout, update)
 
-    return setmetatable(mem, { __index = mem.widget })
+    return mem
 end
 
 return setmetatable(mem, { __call = function(_, ...) return worker(...) end })

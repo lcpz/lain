@@ -177,7 +177,7 @@ local function worker(args)
 
     newtimer("batteries", timeout, bat.update)
     
-    return setmetatable(bat, { __index = bat.widget })
+    return bat
 end
 
 return setmetatable({}, { __call = function(_, ...) return worker(...) end })

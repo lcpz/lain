@@ -129,7 +129,7 @@ local function worker(args)
 
     mpd.timer = helpers.newtimer("mpd", timeout, mpd.update, true, true)
 
-    return setmetatable(mpd, { __index = mpd.widget })
+    return mpd
 end
 
 return setmetatable(mpd, { __call = function(_, ...) return worker(...) end })

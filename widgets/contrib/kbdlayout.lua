@@ -72,7 +72,7 @@ local function worker(args)
 
    helpers.newtimer("kbdlayout", timeout, kbdlayout.update)
 
-   return setmetatable(kbdlayout, { __index = kbdlayout.widget })
+   return kbdlayout
 end
 
 return setmetatable({}, { __call = function (_, ...) return worker(...) end })

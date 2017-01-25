@@ -50,7 +50,7 @@ local function worker(args)
 
     helpers.newtimer(string.format("alsa-%s-%s", alsa.cmd, alsa.channel), timeout, alsa.update)
 
-    return setmetatable(alsa, { __index = alsa.widget })
+    return alsa
 end
 
 return setmetatable(alsa, { __call = function(_, ...) return worker(...) end })

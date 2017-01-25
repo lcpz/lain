@@ -93,7 +93,7 @@ local function worker(args)
 
     moc.timer = helpers.newtimer("moc", timeout, moc.update, true, true)
 
-    return setmetatable(moc, { __index = moc.widget })
+    return moc
 end
 
 return setmetatable(moc, { __call = function(_, ...) return worker(...) end })

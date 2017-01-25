@@ -124,7 +124,7 @@ local function worker(args)
 
     helpers.newtimer(partition, timeout, fs.update)
 
-    return setmetatable(fs, { __index = fs.widget })
+    return fs
 end
 
 return setmetatable(fs, { __call = function(_, ...) return worker(...) end })

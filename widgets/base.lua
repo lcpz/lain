@@ -22,8 +22,6 @@ local function worker(args)
     local cmd       = args.cmd or ""
     local settings  = args.settings or function() end
 
-    base.widget = wibox.widget.textbox()
-
     function base.update()
         output = helpers.read_pipe(cmd)
         if output ~= base.prev then
@@ -35,7 +33,7 @@ local function worker(args)
 
     base.timer = helpers.newtimer(cmd, timeout, base.update, nostart, stoppable)
 
-    return setmetatable(base, { __index = base.widget })
+    return base
 end
 
 return setmetatable({}, { __call = function(_, ...) return worker(...) end })

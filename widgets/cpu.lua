@@ -7,8 +7,7 @@
                                                   
 --]]
 
-local lines_match  = require("lain.helpers").lines_match
-local newtimer     = require("lain.helpers").newtimer
+local helpers      = require("lain.helpers")
 local wibox        = require("wibox")
 local math         = { ceil   = math.ceil }
 local string       = { format = string.format,
@@ -18,20 +17,20 @@ local setmetatable = setmetatable
 
 -- CPU usage
 -- lain.widgets.cpu
-local cpu = { core = {} }
+local cpu = helpers.make_widget_textbox()
 
 local function worker(args)
     local args     = args or {}
     local timeout  = args.timeout or 2
     local settings = args.settings or function() end
 
-    cpu.widget = wibox.widget.textbox()
+    cpu.core = {}
 
     function update()
         -- Read the amount of time the CPUs have spent performing
         -- different kinds of work. Read the first line of /proc/stat
         -- which is the sum of all CPUs.
-        local times = lines_match("cpu","/proc/stat")
+        local times = helpers.lines_match("cpu","/proc/stat")
 
         for index,time in pairs(times) do
             local coreid = index - 1
@@ -75,9 +74,9 @@ local function worker(args)
         settings()
     end
 
-    newtimer("cpu", timeout, update)
+    helpers.newtimer("cpu", timeout, update)
 
-    return setmetatable(cpu, { __index = cpu.widget })
+    return cpu
 end
 
 return setmetatable(cpu, { __call = function(_, ...) return worker(...) end })

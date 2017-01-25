@@ -119,7 +119,7 @@ local function worker(args)
 
     helpers.newtimer("network", timeout, update)
 
-    return setmetatable(net, { __index = net.widget })
+    return net
 end
 
 return setmetatable({}, { __call = function(_, ...) return worker(...) end })
