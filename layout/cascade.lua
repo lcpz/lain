@@ -8,7 +8,7 @@
                                                   
 --]]
 
-local tag      = require("awful.tag")
+local scr      = require("awful.screen")
 local tonumber = tonumber
 
 local cascade = {
@@ -31,6 +31,9 @@ local function do_cascade(p, tiling)
     -- Screen.
     local wa  = p.workarea
     local cls = p.clients
+    local ta = scr.focused().selected_tag
+
+    if not ta then return end
 
     if #cls <= 0 then return end
 
@@ -44,7 +47,7 @@ local function do_cascade(p, tiling)
         if cascade.nmaster > 0 then
             num_c = cascade.nmaster
         else
-            num_c = tag.master_count
+            num_c = ta.master_count
         end
 
         -- Opening a new window will usually force all existing windows to
@@ -89,7 +92,7 @@ local function do_cascade(p, tiling)
         if cascade.tile.mwfact > 0 then
             mwfact = cascade.tile.mwfact
         else
-            mwfact = tag.getmwfact(t)
+            mwfact = ta.master_width_factor
         end
 
         -- Make slave windows overlap main window? Do this if ncol is 1.
@@ -97,7 +100,7 @@ local function do_cascade(p, tiling)
         if cascade.tile.ncol > 0 then
             overlap_main = cascade.tile.ncol
         else
-            overlap_main = tag.column_count
+            overlap_main = ta.column_count
         end
 
         -- Minimum space for slave windows? See cascade.tile.lua.
@@ -105,7 +108,7 @@ local function do_cascade(p, tiling)
         if cascade.tile.nmaster > 0 then
             num_c = cascade.tile.nmaster
         else
-            num_c = tag.master_count
+            num_c = ta.master_count
         end
 
         local how_many = (#cls - 1 >= num_c and (#cls - 1)) or num_c
