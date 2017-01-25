@@ -126,7 +126,6 @@ local function worker(args)
                 }
             else
                 naughty.replace_text(alsabar.notification, preset.title, preset.text)
-                naughty.reset_timeout(alsabar.notification, preset.timeout)
             end
         end)
     end

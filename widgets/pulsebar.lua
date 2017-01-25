@@ -136,7 +136,6 @@ local function worker(args)
                 }
             else
                 naughty.replace_text(pulsebar.notification, preset.title, preset.text)
-                naughty.reset_timeout(pulsebar.notification, preset.timeout)
             end
         end)
     end
