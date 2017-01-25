@@ -9,7 +9,7 @@
                                                   
 --]]
 
-local tag      = require("awful.tag")
+local scr      = require("awful.screen")
 local math     = { ceil  = math.ceil,
                    floor = math.floor,
                    max   = math.max }
@@ -22,6 +22,9 @@ local function do_fair(p, orientation)
     -- Screen.
     local wa  = p.workarea
     local cls = p.clients
+    local ta = scr.focused().selected_tag
+
+    if not ta then return end
 
     if #cls <= 0 then return end
 
@@ -50,12 +53,12 @@ local function do_fair(p, orientation)
         if #cls <= 0 then return end
 
         -- How many vertical columns? Read from nmaster on the tag.
-        local num_x = tonumber(termfair.nmaster) or tag.master_count
-        local ncol  = tonumber(termfair.ncol) or tag.column_count
-        local width = math.floor((wa.width - (num_x + 1)*useless_gap) / num_x)
+        local num_x = tonumber(termfair.nmaster) or ta.master_count
+        local ncol  = tonumber(termfair.ncol) or ta.column_count
 
         if num_x <= 2 then num_x = 2 end
         if ncol  <= 1 then ncol  = 1 end
+        local width = math.floor((wa.width - (num_x + 1)*useless_gap) / num_x)
 
         local num_y     = math.max(math.ceil(#cls / num_x), ncol)
         local height    = math.floor((wa.height - (num_y + 1)*useless_gap) / num_y)
@@ -143,12 +146,13 @@ local function do_fair(p, orientation)
         --   +---+---+---+      +---+---+---+
 
         -- How many vertical columns? Read from nmaster on the tag.
-        local num_x = tonumber(termfair.center.nmaster) or tag.master_count
-        local ncol  = tonumber(termfair.center.ncol) or tag.column_count
-        local width = math.floor((wa.width - (num_x + 1)*useless_gap) / num_x)
+        local num_x = tonumber(termfair.center.nmaster) or ta.master_count
+        local ncol  = tonumber(termfair.center.ncol) or ta.column_count
 
         if num_x <= 2 then num_x = 2 end
         if ncol  <= 1 then ncol  = 1 end
+
+        local width = math.floor((wa.width - (num_x + 1)*useless_gap) / num_x)
 
         if #cls < num_x then
             -- Less clients than the number of columns, let's center it!
