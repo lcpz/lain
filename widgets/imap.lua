@@ -11,6 +11,7 @@ local naughty      = require("naughty")
 local wibox        = require("wibox")
 local string       = { format = string.format,
                        gsub   = string.gsub }
+local type         = type
 local tonumber     = tonumber
 local setmetatable = setmetatable
 
@@ -37,7 +38,11 @@ local function worker(args)
     helpers.set_map(mail, 0)
 
     if not is_plain then
-        helpers.async(password, function(f) password = f:gsub("\n", "") end)
+        if type(password) == "string" or type(password) == "table" then
+            helpers.async(password, function(f) password = f:gsub("\n", "") end)
+        elseif type(password) == "function" then
+            local p = password()
+        end
     end
 
     function update()

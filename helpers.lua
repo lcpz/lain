@@ -177,10 +177,10 @@ function helpers.spairs(t)
     end
 end
 
--- create a textbox with no spacing issues
+-- create a lain textbox
 function helpers.make_widget_textbox()
-    local w = wibox.widget.textbox()
-    return setmetatable({ widget = w }, { __index = w })
+    local w = { widget = wibox.widget.textbox() }
+    return setmetatable(w, { __index = w.widget })
 end
 
 -- }}}
