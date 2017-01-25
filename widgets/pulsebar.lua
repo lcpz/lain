@@ -51,8 +51,8 @@ local function worker(args)
     pulsebar.notifications = args.notification_preset
 
     if not pulsebar.notification_preset then
-        pulsebar.notification_preset      = naughty.config.defaults
-        pulsebar.notification_preset.font = "Monospace 11"
+        pulsebar.notification_preset      = {}
+        pulsebar.notification_preset.font = "Monospace 10"
     end
 
     pulsebar.bar = wibox.widget {

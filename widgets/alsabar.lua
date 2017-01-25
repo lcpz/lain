@@ -50,8 +50,8 @@ local function worker(args)
     alsabar.notification_preset = args.notification_preset
 
     if not alsabar.notification_preset then
-        alsabar.notification_preset      = naughty.config.defaults
-        alsabar.notification_preset.font = "Monospace 11"
+        alsabar.notification_preset      = {}
+        alsabar.notification_preset.font = "Monospace 10"
     end
 
     local format_cmd = string.format("%s get %s", alsabar.cmd, alsabar.channel)

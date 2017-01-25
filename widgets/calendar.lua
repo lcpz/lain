@@ -6,8 +6,7 @@
                                                   
 --]]
 
-local async        = require("lain.helpers").async
-local icons_dir    = require("lain.helpers").icons_dir
+local helpers      = require("lain.helpers")
 local markup       = require("lain.util.markup")
 local awful        = require("awful")
 local naughty      = require("naughty")
@@ -67,7 +66,7 @@ function calendar.show(t_out, inc_offset, scr)
         calendar.notification_preset.screen = src or 1
     end
 
-    async(f, function(ws)
+    helpers.async(f, function(ws)
         fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
         ws = ws:gsub("%c%[%d+[m]?%d+%c%[%d+[m]?", markup.bold(markup.color(bg, fg, today)))
         calendar.notification = naughty.notify({
@@ -83,14 +82,15 @@ function calendar.attach(widget, args)
     local args                   = args or {}
     calendar.cal                 = args.cal or "/usr/bin/cal --color=always"
     calendar.followtag           = args.followtag or false
-    calendar.icons               = args.icons or icons_dir .. "cal/white/"
+    calendar.icons               = args.icons or helpers.icons_dir .. "cal/white/"
     calendar.notification_preset = args.notification_preset
 
     if not calendar.notification_preset then
-        calendar.notification_preset      = naughty.config.defaults
-        calendar.notification_preset.font = "Monospace 10"
-        calendar.notification_preset.fg   = "#FFFFFF"
-        calendar.notification_preset.bg   = "#000000"
+        calendar.notification_preset = {
+            font = "Monospace 10",
+            fg   = "#FFFFFF",
+            bg   = "#000000"
+        }
     end
 
     if widget then

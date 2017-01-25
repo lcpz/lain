@@ -66,9 +66,10 @@ function task.attach(widget, args)
     task.notification_preset = args.notification_preset
 
     if not task.notification_preset then
-        task.notification_preset      = naughty.config.defaults
-        task.notification_preset.font = "Monospace 10"
-        task.notification_preset.icon = helpers.icons_dir .. "/taskwarrior.png"
+        task.notification_preset = {
+            font = "Monospace 10",
+            icon = helpers.icons_dir .. "/taskwarrior.png"
+        }
     end
 
     if widget then

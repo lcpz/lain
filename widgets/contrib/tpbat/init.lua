@@ -51,10 +51,8 @@ function tpbat.show(t_out)
     local time   = bat:remaining_time()
     local msg    = "\t"
 
-    if status ~= "idle" and status ~= "nil"
-    then
-        if time == "N/A"
-        then
+    if status ~= "idle" and status ~= "nil" then
+        if time == "N/A" then
             msg = "...Calculating time remaining..."
         else
             msg = time .. (status == "charging" and " until charged" or " remaining")
@@ -67,10 +65,9 @@ function tpbat.show(t_out)
                 .. string.format("\n%s \t\t\t %s", status:upper(), msg)
 
     tpbat.notification = naughty.notify({
-        preset = naughty.config.defaults,
-        text = str,
+        text    = str,
         timeout = t_out,
-        screen = client.focus and client.focus.screen or 1
+        screen  = client.focus and client.focus.screen or 1
     })
 end
 
@@ -150,6 +147,7 @@ function tpbat.register(args)
         end
 
         widget = tpbat.widget
+
         settings()
     end
 
