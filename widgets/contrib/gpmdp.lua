@@ -19,7 +19,7 @@ local setmetatable = setmetatable
 
 -- Google Play Music Desktop infos
 -- lain.widget.contrib.gpmdp
-local gpmdp = helpers.make_widget_textbox()
+local gpmdp = {}
 
 local function worker(args)
     local args          = args or {}
@@ -29,6 +29,8 @@ local function worker(args)
     local file_location = args.file_location or
                           os.getenv("HOME") .. "/.config/Google Play Music Desktop Player/json_store/playback.json"
     local settings      = args.settings or function() end
+
+    gpmdp.widget = wibox.widget.textbox()
 
     gpmdp_notification_preset = {
         title   = "Now playing",

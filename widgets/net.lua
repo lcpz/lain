@@ -18,7 +18,7 @@ local setmetatable = setmetatable
 -- lain.widgets.net
 
 local function worker(args)
-    local net = helpers.make_widget_textbox()
+    local net = { widget = wibox.widget.textbox() }
     net.last_t = 0
     net.last_r = 0
     net.devices = {}

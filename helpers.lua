@@ -7,16 +7,14 @@
 --]]
 
 
+local easy_async = require("awful.spawn").easy_async
+local timer      = require("gears.timer")
 local debug      = require("debug")
 local io         = { lines = io.lines,
                      open  = io.open,
                      popen = io.popen }
 local rawget     = rawget
 local table      = { sort  = table.sort }
-
-local easy_async = require("awful.spawn").easy_async
-local timer      = require("gears.timer")
-local wibox      = require("wibox")
 
 -- Lain helper functions for internal use
 -- lain.helpers
@@ -175,12 +173,6 @@ function helpers.spairs(t)
             return keys[i], t[keys[i]]
         end
     end
-end
-
--- create a lain textbox
-function helpers.make_widget_textbox()
-    local w = { widget = wibox.widget.textbox() }
-    return setmetatable(w, { __index = w.widget })
 end
 
 -- }}}

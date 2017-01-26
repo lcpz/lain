@@ -24,6 +24,8 @@ function calendar.hide()
 end
 
 function calendar.show(t_out, inc_offset, scr)
+    calendar.hide()
+
     local today = os.date("%d")
     local offs = inc_offset or 0
     local f

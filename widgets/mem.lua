@@ -16,12 +16,14 @@ local setmetatable = setmetatable
 
 -- Memory usage (ignoring caches)
 -- lain.widgets.mem
-local mem = helpers.make_widget_textbox()
+local mem = {}
 
 local function worker(args)
     local args     = args or {}
     local timeout  = args.timeout or 2
     local settings = args.settings or function() end
+
+    mem.widget = wibox.widget.textbox()
 
     function update()
         mem_now = {}

@@ -15,12 +15,14 @@ local setmetatable = setmetatable
 
 -- System load
 -- lain.widgets.sysload
-local sysload = helpers.make_widget_textbox()
+local sysload = {}
 
 local function worker(args)
     local args     = args or {}
     local timeout  = args.timeout or 2
     local settings = args.settings or function() end
+
+    sysload.widget = wibox.widget.textbox()
 
     function update()
         local f = io.open("/proc/loadavg")

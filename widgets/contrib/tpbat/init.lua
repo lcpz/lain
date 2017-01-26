@@ -28,7 +28,7 @@ local smapi        = require("smapi")
 
 -- ThinkPad SMAPI-enabled battery info widget
 -- lain.widgets.contrib.tpbat
-local tpbat = { }
+local tpbat = {}
 
 function tpbat.hide()
     if not tpbat.notification then return end
@@ -39,7 +39,7 @@ end
 function tpbat.show(t_out)
     tpbat.hide()
 
-    local bat   = tpbat.bat
+    local bat = tpbat.bat
 
     if bat == nil or not bat:installed() then return end
 

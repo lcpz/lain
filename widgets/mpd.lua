@@ -21,7 +21,7 @@ local setmetatable = setmetatable
 
 -- MPD infos
 -- lain.widgets.mpd
-local mpd = helpers.make_widget_textbox()
+local mpd = {}
 
 local function worker(args)
     local args          = args or {}
@@ -40,6 +40,8 @@ local function worker(args)
     local mpdh = string.format("telnet://%s:%s", host, port)
     local echo = string.format("printf \"%sstatus\\ncurrentsong\\nclose\\n\"", password)
     local cmd  = string.format("%s | curl --connect-timeout 1 -fsm 3 %s", echo, mpdh)
+
+    mpd.widget = wibox.widget.textbox()
 
     mpd_notification_preset = { title = "Now playing", timeout = 6 }
 

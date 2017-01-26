@@ -16,7 +16,7 @@ local setmetatable = setmetatable
 
 -- Keyboard layout switcher
 -- lain.widgets.contrib.kblayout
-local kbdlayout = helpers.make_widget_textbox()
+local kbdlayout = {}
 
 local function worker(args)
    local args             = args or {}
@@ -27,6 +27,8 @@ local function worker(args)
    local idx              = 1
 
    if args.add_us_secondary == false then add_us_secondary = false end
+
+   kbdlayout.widget = wibox.widget.textbox()
 
    local function kbd_run_settings(layout, variant)
       kbdlayout_now = {

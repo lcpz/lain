@@ -17,14 +17,14 @@ local setmetatable = setmetatable
 
 -- CPU usage
 -- lain.widgets.cpu
-local cpu = helpers.make_widget_textbox()
+local cpu = { core = {} }
 
 local function worker(args)
     local args     = args or {}
     local timeout  = args.timeout or 2
     local settings = args.settings or function() end
 
-    cpu.core = {}
+    cpu.widget = wibox.widget.textbox()
 
     function update()
         -- Read the amount of time the CPUs have spent performing
@@ -67,9 +67,9 @@ local function worker(args)
             end
         end
 
-        widget = cpu.widget
         cpu_now = cpu.core
         cpu_now.usage = cpu_now[0].usage
+        widget = cpu.widget
 
         settings()
     end

@@ -18,7 +18,7 @@ local setmetatable = setmetatable
 
 -- Maildir check (synchronous)
 -- lain.widgets.maildir
-local maildir = helpers.make_widget_textbox()
+local maildir = {}
 
 local function worker(args)
     local args         = args or {}
@@ -27,6 +27,8 @@ local function worker(args)
     local ignore_boxes = args.ignore_boxes or {}
     local settings     = args.settings or function() end
     local cmd          = args.cmd
+
+    maildir.widget = wibox.widget.textbox()
 
     function maildir.update()
         if cmd then helpers.async({ awful.util.shell, "-c", cmd }, function() end) end

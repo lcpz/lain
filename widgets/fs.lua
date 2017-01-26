@@ -20,10 +20,7 @@ local setmetatable = setmetatable
 
 -- File system disk space usage
 -- lain.widgets.fs
-local fs = helpers.make_widget_textbox()
-
--- Unit definitions
-fs.unit = { ["mb"] = 1024, ["gb"] = 1024^2 }
+local fs = { unit  = { ["mb"] = 1024, ["gb"] = 1024^2 } }
 
 function fs.hide()
     if not fs.notification then return end
@@ -67,6 +64,8 @@ local function worker(args)
             bg   = "#000000"
         }
     end
+
+    fs.widget = wibox.widget.textbox()
 
     helpers.set_map(partition, false)
 
@@ -125,7 +124,7 @@ local function worker(args)
 
     helpers.newtimer(partition, timeout, fs.update)
 
-    return setmetatable(fs, { __index = fs.widget })
+    return fs
 end
 
 return setmetatable(fs, { __call = function(_, ...) return worker(...) end })

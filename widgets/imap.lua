@@ -19,7 +19,7 @@ local setmetatable = setmetatable
 -- lain.widgets.imap
 
 local function worker(args)
-    local imap      = helpers.make_widget_textbox()
+    local imap      = { widget = wibox.widget.textbox() }
     local args      = args or {}
     local server    = args.server
     local mail      = args.mail

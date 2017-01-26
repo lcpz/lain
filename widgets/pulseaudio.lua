@@ -16,7 +16,7 @@ local setmetatable = setmetatable
 
 -- PulseAudio volume
 -- lain.widgets.pulseaudio
-local pulseaudio = helpers.make_widget_textbox()
+local pulseaudio = {}
 
 local function worker(args)
    local args        = args or {}
@@ -25,6 +25,8 @@ local function worker(args)
    local scallback   = args.scallback
 
    pulseaudio.cmd    = args.cmd or "pacmd list-sinks | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'"
+
+   pulseaudio.widget = wibox.widget.textbox()
 
    function pulseaudio.update()
       if scallback then pulseaudio.cmd = scallback() end

@@ -16,9 +16,9 @@ local setmetatable = setmetatable
 
 -- ALSA volume
 -- lain.widgets.alsa
-local alsa = helpers.make_widget_textbox()
 
 local function worker(args)
+    local alsa     = { widget = wibox.widget.textbox() }
     local args     = args or {}
     local timeout  = args.timeout or 5
     local settings = args.settings or function() end
@@ -53,4 +53,4 @@ local function worker(args)
     return alsa
 end
 
-return setmetatable(alsa, { __call = function(_, ...) return worker(...) end })
+return setmetatable({}, { __call = function(_, ...) return worker(...) end })

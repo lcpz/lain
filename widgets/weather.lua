@@ -25,7 +25,7 @@ local setmetatable = setmetatable
 -- lain.widgets.weather
 
 local function worker(args)
-    local weather               = helpers.make_widget_textbox()
+    local weather               = { widget = wibox.widget.textbox() }
     local args                  = args or {}
     local APPID                 = args.APPID or "3e321f9414eaedbfab34983bda77a66e" -- lain default
     local timeout               = args.timeout or 900   -- 15 min

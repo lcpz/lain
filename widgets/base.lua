@@ -14,12 +14,12 @@ local setmetatable = setmetatable
 -- lain.widgets.base
 
 local function worker(args)
-    local base      = helpers.make_widget_textbox()
+    local base      = { widget = wibox.widget.textbox() }
     local args      = args or {}
     local timeout   = args.timeout or 5
     local nostart   = args.nostart or false
     local stoppable = args.stoppable or false
-    local cmd       = args.cmd or ""
+    local cmd       = args.cmd
     local settings  = args.settings or function() end
 
     function base.update()

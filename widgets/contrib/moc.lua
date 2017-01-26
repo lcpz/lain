@@ -19,7 +19,7 @@ local setmetatable = setmetatable
 
 -- MOC audio player
 -- lain.widgets.contrib.moc
-local moc = helpers.make_widget_textbox()
+local moc = {}
 
 local function worker(args)
     local args          = args or {}
@@ -30,6 +30,8 @@ local function worker(args)
     local default_art   = args.default_art or ""
     local followtag     = args.followtag or false
     local settings      = args.settings or function() end
+
+    moc.widget = wibox.widget.textbox()
 
     moc_notification_preset = { title = "Now playing", timeout = 6 }
 
