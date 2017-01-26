@@ -8,8 +8,8 @@
                                                   
 --]]
 
-local scr      = require("awful.screen")
-local tonumber = tonumber
+local floor  = math.floor
+local screen = screen
 
 local cascade = {
     name     = "cascade",
@@ -28,17 +28,11 @@ local cascade = {
 }
 
 local function do_cascade(p, tiling)
-    -- Screen.
-    local wa  = p.workarea
+    local t = p.tag or screen[p.screen].selected_tag
+    local wa = p.workarea
     local cls = p.clients
-    local ta = scr.focused().selected_tag
 
-    if not ta then return end
-
-    if #cls <= 0 then return end
-
-    -- Useless gaps.
-    local useless_gap = p.useless_gap or 0
+    if #cls == 0 then return end
 
     if not tiling then
         -- Cascade windows.
@@ -47,7 +41,7 @@ local function do_cascade(p, tiling)
         if cascade.nmaster > 0 then
             num_c = cascade.nmaster
         else
-            num_c = ta.master_count
+            num_c = t.master_count
         end
 
         -- Opening a new window will usually force all existing windows to
@@ -66,13 +60,13 @@ local function do_cascade(p, tiling)
 
             g.x      = wa.x + (how_many - i) * cascade.offset_x
             g.y      = wa.y + (i - 1) * cascade.offset_y
-            g.width  = wa.width - current_offset_x - 2*c.border_width
-            g.height = wa.height - current_offset_y - 2*c.border_width
+            g.width  = wa.width - current_offset_x
+            g.height = wa.height - current_offset_y
 
             if g.width  < 1 then g.width  = 1 end
             if g.height < 1 then g.height = 1 end
 
-            c:geometry(g)
+            p.geometries[c] = g
         end
     else
         -- Layout with one fixed column meant for a master window. Its
@@ -92,7 +86,7 @@ local function do_cascade(p, tiling)
         if cascade.tile.mwfact > 0 then
             mwfact = cascade.tile.mwfact
         else
-            mwfact = ta.master_width_factor
+            mwfact = t.master_width_factor
         end
 
         -- Make slave windows overlap main window? Do this if ncol is 1.
@@ -100,7 +94,7 @@ local function do_cascade(p, tiling)
         if cascade.tile.ncol > 0 then
             overlap_main = cascade.tile.ncol
         else
-            overlap_main = ta.column_count
+            overlap_main = t.column_count
         end
 
         -- Minimum space for slave windows? See cascade.tile.lua.
@@ -108,7 +102,7 @@ local function do_cascade(p, tiling)
         if cascade.tile.nmaster > 0 then
             num_c = cascade.tile.nmaster
         else
-            num_c = ta.master_count
+            num_c = t.master_count
         end
 
         local how_many = (#cls - 1 >= num_c and (#cls - 1)) or num_c
@@ -121,15 +115,13 @@ local function do_cascade(p, tiling)
         -- Main column, fixed width and height.
         local c = cls[1]
         local g = {}
-        -- Subtracting the useless_gap width from the work area width here
-        -- makes this mwfact calculation work the same as in uselesstile.
         -- Rounding is necessary to prevent the rendered size of slavewid
         -- from being 1 pixel off when the result is not an integer.
-        local mainwid = math.floor((wa.width - useless_gap) * mwfact)
+        local mainwid = floor(wa.width * mwfact)
         local slavewid = wa.width - mainwid
 
         if overlap_main == 1 then
-            g.width = wa.width - 2*c.border_width
+            g.width = wa.width
 
             -- The size of the main window may be reduced a little bit.
             -- This allows you to see if there are any windows below the
@@ -138,49 +130,34 @@ local function do_cascade(p, tiling)
             -- overlapping everything else.
             g.width = g.width - cascade.tile.extra_padding
         else
-            g.width = mainwid - 2*c.border_width
+            g.width = mainwid
         end
 
-        g.height = wa.height - 2*c.border_width
+        g.height = wa.height
         g.x = wa.x
         g.y = wa.y
-        if useless_gap > 0 then
-            -- Reduce width once and move window to the right.
-            -- Reduce height twice, however.
-            g.width = g.width - useless_gap
-            g.height = g.height - 2 * useless_gap
-            g.x = g.x + useless_gap
-            g.y = g.y + useless_gap
 
-            -- When there's no window to the right, add an additional gap.
-            if overlap_main == 1 then g.width = g.width - useless_gap end
-        end
-        if g.width < 1 then g.width = 1 end
+        if g.width < 1  then g.width  = 1 end
         if g.height < 1 then g.height = 1 end
-        c:geometry(g)
+
+        p.geometries[c] = g
 
         -- Remaining clients stacked in slave column, new ones on top.
-        if #cls > 1 then
-            for i = 2,#cls do
-                c = cls[i]
-                g = {}
-                g.width = slavewid - current_offset_x - 2*c.border_width
-                g.height = wa.height - current_offset_y - 2*c.border_width
-                g.x = wa.x + mainwid + (how_many - (i - 1)) * cascade.tile.offset_x
-                g.y = wa.y + (i - 2) * cascade.tile.offset_y
+        if #cls <= 1 then return end
+        for i = 2,#cls do
+            c = cls[i]
+            g = {}
 
-                if useless_gap > 0 then
-                    g.width = g.width - 2 * useless_gap
-                    g.height = g.height - 2 * useless_gap
-                    g.x = g.x + useless_gap
-                    g.y = g.y + useless_gap
-                end
+            g.width  = slavewid - current_offset_x
+            g.height = wa.height - current_offset_y
 
-                if g.width < 1 then g.width = 1 end
-                if g.height < 1 then g.height = 1 end
+            g.x = wa.x + mainwid + (how_many - (i - 1)) * cascade.tile.offset_x
+            g.y = wa.y + (i - 2) * cascade.tile.offset_y
 
-                c:geometry(g)
-            end
+            if g.width < 1  then g.width  = 1 end
+            if g.height < 1 then g.height = 1 end
+
+            p.geometries[c] = g
         end
     end
 end

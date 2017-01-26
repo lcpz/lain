@@ -10,9 +10,8 @@
                                                   
 --]]
 
-local tonumber = tonumber
-local math     = { floor = math.floor }
-local scr      = require("awful.screen")
+local floor  = math.floor
+local screen = screen
 
 local centerwork = {
     name         = "centerwork",
@@ -20,60 +19,54 @@ local centerwork = {
 }
 
 local function do_centerwork(p, orientation)
-    -- Screen.
-    local wa  = p.workarea
+    local t = p.tag or screen[p.screen].selected_tag
+    local wa = p.workarea
     local cls = p.clients
-    local ta = scr.focused().selected_tag
 
-    if not ta then return end
-
-    if #cls <= 0 then return end
-
-    -- Useless gaps.
-    local useless_gap = p.useless_gap or 0
+    if #cls == 0 then return end
 
     local c = cls[1]
     local g = {}
 
     -- Main column, fixed width and height.
-    local mwfact          = ta.master_width_factor
-    local mainhei         = math.floor(wa.height * mwfact)
-    local mainwid         = math.floor(wa.width * mwfact)
+    local mwfact          = t.master_width_factor
+    local mainhei         = floor(wa.height * mwfact)
+    local mainwid         = floor(wa.width * mwfact)
     local slavewid        = wa.width - mainwid
-    local slaveLwid       = math.floor(slavewid / 2)
+    local slaveLwid       = floor(slavewid / 2)
     local slaveRwid       = slavewid - slaveLwid
     local slavehei        = wa.height - mainhei
-    local slaveThei       = math.floor(slavehei / 2)
+    local slaveThei       = floor(slavehei / 2)
     local slaveBhei       = slavehei - slaveThei
-    local nbrFirstSlaves  = math.floor(#cls / 2)
-    local nbrSecondSlaves = math.floor((#cls - 1) / 2)
+    local nbrFirstSlaves  = floor(#cls / 2)
+    local nbrSecondSlaves = floor((#cls - 1) / 2)
 
     local slaveFirstDim, slaveSecondDim = 0, 0
 
     if orientation == "vertical" then
-        if nbrFirstSlaves  > 0 then slaveFirstDim  = math.floor(wa.height / nbrFirstSlaves) end
-        if nbrSecondSlaves > 0 then slaveSecondDim = math.floor(wa.height / nbrSecondSlaves) end
+        if nbrFirstSlaves  > 0 then slaveFirstDim  = floor(wa.height / nbrFirstSlaves) end
+        if nbrSecondSlaves > 0 then slaveSecondDim = floor(wa.height / nbrSecondSlaves) end
 
-        g.height = wa.height - 2*useless_gap - 2*c.border_width
-        g.width  = mainwid - 2*c.border_width
+        g.height = wa.height
+        g.width  = mainwid
 
         g.x = wa.x + slaveLwid
-        g.y = wa.y + useless_gap
+        g.y = wa.y
     else
-        if nbrFirstSlaves  > 0 then slaveFirstDim  = math.floor(wa.width / nbrFirstSlaves) end
-        if nbrSecondSlaves > 0 then slaveSecondDim = math.floor(wa.width / nbrSecondSlaves) end
+        if nbrFirstSlaves  > 0 then slaveFirstDim  = floor(wa.width / nbrFirstSlaves) end
+        if nbrSecondSlaves > 0 then slaveSecondDim = floor(wa.width / nbrSecondSlaves) end
 
-        g.height  = mainhei - 2*c.border_width
-        g.width = wa.width - 2*useless_gap - 2*c.border_width
+        g.height  = mainhei
+        g.width = wa.width
 
-        g.x = wa.x + useless_gap
+        g.x = wa.x
         g.y = wa.y + slaveThei
     end
 
     if g.width  < 1 then g.width  = 1 end
     if g.height < 1 then g.height = 1 end
 
-    c:geometry(g)
+    p.geometries[c] = g
 
     -- Auxiliary windows.
     if #cls <= 1 then return end
@@ -81,62 +74,62 @@ local function do_centerwork(p, orientation)
         local c = cls[i]
         local g = {}
 
-        local rowIndex = math.floor(i/2)
+        local rowIndex = floor(i/2)
 
         if orientation == "vertical" then
             if i % 2 == 0 then
                 -- left slave
-                g.x = wa.x + useless_gap
-                g.y = wa.y + useless_gap + (rowIndex-1)*slaveFirstDim
+                g.x = wa.x
+                g.y = wa.y + (rowIndex-1)*slaveFirstDim
 
-                g.width = slaveLwid - 2*useless_gap - 2*c.border_width
+                g.width = slaveLwid
 
                 -- if last slave in left row use remaining space for that slave
                 if rowIndex == nbrFirstSlaves then
-                    g.height = wa.y + wa.height - g.y - useless_gap - 2*c.border_width
+                    g.height = wa.y + wa.height - g.y
                 else
-                    g.height = slaveFirstDim - useless_gap - 2*c.border_width
+                    g.height = slaveFirstDim
                 end
             else
                 -- right slave
-                g.x = wa.x + slaveLwid + mainwid + useless_gap
-                g.y = wa.y + useless_gap + (rowIndex-1)*slaveSecondDim
+                g.x = wa.x + slaveLwid + mainwid
+                g.y = wa.y + (rowIndex-1)*slaveSecondDim
 
-                g.width = slaveRwid - 2*useless_gap - 2*c.border_width
+                g.width = slaveRwid
 
                 -- if last slave in right row use remaining space for that slave
                 if rowIndex == nbrSecondSlaves then
-                    g.height = wa.y + wa.height - g.y - useless_gap - 2*c.border_width
+                    g.height = wa.y + wa.height - g.y
                 else
-                    g.height = slaveSecondDim - useless_gap - 2*c.border_width
+                    g.height = slaveSecondDim
                 end
             end
         else
             if i % 2 == 0 then
                 -- top slave
-                g.x = wa.x + useless_gap + (rowIndex-1)*slaveFirstDim
-                g.y = wa.y + useless_gap
+                g.x = wa.x + (rowIndex-1)*slaveFirstDim
+                g.y = wa.y
 
-                g.height = slaveThei - 2*useless_gap - 2*c.border_width
+                g.height = slaveThei
 
                 -- if last slave in top row use remaining space for that slave
                 if rowIndex == nbrFirstSlaves then
-                    g.width = wa.x + wa.width - g.x - useless_gap - 2*c.border_width
+                    g.width = wa.x + wa.width - g.x
                 else
-                    g.width = slaveFirstDim - useless_gap - 2*c.border_width
+                    g.width = slaveFirstDim
                 end
             else
                 -- bottom slave
-                g.x = wa.x + useless_gap + (rowIndex-1)*slaveFirstDim
-                g.y = wa.y + slaveThei + mainhei + useless_gap
+                g.x = wa.x + (rowIndex-1)*slaveSecondDim
+                g.y = wa.y + slaveThei + mainhei
 
-                g.height = slaveBhei - 2*useless_gap - 2*c.border_width
+                g.height = slaveBhei
 
                 -- if last slave in bottom row use remaining space for that slave
                 if rowIndex == nbrSecondSlaves then
-                    g.width = wa.x + wa.width - g.x - useless_gap - 2*c.border_width
+                    g.width = wa.x + wa.width - g.x
                 else
-                    g.width = slaveSecondDim - useless_gap - 2*c.border_width
+                    g.width = slaveSecondDim
                 end
 
             end
@@ -145,7 +138,7 @@ local function do_centerwork(p, orientation)
         if g.width  < 1 then g.width  = 1 end
         if g.height < 1 then g.height = 1 end
 
-        c:geometry(g)
+        p.geometries[c] = g
     end
 end
 
