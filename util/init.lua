@@ -162,7 +162,7 @@ end
 -- On the fly useless gaps change
 function util.useless_gaps_resize(thatmuch)
     local scr = awful.screen.focused()
-    scr.selected_tag.gap = scr.selected_tag.gap + thatmuch
+    scr.selected_tag.gap = scr.selected_tag.gap + tonumber(thatmuch)
     awful.layout.arrange(scr)
 end
 
