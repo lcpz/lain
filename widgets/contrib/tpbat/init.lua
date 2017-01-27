@@ -108,7 +108,7 @@ function tpbat.register(args)
         })
     end
 
-    function update()
+    function tpbat.update()
         bat_now = {
             status = "Not present",
             perc   = "N/A",
@@ -151,12 +151,12 @@ function tpbat.register(args)
         settings()
     end
 
-    newtimer("tpbat-" .. bat.name, timeout, update)
+    newtimer("tpbat-" .. bat.name, timeout, tpbat.update)
 
     widget:connect_signal('mouse::enter', function () tpbat.show() end)
     widget:connect_signal('mouse::leave', function () tpbat.hide() end)
 
-    return tpbat.widget
+    return tpbat
 end
 
 return setmetatable(tpbat, { __call = function(_, ...) return tpbat.register(...) end })

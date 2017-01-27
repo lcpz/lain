@@ -97,12 +97,10 @@ local function worker(args)
                 helpers.set_map(dev, true)
             end
 
-            -- Old api compatibility
             net_now.carrier      = dev_now.carrier
             net_now.state        = dev_now.state
-            -- And new api
             net_now.devices[dev] = dev_now
-            -- With the new api new_now.sent and net_now.received will be the
+            -- new_now.sent and net_now.received will be the
             -- totals across all specified devices
         end
 

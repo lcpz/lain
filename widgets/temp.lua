@@ -24,7 +24,7 @@ local function worker(args)
 
     temp.widget = wibox.widget.textbox()
 
-    function update()
+    function temp.update()
         local f = io.open(tempfile)
         if f then
             coretemp_now = tonumber(f:read("*all")) / 1000
@@ -37,7 +37,7 @@ local function worker(args)
         settings()
     end
 
-    helpers.newtimer("coretemp", timeout, update)
+    helpers.newtimer("coretemp", timeout, temp.update)
 
     return temp
 end

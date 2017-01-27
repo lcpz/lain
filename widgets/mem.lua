@@ -25,7 +25,7 @@ local function worker(args)
 
     mem.widget = wibox.widget.textbox()
 
-    function update()
+    function mem.update()
         mem_now = {}
         for line in lines("/proc/meminfo") do
             for k, v in gmatch(line, "([%a]+):[%s]+([%d]+).+") do
@@ -48,7 +48,7 @@ local function worker(args)
         settings()
     end
 
-    helpers.newtimer("mem", timeout, update)
+    helpers.newtimer("mem", timeout, mem.update)
 
     return mem
 end

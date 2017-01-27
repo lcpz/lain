@@ -26,7 +26,7 @@ local function worker(args)
 
     cpu.widget = wibox.widget.textbox()
 
-    function update()
+    function cpu.update()
         -- Read the amount of time the CPUs have spent performing
         -- different kinds of work. Read the first line of /proc/stat
         -- which is the sum of all CPUs.
@@ -74,7 +74,7 @@ local function worker(args)
         settings()
     end
 
-    helpers.newtimer("cpu", timeout, update)
+    helpers.newtimer("cpu", timeout, cpu.update)
 
     return cpu
 end

@@ -24,7 +24,7 @@ local function worker(args)
 
     sysload.widget = wibox.widget.textbox()
 
-    function update()
+    function sysload.update()
         local f = io.open("/proc/loadavg")
         local ret = f:read("*all")
         f:close()
@@ -35,7 +35,7 @@ local function worker(args)
         settings()
     end
 
-    helpers.newtimer("sysload", timeout, update)
+    helpers.newtimer("sysload", timeout, sysload.update)
 
     return sysload
 end
