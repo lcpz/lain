@@ -13,14 +13,10 @@
 --]]
 
 local awful        = require("awful")
-local beautiful    = require("beautiful")
-local math         = { sqrt = math.sqrt }
+local sqrt         = math.sqrt
 local pairs        = pairs
-local string       = { gsub = string.gsub }
 local client       = client
-local screen       = screen
 local tonumber     = tonumber
-
 local wrequire     = require("lain.helpers").wrequire
 local setmetatable = setmetatable
 
@@ -89,10 +85,10 @@ function util.mc(c)
     c.floating   = true
     local s      = awful.screen.focused()
     local mg     = s.geometry
-    local mwfact = beautiful.master_width_factor or 0.5
+    local mwfact = s.selected_tag.master_width_factor or 0.5
     local g      = {}
-    g.width      = math.sqrt(mwfact) * mg.width
-    g.height     = math.sqrt(mwfact) * mg.height
+    g.width      = sqrt(mwfact) * mg.width
+    g.height     = sqrt(mwfact) * mg.height
     g.x          = mg.x + (mg.width - g.width) / 2
     g.y          = mg.y + (mg.height - g.height) / 2
 
@@ -165,9 +161,9 @@ end
 
 -- On the fly useless gaps change
 function util.useless_gaps_resize(thatmuch)
-    beautiful.useless_gap = beautiful.useless_gap or 0
-    beautiful.useless_gap = tonumber(beautiful.useless_gap) + thatmuch
-    awful.layout.arrange(awful.screen.focused())
+    local scr = awful.screen.focused()
+    scr.selected_tag.gap = scr.selected_tag.gap + thatmuch
+    awful.layout.arrange(scr)
 end
 
 return setmetatable(util, { __index = wrequire })
