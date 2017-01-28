@@ -44,6 +44,16 @@ function markup.color(fg, bg, text)
   return string.format('<span foreground="%s" background="%s">%s</span>', fg, bg, text)
 end
 
+-- Set font and foreground.
+function markup.fontfg(font, fg, text)
+  return string.format('<span font="%s" foreground="%s">%s</span>', font, fg, text)
+end
+
+-- Set font and background.
+function markup.fontbg(font, bg, text)
+  return string.format('<span font="%s" background="%s">%s</span>', font, bg, text)
+end
+
 -- Set font, foreground and background.
 function markup.fontcolor(font, fg, bg, text)
   return string.format('<span font="%s" foreground="%s" background="%s">%s</span>', font, fg, bg, text)
