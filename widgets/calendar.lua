@@ -13,7 +13,9 @@ local naughty      = require("naughty")
 local os           = { date   = os.date }
 local string       = { format = string.format,
                        gsub   = string.gsub }
+local ipairs       = ipairs
 local tonumber     = tonumber
+local setmetatable = setmetatable
 
 -- Calendar notification
 -- lain.widgets.calendar
@@ -24,8 +26,6 @@ function calendar.hide()
 end
 
 function calendar.show(t_out, inc_offset, scr)
-    calendar.hide()
-
     local today = os.date("%d")
     local offs = inc_offset or 0
     local f
@@ -67,6 +67,7 @@ function calendar.show(t_out, inc_offset, scr)
     helpers.async(f, function(ws)
         fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
         ws = ws:gsub("%c%[%d+[m]?%d+%c%[%d+[m]?", markup.bold(markup.color(bg, fg, today)))
+        calendar.hide()
         calendar.id = naughty.notify({
             replaces_id = calendar.id,
             preset      = calendar.notification_preset,
@@ -77,9 +78,23 @@ function calendar.show(t_out, inc_offset, scr)
     end)
 end
 
-function calendar.attach(widget, args)
+function calendar.attach(widget)
+    widget:connect_signal("mouse::enter", function () calendar.show(0) end)
+    widget:connect_signal("mouse::leave", function () calendar.hide() end)
+    widget:buttons(awful.util.table.join(awful.button({ }, 1, function ()
+                                             calendar.show(0, -1, calendar.scr_pos) end),
+                                         awful.button({ }, 3, function ()
+                                             calendar.show(0, 1, calendar.scr_pos) end),
+                                         awful.button({ }, 4, function ()
+                                             calendar.show(0, -1, calendar.scr_pos) end),
+                                         awful.button({ }, 5, function ()
+                                             calendar.show(0, 1, calendar.scr_pos) end)))
+end
+
+local function worker(args)
     local args                   = args or {}
     calendar.cal                 = args.cal or "/usr/bin/cal --color=always"
+    calendar.attach_to           = args.attach_to or {}
     calendar.followtag           = args.followtag or false
     calendar.icons               = args.icons or helpers.icons_dir .. "cal/white/"
     calendar.notification_preset = args.notification_preset
@@ -92,18 +107,7 @@ function calendar.attach(widget, args)
         }
     end
 
-    if widget then
-        widget:connect_signal("mouse::enter", function () calendar.show(0) end)
-        widget:connect_signal("mouse::leave", function () calendar.hide() end)
-        widget:buttons(awful.util.table.join(awful.button({ }, 1, function ()
-                                                 calendar.show(0, -1, calendar.scr_pos) end),
-                                             awful.button({ }, 3, function ()
-                                                 calendar.show(0, 1, calendar.scr_pos) end),
-                                             awful.button({ }, 4, function ()
-                                                 calendar.show(0, -1, calendar.scr_pos) end),
-                                             awful.button({ }, 5, function ()
-                                                 calendar.show(0, 1, calendar.scr_pos) end)))
-    end
+    for i, widget in ipairs(calendar.attach_to) do calendar.attach(widget) end
 end
 
-return calendar
+return setmetatable(calendar, { __call = function(_, ...) return worker(...) end })
