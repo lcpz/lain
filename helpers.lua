@@ -11,8 +11,7 @@ local easy_async = require("awful.spawn").easy_async
 local timer      = require("gears.timer")
 local debug      = require("debug")
 local io         = { lines = io.lines,
-                     open  = io.open,
-                     popen = io.popen }
+                     open  = io.open }
 local rawget     = rawget
 local table      = { sort  = table.sort }
 
@@ -107,16 +106,6 @@ end
 -- }}}
 
 -- {{{ Pipe operations
-
--- return the full output of an input command (synchronous pipe)
--- @param cmd the input command
--- @return command output (string)
-function helpers.read_pipe(cmd)
-   local f = io.popen(cmd)
-   local output = f:read("*all")
-   f:close()
-   return output
-end
 
 -- run a command and execute a function on its output (asynchronous pipe)
 -- @param cmd the input command

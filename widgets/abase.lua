@@ -7,22 +7,22 @@
 --]]
 
 local helpers      = require("lain.helpers")
-local wibox        = require("wibox")
+local textbox      = require("wibox.widget.textbox")
 local setmetatable = setmetatable
 
--- Basic template for custom widgets (asynchronous version)
+-- Template for custom asynchronous widgets
 -- lain.widgets.abase
 
 local function worker(args)
-    local abase     = { widget = wibox.widget.textbox() }
+    local abase     = {}
     local args      = args or {}
     local timeout   = args.timeout or 5
     local nostart   = args.nostart or false
     local stoppable = args.stoppable or false
     local cmd       = args.cmd
-    local settings  = args.settings or function() end
+    local settings  = args.settings or function() widget:set_text(output) end
 
-    abase.widget = wibox.widget.textbox()
+    abase.widget = args.widget or textbox()
 
     function abase.update()
         helpers.async(cmd, function(f)
