@@ -22,7 +22,9 @@ local setmetatable = setmetatable
 local calendar = { offset = 0 }
 
 function calendar.hide()
-    naughty.destroy(naughty.getById(calendar.id))
+    if not calendar.notification then return end
+    naughty.destroy(calendar.notification)
+    calendar.notification = nil
 end
 
 function calendar.show(t_out, inc_offset, scr)
@@ -68,13 +70,12 @@ function calendar.show(t_out, inc_offset, scr)
         fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
         ws = ws:gsub("%c%[%d+[m]?%d+%c%[%d+[m]?", markup.bold(markup.color(bg, fg, today)))
         calendar.hide()
-        calendar.id = naughty.notify({
-            replaces_id = calendar.id,
+        calendar.notification = naughty.notify({
             preset      = calendar.notification_preset,
             text        = ws:gsub("\n*$", ""),
             icon        = calendar.notify_icon,
-            timeout     = t_out or calendar.notification.preset.timeout or 5
-        }).id
+            timeout     = t_out or calendar.notification_preset.timeout or 5
+        })
     end)
 end
 
