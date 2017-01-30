@@ -32,7 +32,7 @@ function task.show(scr)
 
     helpers.async(task.show_cmd, function(f)
         task.notification = naughty.notify({
-            preset = task_notification_preset,
+            preset = task.notification_preset,
             title  = task.show_cmd,
             text   = markup.font(task.notification_preset.font,
                      awful.util.escape(f:gsub("\n*$", "")))
