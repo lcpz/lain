@@ -7,6 +7,7 @@
 --]]
 
 local helpers = require("lain.helpers")
+local markup  = require("lain.util").markup
 local awful   = require("awful")
 local naughty = require("naughty")
 local string  = { format = string.format, gsub = string.gsub }
