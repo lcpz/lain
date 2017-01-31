@@ -94,7 +94,7 @@ end
 
 local function worker(args)
     local args                   = args or {}
-    calendar.cal                 = args.cal or "/usr/bin/cal --color=always"
+    calendar.cal                 = args.cal or "/usr/bin/cal"
     calendar.attach_to           = args.attach_to or {}
     calendar.followtag           = args.followtag or false
     calendar.icons               = args.icons or helpers.icons_dir .. "cal/white/"
