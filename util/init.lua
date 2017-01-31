@@ -141,11 +141,10 @@ end
 -- pos in {-1, 1} <-> {previous, next} tag position
 function util.move_tag(pos)
     local tag = awful.screen.focused().selected_tag
-    local idx = awful.tag.getidx(tag)
     if tonumber(pos) <= -1 then
-        awful.tag.move(idx - 1, tag)
+        awful.tag.move(tag.index - 1, tag)
     else
-        awful.tag.move(idx + 1, tag)
+        awful.tag.move(tag.index + 1, tag)
     end
 end
 
