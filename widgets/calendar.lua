@@ -38,7 +38,7 @@ function calendar.show(t_out, inc_offset, scr)
 
     if current_month then -- today highlighted
         calendar.offset = 0
-        calendar.notify_icon = string.format("%s%s.png", calendar.icons, today)
+        calendar.notify_icon = string.format("%s%s.png", calendar.icons, tonumber(today))
         f = calendar.cal
     else -- no current month showing, no day to highlight
        local month = tonumber(os.date("%m"))
@@ -68,7 +68,7 @@ function calendar.show(t_out, inc_offset, scr)
 
     helpers.async(f, function(ws)
         fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
-        ws = ws:gsub("%c%[%d+[m]?%d+%c%[%d+[m]?", markup.bold(markup.color(bg, fg, today)))
+        ws = ws:gsub("%c%[+%d+[m]?%s?%d+%c%[+%d+[m]?", markup.bold(markup.color(bg, fg, today:gsub("^0", " "))))
         calendar.hide()
         calendar.notification = naughty.notify({
             preset      = calendar.notification_preset,
