@@ -28,7 +28,7 @@ function calendar.hide()
 end
 
 function calendar.show(t_out, inc_offset, scr)
-    local today = os.date("%d")
+    local today = os.date("%e")
     local offs = inc_offset or 0
     local f
 
@@ -68,7 +68,7 @@ function calendar.show(t_out, inc_offset, scr)
 
     helpers.async(f, function(ws)
         fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
-        ws = ws:gsub("%c%[+%d+[m]?%s?%d+%c%[+%d+[m]?", markup.bold(markup.color(bg, fg, today:gsub("^0", " "))))
+        ws = ws:gsub("%c%[+%d+[m]?%s?%d+%c%[+%d+[m]?", markup.bold(markup.color(bg, fg, today)))
         calendar.hide()
         calendar.notification = naughty.notify({
             preset      = calendar.notification_preset,
