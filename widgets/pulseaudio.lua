@@ -10,15 +10,13 @@ local helpers      = require("lain.helpers")
 local shell        = require("awful.util").shell
 local wibox        = require("wibox")
 local string       = { gmatch = string.gmatch,
-                       match  = string.match,
-                       format = string.format }
-local setmetatable = setmetatable
+                       match  = string.match }
 
 -- PulseAudio volume
 -- lain.widgets.pulseaudio
 
 
-local function worker(args)
+local function factory(args)
    local pulseaudio = {}
    local args        = args or {}
    local timeout     = args.timeout or 5
@@ -59,4 +57,4 @@ local function worker(args)
    return pulseaudio
 end
 
-return setmetatable({}, { __call = function(_, ...) return worker(...) end })
+return factory
