@@ -21,8 +21,8 @@ local function factory(args)
     local args        = args or {}
     local devicetype  = args.devicetype or "sink"
     local timeout     = args.timeout or 5
-    local settings    = args.settings or function() end
     local scallback   = args.scallback
+    
     local cmd         = args.cmd or ("pacmd list-" .. devicetype .. "s | sed -n -e '/* index:/,/index:/ !d' -e '/* index:/ p' -e '/base volume:/ d' -e '/volume:/ p' -e '/muted:/ p' -e '/device\\.string/ p'")
     -- sed script explanation:
     --  '/* index:/,/index:/ !d' removes all lines outside of the range between the line containing '* index:' and the next line containing 'index:'. '* index:' denotes the beginning of the default device section.
@@ -31,7 +31,15 @@ local function factory(args)
     --  '/volume:/ p' prints the line containing 'volume:'.
     --  '/muted:/ p' prints the line containing 'muted:'.
     --  '/device\\.string/ p' prints the line containing 'device.string:'.
-
+    
+    local settings    = args.settings or function()
+            if volume_now.muted == "yes" then
+                widget:set_text("Mute")
+            else
+                widget:set_text(volume_now.left .. "%")
+            end
+        end
+        
     pulseaudio.widget = wibox.widget.textbox()
 
     function pulseaudio.update()
