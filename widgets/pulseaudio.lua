@@ -23,8 +23,7 @@ local function factory(args)
     local timeout     = args.timeout or 5
     local settings    = args.settings or function() end
     local scallback   = args.scallback
-
-    pulseaudio.cmd    = args.cmd or ("pacmd list-" .. devicetype .. "s | sed -n -e '/* index:/,/index:/ !d' -e '/* index:/ p' -e '/base volume:/ d' -e '/volume:/ p' -e '/muted:/ p' -e '/device\\.string/ p'")
+    local cmd         = args.cmd or ("pacmd list-" .. devicetype .. "s | sed -n -e '/* index:/,/index:/ !d' -e '/* index:/ p' -e '/base volume:/ d' -e '/volume:/ p' -e '/muted:/ p' -e '/device\\.string/ p'")
     -- sed script explanation:
     --  '/* index:/,/index:/ !d' removes all lines outside of the range between the line containing '* index:' and the next line containing 'index:'. '* index:' denotes the beginning of the default device section.
     --  '/* index:/ p' prints the line containing '* index:'.
@@ -36,9 +35,9 @@ local function factory(args)
     pulseaudio.widget = wibox.widget.textbox()
 
     function pulseaudio.update()
-        if scallback then pulseaudio.cmd = scallback() end
+        if scallback then cmd = scallback() end
 
-        helpers.async({ shell, "-c", pulseaudio.cmd }, function(s)
+        helpers.async({ shell, "-c", cmd }, function(s)
             volume_now = {
                 index = string.match(s, "index: (%S+)") or "N/A",
                 device = string.match(s, "device.string = \"(%S+)\"") or "N/A",
