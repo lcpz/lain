@@ -27,6 +27,7 @@ local function worker(args)
     local cmd         = args.cmd or ("pacmd list-" .. devicetype .. "s | sed -n -e '/* index:/,/index:/ !d' -e '/* index:/ p' -e '/base volume:/ d' -e '/volume:/ p' -e '/muted:/ p' -e '/device\\.string/ p'")
     
     pulseaudio.widget = wibox.widget.textbox()
+    pulseaudio.tooltip = awful.tooltip({ objects = { pulseaudio.widget } })
     
     function pulseaudio.update()
         if scallback then cmd = scallback() end
@@ -50,6 +51,7 @@ local function worker(args)
             volume_now.right = volume_now.channel[2] or "N/A"
 
             widget = pulseaudio.widget
+            tooltip = pulseaudio.tooltip
             
             settings()
         end)
