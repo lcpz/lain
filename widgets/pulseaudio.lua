@@ -16,9 +16,10 @@ local setmetatable = setmetatable
 
 -- PulseAudio volume
 -- lain.widgets.pulseaudio
-local pulseaudio = {}
+
 
 local function worker(args)
+   local pulseaudio = {}
    local args        = args or {}
    local timeout     = args.timeout or 5
    local settings    = args.settings or function() end
@@ -58,4 +59,4 @@ local function worker(args)
    return pulseaudio
 end
 
-return setmetatable(pulseaudio, { __call = function(_, ...) return worker(...) end })
+return setmetatable({}, { __call = function(_, ...) return worker(...) end })
