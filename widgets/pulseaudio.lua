@@ -15,16 +15,16 @@ local string       = { gmatch = string.gmatch,
 -- PulseAudio volume
 -- lain.widgets.pulseaudio
 
-
 local function factory(args)
-   local pulseaudio = {}
-   local args        = args or {}
-   local devicetype  = args.devicetype or "sink"
-   local timeout     = args.timeout or 5
-   local settings    = args.settings or function() end
-   local scallback   = args.scallback
+    local pulseaudio = {}
+    
+    local args        = args or {}
+    local devicetype  = args.devicetype or "sink"
+    local timeout     = args.timeout or 5
+    local settings    = args.settings or function() end
+    local scallback   = args.scallback
 
-   pulseaudio.cmd    = args.cmd or ("pacmd list-" .. devicetype .. "s | sed -n -e '/* index:/,/index:/ !d' -e '/* index:/ p' -e '/base volume:/ d' -e '/volume:/ p' -e '/muted:/ p' -e '/device\\.string/ p'")
+    pulseaudio.cmd    = args.cmd or ("pacmd list-" .. devicetype .. "s | sed -n -e '/* index:/,/index:/ !d' -e '/* index:/ p' -e '/base volume:/ d' -e '/volume:/ p' -e '/muted:/ p' -e '/device\\.string/ p'")
     -- sed script explanation:
     --  '/* index:/,/index:/ !d' removes all lines outside of the range between the line containing '* index:' and the next line containing 'index:'. '* index:' denotes the beginning of the default device section.
     --  '/* index:/ p' prints the line containing '* index:'.
@@ -33,37 +33,38 @@ local function factory(args)
     --  '/muted:/ p' prints the line containing 'muted:'.
     --  '/device\\.string/ p' prints the line containing 'device.string:'.
 
-   pulseaudio.widget = wibox.widget.textbox()
+    pulseaudio.widget = wibox.widget.textbox()
 
-   function pulseaudio.update()
-      if scallback then pulseaudio.cmd = scallback() end
+    function pulseaudio.update()
+        if scallback then pulseaudio.cmd = scallback() end
 
-      helpers.async({ shell, "-c", pulseaudio.cmd }, function(s)
-          volume_now = {
-              index = string.match(s, "index: (%S+)") or "N/A",
+        helpers.async({ shell, "-c", pulseaudio.cmd }, function(s)
+            volume_now = {
+                index = string.match(s, "index: (%S+)") or "N/A",
                 device = string.match(s, "device.string = \"(%S+)\"") or "N/A",
                 sink   = device,  -- legacy API
                 muted  = string.match(s, "muted: (%S+)") or "N/A"
-          }
+            }
 
-          local ch = 1
-          volume_now.channel = {}
-          for v in string.gmatch(s, ":.-(%d+)%%") do
-              volume_now.channel[ch] = v
-              ch = ch + 1
-          end
+            local ch = 1
+            volume_now.channel = {}
+            for v in string.gmatch(s, ":.-(%d+)%%") do
+                volume_now.channel[ch] = v
+                ch = ch + 1
+            end
 
-          volume_now.left  = volume_now.channel[1] or "N/A"
-          volume_now.right = volume_now.channel[2] or "N/A"
+            volume_now.left  = volume_now.channel[1] or "N/A"
+            volume_now.right = volume_now.channel[2] or "N/A"
 
-          widget = pulseaudio.widget
-          settings()
-      end)
-   end
+            widget = pulseaudio.widget
+            
+            settings()
+        end)
+    end
 
-   helpers.newtimer("pulseaudio", timeout, pulseaudio.update)
+    helpers.newtimer("pulseaudio", timeout, pulseaudio.update)
 
-   return pulseaudio
+    return pulseaudio
 end
 
 return factory
