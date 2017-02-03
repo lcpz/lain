@@ -68,6 +68,7 @@ local function worker(args)
         end
 
         if not weather.notification_text then
+            weather.update()
             weather.forecast_update()
         end
 
