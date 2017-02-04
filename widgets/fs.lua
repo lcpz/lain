@@ -118,7 +118,7 @@ local function worker(args)
     end
 
     if showpopup == "on" then
-       fs.widget:connect_signal('mouse::enter', function () fs.show(0) end)
+       fs.widget:connect_signal('mouse::enter', function () fs.show(0,'--exclude-type={dev,}tmpfs',fs.notification_preset.screen) end)
        fs.widget:connect_signal('mouse::leave', function () fs.hide() end)
     end
 
