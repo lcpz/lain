@@ -8,20 +8,15 @@
 --]]
 
 local helpers      = require("lain.helpers")
-local async        = require("lain.asyncshell")
-
+local shell        = require("awful.util").shell
 local escape_f     = require("awful.util").escape
+local focused      = require("awful.screen").focused
 local naughty      = require("naughty")
 local wibox        = require("wibox")
-
-local os           = { execute = os.execute,
-                       getenv  = os.getenv }
-local math         = { floor   = math.floor }
-local mouse        = mouse
-local string       = { format  = string.format,
-                       match   = string.match,
-                       gmatch  = string.gmatch }
-
+local os           = { getenv = os.getenv }
+local string       = { format = string.format,
+                       gmatch = string.gmatch,
+                       match  = string.match }
 local setmetatable = setmetatable
 
 -- MPD infos
@@ -29,34 +24,31 @@ local setmetatable = setmetatable
 local mpd = {}
 
 local function worker(args)
-    local args        = args or {}
-    local timeout     = args.timeout or 2
-    local password    = args.password or ""
-    local host        = args.host or "127.0.0.1"
-    local port        = args.port or "6600"
-    local music_dir   = args.music_dir or os.getenv("HOME") .. "/Music"
-    local cover_size  = args.cover_size or 100
-    local default_art = args.default_art or ""
-    local notify      = args.notify or "on"
-    local followmouse = args.followmouse or false
-    local echo_cmd    = args.echo_cmd or "echo"
-    local settings    = args.settings or function() end
+    local args          = args or {}
+    local timeout       = args.timeout or 2
+    local password      = (args.password and #args.password > 0 and string.format("password %s\\n", args.password)) or ""
+    local host          = args.host or "127.0.0.1"
+    local port          = args.port or "6600"
+    local music_dir     = args.music_dir or os.getenv("HOME") .. "/Music"
+    local cover_pattern = args.cover_pattern or "*\\.(jpg|jpeg|png|gif)$"
+    local cover_size    = args.cover_size or 100
+    local default_art   = args.default_art
+    local notify        = args.notify or "on"
+    local followtag     = args.followtag or false
+    local settings      = args.settings or function() end
 
-    local mpdcover = helpers.scripts_dir .. "mpdcover"
-    local mpdh = "telnet://" .. host .. ":" .. port
-    local echo = echo_cmd .. " 'password " .. password .. "\nstatus\ncurrentsong\nclose'"
+    local mpdh = string.format("telnet://%s:%s", host, port)
+    local echo = string.format("printf \"%sstatus\\ncurrentsong\\nclose\\n\"", password)
+    local cmd  = string.format("%s | curl --connect-timeout 1 -fsm 3 %s", echo, mpdh)
 
-    mpd.widget = wibox.widget.textbox('')
+    mpd.widget = wibox.widget.textbox()
 
-    mpd_notification_preset = {
-        title   = "Now playing",
-        timeout = 6
-    }
+    mpd_notification_preset = { title = "Now playing", timeout = 6 }
 
     helpers.set_map("current mpd track", nil)
 
     function mpd.update()
-        async.request(echo .. " | curl --connect-timeout 1 -fsm 3 " .. mpdh, function (f)
+        helpers.async({ shell, "-c", cmd }, function(f)
             mpd_now = {
                 random_mode  = false,
                 single_mode  = false,
@@ -70,6 +62,8 @@ local function worker(args)
                 artist       = "N/A",
                 title        = "N/A",
                 album        = "N/A",
+                genre        = "N/A",
+                track        = "N/A",
                 date         = "N/A",
                 time         = "N/A",
                 elapsed      = "N/A"
@@ -83,6 +77,8 @@ local function worker(args)
                     elseif k == "Artist"         then mpd_now.artist       = escape_f(v)
                     elseif k == "Title"          then mpd_now.title        = escape_f(v)
                     elseif k == "Album"          then mpd_now.album        = escape_f(v)
+                    elseif k == "Genre"          then mpd_now.genre        = escape_f(v)
+                    elseif k == "Track"          then mpd_now.track        = escape_f(v)
                     elseif k == "Date"           then mpd_now.date         = escape_f(v)
                     elseif k == "Time"           then mpd_now.time         = v
                     elseif k == "elapsed"        then mpd_now.elapsed      = string.match(v, "%d+")
@@ -101,41 +97,41 @@ local function worker(args)
             widget = mpd.widget
             settings()
 
-            if mpd_now.state == "play"
-            then
-                if notify == "on" and mpd_now.title ~= helpers.get_map("current mpd track")
-                then
+            if mpd_now.state == "play" then
+                if notify == "on" and mpd_now.title ~= helpers.get_map("current mpd track") then
                     helpers.set_map("current mpd track", mpd_now.title)
 
-                    if string.match(mpd_now.file, "http.*://") == nil
-                    then -- local file
-                        os.execute(string.format("%s %q %q %d %q", mpdcover, music_dir,
-                                   mpd_now.file, cover_size, default_art))
-                        current_icon = "/tmp/mpdcover.png"
-                    else -- http stream
-                        current_icon = default_art
+                    if followtag then mpd_notification_preset.screen = focused() end
+
+                    local common =  {
+                        preset      = mpd_notification_preset,
+                        icon        = default_art,
+                        icon_size   = cover_size,
+                        replaces_id = mpd.id
+                    }
+
+                    if not string.match(mpd_now.file, "http.*://") then -- local file instead of http stream
+                        local path   = string.format("%s/%s", music_dir, string.match(mpd_now.file, ".*/"))
+                        local cover  = string.format("find '%s' -maxdepth 1 -type f | egrep -i -m1 '%s'", path:gsub("'", "'\\''"), cover_pattern)
+                        helpers.async({ shell, "-c", cover }, function(current_icon)
+                            common.icon = current_icon:gsub("\n", "")
+                            if #common.icon == 0 then common.icon = nil end
+                            mpd.id = naughty.notify(common).id
+                        end)
+                    else
+                        mpd.id = naughty.notify(common).id
                     end
 
-                    if followmouse then
-                        mpd_notification_preset.screen = mouse.screen
-                    end
-
-                    mpd.id = naughty.notify({
-                        preset = mpd_notification_preset,
-                        icon = current_icon,
-                        replaces_id = mpd.id,
-                    }).id
                 end
-            elseif mpd_now.state ~= "pause"
-            then
+            elseif mpd_now.state ~= "pause" then
                 helpers.set_map("current mpd track", nil)
             end
         end)
     end
 
-    helpers.newtimer("mpd", timeout, mpd.update)
+    mpd.timer = helpers.newtimer("mpd", timeout, mpd.update, true, true)
 
-    return setmetatable(mpd, { __index = mpd.widget })
+    return mpd
 end
 
 return setmetatable(mpd, { __call = function(_, ...) return worker(...) end })

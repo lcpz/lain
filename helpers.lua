@@ -6,15 +6,14 @@
                                                   
 --]]
 
-local debug  = require("debug")
 
-local assert = assert
-local capi   = { timer = (type(timer) == 'table' and timer or require ("gears.timer")) }
-local io     = { open  = io.open,
-                 lines = io.lines,
-                 popen = io.popen }
-local rawget = rawget
-local table  = { sort   = table.sort }
+local easy_async = require("awful.spawn").easy_async
+local timer      = require("gears.timer")
+local debug      = require("debug")
+local io         = { lines = io.lines,
+                     open  = io.open }
+local rawget     = rawget
+local table      = { sort  = table.sort }
 
 -- Lain helper functions for internal use
 -- lain.helpers
@@ -90,38 +89,33 @@ end
 
 helpers.timer_table = {}
 
-function helpers.newtimer(_name, timeout, fun, nostart)
-    local name = timeout
+function helpers.newtimer(name, timeout, fun, nostart, stoppable)
+    if not name or #name == 0 then return end
+    name = (stoppable and name) or timeout
     if not helpers.timer_table[name] then
-        helpers.timer_table[name] = capi.timer({ timeout = timeout })
+        helpers.timer_table[name] = timer({ timeout = timeout })
         helpers.timer_table[name]:start()
     end
     helpers.timer_table[name]:connect_signal("timeout", fun)
     if not nostart then
         helpers.timer_table[name]:emit_signal("timeout")
     end
+    return stoppable and helpers.timer_table[name]
 end
 
 -- }}}
 
 -- {{{ Pipe operations
 
--- read the full output of a command output
-function helpers.read_pipe(cmd)
-   local f = assert(io.popen(cmd))
-   local output = f:read("*all")
-   f:close()
-   return output
-end
-
--- return line iterator of a command output
-function helpers.pipelines(...)
-    local f = assert(io.popen(...))
-    return function () -- iterator
-        local data = f:read()
-        if data == nil then f:close() end
-        return data
-    end
+-- run a command and execute a function on its output (asynchronous pipe)
+-- @param cmd the input command
+-- @param callback function to execute on cmd output
+-- @return cmd PID
+function helpers.async(cmd, callback)
+    return easy_async(cmd,
+    function (stdout, stderr, reason, exit_code)
+        callback(stdout)
+    end)
 end
 
 -- }}}
@@ -140,7 +134,19 @@ end
 
 -- }}}
 
---{{{ Iterate over table of records sorted by keys
+-- {{{ Misc
+
+-- check if an element exist on a table
+function helpers.element_in_table(element, tbl)
+    for _, i in pairs(tbl) do
+        if i == element then
+            return true
+        end
+    end
+    return false
+end
+
+-- iterate over table of records sorted by keys
 function helpers.spairs(t)
     -- collect the keys
     local keys = {}
@@ -157,7 +163,7 @@ function helpers.spairs(t)
         end
     end
 end
---}}}
 
+-- }}}
 
 return helpers

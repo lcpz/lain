@@ -7,14 +7,11 @@
                                                   
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
-
+local helpers      = require("lain.helpers")
 local wibox        = require("wibox")
-
-local io           = { lines  = io.lines }
-local math         = { floor  = math.floor }
-local string       = { gmatch = string.gmatch }
-
+local gmatch       = string.gmatch
+local lines        = io.lines
+local floor        = math.floor
 local setmetatable = setmetatable
 
 -- Memory usage (ignoring caches)
@@ -26,25 +23,24 @@ local function worker(args)
     local timeout  = args.timeout or 2
     local settings = args.settings or function() end
 
-    mem.widget = wibox.widget.textbox('')
+    mem.widget = wibox.widget.textbox()
 
-    function update()
+    function mem.update()
         mem_now = {}
-        for line in io.lines("/proc/meminfo")
-        do
-            for k, v in string.gmatch(line, "([%a]+):[%s]+([%d]+).+")
-            do
-                if     k == "MemTotal"  then mem_now.total = math.floor(v / 1024)
-                elseif k == "MemFree"   then mem_now.free  = math.floor(v / 1024)
-                elseif k == "Buffers"   then mem_now.buf   = math.floor(v / 1024)
-                elseif k == "Cached"    then mem_now.cache = math.floor(v / 1024)
-                elseif k == "SwapTotal" then mem_now.swap  = math.floor(v / 1024)
-                elseif k == "SwapFree"  then mem_now.swapf = math.floor(v / 1024)
+        for line in lines("/proc/meminfo") do
+            for k, v in gmatch(line, "([%a]+):[%s]+([%d]+).+") do
+                if     k == "MemTotal"     then mem_now.total = floor(v / 1024 + 0.5)
+                elseif k == "MemFree"      then mem_now.free  = floor(v / 1024 + 0.5)
+                elseif k == "Buffers"      then mem_now.buf   = floor(v / 1024 + 0.5)
+                elseif k == "Cached"       then mem_now.cache = floor(v / 1024 + 0.5)
+                elseif k == "SwapTotal"    then mem_now.swap  = floor(v / 1024 + 0.5)
+                elseif k == "SwapFree"     then mem_now.swapf = floor(v / 1024 + 0.5)
+                elseif k == "SReclaimable" then mem_now.srec  = floor(v / 1024 + 0.5)
                 end
             end
         end
 
-        mem_now.used = mem_now.total - (mem_now.free + mem_now.buf + mem_now.cache)
+        mem_now.used = mem_now.total - mem_now.free - mem_now.buf - mem_now.cache - mem_now.srec
         mem_now.swapused = mem_now.swap - mem_now.swapf
         mem_now.perc = math.floor(mem_now.used / mem_now.total * 100)
 
@@ -52,9 +48,9 @@ local function worker(args)
         settings()
     end
 
-    newtimer("mem", timeout, update)
+    helpers.newtimer("mem", timeout, mem.update)
 
-    return mem.widget
+    return mem
 end
 
 return setmetatable(mem, { __call = function(_, ...) return worker(...) end })

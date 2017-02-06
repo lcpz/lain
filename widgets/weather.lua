@@ -6,24 +6,17 @@
                                                   
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
-local read_pipe    = require("lain.helpers").read_pipe
-
-local async        = require("lain.asyncshell")
+local helpers      = require("lain.helpers")
 local json         = require("lain.util").dkjson
-local lain_icons   = require("lain.helpers").icons_dir
-
+local focused      = require("awful.screen").focused
 local naughty      = require("naughty")
 local wibox        = require("wibox")
-
 local math         = { floor    = math.floor }
 local os           = { time     = os.time,
                        date     = os.date,
                        difftime = os.difftime }
 local string       = { format   = string.format,
                        gsub     = string.gsub }
-
-local mouse        = mouse
 local tonumber     = tonumber
 local setmetatable = setmetatable
 
@@ -32,7 +25,7 @@ local setmetatable = setmetatable
 -- lain.widgets.weather
 
 local function worker(args)
-    local weather               = {}
+    local weather               = { widget = wibox.widget.textbox() }
     local args                  = args or {}
     local APPID                 = args.APPID or "3e321f9414eaedbfab34983bda77a66e" -- lain default
     local timeout               = args.timeout or 900   -- 15 min
@@ -49,32 +42,33 @@ local function worker(args)
     local lang                  = args.lang or "en"
     local cnt                   = args.cnt or 5
     local date_cmd              = args.date_cmd or "date -u -d @%d +'%%a %%d'"
-    local icons_path            = args.icons_path or lain_icons .. "openweathermap/"
+    local icons_path            = args.icons_path or helpers.icons_dir .. "openweathermap/"
     local notification_preset   = args.notification_preset or {}
     local notification_text_fun = args.notification_text_fun or
                                   function (wn)
-                                      local day = string.gsub(read_pipe(string.format(date_cmd, wn["dt"])), "\n", "")
+                                      local day = os.date("%a %d", wn["dt"])
                                       local tmin = math.floor(wn["temp"]["min"])
                                       local tmax = math.floor(wn["temp"]["max"])
                                       local desc = wn["weather"][1]["description"]
                                       return string.format("<b>%s</b>: %s, %d - %d ", day, desc, tmin, tmax)
                                   end
     local weather_na_markup     = args.weather_na_markup or " N/A "
-    local followmouse           = args.followmouse or false
+    local followtag             = args.followtag or false
     local settings              = args.settings or function() end
 
-    weather.widget    = wibox.widget.textbox(weather_na_markup)
+    weather.widget:set_markup(weather_na_markup)
     weather.icon_path = icons_path .. "na.png"
-    weather.icon      = wibox.widget.imagebox(weather.icon_path)
+    weather.icon = wibox.widget.imagebox(weather.icon_path)
 
     function weather.show(t_out)
         weather.hide()
 
-        if followmouse then
-            notification_preset.screen = mouse.screen
+        if followtag then
+            notification_preset.screen = focused()
         end
 
         if not weather.notification_text then
+            weather.update()
             weather.forecast_update()
         end
 
@@ -104,7 +98,7 @@ local function worker(args)
 
     function weather.forecast_update()
         local cmd = string.format(forecast_call, city_id, units, lang, cnt, APPID)
-        async.request(cmd, function(f)
+        helpers.async(cmd, function(f)
             local pos, err
             weather_now, pos, err = json.decode(f, 1, nil)
 
@@ -124,7 +118,7 @@ local function worker(args)
 
     function weather.update()
         local cmd = string.format(current_call, city_id, units, lang, APPID)
-        async.request(cmd, function(f)
+        helpers.async(cmd, function(f)
             local pos, err, icon
             weather_now, pos, err = json.decode(f, 1, nil)
 
@@ -134,12 +128,9 @@ local function worker(args)
                 local sunrise = tonumber(weather_now["sys"]["sunrise"])
                 local sunset  = tonumber(weather_now["sys"]["sunset"])
                 local icon    = weather_now["weather"][1]["icon"]
-                local utc_m   = string.gsub(read_pipe(string.format("date -u -d 'today 00:00:00' +'%%s'")), "\n", "")
-                local loc_m   = string.gsub(read_pipe(string.format("date -d 'today 00:00:00' +'%%s'")), "\n", "")
-
-                loc_m  = tonumber(loc_m)
-                utc_m  = tonumber(utc_m)
-                offset = utc_offset()
+                local loc_m   = os.time { year = os.date("%Y"), month = os.date("%m"), day = os.date("%d"), hour = 0 }
+                local offset  = utc_offset()
+                local utc_m   = loc_m + offset
 
                 -- if we are 1 day after the GMT, return 1 day back, and viceversa
                 if offset > 0 and loc_m >= utc_m then
@@ -168,10 +159,10 @@ local function worker(args)
 
     weather.attach(weather.widget)
 
-    newtimer("weather-" .. city_id, timeout, weather.update)
-    newtimer("weather_forecast-" .. city_id, timeout, weather.forecast_update)
+    weather.timer = helpers.newtimer("weather-" .. city_id, timeout, weather.update, false, true)
+    weather.timer_forecast = helpers.newtimer("weather_forecast-" .. city_id, timeout, weather.forecast_update, false, true)
 
-    return setmetatable(weather, { __index = weather.widget })
+    return weather
 end
 
 return setmetatable({}, { __call = function(_, ...) return worker(...) end })

@@ -7,19 +7,17 @@ source = {
 description = {
    summary = "Layout, widgets and utilities for Awesome WM",
    detailed = [[
-        Successor of awesome-vain, this module provides new layouts, a set of widgets and utility functions, in order to improve Awesome usability and configurability.
+        Successor of awesome-vain, this module provides new layouts, a set of widgets and utility functions, with the aim of improving Awesome usability and configurability.
 
-        Optional dependencies: alsa-utils (for alsamixer); curl; imagemagick.
+        Optional dependency: curl (for IMAP and weather widgets).
     ]],
    homepage = "https://github.com/copycat-killer/lain",
    license = "GPL v2"
 }
 dependencies = {
-   "lua >= 5.1",
-   "awesome >= 3.5",
-   "alsa-utils",
-   "curl",
-   "imagemagick"
+   "lua >= 5.3",
+   "awesome >= 4.0",
+   "curl"
 }
 supported_platforms = { "linux" }
 build = {

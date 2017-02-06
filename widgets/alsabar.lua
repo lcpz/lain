@@ -7,179 +7,130 @@
                                                   
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
-local read_pipe    = require("lain.helpers").read_pipe
-
+local helpers      = require("lain.helpers")
 local awful        = require("awful")
-local beautiful    = require("beautiful")
 local naughty      = require("naughty")
-
+local wibox        = require("wibox")
 local math         = { modf   = math.modf }
-local mouse        = mouse
 local string       = { format = string.format,
                        match  = string.match,
                        rep    = string.rep }
+local type         = type
 local tonumber     = tonumber
-
 local setmetatable = setmetatable
 
 -- ALSA volume bar
 -- lain.widgets.alsabar
 local alsabar = {
-    channel = "Master",
-    step    = "1%",
-
     colors = {
-        background = beautiful.bg_normal,
+        background = "#000000",
         mute       = "#EB8F8F",
         unmute     = "#A4CE8A"
-    },
-
-    terminal = terminal or "xterm",
-    mixer    = terminal .. " -e alsamixer",
-
-    notifications = {
-        font      = beautiful.font:sub(beautiful.font:find(""), beautiful.font:find(" ")),
-        font_size = "11",
-        color     = beautiful.fg_normal,
-        bar_size  = 18,
-        screen    = 1
     },
 
     _current_level = 0,
     _muted         = false
 }
 
-function alsabar.notify()
-    alsabar.update()
-
-    local preset = {
-        title   = "",
-        text    = "",
-        timeout = 5,
-        screen  = alsabar.notifications.screen,
-        font    = alsabar.notifications.font .. " " ..
-                  alsabar.notifications.font_size,
-        fg      = alsabar.notifications.color
-    }
-
-    if alsabar._muted
-    then
-        preset.title = alsabar.channel .. " - Muted"
-    else
-        preset.title = alsabar.channel .. " - " .. alsabar._current_level .. "%"
-    end
-
-    int = math.modf((alsabar._current_level / 100) * alsabar.notifications.bar_size)
-    preset.text = "["
-                .. string.rep("|", int)
-                .. string.rep(" ", alsabar.notifications.bar_size - int)
-                .. "]"
-
-    if alsabar.followmouse then
-        preset.screen = mouse.screen
-    end
-
-    if alsabar._notify ~= nil then
-        alsabar._notify = naughty.notify ({
-            replaces_id = alsabar._notify.id,
-            preset      = preset,
-        })
-    else
-        alsabar._notify = naughty.notify ({
-            preset = preset,
-        })
-    end
-end
-
 local function worker(args)
     local args       = args or {}
     local timeout    = args.timeout or 5
     local settings   = args.settings or function() end
     local width      = args.width or 63
-    local height     = args.heigth or 1
+    local height     = args.height or 1
     local ticks      = args.ticks or false
     local ticks_size = args.ticks_size or 7
     local vertical   = args.vertical or false
 
-    alsabar.cmd           = args.cmd or "amixer"
-    alsabar.channel       = args.channel or alsabar.channel
-    alsabar.togglechannel = args.togglechannel
-    alsabar.step          = args.step or alsabar.step
-    alsabar.colors        = args.colors or alsabar.colors
-    alsabar.notifications = args.notifications or alsabar.notifications
-    alsabar.followmouse   = args.followmouse or false
+    alsabar.cmd                 = args.cmd or "amixer"
+    alsabar.channel             = args.channel or "Master"
+    alsabar.togglechannel       = args.togglechannel
+    alsabar.colors              = args.colors or alsabar.colors
+    alsabar.followtag           = args.followtag or false
+    alsabar.notification_preset = args.notification_preset
 
-    alsabar.bar = awful.widget.progressbar()
-
-    alsabar.bar:set_background_color(alsabar.colors.background)
-    alsabar.bar:set_color(alsabar.colors.unmute)
-    alsabar.tooltip = awful.tooltip({ objects = { alsabar.bar } })
-    alsabar.bar:set_width(width)
-    alsabar.bar:set_height(height)
-    alsabar.bar:set_ticks(ticks)
-    alsabar.bar:set_ticks_size(ticks_size)
-    alsabar.bar:set_vertical(vertical)
-
-    function alsabar.update()
-        -- Get mixer control contents
-        local mixer = read_pipe(string.format("%s get %s", alsabar.cmd, alsabar.channel))
-
-        -- Capture mixer control state:          [5%] ... ... [on]
-        local volu, mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
-
-        -- HDMIs can have a channel different from Master for toggling mute
-        if alsabar.togglechannel then
-            mute = string.match(read_pipe(string.format("%s get %s", alsabar.cmd, alsabar.togglechannel)), "%[(%a+)%]")
-        end
-
-        if (volu and tonumber(volu) ~= alsabar._current_level) or (mute and string.match(mute, "on") ~= alsabar._muted)
-        then
-            alsabar._current_level = tonumber(volu) or alsabar._current_level
-            alsabar.bar:set_value(alsabar._current_level / 100)
-            if not mute and tonumber(volu) == 0 or mute == "off"
-            then
-                alsabar._muted = true
-                alsabar.tooltip:set_text (" [Muted] ")
-                alsabar.bar:set_color(alsabar.colors.mute)
-            else
-                alsabar._muted = false
-                alsabar.tooltip:set_text(string.format(" %s:%s ", alsabar.channel, volu))
-                alsabar.bar:set_color(alsabar.colors.unmute)
-            end
-
-            volume_now = {}
-            volume_now.level = tonumber(volu)
-            volume_now.status = mute
-            settings()
-        end
+    if not alsabar.notification_preset then
+        alsabar.notification_preset      = {}
+        alsabar.notification_preset.font = "Monospace 10"
     end
 
-    alsabar.bar:buttons(awful.util.table.join (
-          awful.button({}, 1, function()
-            awful.util.spawn(alsabar.mixer)
-          end),
-          awful.button({}, 2, function()
-						awful.util.spawn(string.format("%s set %s 100%%", alsabar.cmd, alsabar.channel))
-            pulsebar.update()
-          end),
-          awful.button({}, 3, function()
-            awful.util.spawn(string.format("%s set %s toggle", alsabar.cmd, alsabar.channel))
-            alsabar.update()
-          end),
-          awful.button({}, 4, function()
-            awful.util.spawn(string.format("%s set %s %s+", alsabar.cmd, alsabar.channel, alsabar.step))
-            alsabar.update()
-          end),
-          awful.button({}, 5, function()
-            awful.util.spawn(string.format("%s set %s %s-", alsabar.cmd, alsabar.channel, alsabar.step))
-            alsabar.update()
-          end)
-    ))
+    local format_cmd = string.format("%s get %s", alsabar.cmd, alsabar.channel)
 
-    timer_id = string.format("alsabar-%s-%s", alsabar.cmd, alsabar.channel)
+    if alsabar.togglechannel then
+        format_cmd = { awful.util.shell, "-c", string.format("%s get %s; %s get %s",
+        alsabar.cmd, alsabar.channel, alsabar.cmd, alsabar.togglechannel) }
+    end
 
-    newtimer(timer_id, timeout, alsabar.update)
+    alsabar.bar = wibox.widget {
+        forced_height    = height,
+        forced_width     = width,
+        color            = alsabar.colors.unmute,
+        background_color = alsabar.colors.background,
+        margins          = 1,
+        paddings         = 1,
+        ticks            = ticks,
+        ticks_size       = ticks_size,
+        widget           = wibox.widget.progressbar,
+        layout           = vertical and wibox.container.rotate
+    }
+
+    alsabar.tooltip = awful.tooltip({ objects = { alsabar.bar } })
+
+    function alsabar.update(callback)
+        helpers.async(format_cmd, function(mixer)
+            local volu,mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
+            if (volu and tonumber(volu) ~= alsabar._current_level) or (mute and string.match(mute, "on") ~= alsabar._muted) then
+                alsabar._current_level = tonumber(volu) or alsabar._current_level
+                alsabar.bar:set_value(alsabar._current_level / 100)
+                if (not mute and tonumber(volu) == 0) or mute == "off" then
+                    alsabar._muted = true
+                    alsabar.tooltip:set_text ("[Muted]")
+                    alsabar.bar.color = alsabar.colors.mute
+                else
+                    alsabar._muted = false
+                    alsabar.tooltip:set_text(string.format("%s: %s", alsabar.channel, volu))
+                    alsabar.bar.color = alsabar.colors.unmute
+                end
+
+                volume_now = {}
+                volume_now.level = tonumber(volu)
+                volume_now.status = mute
+
+                settings()
+
+                if type(callback) == "function" then callback() end
+            end
+        end)
+    end
+
+    function alsabar.notify()
+        alsabar.update(function()
+            local preset = alsabar.notification_preset
+
+            if alsabar._muted then
+                preset.title = string.format("%s - Muted", alsabar.channel)
+            else
+                preset.title = string.format("%s - %s%%", alsabar.channel, alsabar._current_level)
+            end
+
+            int = math.modf((alsabar._current_level / 100) * awful.screen.focused().mywibox.height)
+            preset.text = string.format("[%s%s]", string.rep("|", int),
+                          string.rep(" ", awful.screen.focused().mywibox.height - int))
+
+            if alsabar.followtag then preset.screen = awful.screen.focused() end
+
+            if not alsabar.notification then
+                alsabar.notification = naughty.notify {
+                    preset  = preset,
+                    destroy = function() alsabar.notification = nil end
+                }
+            else
+                naughty.replace_text(alsabar.notification, preset.title, preset.text)
+            end
+        end)
+    end
+
+    helpers.newtimer(string.format("alsabar-%s-%s", alsabar.cmd, alsabar.channel), timeout, alsabar.update)
 
     return alsabar
 end

@@ -7,18 +7,16 @@
 												                        
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
 local first_line   = require("lain.helpers").first_line
-
+local newtimer     = require("lain.helpers").newtimer
 local naughty      = require("naughty")
 local wibox        = require("wibox")
-
 local math         = { abs    = math.abs,
                        floor  = math.floor,
                        log10  = math.log10,
                        min    = math.min }
 local string       = { format = string.format }
-
+local ipairs       = ipairs
 local type         = type
 local tonumber     = tonumber
 local setmetatable = setmetatable
@@ -27,15 +25,13 @@ local setmetatable = setmetatable
 -- lain.widgets.bat
 
 local function worker(args)
-    local bat       = {}
+    local bat       = { widget = wibox.widget.textbox() }
     local args      = args or {}
     local timeout   = args.timeout or 30
     local batteries = args.batteries or (args.battery and {args.battery}) or {"BAT0"}
     local ac        = args.ac or "AC0"
     local notify    = args.notify or "on"
     local settings  = args.settings or function() end
-
-    bat.widget = wibox.widget.textbox('')
 
     bat_notification_low_preset = {
         title   = "Battery low",
@@ -110,35 +106,48 @@ local function worker(args)
             end
         end
 
+        -- When one of the battery is charging, others' status are either
+        -- "Full", "Unknown" or "Charging". When the laptop is not plugged in,
+        -- one or more of the batteries may be full, but only one battery
+        -- discharging suffices to set global status to "Discharging".
         bat_now.status = bat_now.n_status[1]
+        for _,status in ipairs(bat_now.n_status) do
+            if status == "Discharging" or status == "Charging" then
+                bat_now.status = status
+            end
+        end
         bat_now.ac_status = tonumber(first_line(string.format("%s%s/online", pspath, ac))) or "N/A"
 
         if bat_now.status ~= "N/A" then
+            if bat_now.status ~= "Full" and sum_rate_power == 0 and bat_now.ac_status == 1 then
+								bat_now.perc  = math.floor(math.min(100, (sum_energy_now / sum_energy_full) * 100))
+								bat_now.time  = "00:00"
+								bat_now.watt  = 0
+
             -- update {perc,time,watt} iff battery not full and rate > 0
-            if bat_now.status ~= "Full" and (sum_rate_power > 0 or sum_rate_current > 0) then
+            elseif bat_now.status ~= "Full" then
                 local rate_time = 0
-                local div = (sum_rate_power > 0 and sum_rate_power) or sum_rate_current
+                -- Calculate time and watt if rates are greater then 0
+                if (sum_rate_power > 0 or sum_rate_current > 0) then
+                    local div = (sum_rate_power > 0 and sum_rate_power) or sum_rate_current
 
-                if bat_now.status == "Charging" then
-                    rate_time = (sum_energy_full - sum_energy_now) / div
-                else -- Discharging
-                    rate_time = sum_energy_now / div
-                end
+                    if bat_now.status == "Charging" then
+                        rate_time = (sum_energy_full - sum_energy_now) / div
+                    else -- Discharging
+                        rate_time = sum_energy_now / div
+                    end
 
-                if 0 < rate_time and rate_time < 0.01 then -- check for magnitude discrepancies (#199)
-                    rate_time_magnitude = math.abs(math.floor(math.log10(rate_time)))
-                    rate_time = rate_time * 10^(rate_time_magnitude - 2)
-                end
+                    if 0 < rate_time and rate_time < 0.01 then -- check for magnitude discrepancies (#199)
+                        rate_time_magnitude = math.abs(math.floor(math.log10(rate_time)))
+                        rate_time = rate_time * 10^(rate_time_magnitude - 2)
+                    end
+                 end
 
                 local hours   = math.floor(rate_time)
                 local minutes = math.floor((rate_time - hours) * 60)
                 bat_now.perc  = math.floor(math.min(100, (sum_energy_now / sum_energy_full) * 100))
                 bat_now.time  = string.format("%02d:%02d", hours, minutes)
                 bat_now.watt  = tonumber(string.format("%.2f", sum_rate_energy / 1e6))
-            elseif bat_now.status ~= "Full" and sum_rate_power == 0 and bat_now.ac_status == 1 then
-								bat_now.perc  = math.floor(math.min(100, (sum_energy_now / sum_energy_full) * 100))
-								bat_now.time  = "00:00"
-								bat_now.watt  = 0
             elseif bat_now.status == "Full" then
                 bat_now.perc  = 100
                 bat_now.time  = "00:00"
@@ -165,9 +174,9 @@ local function worker(args)
         end
     end
 
-    newtimer(battery, timeout, bat.update)
+    newtimer("batteries", timeout, bat.update)
 
-    return setmetatable(bat, { __index = bat.widget })
+    return bat
 end
 
 return setmetatable({}, { __call = function(_, ...) return worker(...) end })

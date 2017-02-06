@@ -8,58 +8,56 @@
                                  
 --]]
 
-local beautiful    = require("beautiful")
-local tostring     = tostring
+local string       = { format = string.format }
 local setmetatable = setmetatable
 
 -- Lain markup util submodule
 -- lain.util.markup
-local markup = {}
-
-local fg = {}
-local bg = {}
+local markup = { fg = {}, bg = {} }
 
 -- Convenience tags.
-function markup.bold(text)      return '<b>'     .. tostring(text) .. '</b>'     end
-function markup.italic(text)    return '<i>'     .. tostring(text) .. '</i>'     end
-function markup.strike(text)    return '<s>'     .. tostring(text) .. '</s>'     end
-function markup.underline(text) return '<u>'     .. tostring(text) .. '</u>'     end
-function markup.monospace(text) return '<tt>'    .. tostring(text) .. '</tt>'    end
-function markup.big(text)       return '<big>'   .. tostring(text) .. '</big>'   end
-function markup.small(text)     return '<small>' .. tostring(text) .. '</small>' end
+function markup.bold(text)      return '<b>'     .. text .. '</b>'     end
+function markup.italic(text)    return '<i>'     .. text .. '</i>'     end
+function markup.strike(text)    return '<s>'     .. text .. '</s>'     end
+function markup.underline(text) return '<u>'     .. text .. '</u>'     end
+function markup.monospace(text) return '<tt>'    .. text .. '</tt>'    end
+function markup.big(text)       return '<big>'   .. text .. '</big>'   end
+function markup.small(text)     return '<small>' .. text .. '</small>' end
 
 -- Set the font.
 function markup.font(font, text)
-  return '<span font="'  .. tostring(font)  .. '">' .. tostring(text) ..'</span>'
+  return '<span font="'  .. font  .. '">' .. text ..'</span>'
 end
 
 -- Set the foreground.
-function fg.color(color, text)
-  return '<span foreground="' .. tostring(color) .. '">' .. tostring(text) .. '</span>'
+function markup.fg.color(color, text)
+  return '<span foreground="' .. color .. '">' .. text .. '</span>'
 end
 
 -- Set the background.
-function bg.color(color, text)
-  return '<span background="' .. tostring(color) .. '">' .. tostring(text) .. '</span>'
+function markup.bg.color(color, text)
+  return '<span background="' .. color .. '">' .. text .. '</span>'
 end
 
--- Context: focus
-function fg.focus(text) return fg.color(beautiful.fg_focus, text) end
-function bg.focus(text) return bg.color(beautiful.bg_focus, text) end
-function markup.focus(text) return bg.focus(fg.focus(text)) end
+-- Set foreground and background.
+function markup.color(fg, bg, text)
+  return string.format('<span foreground="%s" background="%s">%s</span>', fg, bg, text)
+end
 
--- Context: normal
-function fg.normal(text) return fg.color(beautiful.fg_normal, text) end
-function bg.normal(text) return bg.color(beautiful.bg_normal, text) end
-function markup.normal(text) return bg.normal(fg.normal(text)) end
+-- Set font and foreground.
+function markup.fontfg(font, fg, text)
+  return string.format('<span font="%s" foreground="%s">%s</span>', font, fg, text)
+end
 
--- Context: urgent
-function fg.urgent(text) return fg.color(beautiful.fg_urgent, text) end
-function bg.urgent(text) return bg.color(beautiful.bg_urgent, text) end
-function markup.urgent(text) return bg.urgent(fg.urgent(text)) end
+-- Set font and background.
+function markup.fontbg(font, bg, text)
+  return string.format('<span font="%s" background="%s">%s</span>', font, bg, text)
+end
 
-markup.fg = fg
-markup.bg = bg
+-- Set font, foreground and background.
+function markup.fontcolor(font, fg, bg, text)
+  return string.format('<span font="%s" foreground="%s" background="%s">%s</span>', font, fg, bg, text)
+end
 
 -- link markup.{fg,bg}(...) calls to markup.{fg,bg}.color(...)
 setmetatable(markup.fg, { __call = function(_, ...) return markup.fg.color(...) end })

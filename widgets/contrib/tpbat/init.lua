@@ -17,39 +17,33 @@
 local debug        = { getinfo = debug.getinfo }
 local newtimer     = require("lain.helpers").newtimer
 local first_line   = require("lain.helpers").first_line
-local beautiful    = require("beautiful")
 local naughty      = require("naughty")
 local wibox        = require("wibox")
-
 local string       = { format = string.format }
 local math         = { floor = math.floor }
 local tostring     = tostring
 local setmetatable = setmetatable
-
 package.path       = debug.getinfo(1,"S").source:match[[^@?(.*[\/])[^\/]-$]] .. "?.lua;" .. package.path
 local smapi        = require("smapi")
 
 -- ThinkPad SMAPI-enabled battery info widget
 -- lain.widgets.contrib.tpbat
-local tpbat = { }
-local tpbat_notification = nil
+local tpbat = {}
 
-function tpbat:hide()
-    if tpbat_notification ~= nil
-    then
-        naughty.destroy(tpbat_notification)
-        tpbat_notification = nil
-    end
+function tpbat.hide()
+    if not tpbat.notification then return end
+    naughty.destroy(tpbat.notification)
+    tpbat.notification = nil
 end
 
-function tpbat:show(t_out)
-    tpbat:hide()
+function tpbat.show(t_out)
+    tpbat.hide()
 
-    local bat   = self.bat
-    local t_out = t_out or 0
+    local bat = tpbat.bat
 
     if bat == nil or not bat:installed() then return end
 
+    local t_out = t_out or 0
     local mfgr   = bat:get('manufacturer') or "no_mfgr"
     local model  = bat:get('model') or "no_model"
     local chem   = bat:get('chemistry') or "no_chem"
@@ -57,10 +51,8 @@ function tpbat:show(t_out)
     local time   = bat:remaining_time()
     local msg    = "\t"
 
-    if status ~= "idle" and status ~= "nil"
-    then
-        if time == "N/A"
-        then
+    if status ~= "idle" and status ~= "nil" then
+        if time == "N/A" then
             msg = "...Calculating time remaining..."
         else
             msg = time .. (status == "charging" and " until charged" or " remaining")
@@ -72,11 +64,10 @@ function tpbat:show(t_out)
     local str = string.format("%s : %s %s (%s)\n", bat.name, mfgr, model, chem)
                 .. string.format("\n%s \t\t\t %s", status:upper(), msg)
 
-    tpbat_notification = naughty.notify({
-        preset = { fg = beautiful.fg_normal },
-        text = str,
+    tpbat.notification = naughty.notify({
+        text    = str,
         timeout = t_out,
-        screen = client.focus and client.focus.screen or 1
+        screen  = client.focus and client.focus.screen or 1
     })
 end
 
@@ -89,7 +80,7 @@ function tpbat.register(args)
     tpbat.bat = smapi:battery(battery) -- Create a new battery
     local bat = tpbat.bat
 
-    tpbat.widget = wibox.widget.textbox('')
+    tpbat.widget = wibox.widget.textbox()
 
     bat_notification_low_preset = {
         title = "Battery low",
@@ -117,7 +108,7 @@ function tpbat.register(args)
         })
     end
 
-    function update()
+    function tpbat.update()
         bat_now = {
             status = "Not present",
             perc   = "N/A",
@@ -156,15 +147,16 @@ function tpbat.register(args)
         end
 
         widget = tpbat.widget
+
         settings()
     end
 
-    newtimer("tpbat-" .. bat.name, timeout, update)
+    newtimer("tpbat-" .. bat.name, timeout, tpbat.update)
 
-    widget:connect_signal('mouse::enter', function () tpbat:show() end)
-    widget:connect_signal('mouse::leave', function () tpbat:hide() end)
+    widget:connect_signal('mouse::enter', function () tpbat.show() end)
+    widget:connect_signal('mouse::leave', function () tpbat.hide() end)
 
-    return tpbat.widget
+    return tpbat
 end
 
 return setmetatable(tpbat, { __call = function(_, ...) return tpbat.register(...) end })

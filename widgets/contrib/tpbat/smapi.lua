@@ -81,13 +81,11 @@ function smapi:battery(name)
         local time_val = bat_now.status == 'discharging' and 'remaining_running_time' or 'remaining_charging_time'
         local mins_left = self:get(time_val)
 
-        if mins_left:find("^%d+") == nil
-        then
-            return "N/A"
-        end
+        if not mins_left:find("^%d+") then return "N/A" end
 
         local hrs = math.floor(mins_left / 60)
         local min = mins_left % 60
+
         return string.format("%02d:%02d", hrs, min)
     end
 

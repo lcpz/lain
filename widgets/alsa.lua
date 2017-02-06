@@ -7,21 +7,18 @@
                                                   
 --]]
 
-local newtimer     = require("lain.helpers").newtimer
-local read_pipe    = require("lain.helpers").read_pipe
-
+local helpers      = require("lain.helpers")
+local shell        = require("awful.util").shell
 local wibox        = require("wibox")
-
 local string       = { match  = string.match,
                        format = string.format }
-
 local setmetatable = setmetatable
 
 -- ALSA volume
 -- lain.widgets.alsa
-local alsa = { last_level = "0", last_status = "" }
 
 local function worker(args)
+    local alsa     = { widget = wibox.widget.textbox() }
     local args     = args or {}
     local timeout  = args.timeout or 5
     local settings = args.settings or function() end
@@ -29,31 +26,31 @@ local function worker(args)
     alsa.cmd           = args.cmd or "amixer"
     alsa.channel       = args.channel or "Master"
     alsa.togglechannel = args.togglechannel
-    alsa.widget        = wibox.widget.textbox('')
 
-    function alsa.update()
-        mixer = read_pipe(string.format("%s get %s", alsa.cmd, alsa.channel))
-        l,s   = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
+    local format_cmd = string.format("%s get %s", alsa.cmd, alsa.channel)
 
-        -- HDMIs can have a channel different from Master for toggling mute
-        if alsa.togglechannel then
-            s = string.match(read_pipe(string.format("%s get %s", alsa.cmd, alsa.togglechannel)), "%[(%a+)%]")
-        end
-
-        if alsa.last_level ~= l or alsa.last_status ~= s then
-            volume_now = { level = l, status = s }
-            alsa.last_level  = l
-            alsa.last_status = s
-
-            widget = alsa.widget
-            settings()
-        end
+    if alsa.togglechannel then
+        format_cmd = { shell, "-c", string.format("%s get %s; %s get %s",
+        alsa.cmd, alsa.channel, alsa.cmd, alsa.togglechannel) }
     end
 
-    timer_id = string.format("alsa-%s-%s", alsa.cmd, alsa.channel)
-    newtimer(timer_id, timeout, alsa.update)
+    alsa.last = {}
 
-    return setmetatable(alsa, { __index = alsa.widget })
+    function alsa.update()
+        helpers.async(format_cmd, function(mixer)
+            local l,s = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
+            if alsa.last.level ~= l or alsa.last.status ~= s then
+                volume_now = { level = l, status = s }
+                widget = alsa.widget
+                settings()
+                alsa.last = volume_now
+            end
+        end)
+    end
+
+    helpers.newtimer(string.format("alsa-%s-%s", alsa.cmd, alsa.channel), timeout, alsa.update)
+
+    return alsa
 end
 
-return setmetatable(alsa, { __call = function(_, ...) return worker(...) end })
+return setmetatable({}, { __call = function(_, ...) return worker(...) end })

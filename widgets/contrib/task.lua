@@ -6,145 +6,77 @@
                                                   
 --]]
 
-local icons_dir    = require("lain.helpers").icons_dir
-
-local awful        = require("awful")
-local beautiful    = require("beautiful")
-local naughty      = require("naughty")
-
-local mouse        = mouse
-local io           = io
-local string       = { len = string.len }
-local tonumber     = tonumber
-
-local setmetatable = setmetatable
+local helpers = require("lain.helpers")
+local markup  = require("lain.util").markup
+local awful   = require("awful")
+local naughty = require("naughty")
+local string  = { format = string.format, gsub = string.gsub }
 
 -- Taskwarrior notification
 -- lain.widgets.contrib.task
 local task = {}
 
-local task_notification = nil
-
-function findLast(haystack, needle)
-    local i=haystack:match(".*"..needle.."()")
-    if i==nil then return nil else return i-1 end
-end
-
 function task.hide()
-    if task_notification ~= nil then
-        naughty.destroy(task_notification)
-        task_notification = nil
-    end
+    if not task.notification then return end
+    naughty.destroy(task.notification)
+    task.notification = nil
 end
 
-function task.show(scr_pos)
+function task.show(scr)
     task.hide()
 
-    local f, c_text, scrp
-
-    if task.followmouse then
-        scrp = mouse.screen
-    else
-        scrp = scr_pos or task.scr_pos
+    if task.followtag then
+        task.notification_preset.screen = awful.screen.focused()
+    elseif scr then
+        task.notification_preset.screen = scr
     end
 
-    f = io.popen('task ' .. task.cmdline)
-    c_text = "<span font='"
-             .. task.font .. " "
-             .. task.font_size .. "'>"
-             .. awful.util.escape(f:read("*all"):gsub("\n*$", ""))
-             .. "</span>"
-    f:close()
-
-    task_notification = naughty.notify({ title = "[task next]",
-                                         text = c_text,
-                                         icon = task.notify_icon,
-                                         position = task.position,
-                                         fg = task.fg,
-                                         bg = task.bg,
-                                         timeout = task.timeout,
-                                         screen = scrp
-                                     })
+    helpers.async(task.show_cmd, function(f)
+        task.notification = naughty.notify({
+            preset = task.notification_preset,
+            title  = task.show_cmd,
+            text   = markup.font(task.notification_preset.font,
+                     awful.util.escape(f:gsub("\n*$", "")))
+        })
+    end)
 end
 
-function task.prompt_add()
-  awful.prompt.run({ prompt = "Add task: " },
-      mypromptbox[mouse.screen].widget,
-      function (...)
-          local f = io.popen("task add " .. ...)
-          c_text = "\n<span font='"
-                   .. task.font .. " "
-                   .. task.font_size .. "'>"
-                   .. awful.util.escape(f:read("*all"))
-                   .. "</span>"
-          f:close()
-
-          naughty.notify({
-              text     = c_text,
-              icon     = task.notify_icon,
-              position = task.position,
-              fg       = task.fg,
-              bg       = task.bg,
-              timeout  = task.timeout,
-          })
-      end,
-      nil,
-      awful.util.getdir("cache") .. "/history_task_add")
-end
-
-function task.prompt_search()
-  awful.prompt.run({ prompt = "Search task: " },
-      mypromptbox[mouse.screen].widget,
-      function (...)
-          local f = io.popen("task " .. ...)
-          c_text = f:read("*all"):gsub(" \n*$", "")
-          f:close()
-
-          if string.len(c_text) == 0
-          then
-              c_text = "No results found."
-          else
-              c_text = "<span font='"
-                       .. task.font .. " "
-                       .. task.font_size .. "'>"
-                       .. awful.util.escape(c_text)
-                       .. "</span>"
-          end
-
-          naughty.notify({
-              title    = "[task next " .. ... .. "]",
-              text     = c_text,
-              icon     = task.notify_icon,
-              position = task.position,
-              fg       = task.fg,
-              bg       = task.bg,
-              timeout  = task.timeout,
-              screen   = mouse.screen
-          })
-      end,
-      nil,
-      awful.util.getdir("cache") .. "/history_task")
+function task.prompt()
+    awful.prompt.run {
+        prompt       = task.prompt_text,
+        textbox      = awful.screen.focused().mypromptbox.widget,
+        exe_callback = function(t)
+            helpers.async(t, function(f)
+                naughty.notify {
+                    preset = task.notification_preset,
+                    title    = t,
+                    text     = markup.font(task.notification_preset.font,
+                               awful.util.escape(f:gsub("\n*$", "")))
+                }
+            end)
+        end,
+        history_path = awful.util.getdir("cache") .. "/history_task"
+    }
 end
 
 function task.attach(widget, args)
-    local args       = args or {}
+    local args               = args or {}
+    task.show_cmd            = args.show_cmd or "task next"
+    task.prompt_text         = args.prompt_text or "Enter task command: "
+    task.followtag           = args.followtag or false
+    task.notification_preset = args.notification_preset
 
-    task.font_size   = tonumber(args.font_size) or 12
-    task.font        = args.font or beautiful.font:sub(beautiful.font:find(""),
-                       findLast(beautiful.font, " "))
-    task.fg          = args.fg or beautiful.fg_normal or "#FFFFFF"
-    task.bg          = args.bg or beautiful.bg_normal or "#FFFFFF"
-    task.position    = args.position or "top_right"
-    task.timeout     = args.timeout or 7
-    task.scr_pos     = args.scr_pos or 1
-    task.followmouse = args.followmouse or false
-    task.cmdline     = args.cmdline or "next"
+    if not task.notification_preset then
+        task.notification_preset = {
+            font = "Monospace 10",
+            icon = helpers.icons_dir .. "/taskwarrior.png"
+        }
+    end
 
-    task.notify_icon = icons_dir .. "/taskwarrior/task.png"
-    task.notify_icon_small = icons_dir .. "/taskwarrior/tasksmall.png"
-
-    widget:connect_signal("mouse::enter", function () task.show(task.scr_pos) end)
-    widget:connect_signal("mouse::leave", function () task.hide() end)
+    if widget then
+        widget:connect_signal("mouse::enter", function () task.show() end)
+        widget:connect_signal("mouse::leave", function () task.hide() end)
+    end
 end
 
-return setmetatable(task, { __call = function(_, ...) return create(...) end })
+return task
