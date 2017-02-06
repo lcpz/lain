@@ -67,28 +67,28 @@ function util.menu_clients_current_tags(menu, args)
 end
 
 -- Magnify a client: set it to "float" and resize it.
-function util.magnify_client(c)
+function util.magnify_client(c, width_f, height_f)
     if c and not c.floating then
-        util.mc(c)
         util.magnified_client = c
+        util.mc(c, width_f, height_f)
     else
-        c.floating = false
         util.magnified_client = nil
+        c.floating = false
     end
 end
 
 -- https://github.com/copycat-killer/lain/issues/195
-function util.mc(c)
+function util.mc(c, width_f, height_f)
     c = c or util.magnified_client
     if not c then return end
 
     c.floating   = true
     local s      = awful.screen.focused()
-    local mg     = s.geometry
-    local mwfact = s.selected_tag.master_width_factor or 0.5
+    local mg     = s.workarea
     local g      = {}
+    local mwfact = width_f or s.selected_tag.master_width_factor or 0.5
     g.width      = sqrt(mwfact) * mg.width
-    g.height     = sqrt(mwfact) * mg.height
+    g.height     = sqrt(height_f or mwfact) * mg.height
     g.x          = mg.x + (mg.width - g.width) / 2
     g.y          = mg.y + (mg.height - g.height) / 2
 
