@@ -130,7 +130,13 @@ local function worker(args)
                 local icon    = weather_now["weather"][1]["icon"]
                 local loc_m   = os.time { year = os.date("%Y"), month = os.date("%m"), day = os.date("%d"), hour = 0 }
                 local offset  = utc_offset()
-                local utc_m   = loc_m + offset
+                local utc_m   = loc_m - offset
+
+                if offset > 0 and (now - utc_m)>=86400 then
+                    utc_m = utc_m + 86400
+                elseif offset < 0 and (utc_m - now)>=86400 then
+                    utc_m = utc_m - 86400
+                end
 
                 -- if we are 1 day after the GMT, return 1 day back, and viceversa
                 if offset > 0 and loc_m >= utc_m then
