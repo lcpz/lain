@@ -28,9 +28,7 @@ function calendar.hide()
 end
 
 function calendar.show(t_out, inc_offset, scr)
-    local today = os.date("%e")
-    local offs = inc_offset or 0
-    local f
+    local f, offs = nil, inc_offset or 0
 
     calendar.offset = calendar.offset + offs
 
@@ -38,7 +36,7 @@ function calendar.show(t_out, inc_offset, scr)
 
     if current_month then -- today highlighted
         calendar.offset = 0
-        calendar.notify_icon = string.format("%s%s.png", calendar.icons, tonumber(today))
+        calendar.icon = string.format("%s%s.png", calendar.icons, tonumber(os.date("%d")))
         f = calendar.cal
     else -- no current month showing, no day to highlight
        local month = tonumber(os.date("%m"))
@@ -56,7 +54,7 @@ function calendar.show(t_out, inc_offset, scr)
            year = year - 1
        end
 
-       calendar.notify_icon = nil
+       calendar.icon = nil
        f = string.format("%s %s %s", calendar.cal, month, year)
     end
 
@@ -66,16 +64,39 @@ function calendar.show(t_out, inc_offset, scr)
         calendar.notification_preset.screen = src or 1
     end
 
-    helpers.async(f, function(ws)
-        fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
-        ws = ws:gsub("%c%[%d+[m]?%s?%d+%c%[%d+[m]?", markup.bold(markup.color(bg, fg, today)))
+    if f == calendar then
+        calendar.update(f, false)
         calendar.hide()
         calendar.notification = naughty.notify({
             preset      = calendar.notification_preset,
-            text        = ws:gsub("\n*$", ""),
-            icon        = calendar.notify_icon,
+            icon        = calendar.icon,
             timeout     = t_out or calendar.notification_preset.timeout or 5
         })
+    else
+        calendar.update(f, true, t_out)
+    end
+end
+
+function calendar.update(f, show, t_out)
+    local fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
+
+    helpers.async(f, function(ws)
+        ws = ws:gsub("%c%[%d+[m]?%s?%d+%c%[%d+[m]?",
+             markup.bold(markup.color(bg, fg, os.date("%e")))):gsub("\n*$", "")
+
+        if f == calendar.cal then
+            calendar.notification_preset.text = ws
+        end
+
+        if show then
+            calendar.hide()
+            calendar.notification = naughty.notify({
+                preset      = calendar.notification_preset,
+                text        = ws,
+                icon        = calendar.icon,
+                timeout     = t_out or calendar.notification_preset.timeout or 5
+            })
+        end
     end)
 end
 
@@ -109,6 +130,8 @@ local function worker(args)
     end
 
     for i, widget in ipairs(calendar.attach_to) do calendar.attach(widget) end
+
+    calendar.update(calendar.cal, false)
 end
 
 return setmetatable(calendar, { __call = function(_, ...) return worker(...) end })
