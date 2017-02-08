@@ -18,7 +18,7 @@ local setmetatable = setmetatable
 -- lain.widgets.pulseaudio
 
 local function worker(args)
-    local pulseaudio = { wibox.widget.textbox() }
+    local pulseaudio = { widget = wibox.widget.textbox() }
     local args        = args or {}
     local devicetype  = args.devicetype or "sink"
     local timeout     = args.timeout or 5
