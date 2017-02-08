@@ -10,6 +10,7 @@ local helpers      = require("lain.helpers")
 local markup       = require("lain.util.markup")
 local awful        = require("awful")
 local naughty      = require("naughty")
+local mouse        = mouse
 local os           = { date   = os.date }
 local string       = { format = string.format,
                        gsub   = string.gsub }
@@ -30,6 +31,7 @@ end
 function calendar.show(t_out, inc_offset, scr)
     local f, offs = nil, inc_offset or 0
 
+    calendar.notification_preset.screen = scr or (calendar.followtag and awful.screen.focused()) or 1
     calendar.offset = calendar.offset + offs
 
     local current_month = (offs == 0 or calendar.offset == 0)
@@ -58,59 +60,42 @@ function calendar.show(t_out, inc_offset, scr)
        f = string.format("%s %s %s", calendar.cal, month, year)
     end
 
-    if calendar.followtag then
-        calendar.notification_preset.screen = awful.screen.focused()
-    else
-        calendar.notification_preset.screen = src or 1
-    end
-
-    if f == calendar then
-        calendar.update(f, false)
-        calendar.hide()
-        calendar.notification = naughty.notify({
-            preset      = calendar.notification_preset,
-            icon        = calendar.icon,
-            timeout     = t_out or calendar.notification_preset.timeout or 5
-        })
-    else
-        calendar.update(f, true, t_out)
-    end
-end
-
-function calendar.update(f, show, t_out)
-    local fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
-
     helpers.async(f, function(ws)
-        ws = ws:gsub("%c%[%d+[m]?%s?%d+%c%[%d+[m]?",
-             markup.bold(markup.color(bg, fg, os.date("%e")))):gsub("\n*$", "")
+        local fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
+        calendar.notification_preset.text = ws:gsub("%c%[%d+[m]?%s?%d+%c%[%d+[m]?",
+        markup.bold(markup.color(bg, fg, os.date("%e")))):gsub("\n*$", "")
 
-        if f == calendar.cal then
-            calendar.notification_preset.text = ws
+        local widget_focused = true
+
+        if t_out == 0 then
+            widget_focused = false
+            for i, widget in ipairs(calendar.attach_to) do
+                for _,v in ipairs(mouse.current_widgets) do
+                    if widget == v then
+                        widget_focused = true
+                        break
+                    end
+                end
+            end
         end
 
-        if show then
-            calendar.hide()
-            calendar.notification = naughty.notify({
-                preset      = calendar.notification_preset,
-                text        = ws,
-                icon        = calendar.icon,
-                timeout     = t_out or calendar.notification_preset.timeout or 5
-            })
-        end
+        calendar.hide()
+
+        calendar.notification = naughty.notify({
+            preset  = calendar.notification_preset,
+            icon    = calendar.icon,
+            timeout = (widget_focused and t_out) or calendar.notification_preset.timeout or 5
+        })
     end)
 end
 
 function calendar.attach(widget)
     widget:connect_signal("mouse::enter", function () calendar.show(0) end)
     widget:connect_signal("mouse::leave", function () calendar.hide() end)
-    widget:buttons(awful.util.table.join(awful.button({ }, 1, function ()
-                                             calendar.show(0, -1, calendar.scr_pos) end),
-                                         awful.button({ }, 3, function ()
-                                             calendar.show(0, 1, calendar.scr_pos) end),
-                                         awful.button({ }, 4, function ()
-                                             calendar.show(0, -1, calendar.scr_pos) end),
-                                         awful.button({ }, 5, function ()
-                                             calendar.show(0, 1, calendar.scr_pos) end)))
+    widget:buttons(awful.util.table.join(awful.button({ }, 1, function () calendar.show(0, -1) end),
+                                         awful.button({ }, 3, function () calendar.show(0,  1) end),
+                                         awful.button({ }, 4, function () calendar.show(0, -1) end),
+                                         awful.button({ }, 5, function () calendar.show(0,  1) end)))
 end
 
 local function worker(args)
@@ -130,8 +115,6 @@ local function worker(args)
     end
 
     for i, widget in ipairs(calendar.attach_to) do calendar.attach(widget) end
-
-    calendar.update(calendar.cal, false)
 end
 
 return setmetatable(calendar, { __call = function(_, ...) return worker(...) end })
