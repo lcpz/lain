@@ -20,7 +20,7 @@ local tonumber     = tonumber
 local setmetatable = setmetatable
 
 -- ALSA volume bar
--- lain.widgets.alsabar
+-- lain.widget.alsabar
 local alsabar = {
     colors = {
         background = "#000000",

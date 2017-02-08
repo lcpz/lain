@@ -21,7 +21,7 @@ local tonumber     = tonumber
 local setmetatable = setmetatable
 
 -- Pulseaudio volume bar
--- lain.widgets.pulsebar
+-- lain.widget.pulsebar
 local pulsebar = {
     colors = {
         background = "#000000",

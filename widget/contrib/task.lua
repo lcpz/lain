@@ -13,7 +13,7 @@ local naughty = require("naughty")
 local string  = { format = string.format, gsub = string.gsub }
 
 -- Taskwarrior notification
--- lain.widgets.contrib.task
+-- lain.widget.contrib.task
 local task = {}
 
 function task.hide()

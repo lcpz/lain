@@ -15,7 +15,7 @@ local string       = { format = string.format,
 local setmetatable = setmetatable
 
 -- Network infos
--- lain.widgets.net
+-- lain.widget.net
 
 local function worker(args)
     local net = { widget = wibox.widget.textbox() }

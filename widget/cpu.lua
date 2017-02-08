@@ -16,7 +16,7 @@ local tostring     = tostring
 local setmetatable = setmetatable
 
 -- CPU usage
--- lain.widgets.cpu
+-- lain.widget.cpu
 local cpu = { core = {} }
 
 local function worker(args)

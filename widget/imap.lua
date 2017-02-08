@@ -16,7 +16,7 @@ local tonumber     = tonumber
 local setmetatable = setmetatable
 
 -- Mail IMAP check
--- lain.widgets.imap
+-- lain.widget.imap
 
 local function worker(args)
     local imap      = { widget = wibox.widget.textbox() }

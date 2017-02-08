@@ -14,7 +14,7 @@ local string       = { match  = string.match }
 local setmetatable = setmetatable
 
 -- System load
--- lain.widgets.sysload
+-- lain.widget.sysload
 local sysload = {}
 
 local function worker(args)

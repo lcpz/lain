@@ -18,7 +18,7 @@ local tonumber     = tonumber
 local setmetatable = setmetatable
 
 -- Calendar notification
--- lain.widgets.calendar
+-- lain.widget.calendar
 local calendar = { offset = 0 }
 
 function calendar.hide()

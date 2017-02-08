@@ -15,7 +15,7 @@ local floor        = math.floor
 local setmetatable = setmetatable
 
 -- Memory usage (ignoring caches)
--- lain.widgets.mem
+-- lain.widget.mem
 local mem = {}
 
 local function worker(args)

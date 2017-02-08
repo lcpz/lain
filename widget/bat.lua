@@ -22,7 +22,7 @@ local tonumber     = tonumber
 local setmetatable = setmetatable
 
 -- Battery infos
--- lain.widgets.bat
+-- lain.widget.bat
 
 local function worker(args)
     local bat       = { widget = wibox.widget.textbox() }

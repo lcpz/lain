@@ -3,7 +3,7 @@
                                                                
      tpbat.lua                                                 
      Battery status widget for ThinkPad laptops that use SMAPI 
-     lain.widgets.contrib.tpbat                                
+     lain.widget.contrib.tpbat                                
                                                                
      More on tp_smapi: http://www.thinkwiki.org/wiki/Tp_smapi  
                                                                
@@ -27,7 +27,7 @@ package.path       = debug.getinfo(1,"S").source:match[[^@?(.*[\/])[^\/]-$]] .. 
 local smapi        = require("smapi")
 
 -- ThinkPad SMAPI-enabled battery info widget
--- lain.widgets.contrib.tpbat
+-- lain.widget.contrib.tpbat
 local tpbat = {}
 
 function tpbat.hide()

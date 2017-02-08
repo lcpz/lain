@@ -13,7 +13,7 @@ local tonumber     = tonumber
 local setmetatable = setmetatable
 
 -- coretemp
--- lain.widgets.temp
+-- lain.widget.temp
 local temp = {}
 
 local function worker(args)

@@ -12,7 +12,7 @@ local execute = os.execute
 local type    = type
 
 -- Redshift
--- lain.widgets.contrib.redshift
+-- lain.widget.contrib.redshift
 local redshift = { active = false, pid = nil }
 
 function redshift:start()

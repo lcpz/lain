@@ -20,7 +20,7 @@ local string       = { format = string.format,
 local setmetatable = setmetatable
 
 -- MPD infos
--- lain.widgets.mpd
+-- lain.widget.mpd
 local mpd = {}
 
 local function worker(args)

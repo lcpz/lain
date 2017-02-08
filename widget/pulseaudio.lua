@@ -15,7 +15,7 @@ local string       = { gmatch = string.gmatch,
 local setmetatable = setmetatable
 
 -- PulseAudio volume
--- lain.widgets.pulseaudio
+-- lain.widget.pulseaudio
 
 local function worker(args)
     local pulseaudio = { widget = wibox.widget.textbox() }

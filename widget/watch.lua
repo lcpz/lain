@@ -11,7 +11,7 @@ local textbox      = require("wibox.widget.textbox")
 local setmetatable = setmetatable
 
 -- Template for asynchronous watcher widgets
--- lain.widgets.watch
+-- lain.widget.watch
 
 local function worker(args)
     local watch     = {}

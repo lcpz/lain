@@ -19,7 +19,7 @@ local tonumber     = tonumber
 local setmetatable = setmetatable
 
 -- File system disk space usage
--- lain.widgets.fs
+-- lain.widget.fs
 local fs = { unit  = { ["mb"] = 1024, ["gb"] = 1024^2 } }
 
 function fs.hide()

@@ -15,7 +15,7 @@ local execute      = os.execute
 local setmetatable = setmetatable
 
 -- Keyboard layout switcher
--- lain.widgets.contrib.kblayout
+-- lain.widget.contrib.kblayout
 local kbdlayout = {}
 
 local function worker(args)

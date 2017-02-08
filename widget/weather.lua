@@ -22,7 +22,7 @@ local setmetatable = setmetatable
 
 -- OpenWeatherMap
 -- current weather and X-days forecast
--- lain.widgets.weather
+-- lain.widget.weather
 
 local function worker(args)
     local weather               = { widget = wibox.widget.textbox() }

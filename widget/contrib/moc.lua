@@ -18,7 +18,7 @@ local string       = { format = string.format,
 local setmetatable = setmetatable
 
 -- MOC audio player
--- lain.widgets.contrib.moc
+-- lain.widget.contrib.moc
 local moc = {}
 
 local function worker(args)

@@ -15,7 +15,7 @@ local string       = { match  = string.match,
 local setmetatable = setmetatable
 
 -- ALSA volume
--- lain.widgets.alsa
+-- lain.widget.alsa
 
 local function worker(args)
     local alsa     = { widget = wibox.widget.textbox() }
