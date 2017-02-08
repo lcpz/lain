@@ -23,7 +23,7 @@ local setmetatable = setmetatable
 -- lain.widget.mpd
 local mpd = {}
 
-local function worker(args)
+local function factory(args)
     local args          = args or {}
     local timeout       = args.timeout or 2
     local password      = (args.password and #args.password > 0 and string.format("password %s\\n", args.password)) or ""
@@ -134,4 +134,4 @@ local function worker(args)
     return mpd
 end
 
-return setmetatable(mpd, { __call = function(_, ...) return worker(...) end })
+return setmetatable(mpd, { __call = function(_, ...) return factory(...) end })

@@ -7,15 +7,12 @@
 --]]
 
 local helpers      = require("lain.helpers")
-
 local shell        = require("awful.util").shell
 local focused      = require("awful.screen").focused
 local wibox        = require("wibox")
 local naughty      = require("naughty")
-
 local string       = string
 local tonumber     = tonumber
-
 local setmetatable = setmetatable
 
 -- File system disk space usage
@@ -45,7 +42,7 @@ function fs.show(seconds, scr)
     })
 end
 
-local function worker(args)
+local function factory(args)
     local args             = args or {}
     local timeout          = args.timeout or 600
     local partition        = args.partition or "/"
@@ -127,4 +124,4 @@ local function worker(args)
     return fs
 end
 
-return setmetatable(fs, { __call = function(_, ...) return worker(...) end })
+return setmetatable(fs, { __call = function(_, ...) return factory(...) end })

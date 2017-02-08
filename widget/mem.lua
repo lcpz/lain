@@ -18,7 +18,7 @@ local setmetatable = setmetatable
 -- lain.widget.mem
 local mem = {}
 
-local function worker(args)
+local function factory(args)
     local args     = args or {}
     local timeout  = args.timeout or 2
     local settings = args.settings or function() end
@@ -53,4 +53,4 @@ local function worker(args)
     return mem
 end
 
-return setmetatable(mem, { __call = function(_, ...) return worker(...) end })
+return setmetatable(mem, { __call = function(_, ...) return factory(...) end })

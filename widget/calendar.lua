@@ -98,7 +98,7 @@ function calendar.attach(widget)
                                          awful.button({ }, 5, function () calendar.show(0,  1) end)))
 end
 
-local function worker(args)
+local function factory(args)
     local args                   = args or {}
     calendar.cal                 = args.cal or "/usr/bin/cal"
     calendar.attach_to           = args.attach_to or {}
@@ -117,4 +117,4 @@ local function worker(args)
     for i, widget in ipairs(calendar.attach_to) do calendar.attach(widget) end
 end
 
-return setmetatable(calendar, { __call = function(_, ...) return worker(...) end })
+return setmetatable(calendar, { __call = function(_, ...) return factory(...) end })

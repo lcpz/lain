@@ -6,25 +6,24 @@
                                                   
 --]]
 
-local helpers      = require("lain.helpers")
-local json         = require("lain.util").dkjson
-local focused      = require("awful.screen").focused
-local naughty      = require("naughty")
-local wibox        = require("wibox")
-local math         = { floor    = math.floor }
-local os           = { time     = os.time,
-                       date     = os.date,
-                       difftime = os.difftime }
-local string       = { format   = string.format,
-                       gsub     = string.gsub }
-local tonumber     = tonumber
-local setmetatable = setmetatable
+local helpers  = require("lain.helpers")
+local json     = require("lain.util").dkjson
+local focused  = require("awful.screen").focused
+local naughty  = require("naughty")
+local wibox    = require("wibox")
+local math     = { floor    = math.floor }
+local os       = { time     = os.time,
+                   date     = os.date,
+                   difftime = os.difftime }
+local string   = { format   = string.format,
+                   gsub     = string.gsub }
+local tonumber = tonumber
 
 -- OpenWeatherMap
 -- current weather and X-days forecast
 -- lain.widget.weather
 
-local function worker(args)
+local function factory(args)
     local weather               = { widget = wibox.widget.textbox() }
     local args                  = args or {}
     local APPID                 = args.APPID or "3e321f9414eaedbfab34983bda77a66e" -- lain default
@@ -171,4 +170,4 @@ local function worker(args)
     return weather
 end
 
-return setmetatable({}, { __call = function(_, ...) return worker(...) end })
+return factory

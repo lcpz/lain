@@ -21,7 +21,7 @@ local setmetatable = setmetatable
 -- lain.widget.contrib.gpmdp
 local gpmdp = {}
 
-local function worker(args)
+local function factory(args)
     local args          = args or {}
     local timeout       = args.timeout or 2
     local notify        = args.notify or "off"
@@ -89,4 +89,4 @@ local function worker(args)
     return gpmdp
 end
 
-return setmetatable(gpmdp, { __call = function(_, ...) return worker(...) end })
+return setmetatable(gpmdp, { __call = function(_, ...) return factory(...) end })

@@ -7,17 +7,16 @@
                                                   
 --]]
 
-local helpers      = require("lain.helpers")
-local naughty      = require("naughty")
-local wibox        = require("wibox")
-local string       = { format = string.format,
-                       match  = string.match }
-local setmetatable = setmetatable
+local helpers = require("lain.helpers")
+local naughty = require("naughty")
+local wibox   = require("wibox")
+local string  = { format = string.format,
+                  match  = string.match }
 
 -- Network infos
 -- lain.widget.net
 
-local function worker(args)
+local function factory(args)
     local net = { widget = wibox.widget.textbox() }
     net.last_t = 0
     net.last_r = 0
@@ -120,4 +119,4 @@ local function worker(args)
     return net
 end
 
-return setmetatable({}, { __call = function(_, ...) return worker(...) end })
+return factory

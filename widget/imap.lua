@@ -6,19 +6,18 @@
                                                   
 --]]
 
-local helpers      = require("lain.helpers")
-local naughty      = require("naughty")
-local wibox        = require("wibox")
-local string       = { format = string.format,
-                       gsub   = string.gsub }
-local type         = type
-local tonumber     = tonumber
-local setmetatable = setmetatable
+local helpers  = require("lain.helpers")
+local naughty  = require("naughty")
+local wibox    = require("wibox")
+local string   = { format = string.format,
+                   gsub   = string.gsub }
+local type     = type
+local tonumber = tonumber
 
 -- Mail IMAP check
 -- lain.widget.imap
 
-local function worker(args)
+local function factory(args)
     local imap      = { widget = wibox.widget.textbox() }
     local args      = args or {}
     local server    = args.server
@@ -84,4 +83,4 @@ local function worker(args)
     return imap
 end
 
-return setmetatable({}, { __call = function(_, ...) return worker(...) end })
+return factory

@@ -32,7 +32,7 @@ local alsabar = {
     _muted         = false
 }
 
-local function worker(args)
+local function factory(args)
     local args       = args or {}
     local timeout    = args.timeout or 5
     local settings   = args.settings or function() end
@@ -135,4 +135,4 @@ local function worker(args)
     return alsabar
 end
 
-return setmetatable(alsabar, { __call = function(_, ...) return worker(...) end })
+return setmetatable(alsabar, { __call = function(_, ...) return factory(...) end })

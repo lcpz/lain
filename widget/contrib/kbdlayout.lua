@@ -16,52 +16,50 @@ local setmetatable = setmetatable
 
 -- Keyboard layout switcher
 -- lain.widget.contrib.kblayout
-local kbdlayout = {}
 
-local function worker(args)
-   local args             = args or {}
-   local layouts          = args.layouts or {}
-   local settings         = args.settings or function () end
-   local add_us_secondary = true
-   local timeout          = args.timeout or 5
-   local idx              = 1
+local function factory(args)
+    local kbdlayout       = { widget = wibox.widget.textbox() }
+    local args             = args or {}
+    local layouts          = args.layouts or {}
+    local settings         = args.settings or function () end
+    local add_us_secondary = true
+    local timeout          = args.timeout or 5
+    local idx              = 1
 
-   if args.add_us_secondary == false then add_us_secondary = false end
+    if args.add_us_secondary == false then add_us_secondary = false end
 
-   kbdlayout.widget = wibox.widget.textbox()
+    local function kbd_run_settings(layout, variant)
+        kbdlayout_now = {
+            layout  = string.match(layout, "[^,]+"), -- Make sure to match the primary layout only.
+            variant = variant
+        }
+        widget = kbdlayout.widget
+        settings()
+    end
 
-   local function kbd_run_settings(layout, variant)
-      kbdlayout_now = {
-          layout  = string.match(layout, "[^,]+"), -- Make sure to match the primary layout only.
-          variant = variant
-      }
-      widget = kbdlayout.widget
-      settings()
-   end
+    function kbdlayout.update()
+        helpers.async("setxkbmap -query", function(status)
+            kbd_run_settings(string.match(status, "layout:%s*([^\n]*)"),
+            string.match(status, "variant:%s*([^\n]*)"))
+        end)
+    end
 
-   function kbdlayout.update()
-      helpers.async("setxkbmap -query", function(status)
-          kbd_run_settings(string.match(status, "layout:%s*([^\n]*)"),
-          string.match(status, "variant:%s*([^\n]*)"))
-      end)
-   end
+    function kbdlayout.set(i)
+        if #layouts == 0 then return end
+        idx = ((i - 1) % #layouts) + 1 -- Make sure to wrap around as needed.
+        local to_execute = "setxkbmap " .. layouts[idx].layout
 
-   function kbdlayout.set(i)
-      if #layouts == 0 then return end
-      idx = ((i - 1) % #layouts) + 1 -- Make sure to wrap around as needed.
-      local to_execute = "setxkbmap " .. layouts[idx].layout
+        if add_us_secondary and not string.match(layouts[idx].layout, ",?us,?") then
+            to_execute = to_execute .. ",us"
+        end
 
-      if add_us_secondary and not string.match(layouts[idx].layout, ",?us,?") then
-         to_execute = to_execute .. ",us"
-      end
+        if layouts[idx].variant then
+            to_execute = to_execute .. " " .. layouts[idx].variant
+        end
 
-      if layouts[idx].variant then
-         to_execute = to_execute .. " " .. layouts[idx].variant
-      end
-
-      if execute(to_execute) then
-         kbd_run_settings(layouts[idx].layout, layouts[idx].variant)
-      end
+        if execute(to_execute) then
+            kbd_run_settings(layouts[idx].layout, layouts[idx].variant)
+        end
    end
 
    function kbdlayout.next() kbdlayout.set(idx + 1) end
@@ -77,4 +75,4 @@ local function worker(args)
    return kbdlayout
 end
 
-return setmetatable({}, { __call = function (_, ...) return worker(...) end })
+return factory

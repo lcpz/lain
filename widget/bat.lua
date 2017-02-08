@@ -7,24 +7,23 @@
 												                        
 --]]
 
-local first_line   = require("lain.helpers").first_line
-local newtimer     = require("lain.helpers").newtimer
-local naughty      = require("naughty")
-local wibox        = require("wibox")
-local math         = { abs    = math.abs,
-                       floor  = math.floor,
-                       log10  = math.log10,
-                       min    = math.min }
-local string       = { format = string.format }
-local ipairs       = ipairs
-local type         = type
-local tonumber     = tonumber
-local setmetatable = setmetatable
+local first_line = require("lain.helpers").first_line
+local newtimer   = require("lain.helpers").newtimer
+local naughty    = require("naughty")
+local wibox      = require("wibox")
+local math       = { abs    = math.abs,
+                     floor  = math.floor,
+                     log10  = math.log10,
+                     min    = math.min }
+local string     = { format = string.format }
+local ipairs     = ipairs
+local type       = type
+local tonumber   = tonumber
 
 -- Battery infos
 -- lain.widget.bat
 
-local function worker(args)
+local function factory(args)
     local bat       = { widget = wibox.widget.textbox() }
     local args      = args or {}
     local timeout   = args.timeout or 30
@@ -179,4 +178,4 @@ local function worker(args)
     return bat
 end
 
-return setmetatable({}, { __call = function(_, ...) return worker(...) end })
+return factory
