@@ -79,13 +79,14 @@ function calendar.show(t_out, inc_offset, scr)
             end
         end
 
-        calendar.hide()
-
-        calendar.notification = naughty.notify({
-            preset  = calendar.notification_preset,
-            icon    = calendar.icon,
-            timeout = (widget_focused and t_out) or calendar.notification_preset.timeout or 5
-        })
+        if widget_focused then
+            calendar.hide()
+            calendar.notification = naughty.notify({
+                preset  = calendar.notification_preset,
+                icon    = calendar.icon,
+                timeout = t_out or calendar.notification_preset.timeout or 5
+            })
+        end
     end)
 end
 
