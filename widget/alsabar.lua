@@ -40,7 +40,6 @@ local function factory(args)
     local height     = args.height or 1
     local ticks      = args.ticks or false
     local ticks_size = args.ticks_size or 7
-    local vertical   = args.vertical or false
 
     alsabar.cmd                 = args.cmd or "amixer"
     alsabar.channel             = args.channel or "Master"
@@ -70,8 +69,7 @@ local function factory(args)
         paddings         = 1,
         ticks            = ticks,
         ticks_size       = ticks_size,
-        widget           = wibox.widget.progressbar,
-        layout           = vertical and wibox.container.rotate
+        widget           = wibox.widget.progressbar
     }
 
     alsabar.tooltip = awful.tooltip({ objects = { alsabar.bar } })

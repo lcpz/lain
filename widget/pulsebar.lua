@@ -41,7 +41,6 @@ local function factory(args)
     local height     = args.heigth or 1
     local ticks      = args.ticks or false
     local ticks_size = args.ticks_size or 7
-    local vertical   = args.vertical or false
     local scallback  = args.scallback
 
     pulsebar.cmd           = args.cmd or "pacmd list-sinks | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'"
@@ -65,7 +64,6 @@ local function factory(args)
         ticks            = ticks,
         ticks_size       = ticks_size,
         widget           = wibox.widget.progressbar,
-        layout           = vertical and wibox.container.rotate
     }
 
     pulsebar.tooltip = awful.tooltip({ objects = { pulsebar.bar } })
