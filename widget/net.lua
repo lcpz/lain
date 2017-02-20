@@ -103,12 +103,10 @@ local function factory(args)
             -- totals across all specified devices
         end
 
-        if total_t ~= net.last_t or total_r ~= net.last_r then
-            net_now.sent     = string.format('%.1f', net_now.sent)
-            net_now.received = string.format('%.1f', net_now.received)
-            net.last_t       = total_t
-            net.last_r       = total_r
-        end
+        net_now.sent     = string.format('%.1f', net_now.sent)
+        net_now.received = string.format('%.1f', net_now.received)
+        net.last_t       = total_t
+        net.last_r       = total_r
 
         widget = net.widget
         settings()
