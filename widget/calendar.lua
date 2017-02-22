@@ -90,13 +90,20 @@ function calendar.show(t_out, inc_offset, scr)
     end)
 end
 
+function calendar.hover_on() calendar.show(0) end
+function calendar.hover_off() calendar.hide() end
+function calendar.prev() calendar.show(0, -1) end
+function calendar.next() calendar.show(0, 1) end
+
 function calendar.attach(widget)
-    widget:connect_signal("mouse::enter", function () calendar.show(0) end)
-    widget:connect_signal("mouse::leave", function () calendar.hide() end)
-    widget:buttons(awful.util.table.join(awful.button({ }, 1, function () calendar.show(0, -1) end),
-                                         awful.button({ }, 3, function () calendar.show(0,  1) end),
-                                         awful.button({ }, 4, function () calendar.show(0, -1) end),
-                                         awful.button({ }, 5, function () calendar.show(0,  1) end)))
+    widget:connect_signal("mouse::enter", calendar.hover_on)
+    widget:connect_signal("mouse::leave", calendar.hover_off)
+    widget:buttons(awful.util.table.join(
+                awful.button({}, 1, calendar.prev),
+                awful.button({}, 3, calendar.next),
+                awful.button({}, 2, calendar.hover_on),
+                awful.button({}, 4, calendar.prev),
+                awful.button({}, 5, calendar.next)))
 end
 
 local function factory(args)
