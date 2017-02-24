@@ -25,7 +25,7 @@ local function factory(args)
     local scallback   = args.scallback
 
     pulseaudio.device = "0"
-    pulseaudio.cmd    = args.cmd or "pacmd list-sinks | sed -n -e '/* index:/p' -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device.string/p' -e '/index:/,$d'"
+    pulseaudio.cmd    = args.cmd or "pacmd list-" .. devicetype .. "s | sed -n -e '/* index:/p' -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device.string/p' -e '/index:/,$d'"
 
     function pulseaudio.update()
         if scallback then pulseaudio.cmd = scallback() end
