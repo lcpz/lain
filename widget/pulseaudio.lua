@@ -19,12 +19,13 @@ local string  = { gmatch = string.gmatch,
 local function factory(args)
     local pulseaudio = { widget = wibox.widget.textbox() }
     local args        = args or {}
-    local devicetype  = args.devicetype or "sink"
     local timeout     = args.timeout or 5
     local settings    = args.settings or function() end
     local scallback   = args.scallback
-
-    pulseaudio.cmd    = args.cmd or "pacmd list-" .. devicetype .. "s | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'"
+ 
+    pulseaudio.device = "N/A"
+    pulseaudio.devicetype = args.devicetype or "sink"
+    pulseaudio.cmd = args.cmd or "pacmd list-" .. pulseaudio.devicetype .. "s | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'"
 
     function pulseaudio.update()
         if scallback then pulseaudio.cmd = scallback() end
@@ -36,6 +37,8 @@ local function factory(args)
                 sink   = device, -- legacy API
                 muted  = string.match(s, "muted: (%S+)") or "N/A"
             }
+
+            pulseaudio.device = volume_now.index
 
             local ch = 1
             volume_now.channel = {}

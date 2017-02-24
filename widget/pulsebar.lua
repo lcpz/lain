@@ -48,6 +48,7 @@ local function factory(args)
     pulsebar.colors        = args.colors or pulsebar.colors
     pulsebar.followtag     = args.followtag or false
     pulsebar.notifications = args.notification_preset
+    pulseaudio.device      = "N/A"
 
     if not pulsebar.notification_preset then
         pulsebar.notification_preset      = {}
@@ -77,6 +78,8 @@ local function factory(args)
                 sink  = string.match(s, "device.string = \"(%S+)\"") or "N/A",
                 muted = string.match(s, "muted: (%S+)") or "N/A"
             }
+
+            pulseaudio.device = volume_now.index
 
             local ch = 1
             volume_now.channel = {}
