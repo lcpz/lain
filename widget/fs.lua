@@ -32,13 +32,13 @@ function fs.show(seconds, scr)
 
     if fs.followtag then
         fs.notification_preset.screen = focused()
-    elseif scr then
+    else
         fs.notification_preset.screen = scr or 1
     end
 
     fs.notification = naughty.notify({
-        preset      = fs.notification_preset,
-        timeout     = seconds or 5
+        preset  = fs.notification_preset,
+        timeout = seconds or 5
     })
 end
 
