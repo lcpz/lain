@@ -24,7 +24,8 @@ local function factory(args)
     local settings    = args.settings or function() end
     local scallback   = args.scallback
 
-    pulseaudio.cmd    = args.cmd or "pacmd list-" .. devicetype .. "s | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'"
+    pulseaudio.device = "0"
+    pulseaudio.cmd    = args.cmd or "pacmd list-sinks | sed -n -e '/* index:/p' -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device.string/p' -e '/index:/,$d'"
 
     function pulseaudio.update()
         if scallback then pulseaudio.cmd = scallback() end
@@ -37,6 +38,8 @@ local function factory(args)
                 muted  = string.match(s, "muted: (%S+)") or "N/A"
             }
 
+            pulseaudio.device = volume_now.device
+        
             local ch = 1
             volume_now.channel = {}
             for v in string.gmatch(s, ":.-(%d+)%%") do
