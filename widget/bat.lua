@@ -17,7 +17,6 @@ local math       = { abs    = math.abs,
                      min    = math.min }
 local string     = { format = string.format }
 local ipairs     = ipairs
-local type       = type
 local tonumber   = tonumber
 
 -- Battery infos
@@ -158,13 +157,13 @@ local function factory(args)
         settings()
 
         -- notifications for low and critical states
-        if notify == "on" and type(bat_now.perc) == "number" and bat_now.status == "Discharging" then
-            if bat_now.perc <= 5 then
+        if notify == "on" and bat_now.status == "Discharging" then
+            if tonumber(bat_now.perc) <= 5 then
                 bat.id = naughty.notify({
                     preset = bat_notification_critical_preset,
                     replaces_id = bat.id
                 }).id
-            elseif bat_now.perc <= 15 then
+            elseif tonumber(bat_now.perc) <= 15 then
                 bat.id = naughty.notify({
                     preset = bat_notification_low_preset,
                     replaces_id = bat.id
