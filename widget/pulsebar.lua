@@ -48,7 +48,7 @@ local function factory(args)
     pulsebar.colors        = args.colors or pulsebar.colors
     pulsebar.followtag     = args.followtag or false
     pulsebar.notifications = args.notification_preset
-    pulseaudio.device      = "N/A"
+    pulsebar.device        = "N/A"
 
     if not pulsebar.notification_preset then
         pulsebar.notification_preset      = {}
@@ -70,7 +70,7 @@ local function factory(args)
     pulsebar.tooltip = awful.tooltip({ objects = { pulsebar.bar } })
 
     function pulsebar.update(callback)
-        if scallback then pulseaudio.cmd = scallback() end
+        if scallback then pulsebar.cmd = scallback() end
 
         helpers.async({ awful.util.shell, "-c", pulsebar.cmd }, function(s)
             volume_now = {
@@ -79,7 +79,7 @@ local function factory(args)
                 muted = string.match(s, "muted: (%S+)") or "N/A"
             }
 
-            pulseaudio.device = volume_now.index
+            pulsebar.device = volume_now.index
 
             local ch = 1
             volume_now.channel = {}
