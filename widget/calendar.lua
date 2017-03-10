@@ -67,7 +67,7 @@ function calendar.show(t_out, inc_offset, scr)
 
         local widget_focused = true
 
-        if t_out == 0 then
+        if t_out == 0 and mouse.current_widgets then
             widget_focused = false
             for i, widget in ipairs(calendar.attach_to) do
                 for _,v in ipairs(mouse.current_widgets) do
