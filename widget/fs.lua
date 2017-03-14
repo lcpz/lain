@@ -100,7 +100,7 @@ local function factory(args)
                 naughty.notify({
                     preset = naughty.config.presets.critical,
                     title  = "Warning",
-                    text   = partition .. " is empty",
+                    text   = partition .. " is full",
                 })
                 helpers.set_map(partition, true)
             else
