@@ -1,10 +1,10 @@
 
 --[[
-												                        
-	 Licensed under GNU General Public License v2 
-	  * (c) 2013,      Luke Bonham                
-	  * (c) 2010-2012, Peter Hofmann              
-												                        
+
+	 Licensed under GNU General Public License v2
+	  * (c) 2013,      Luke Bonham
+	  * (c) 2010-2012, Peter Hofmann
+
 --]]
 
 local first_line = require("lain.helpers").first_line
@@ -23,18 +23,20 @@ local tonumber   = tonumber
 -- lain.widget.bat
 
 local function factory(args)
-    local bat       = { widget = wibox.widget.textbox() }
-    local args      = args or {}
-    local timeout   = args.timeout or 30
-    local batteries = args.batteries or (args.battery and {args.battery}) or {"BAT0"}
-    local ac        = args.ac or "AC0"
-    local notify    = args.notify or "on"
-    local settings  = args.settings or function() end
+    local bat          = { widget = wibox.widget.textbox() }
+    local args         = args or {}
+    local timeout      = args.timeout or 30
+    local timeout_low  = args.timeout_low or 15
+    local timeout_crit = args.timeout_crit or 5
+    local batteries    = args.batteries or (args.battery and {args.battery}) or {"BAT0"}
+    local ac           = args.ac or "AC0"
+    local notify       = args.notify or "on"
+    local settings     = args.settings or function() end
 
     bat_notification_low_preset = {
         title   = "Battery low",
         text    = "Plug the cable!",
-        timeout = 15,
+        timeout = timeout_low,
         fg      = "#202020",
         bg      = "#CDCDCD"
     }
@@ -42,7 +44,7 @@ local function factory(args)
     bat_notification_critical_preset = {
         title   = "Battery exhausted",
         text    = "Shutdown imminent",
-        timeout = 15,
+        timeout = timeout_crit,
         fg      = "#000000",
         bg      = "#FFFFFF"
     }
@@ -158,12 +160,12 @@ local function factory(args)
 
         -- notifications for low and critical states
         if notify == "on" and bat_now.status == "Discharging" then
-            if tonumber(bat_now.perc) <= 5 then
+            if tonumber(bat_now.perc) <= timeout_crit then
                 bat.id = naughty.notify({
                     preset = bat_notification_critical_preset,
                     replaces_id = bat.id
                 }).id
-            elseif tonumber(bat_now.perc) <= 15 then
+            elseif tonumber(bat_now.perc) <= timeout_low then
                 bat.id = naughty.notify({
                     preset = bat_notification_low_preset,
                     replaces_id = bat.id
