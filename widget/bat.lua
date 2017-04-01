@@ -29,15 +29,8 @@ local function factory(args)
     local batteries = args.batteries or (args.battery and {args.battery}) or {"BAT0"}
     local ac        = args.ac or "AC0"
     local notify    = args.notify or "on"
+    local n_perc    = args.n_perc or { 5, 15 }
     local settings  = args.settings or function() end
-
-    bat_notification_low_preset = {
-        title   = "Battery low",
-        text    = "Plug the cable!",
-        timeout = 15,
-        fg      = "#202020",
-        bg      = "#CDCDCD"
-    }
 
     bat_notification_critical_preset = {
         title   = "Battery exhausted",
@@ -45,6 +38,14 @@ local function factory(args)
         timeout = 15,
         fg      = "#000000",
         bg      = "#FFFFFF"
+    }
+
+    bat_notification_low_preset = {
+        title   = "Battery low",
+        text    = "Plug the cable!",
+        timeout = 15,
+        fg      = "#202020",
+        bg      = "#CDCDCD"
     }
 
     bat_now = {
@@ -156,14 +157,14 @@ local function factory(args)
         widget = bat.widget
         settings()
 
-        -- notifications for low and critical states
+        -- notifications for critical and low levels
         if notify == "on" and bat_now.status == "Discharging" then
-            if tonumber(bat_now.perc) <= 5 then
+            if tonumber(bat_now.perc) <= n_perc[1] then
                 bat.id = naughty.notify({
                     preset = bat_notification_critical_preset,
                     replaces_id = bat.id
                 }).id
-            elseif tonumber(bat_now.perc) <= 15 then
+            elseif tonumber(bat_now.perc) <= n_perc[2] then
                 bat.id = naughty.notify({
                     preset = bat_notification_low_preset,
                     replaces_id = bat.id
