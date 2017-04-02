@@ -7,32 +7,31 @@
                                                   
 --]]
 
-local helpers      = require("lain.helpers")
-local awful        = require("awful")
-local naughty      = require("naughty")
-local wibox        = require("wibox")
-local math         = { modf   = math.modf }
-local string       = { format = string.format,
-                       match  = string.match,
-                       rep    = string.rep }
-local type         = type
-local tonumber     = tonumber
-local setmetatable = setmetatable
+local helpers        = require("lain.helpers")
+local awful          = require("awful")
+local naughty        = require("naughty")
+local wibox          = require("wibox")
+local math           = { modf   = math.modf }
+local string         = { format = string.format,
+                         match  = string.match,
+                         rep    = string.rep }
+local type, tonumber = type, tonumber
 
 -- ALSA volume bar
 -- lain.widget.alsabar
-local alsabar = {
-    colors = {
-        background = "#000000",
-        mute       = "#EB8F8F",
-        unmute     = "#A4CE8A"
-    },
-
-    _current_level = 0,
-    _muted         = false
-}
 
 local function factory(args)
+    local alsabar = {
+        colors = {
+            background = "#000000",
+            mute       = "#EB8F8F",
+            unmute     = "#A4CE8A"
+        },
+
+        _current_level = 0,
+        _muted         = false
+    }
+
     local args       = args or {}
     local timeout    = args.timeout or 5
     local settings   = args.settings or function() end
@@ -133,4 +132,4 @@ local function factory(args)
     return alsabar
 end
 
-return setmetatable(alsabar, { __call = function(_, ...) return factory(...) end })
+return factory

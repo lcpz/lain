@@ -15,13 +15,12 @@ local wibox        = require("wibox")
 local os           = { getenv = os.getenv }
 local string       = { format = string.format,
                        gmatch = string.gmatch }
-local setmetatable = setmetatable
 
 -- MOC audio player
 -- lain.widget.contrib.moc
-local moc = {}
 
 local function factory(args)
+    local moc           = { widget = wibox.widget.textbox() }
     local args          = args or {}
     local timeout       = args.timeout or 2
     local music_dir     = args.music_dir or os.getenv("HOME") .. "/Music"
@@ -30,8 +29,6 @@ local function factory(args)
     local default_art   = args.default_art or ""
     local followtag     = args.followtag or false
     local settings      = args.settings or function() end
-
-    moc.widget = wibox.widget.textbox()
 
     moc_notification_preset = { title = "Now playing", timeout = 6 }
 
@@ -98,4 +95,4 @@ local function factory(args)
     return moc
 end
 
-return setmetatable(moc, { __call = function(_, ...) return factory(...) end })
+return factory

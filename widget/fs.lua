@@ -6,43 +6,42 @@
                                                   
 --]]
 
-local helpers      = require("lain.helpers")
-local shell        = require("awful.util").shell
-local focused      = require("awful.screen").focused
-local wibox        = require("wibox")
-local naughty      = require("naughty")
-local string       = string
-local tonumber     = tonumber
-local setmetatable = setmetatable
+local helpers  = require("lain.helpers")
+local shell    = require("awful.util").shell
+local focused  = require("awful.screen").focused
+local wibox    = require("wibox")
+local naughty  = require("naughty")
+local string   = string
+local tonumber = tonumber
 
 -- File system disk space usage
 -- lain.widget.fs
-local fs = { unit  = { ["mb"] = 1024, ["gb"] = 1024^2 } }
-
-function fs.hide()
-    if not fs.notification then return end
-    naughty.destroy(fs.notification)
-    fs.notification = nil
-end
-
-function fs.show(seconds, scr)
-    fs.update()
-
-    fs.hide()
-
-    if fs.followtag then
-        fs.notification_preset.screen = focused()
-    else
-        fs.notification_preset.screen = scr or 1
-    end
-
-    fs.notification = naughty.notify({
-        preset  = fs.notification_preset,
-        timeout = seconds or 5
-    })
-end
 
 local function factory(args)
+    local fs = { unit  = { ["mb"] = 1024, ["gb"] = 1024^2 }, widget = wibox.widget.textbox() }
+
+    function fs.hide()
+        if not fs.notification then return end
+        naughty.destroy(fs.notification)
+        fs.notification = nil
+    end
+
+    function fs.show(seconds, scr)
+        fs.update()
+        fs.hide()
+
+        if fs.followtag then
+            fs.notification_preset.screen = focused()
+        else
+            fs.notification_preset.screen = scr or 1
+        end
+
+        fs.notification = naughty.notify({
+            preset  = fs.notification_preset,
+            timeout = seconds or 5
+        })
+    end
+
     local args             = args or {}
     local timeout          = args.timeout or 600
     local partition        = args.partition or "/"
@@ -61,8 +60,6 @@ local function factory(args)
             bg   = "#000000"
         }
     end
-
-    fs.widget = wibox.widget.textbox()
 
     helpers.set_map(partition, false)
 
@@ -124,4 +121,4 @@ local function factory(args)
     return fs
 end
 
-return setmetatable(fs, { __call = function(_, ...) return factory(...) end })
+return factory

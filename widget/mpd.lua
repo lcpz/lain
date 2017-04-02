@@ -17,13 +17,12 @@ local os           = { getenv = os.getenv }
 local string       = { format = string.format,
                        gmatch = string.gmatch,
                        match  = string.match }
-local setmetatable = setmetatable
 
 -- MPD infos
 -- lain.widget.mpd
-local mpd = {}
 
 local function factory(args)
+    local mpd           = { widget = wibox.widget.textbox() }
     local args          = args or {}
     local timeout       = args.timeout or 2
     local password      = (args.password and #args.password > 0 and string.format("password %s\\n", args.password)) or ""
@@ -40,8 +39,6 @@ local function factory(args)
     local mpdh = string.format("telnet://%s:%s", host, port)
     local echo = string.format("printf \"%sstatus\\ncurrentsong\\nclose\\n\"", password)
     local cmd  = string.format("%s | curl --connect-timeout 1 -fsm 3 %s", echo, mpdh)
-
-    mpd.widget = wibox.widget.textbox()
 
     mpd_notification_preset = { title = "Now playing", timeout = 6 }
 
@@ -112,7 +109,8 @@ local function factory(args)
 
                     if not string.match(mpd_now.file, "http.*://") then -- local file instead of http stream
                         local path   = string.format("%s/%s", music_dir, string.match(mpd_now.file, ".*/"))
-                        local cover  = string.format("find '%s' -maxdepth 1 -type f | egrep -i -m1 '%s'", path:gsub("'", "'\\''"), cover_pattern)
+                        local cover  = string.format("find '%s' -maxdepth 1 -type f | egrep -i -m1 '%s'",
+                                       path:gsub("'", "'\\''"), cover_pattern)
                         helpers.async({ shell, "-c", cover }, function(current_icon)
                             common.icon = current_icon:gsub("\n", "")
                             if #common.icon == 0 then common.icon = nil end
@@ -134,4 +132,4 @@ local function factory(args)
     return mpd
 end
 
-return setmetatable(mpd, { __call = function(_, ...) return factory(...) end })
+return factory

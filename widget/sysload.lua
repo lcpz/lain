@@ -7,29 +7,25 @@
                                                   
 --]]
 
-local helpers      = require("lain.helpers")
-local wibox        = require("wibox")
-local io           = { open = io.open }
-local string       = { match  = string.match }
-local setmetatable = setmetatable
+local helpers     = require("lain.helpers")
+local wibox       = require("wibox")
+local open, match = io.open, string.match
 
 -- System load
 -- lain.widget.sysload
-local sysload = {}
 
 local function factory(args)
+    local sysload  = { widget = wibox.widget.textbox() }
     local args     = args or {}
     local timeout  = args.timeout or 2
     local settings = args.settings or function() end
 
-    sysload.widget = wibox.widget.textbox()
-
     function sysload.update()
-        local f = io.open("/proc/loadavg")
+        local f = open("/proc/loadavg")
         local ret = f:read("*all")
         f:close()
 
-        load_1, load_5, load_15 = string.match(ret, "([^%s]+) ([^%s]+) ([^%s]+)")
+        load_1, load_5, load_15 = match(ret, "([^%s]+) ([^%s]+) ([^%s]+)")
 
         widget = sysload.widget
         settings()
@@ -40,4 +36,4 @@ local function factory(args)
     return sysload
 end
 
-return setmetatable(sysload, { __call = function(_, ...) return factory(...) end })
+return factory

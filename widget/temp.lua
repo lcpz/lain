@@ -6,26 +6,23 @@
                                                   
 --]]
 
-local helpers      = require("lain.helpers")
-local wibox        = require("wibox")
-local io           = { open = io.open }
-local tonumber     = tonumber
-local setmetatable = setmetatable
+local helpers  = require("lain.helpers")
+local wibox    = require("wibox")
+local open     = io.open
+local tonumber = tonumber
 
 -- coretemp
 -- lain.widget.temp
-local temp = {}
 
 local function factory(args)
+    local temp     = { widget = wibox.widget.textbox() }
     local args     = args or {}
     local timeout  = args.timeout or 2
     local tempfile = args.tempfile or "/sys/class/thermal/thermal_zone0/temp"
     local settings = args.settings or function() end
 
-    temp.widget = wibox.widget.textbox()
-
     function temp.update()
-        local f = io.open(tempfile)
+        local f = open(tempfile)
         if f then
             coretemp_now = tonumber(f:read("*all")) / 1000
             f:close()
@@ -42,4 +39,4 @@ local function factory(args)
     return temp
 end
 
-return setmetatable(temp, { __call = function(_, ...) return factory(...) end })
+return factory

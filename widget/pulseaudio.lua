@@ -17,7 +17,7 @@ local string  = { gmatch = string.gmatch,
 -- lain.widget.pulseaudio
 
 local function factory(args)
-    local pulseaudio = { widget = wibox.widget.textbox() }
+    local pulseaudio  = { widget = wibox.widget.textbox() }
     local args        = args or {}
     local timeout     = args.timeout or 5
     local settings    = args.settings or function() end

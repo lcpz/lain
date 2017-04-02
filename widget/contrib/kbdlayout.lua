@@ -18,7 +18,7 @@ local setmetatable = setmetatable
 -- lain.widget.contrib.kblayout
 
 local function factory(args)
-    local kbdlayout       = { widget = wibox.widget.textbox() }
+    local kbdlayout        = { widget = wibox.widget.textbox() }
     local args             = args or {}
     local layouts          = args.layouts or {}
     local settings         = args.settings or function () end

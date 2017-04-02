@@ -16,8 +16,7 @@ local string  = { format = string.format, match = string.match }
 -- lain.widget.net
 
 local function factory(args)
-    local net = { widget  = wibox.widget.textbox(), devices = {} }
-
+    local net      = { widget = wibox.widget.textbox(), devices = {} }
     local args     = args or {}
     local timeout  = args.timeout or 2
     local units    = args.units or 1024 -- KB
