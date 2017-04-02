@@ -145,4 +145,4 @@ local function factory(args)
     return pulsebar
 end
 
-return setmetatable(pulsebar, { __call = function(_, ...) return factory(...) end })
+return factory
