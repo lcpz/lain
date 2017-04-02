@@ -6,31 +6,27 @@
                                                      
 --]]
 
-local helpers      = require("lain.helpers")
-local json         = require("lain.util.dkjson")
-local focused      = require("awful.screen").focused
-local pread        = require("awful.util").pread
-local naughty      = require("naughty")
-local wibox        = require("wibox")
-local next         = next
-local os           = { getenv = os.getenv }
-local table        = table
-local setmetatable = setmetatable
+local helpers             = require("lain.helpers")
+local json                = require("lain.util.dkjson")
+local focused             = require("awful.screen").focused
+local pread               = require("awful.util").pread
+local naughty             = require("naughty")
+local wibox               = require("wibox")
+local next, getenv, table = next, os.getenv, table
 
 -- Google Play Music Desktop infos
 -- lain.widget.contrib.gpmdp
-local gpmdp = {}
+-- requires: curl
 
 local function factory(args)
+    local gpmdp         = { widget = wibox.widget.textbox() }
     local args          = args or {}
     local timeout       = args.timeout or 2
     local notify        = args.notify or "off"
     local followtag     = args.followtag or false
     local file_location = args.file_location or
-                          os.getenv("HOME") .. "/.config/Google Play Music Desktop Player/json_store/playback.json"
+                          getenv("HOME") .. "/.config/Google Play Music Desktop Player/json_store/playback.json"
     local settings      = args.settings or function() end
-
-    gpmdp.widget = wibox.widget.textbox()
 
     gpmdp_notification_preset = {
         title   = "Now playing",
@@ -89,4 +85,4 @@ local function factory(args)
     return gpmdp
 end
 
-return setmetatable(gpmdp, { __call = function(_, ...) return factory(...) end })
+return factory
