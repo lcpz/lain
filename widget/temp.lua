@@ -34,7 +34,7 @@ local function factory(args)
         end
 
         widget = temp.widget
-        settings()
+        settings(temp.widget)
     end
 
     helpers.newtimer("coretemp", timeout, temp.update)

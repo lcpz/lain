@@ -94,7 +94,7 @@ local function factory(args)
         net_now.received = string.format("%.1f", net_now.received)
 
         widget = net.widget
-        settings()
+        settings(net.widget)
     end
 
     helpers.newtimer("network", timeout, net.update)

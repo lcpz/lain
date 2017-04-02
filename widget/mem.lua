@@ -45,7 +45,7 @@ local function factory(args)
         mem_now.perc = math.floor(mem_now.used / mem_now.total * 100)
 
         widget = mem.widget
-        settings()
+        settings(mem.widget)
     end
 
     helpers.newtimer("mem", timeout, mem.update)

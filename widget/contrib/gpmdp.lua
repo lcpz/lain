@@ -62,7 +62,7 @@ local function factory(args)
 
         gpmdp_notification_preset.text = string.format("%s (%s) - %s", gpm_now.artist, gpm_now.album, gpm_now.title)
         widget = gpmdp.widget
-        settings()
+        settings(gpmdp.widget)
 
         if gpm_now.playing then
             if notify == "on" and gpm_now.title ~= helpers.get_map("gpmdp_current") then

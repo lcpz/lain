@@ -32,7 +32,7 @@ local function factory(args)
         load_1, load_5, load_15 = string.match(ret, "([^%s]+) ([^%s]+) ([^%s]+)")
 
         widget = sysload.widget
-        settings()
+        settings(sysload.widget)
     end
 
     helpers.newtimer("sysload", timeout, sysload.update)

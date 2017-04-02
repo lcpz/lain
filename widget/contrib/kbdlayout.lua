@@ -34,7 +34,7 @@ local function factory(args)
             variant = variant
         }
         widget = kbdlayout.widget
-        settings()
+        settings(kbdlayout.widget)
     end
 
     function kbdlayout.update()

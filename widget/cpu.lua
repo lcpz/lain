@@ -71,7 +71,7 @@ local function factory(args)
         cpu_now.usage = cpu_now[0].usage
         widget = cpu.widget
 
-        settings()
+        settings(cpu.widget)
     end
 
     helpers.newtimer("cpu", timeout, cpu.update)

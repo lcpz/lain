@@ -148,7 +148,7 @@ function tpbat.register(args)
 
         widget = tpbat.widget
 
-        settings()
+        settings(tpbat.widget)
     end
 
     newtimer("tpbat-" .. bat.name, timeout, tpbat.update)
