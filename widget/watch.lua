@@ -26,7 +26,7 @@ local function factory(args)
             output = f
             if output ~= watch.prev then
                 widget = watch.widget
-                settings()
+                settings(watch.widget)
                 watch.prev = output
             end
         end)

@@ -152,7 +152,7 @@ local function factory(args)
 
                 weather.icon_path = icons_path .. icon .. ".png"
                 widget = weather.widget
-                settings()
+                settings(weather.widget)
             else
                 weather.icon_path = icons_path .. "na.png"
                 weather.widget:set_markup(weather_na_markup)

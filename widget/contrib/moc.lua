@@ -62,7 +62,7 @@ local function factory(args)
             moc_notification_preset.text = string.format("%s (%s) - %s\n%s", moc_now.artist,
                                            moc_now.album, moc_now.total, moc_now.title)
             widget = moc.widget
-            settings()
+            settings(moc.widget)
 
             if moc_now.state == "PLAY" then
                 if moc_now.title ~= helpers.get_map("current moc track") then

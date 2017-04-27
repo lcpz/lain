@@ -62,7 +62,7 @@ local function factory(args)
             _ = nil
 
             widget = imap.widget
-            settings()
+            settings(imap.widget)
 
             if mailcount >= 1 and mailcount > helpers.get_map(mail) then
                 if mailcount == 1 then

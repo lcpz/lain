@@ -41,7 +41,7 @@ local function factory(args)
             if alsa.last.level ~= l or alsa.last.status ~= s then
                 volume_now = { level = l, status = s }
                 widget = alsa.widget
-                settings()
+                settings(alsa.widget)
                 alsa.last = volume_now
             end
         end)

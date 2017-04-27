@@ -91,7 +91,7 @@ local function factory(args)
 
             notification_preset = fs.notification_preset
             widget = fs.widget
-            settings()
+            settings(fs.widget)
 
             if notify == "on" and #fs_now.used > 0 and tonumber(fs_now.used) >= 99 and not helpers.get_map(partition) then
                 naughty.notify({

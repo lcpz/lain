@@ -52,7 +52,7 @@ local function factory(args)
 
             widget = pulseaudio.widget
 
-            settings()
+            settings(pulseaudio.widget)
         end)
     end
 

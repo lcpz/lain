@@ -92,7 +92,7 @@ local function factory(args)
             mpd_notification_preset.text = string.format("%s (%s) - %s\n%s", mpd_now.artist,
                                            mpd_now.album, mpd_now.date, mpd_now.title)
             widget = mpd.widget
-            settings()
+            settings(mpd.widget)
 
             if mpd_now.state == "play" then
                 if notify == "on" and mpd_now.title ~= helpers.get_map("current mpd track") then

@@ -155,7 +155,7 @@ local function factory(args)
         end
 
         widget = bat.widget
-        settings()
+        settings(bat.widget)
 
         -- notifications for critical and low levels
         if notify == "on" and bat_now.status == "Discharging" then
