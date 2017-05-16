@@ -93,7 +93,7 @@ local function factory(args)
             widget = fs.widget
             settings()
 
-            if notify == "on" and #fs_now.used > 0 and tonumber(fs_now.used) >= 99 and not helpers.get_map(partition) then
+            if notify == "on" and tonumber(fs_now.used) > 0 and tonumber(fs_now.used) >= 99 and not helpers.get_map(partition) then
                 naughty.notify({
                     preset = naughty.config.presets.critical,
                     title  = "Warning",
