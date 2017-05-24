@@ -67,7 +67,7 @@ local function factory(args)
 
                 if followtag then gpmdp_notification_preset.screen = focused() end
 
-                helpers.async(string.format("curl %d -o /tmp/gpmcover.png", gpm_now.cover_url),
+                helpers.async(string.format("curl %s -o /tmp/gpmcover.png", gpm_now.cover_url),
                 function(f)
                     gpmdp.id = naughty.notify({
                         preset = gpmdp_notification_preset,
