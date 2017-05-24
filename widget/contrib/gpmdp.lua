@@ -37,12 +37,13 @@ local function factory(args)
 
     function gpmdp.update()
         local filelines = helpers.lines_from(file_location)
+        local gpm_now = {}
 
         if not next(filelines) then
-            local gpm_now = { running = false, playing = false }
+            gpm_now.running = false
+            gpm_now.playing = false
         else
             dict, pos, err = json.decode(table.concat(filelines), 1, nil)
-            local gpm_now = {}
             gpm_now.artist    = dict.song.artist
             gpm_now.album     = dict.song.album
             gpm_now.title     = dict.song.title
