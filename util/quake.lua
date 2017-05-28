@@ -68,8 +68,8 @@ function quake:display()
     client.size_hints_honor = false
     client:geometry(self:compute_size())
 
-    -- Set not sticky and on top
-    client.sticky = false
+    -- Set if sticky and on top
+    client.sticky = self.sticky
     client.ontop = true
     client.above = true
     client.skip_taskbar = true
@@ -129,6 +129,7 @@ function quake:new(config)
     conf.extra      = conf.extra     or ""         -- extra arguments
     conf.border     = conf.border    or 1          -- client border width
     conf.visible    = conf.visible   or false      -- initially not visible
+    conf.sticky     = conf.sticky    or false      -- stick to currently selected tag
     conf.followtag  = conf.followtag or false      -- spawn on currently focused screen
     conf.onlyone    = conf.onlyone   or false      -- one instance for all screens
     conf.overlap    = conf.overlap   or false      -- overlap wibox
