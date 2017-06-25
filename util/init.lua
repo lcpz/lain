@@ -117,7 +117,7 @@ function util.add_tag(layout)
         textbox      = awful.screen.focused().mypromptbox.widget,
         exe_callback = function(name)
             if not name or #name == 0 then return end
-            awful.tag.add(name, { screen = awful.screen.focused(), layout = layout or awful.layout.layouts[0] }):view_only()
+            awful.tag.add(name, { screen = awful.screen.focused(), layout = layout or awful.layout.layouts[1] }):view_only()
         end
     }
 end
