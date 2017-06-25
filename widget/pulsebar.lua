@@ -30,7 +30,7 @@ local function factory(args)
         },
 
         _current_level = 0,
-        _muted         = false
+        _mute          = "no",
     }
 
     local args       = args or {}
@@ -42,12 +42,12 @@ local function factory(args)
     local ticks_size = args.ticks_size or 7
     local scallback  = args.scallback
 
-    pulsebar.cmd           = args.cmd or "pacmd list-sinks | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'"
-    pulsebar.sink          = args.sink or 0
-    pulsebar.colors        = args.colors or pulsebar.colors
-    pulsebar.followtag     = args.followtag or false
-    pulsebar.notifications = args.notification_preset
-    pulsebar.device        = "N/A"
+    pulsebar.cmd                 = args.cmd or "pacmd list-sinks | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'"
+    pulsebar.sink                = args.sink or 0
+    pulsebar.colors              = args.colors or pulsebar.colors
+    pulsebar.followtag           = args.followtag or false
+    pulsebar.notification_preset = args.notification_preset
+    pulsebar.device              = "N/A"
 
     if not pulsebar.notification_preset then
         pulsebar.notification_preset      = {}
@@ -93,15 +93,17 @@ local function factory(args)
             local volu = volume_now.left
             local mute = volume_now.muted
 
-            if (volu and volu ~= pulsebar._current_level) or (mute and mute ~= pulsebar._muted) then
-                pulsebar._current_level = volu
+            if volu:match("N/A") or mute:match("N/A") then return end
+
+            if volu ~= pulsebar._current_level or mute ~= pulsebar._mute then
+                pulsebar._current_level = tonumber(volu)
                 pulsebar.bar:set_value(pulsebar._current_level / 100)
-                if (not mute and volu == 0) or mute == "yes" then
-                    pulsebar._muted = true
+                if pulsebar._current_level == 0 or mute == "yes" then
+                    pulsebar._mute = mute
                     pulsebar.tooltip:set_text ("[Muted]")
                     pulsebar.bar.color = pulsebar.colors.mute
                 else
-                    pulsebar._muted = false
+                    pulsebar._mute = "no"
                     pulsebar.tooltip:set_text(string.format("%s: %s", pulsebar.sink, volu))
                     pulsebar.bar.color = pulsebar.colors.unmute
                 end
@@ -117,10 +119,10 @@ local function factory(args)
         pulsebar.update(function()
             local preset = pulsebar.notification_preset
 
-            if pulsebar._muted then
+            if pulsebar._mute == "yes" then
                 preset.title = string.format("Sink %s - Muted", pulsebar.sink)
             else
-                preset.title = string.format("%s - %s%%", pulsebar.sink, pulsebar._current_level)
+                preset.title = string.format("Sink %s - %s%%", pulsebar.sink, pulsebar._current_level)
             end
 
             int = math.modf((pulsebar._current_level / 100) * awful.screen.focused().mywibox.height)
