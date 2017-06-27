@@ -13,22 +13,20 @@ Layouts, widgets and utilities for Awesome WM 4.x
 Description
 -----------
 
-Successor of awesome-vain_, this module provides alternative layouts, asynchronous widgets and utility functions for Awesome_ WM.
-
-Read the wiki_ for all the info.
+Successor of awesome-vain_, this module provides alternative layouts, asynchronous widgets and utility functions for Awesome_ WM. Read the wiki_ for all the info.
 
 Contributions
 -------------
 
-Any contribution is welcome! Feel free to make a pull request.
+Constructive criticism and suggestions are welcome.
 
-Just make sure that:
+If you want to create a pull request, make sure that:
 
 - Your code fits with the general style of the module. In particular, you should use the same indentation pattern that the code uses, and also avoid adding space at the ends of lines.
 
-- Your code its easy to understand, maintainable, and modularized. You should also avoid code duplication wherever possible by adding functions or using lain.helpers_. If something is unclear, and you can't write it in such a way that it will be clear, explain it with a comment.
+- Your code its easy to understand, maintainable, and modularized. You should also avoid code duplication wherever possible by adding functions to or using lain.helpers_. If something is unclear, or you can't write it in such a way that it will be clear, explain it with a comment.
 
-- You test your changes before submitting to make sure that not only your code works, but did not break other parts of the module too!
+- You test your changes before submitting to make sure that you code works and does not break other parts of the module.
 
 - You eventually update ``wiki`` submodule with a thorough section.
 
