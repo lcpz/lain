@@ -29,7 +29,7 @@ local function factory(args)
         },
 
         _current_level = 0,
-        _mute          = "off"
+        _playback      = "off"
     }
 
     local args       = args or {}
@@ -75,26 +75,26 @@ local function factory(args)
 
     function alsabar.update(callback)
         helpers.async(format_cmd, function(mixer)
-            local volu, mute = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
+            local vol, playback = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
 
-            if not volu or not mute then return end
+            if not vol or not playback then return end
 
-            if volu ~= alsabar._current_level or mute ~= alsabar._mute then
-                alsabar._current_level = tonumber(volu)
+            if vol ~= alsabar._current_level or playback ~= alsabar._playback then
+                alsabar._current_level = tonumber(vol)
                 alsabar.bar:set_value(alsabar._current_level / 100)
-                if alsabar._current_level == 0 or mute == "off" then
-                    alsabar._mute = mute
+                if alsabar._current_level == 0 or playback == "off" then
+                    alsabar._playback = playback
                     alsabar.tooltip:set_text("[Muted]")
                     alsabar.bar.color = alsabar.colors.mute
                 else
-                    alsabar._mute = "on"
-                    alsabar.tooltip:set_text(string.format("%s: %s", alsabar.channel, volu))
+                    alsabar._playback = "on"
+                    alsabar.tooltip:set_text(string.format("%s: %s", alsabar.channel, vol))
                     alsabar.bar.color = alsabar.colors.unmute
                 end
 
                 volume_now = {
                     level  = alsabar._current_level,
-                    status = alsabar._mute
+                    status = alsabar._playback
                 }
 
                 settings()
@@ -108,7 +108,7 @@ local function factory(args)
         alsabar.update(function()
             local preset = alsabar.notification_preset
 
-            if alsabar._mute == "on" then
+            if alsabar._playback == "off" then
                 preset.title = string.format("%s - Muted", alsabar.channel)
             else
                 preset.title = string.format("%s - %s%%", alsabar.channel, alsabar._current_level)
