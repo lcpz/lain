@@ -66,7 +66,7 @@ function quake:display()
     client.floating = true
     client.border_width = self.border
     client.size_hints_honor = false
-    client:geometry(self:compute_size())
+    client:geometry(self.geometry[self.screen] or self:compute_size())
 
     -- Set not sticky and on top
     client.sticky = false
