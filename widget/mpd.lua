@@ -36,10 +36,21 @@ local function factory(args)
     local followtag     = args.followtag or false
     local settings      = args.settings or function() end
 
-    local mpdh = string.format("telnet://%s:%s", host, port)
+    local mpdh          = ""
+    local cmd           = ""
     local echo = string.format("printf \"%sstatus\\ncurrentsong\\nclose\\n\"", password)
-    local cmd  = string.format("%s | curl --connect-timeout 1 -fsm 3 %s", echo, mpdh)
-
+   
+    -- If host begins with "/", we can assume that it is a socket
+    if host.sub(host, 1, 1) == "/" then
+        -- It's a socket, use socat to talk directly to it
+        mpdh = string.format("UNIX-CONNECT:%s", host)
+        cmd = string.format("%s | socat - %s", echo, mpdh)
+    else
+        -- It's not a socket, assume IP or other host
+        mpdh = string.format("telnet://%s:%s", host, port)
+        cmd = string.format("%s | curl --connect-timeout 1 -fsm 3 %s", echo, mpdh)
+    end
+    
     mpd_notification_preset = { title = "Now playing", timeout = 6 }
 
     helpers.set_map("current mpd track", nil)
