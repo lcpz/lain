@@ -16,7 +16,8 @@ local wibox        = require("wibox")
 local os           = { getenv = os.getenv }
 local string       = { format = string.format,
                        gmatch = string.gmatch,
-                       match  = string.match }
+                       match  = string.match,
+                       sub    = string.sub }
 
 -- MPD infos
 -- lain.widget.mpd
@@ -41,7 +42,7 @@ local function factory(args)
     local echo = string.format("printf \"%sstatus\\ncurrentsong\\nclose\\n\"", password)
    
     -- If host begins with "/", we can assume that it is a socket
-    if host.sub(host, 1, 1) == "/" then
+    if string.sub(host, 1, 1) == "/" then
         -- It's a socket, use socat to talk directly to it
         mpdh = string.format("UNIX-CONNECT:%s", host)
         cmd = string.format("%s | socat - %s", echo, mpdh)
