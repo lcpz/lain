@@ -31,10 +31,10 @@ function task.show(scr)
         task.notification_preset.screen = scr
     end
 
-    helpers.async(task.show_cmd, function(f)
+    helpers.async({ awful.util.shell, "-c", task.show_cmd }, function(f)
         task.notification = naughty.notify({
             preset = task.notification_preset,
-            title  = task.show_cmd,
+            title  = "task next",
             text   = markup.font(task.notification_preset.font,
                      awful.util.escape(f:gsub("\n*$", "")))
         })
@@ -49,9 +49,9 @@ function task.prompt()
             helpers.async(t, function(f)
                 naughty.notify {
                     preset = task.notification_preset,
-                    title    = t,
-                    text     = markup.font(task.notification_preset.font,
-                               awful.util.escape(f:gsub("\n*$", "")))
+                    title  = t,
+                    text   = markup.font(task.notification_preset.font,
+                             awful.util.escape(f:gsub("\n*$", "")))
                 }
             end)
         end,
