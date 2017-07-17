@@ -139,15 +139,25 @@ end
 
 -- {{{ Network functions
 
--- Send some data to a UNIX socket
-function helpers.send_to_unix_socket(unix_path, data, buffer_length) 
-    
+-- Create a recieving buffer
+-- NOTE: Not sure whether to export this with helpers or not
+-- Probably just gonna leave it local for now
+function generate_buffer(buffer_length)
     -- First, create an output buffer to recieve from
     local recv_buffer = ""
     -- We'll need to allocate `buffer_length` bytes to it
     for i=1,buffer_length do
-        recv_buffer = recv_bufer .. " "
+        local recv_buffer = recv_buffer .. " "
     end
+
+    return recv_buffer
+end
+
+-- Send some data to a UNIX socket
+
+function helpers.send_to_unix_socket(unix_path, data, buffer_length) 
+    -- Create a buffer to recieve into
+    local recv_buffer = generate_buffer(buffer_length)
 
     -- Create a socket to send some data from
     local sock = gio.Socket.new(gio.SocketFamily.UNIX,
@@ -155,20 +165,44 @@ function helpers.send_to_unix_socket(unix_path, data, buffer_length)
                                 gio.SocketProtocol.DEFAULT)
 
     -- Create a socket address to connect to
-    local addr = gio.UnixSocketAddress.new(path)
+    local addr = gio.UnixSocketAddress.new(unix_path)
+    -- Connect across
+    sock:connect(addr)
+    -- Send our message
+    sock:send(data)
+    -- Pull back anything it sends back
+    sock:receive(recv_buffer)
+    
+    sock:close()
+
+    return recv_buffer    
+end
+
+-- Send some data to an IPv4 socket
+function helpers.send_to_ip_address(ip_address, port, data, buffer_length)
+    -- Create a buffer to recieve into
+    local recv_buffer = generate_buffer(buffer_length)
+    
+    -- Create a socket to send some data from
+    local sock = gio.Socket.new(gio.SocketFamily.IPV4,
+                                gio.SocketType.STREAM,
+                                gio.SocketProtocol.DEFAULT)
+
+    -- Create a socket address to connect to
+    local inet_addr = Gio.InetAddress.new_from_string(ip_address)
+    local addr = gio.UnixSocketAddress.new(inet_addr, port)
 
     -- Connect across
     sock:connect(addr)
-    
+
     -- Send our message
     sock:send(data)
 
     -- Pull back anything it sends back
     sock:receive(recv_buffer)
 
-    return recv_buffer    
+    return recv_buffer
 end
-
 
 -- }}} 
 
