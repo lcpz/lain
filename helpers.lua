@@ -15,6 +15,8 @@ local io         = { lines = io.lines,
 local rawget     = rawget
 local table      = { sort  = table.sort }
 
+local gio = require("lgi").Gio
+
 -- Lain helper functions for internal use
 -- lain.helpers
 local helpers = {}
@@ -133,6 +135,42 @@ function helpers.get_map(element)
 end
 
 -- }}}
+
+
+-- {{{ Network functions
+
+-- Send some data to a UNIX socket
+function helpers.send_to_unix_socket(unix_path, data, buffer_length) 
+    
+    -- First, create an output buffer to recieve from
+    local recv_buffer = ""
+    -- We'll need to allocate `buffer_length` bytes to it
+    for i=1,buffer_length do
+        recv_buffer = recv_bufer .. " "
+    end
+
+    -- Create a socket to send some data from
+    local sock = gio.Socket.new(gio.SocketFamily.UNIX,
+                                gio.SocketType.STREAM,
+                                gio.SocketProtocol.DEFAULT)
+
+    -- Create a socket address to connect to
+    local addr = gio.UnixSocketAddress.new(path)
+
+    -- Connect across
+    sock:connect(addr)
+    
+    -- Send our message
+    sock:send(data)
+
+    -- Pull back anything it sends back
+    sock:receive(recv_buffer)
+
+    return recv_buffer    
+end
+
+
+-- }}} 
 
 -- {{{ Misc
 
