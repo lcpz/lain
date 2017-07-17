@@ -15,7 +15,7 @@ local io         = { lines = io.lines,
 local rawget     = rawget
 local table      = { sort  = table.sort }
 
-local gio = require("lgi").Gio
+local Gio = require("lgi").Gio
 
 -- Lain helper functions for internal use
 -- lain.helpers
@@ -153,54 +153,42 @@ function generate_buffer(buffer_length)
     return recv_buffer
 end
 
--- Send some data to a UNIX socket
+-- Wrapper function to send to any sort of address
+function helpers.send_to_address(host, port, data, buffer_length, callback)
+    -- Have a default buffer length of 1000
+    if not buffer_length then
+      buffer_length = 1000
+    end
 
-function helpers.send_to_unix_socket(unix_path, data, buffer_length) 
-    -- Create a buffer to recieve into
+    -- Generate a buffer to store our result in
     local recv_buffer = generate_buffer(buffer_length)
 
-    -- Create a socket to send some data from
-    local sock = gio.Socket.new(gio.SocketFamily.UNIX,
-                                gio.SocketType.STREAM,
-                                gio.SocketProtocol.DEFAULT)
+    -- Check if we should be sending to a socket or an IP
+    local is_socket = (string.sub(host, 1, 1) == "/")
 
-    -- Create a socket address to connect to
-    local addr = gio.UnixSocketAddress.new(unix_path)
-    -- Connect across
-    sock:connect(addr)
-    -- Send our message
-    sock:send(data)
-    -- Pull back anything it sends back
-    sock:receive(recv_buffer)
-    
-    sock:close()
+    -- Create a client to listen and send with
+    local client = Gio.SocketClient()
 
-    return recv_buffer    
+    local addr
+
+    if is_socket then
+        addr = Gio.UnixSocketAddress.new(host)
+    else
+        local inet_addr = gio.InetAddress.new_from_string(host)
+        addr = Gio.InetSocketAddress.new(inet_addr, port)
+    end
+
+    local conn = client:connect(addr)
+
+    local input_stream = conn:get_output_stream()
+    local output_stream = conn:get_input_stream()
+
+    input_stream:write(data)
+    output_stream:read(recv_buffer)
+    output_stream:read(recv_buffer)
+
+    callback(recv_buffer)
 end
-
--- Send some data to an IPv4 socket
-function helpers.send_to_ip_address(ip_address, port, data, buffer_length)
-    -- Create a buffer to recieve into
-    local recv_buffer = generate_buffer(buffer_length)
-    
-    -- Create a socket to send some data from
-    local sock = gio.Socket.new(gio.SocketFamily.IPV4,
-                                gio.SocketType.STREAM,
-                                gio.SocketProtocol.DEFAULT)
-
-    -- Create a socket address to connect to
-    local inet_addr = gio.InetAddress.new_from_string(ip_address)
-    local addr = gio.InetSocketAddress.new(inet_addr, port)
-    -- Connect across
-    sock:connect(addr)
-    -- Send our message
-    sock:send(data)
-    -- Pull back anything it sends back
-    sock:receive(recv_buffer)
-    sock:close()
-    return recv_buffer
-end
-
 -- }}} 
 
 -- {{{ Misc

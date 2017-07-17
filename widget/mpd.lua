@@ -39,25 +39,14 @@ local function factory(args)
 
     local mpdh          = ""
     local cmd           = ""
-    local echo = string.format("printf \"%sstatus\\ncurrentsong\\nclose\\n\"", password)
+    local echo = string.format("%sstatus\ncurrentsong\nclose\n", password)
    
-    -- If host begins with "/", we can assume that it is a socket
-    if string.sub(host, 1, 1) == "/" then
-        -- It's a socket, use socat to talk directly to it
-        mpdh = string.format("UNIX-CONNECT:%s", host)
-        cmd = string.format("%s | socat - %s", echo, mpdh)
-    else
-        -- It's not a socket, assume IP or other host
-        mpdh = string.format("telnet://%s:%s", host, port)
-        cmd = string.format("%s | curl --connect-timeout 1 -fsm 3 %s", echo, mpdh)
-    end
-    
     mpd_notification_preset = { title = "Now playing", timeout = 6 }
 
     helpers.set_map("current mpd track", nil)
-
     function mpd.update()
-        helpers.async({ shell, "-c", cmd }, function(f)
+        helpers.send_to_address(host, port, echo, 10000, function(f)
+            local res = 0
             mpd_now = {
                 random_mode  = false,
                 single_mode  = false,
