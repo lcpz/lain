@@ -144,10 +144,10 @@ end
 -- Probably just gonna leave it local for now
 function generate_buffer(buffer_length)
     -- First, create an output buffer to recieve from
-    local recv_buffer = ""
+    local recv_buffer = " "
     -- We'll need to allocate `buffer_length` bytes to it
     for i=1,buffer_length do
-        local recv_buffer = recv_buffer .. " "
+        recv_buffer = recv_buffer .. " "
     end
 
     return recv_buffer
@@ -189,9 +189,8 @@ function helpers.send_to_ip_address(ip_address, port, data, buffer_length)
                                 gio.SocketProtocol.DEFAULT)
 
     -- Create a socket address to connect to
-    local inet_addr = Gio.InetAddress.new_from_string(ip_address)
-    local addr = gio.UnixSocketAddress.new(inet_addr, port)
-
+    local inet_addr = gio.InetAddress.new_from_string(ip_address)
+    local addr = gio.InetSocketAddress.new(inet_addr, port)
     -- Connect across
     sock:connect(addr)
 
