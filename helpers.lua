@@ -193,13 +193,11 @@ function helpers.send_to_ip_address(ip_address, port, data, buffer_length)
     local addr = gio.InetSocketAddress.new(inet_addr, port)
     -- Connect across
     sock:connect(addr)
-
     -- Send our message
     sock:send(data)
-
     -- Pull back anything it sends back
     sock:receive(recv_buffer)
-
+    sock:close()
     return recv_buffer
 end
 
