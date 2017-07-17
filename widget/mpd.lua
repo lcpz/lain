@@ -46,7 +46,6 @@ local function factory(args)
     helpers.set_map("current mpd track", nil)
     function mpd.update()
         helpers.send_to_address(host, port, echo, 10000, function(f)
-            local res = 0
             mpd_now = {
                 random_mode  = false,
                 single_mode  = false,
