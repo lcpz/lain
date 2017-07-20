@@ -60,6 +60,10 @@ function calendar.show(t_out, inc_offset, scr)
        f = string.format("%s %s %s", calendar.cal, month, year)
     end
 
+    if calendar.disable_icon then
+        calendar.icon = nil
+    end
+
     helpers.async(f, function(ws)
         local fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
         calendar.notification_preset.text = ws:gsub("%c%[%d+[m]?%s?%d+%c%[%d+[m]?",
@@ -112,6 +116,7 @@ local function factory(args)
     calendar.attach_to           = args.attach_to or {}
     calendar.followtag           = args.followtag or false
     calendar.icons               = args.icons or helpers.icons_dir .. "cal/white/"
+    calendar.disable_icon        = args.disable_icon or false
     calendar.notification_preset = args.notification_preset
 
     if not calendar.notification_preset then
