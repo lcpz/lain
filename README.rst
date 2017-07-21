@@ -32,13 +32,6 @@ If you want to create a pull request, make sure that:
 
 Contributed widgets have to be put in ``widget/contrib``.
 
-Screenshots
------------
-
-.. image:: http://i.imgur.com/8D9A7lW.png
-.. image:: http://i.imgur.com/9Iv3OR3.png
-.. image:: http://i.imgur.com/STCPcaJ.png
-
 .. _GNU-GPL2: http://www.gnu.org/licenses/gpl-2.0.html
 .. _awesome-vain: https://github.com/vain/awesome-vain
 .. _Awesome: https://github.com/awesomeWM/awesome
