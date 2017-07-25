@@ -53,6 +53,7 @@ local function factory(args)
                                   end
     local weather_na_markup     = args.weather_na_markup or " N/A "
     local followtag             = args.followtag or false
+    local showpopup             = args.showpopup or "on"
     local settings              = args.settings or function() end
 
     weather.widget:set_markup(weather_na_markup)
@@ -162,7 +163,7 @@ local function factory(args)
         end)
     end
 
-    weather.attach(weather.widget)
+    if showpopup == "on" then weather.attach(weather.widget) end
 
     weather.timer = helpers.newtimer("weather-" .. city_id, timeout, weather.update, false, true)
     weather.timer_forecast = helpers.newtimer("weather_forecast-" .. city_id, timeout, weather.forecast_update, false, true)
