@@ -27,6 +27,7 @@ local function factory(args)
     local timeout   = args.timeout or 60
     local is_plain  = args.is_plain or false
     local followtag = args.followtag or false
+    local notify    = args.notify or "on"
     local settings  = args.settings or function() end
 
     local head_command = "curl --connect-timeout 3 -fsm 3"
@@ -64,7 +65,7 @@ local function factory(args)
             widget = imap.widget
             settings()
 
-            if mailcount >= 1 and mailcount > helpers.get_map(mail) then
+            if notify == "on" and mailcount >= 1 and mailcount > helpers.get_map(mail) then
                 if mailcount == 1 then
                     nt = mail .. " has one new message"
                 else
