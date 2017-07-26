@@ -30,6 +30,7 @@ local function factory(args)
 
     gpmdp_notification_preset = {
         title   = "Now playing",
+        icon_size = 64,
         timeout = 6
     }
 
