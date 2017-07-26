@@ -37,12 +37,13 @@ local function factory(args)
 
     function gpmdp.update()
         local filelines = helpers.lines_from(file_location)
+        local gpm_now = {}
 
         if not next(filelines) then
-            local gpm_now = { running = false, playing = false }
+            gpm_now.running = false
+            gpm_now.playing = false
         else
             dict, pos, err = json.decode(table.concat(filelines), 1, nil)
-            local gpm_now = {}
             gpm_now.artist    = dict.song.artist
             gpm_now.album     = dict.song.album
             gpm_now.title     = dict.song.title
@@ -66,7 +67,7 @@ local function factory(args)
 
                 if followtag then gpmdp_notification_preset.screen = focused() end
 
-                helpers.async(string.format("curl %d -o /tmp/gpmcover.png", gpm_now.cover_url),
+                helpers.async(string.format("curl %s -o /tmp/gpmcover.png", gpm_now.cover_url),
                 function(f)
                     gpmdp.id = naughty.notify({
                         preset = gpmdp_notification_preset,
