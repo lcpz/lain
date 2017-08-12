@@ -1,16 +1,16 @@
 
 --[[
-                                                     
-        Licensed under GNU General Public License v2 
-        * (c) 2016, Alexandre Terrien                
-                                                     
+
+        Licensed under GNU General Public License v2
+        * (c) 2016, Greg Flynn
+
 --]]
-
+local awful = require("awful")
 local naughty = require("naughty")
+local io, next, os, string, table = io, next, os, string, table
 
--- Google Play Music Desktop infos
--- lain.widget.contrib.gpmdp
--- requires: curl
+-- Google Play Music Desktop Player widget
+-- requires: curl and dkjson or lain
 
 local gpmdp = {
     notify        = "on",
@@ -22,7 +22,7 @@ local gpmdp = {
         timeout   = 6
     },
     notification  = nil,
-    current_track = nil,
+    current_track = nil
 }
 
 function gpmdp.notification_on()
@@ -73,7 +73,8 @@ gpmdp.widget = awful.widget.watch("pidof 'Google Play Music Desktop Player'", 2,
         gpm_now.running = false
         gpm_now.playing = false
     else
-        dict, pos, err    = require('dkjson').decode(table.concat(filelines), 1, nil)
+        dict, pos, err    = require("dkjson").decode(table.concat(filelines), 1, nil) -- dkjson
+        -- dict, pos, err    = require("lain.util").dkjson.decode(table.concat(filelines), 1, nil) -- lain
         gpm_now.artist    = dict.song.artist
         gpm_now.album     = dict.song.album
         gpm_now.title     = dict.song.title
