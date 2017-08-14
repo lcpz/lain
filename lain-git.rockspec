@@ -7,15 +7,15 @@ source = {
 description = {
    summary = "Layout, widgets and utilities for Awesome WM",
    detailed = [[
-        Successor of awesome-vain, this module provides new layouts, a set of widgets and utility functions, with the aim of improving Awesome usability and configurability.
+        Successor of awesome-vain, this module provides alternative layouts, asynchronous widgets and utility functions for Awesome WM.
 
-        Optional dependency: curl (for IMAP and weather widgets).
+        Optional dependency: curl (for IMAP, MPD and weather widgets).
     ]],
    homepage = "https://github.com/copycat-killer/lain",
    license = "GPL v2"
 }
 dependencies = {
-   "lua >= 5.3",
+   "lua >= 5.1",
    "awesome >= 4.0",
    "curl"
 }
