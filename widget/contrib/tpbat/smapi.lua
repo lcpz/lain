@@ -55,7 +55,7 @@ local readable = {
     state                      = true,
     stop_charge_thresh         = false,
     temperature                = true,
-    voltage                    = true,
+    voltage                    = true
 }
 
 function smapi:battery(name)
