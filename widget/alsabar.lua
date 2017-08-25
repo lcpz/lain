@@ -107,11 +107,11 @@ local function factory(args)
     function alsabar.notify()
         alsabar.update(function()
             local preset = alsabar.notification_preset
+            
+            preset.title = string.format("%s - %s%%", alsabar.channel, alsabar._current_level)
 
             if alsabar._playback == "off" then
-                preset.title = string.format("%s - Muted", alsabar.channel)
-            else
-                preset.title = string.format("%s - %s%%", alsabar.channel, alsabar._current_level)
+                preset.title = preset.title .. " Muted"
             end
 
             int = math.modf((alsabar._current_level / 100) * awful.screen.focused().mywibox.height)

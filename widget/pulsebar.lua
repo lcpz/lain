@@ -118,11 +118,11 @@ local function factory(args)
     function pulsebar.notify()
         pulsebar.update(function()
             local preset = pulsebar.notification_preset
+            
+            preset.title = string.format("Sink %s - %s%%", pulsebar.sink, pulsebar._current_level)
 
             if pulsebar._mute == "yes" then
-                preset.title = string.format("Sink %s - Muted", pulsebar.sink)
-            else
-                preset.title = string.format("Sink %s - %s%%", pulsebar.sink, pulsebar._current_level)
+                preset.title = preset.title .. " Muted"
             end
 
             int = math.modf((pulsebar._current_level / 100) * awful.screen.focused().mywibox.height)
