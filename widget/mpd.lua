@@ -26,8 +26,8 @@ local function factory(args)
     local args          = args or {}
     local timeout       = args.timeout or 2
     local password      = (args.password and #args.password > 0 and string.format("password %s\\n", args.password)) or ""
-    local host          = args.host or "127.0.0.1"
-    local port          = args.port or "6600"
+    local host          = args.host or os.getenv("MPD_HOST") or "127.0.0.1"
+    local port          = args.port or os.getenv("MPD_PORT") or "6600"
     local music_dir     = args.music_dir or os.getenv("HOME") .. "/Music"
     local cover_pattern = args.cover_pattern or "*\\.(jpg|jpeg|png|gif)$"
     local cover_size    = args.cover_size or 100
