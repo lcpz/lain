@@ -26,6 +26,7 @@ local function factory(args)
     local args          = args or {}
     local timeout       = args.timeout or 2
     local password      = (args.password and #args.password > 0 and string.format("password %s\\n", args.password)) or ""
+    local socket        = args.socket or os.getenv("HOME") .. "/.config/mpd/socket"
     local host          = args.host or "127.0.0.1"
     local port          = args.port or "6600"
     local music_dir     = args.music_dir or os.getenv("HOME") .. "/Music"
@@ -35,10 +36,16 @@ local function factory(args)
     local notify        = args.notify or "on"
     local followtag     = args.followtag or false
     local settings      = args.settings or function() end
+    local use_unix_socket = args.use_unix_socket or false
 
-    local mpdh = string.format("telnet://%s:%s", host, port)
-    local echo = string.format("printf \"%sstatus\\ncurrentsong\\nclose\\n\"", password)
-    local cmd  = string.format("%s | curl --connect-timeout 1 -fsm 3 %s", echo, mpdh)
+    if not use_unix_socket then
+        mpdh = string.format("telnet://%s:%s", host, port)
+        echo = string.format("printf \"%sstatus\\ncurrentsong\\nclose\\n\"", password)
+        cmd  = string.format("%s | curl --connect-timeout 1 -fsm 3 %s", echo, mpdh)
+    else
+        echo = string.format("printf \"%sstatus\\ncurrentsong\\nclose\\n\"", password)
+        cmd  = string.format("%s | /usr/bin/ncat -U %s", echo, socket)
+    end
 
     mpd_notification_preset = { title = "Now playing", timeout = 6 }
 
