@@ -1,9 +1,8 @@
-
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2016, Luke Bonham                     
-                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2016, Luke Bonham
+
 --]]
 
 local helpers = require("lain.helpers")
@@ -22,7 +21,7 @@ local function factory(args)
     local timeout     = args.timeout or 5
     local settings    = args.settings or function() end
     local scallback   = args.scallback
- 
+
     pulseaudio.device = "N/A"
     pulseaudio.devicetype = args.devicetype or "sink"
     pulseaudio.cmd = args.cmd or "pacmd list-" .. pulseaudio.devicetype .. "s | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'"

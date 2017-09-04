@@ -1,10 +1,9 @@
-
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013, Luke Bonham                     
-      * (c) 2013, Rman                            
-                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2013, Luke Bonham
+      * (c) 2013, Rman
+
 --]]
 
 local helpers        = require("lain.helpers")
@@ -118,7 +117,7 @@ local function factory(args)
     function pulsebar.notify()
         pulsebar.update(function()
             local preset = pulsebar.notification_preset
-            
+
             preset.title = string.format("Sink %s - %s%%", pulsebar.sink, pulsebar._current_level)
 
             if pulsebar._mute == "yes" then

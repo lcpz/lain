@@ -1,17 +1,16 @@
-
 --[[
-                                                               
-     tpbat.lua                                                 
-     Battery status widget for ThinkPad laptops that use SMAPI 
-     lain.widget.contrib.tpbat                                
-                                                               
-     More on tp_smapi: http://www.thinkwiki.org/wiki/Tp_smapi  
-                                                               
-     Licensed under GNU General Public License v2              
-      * (c) 2013,      Conor Heine                             
-      * (c) 2013,      Luke Bonham                             
-      * (c) 2010-2012, Peter Hofmann                           
-                                                               
+
+     tpbat.lua
+     Battery status widget for ThinkPad laptops that use SMAPI
+     lain.widget.contrib.tpbat
+
+     More on tp_smapi: http://www.thinkwiki.org/wiki/Tp_smapi
+
+     Licensed under GNU General Public License v2
+      * (c) 2013,      Conor Heine
+      * (c) 2013,      Luke Bonham
+      * (c) 2010-2012, Peter Hofmann
+
 --]]
 
 local debug        = { getinfo = debug.getinfo }

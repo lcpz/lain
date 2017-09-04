@@ -1,10 +1,9 @@
-
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013, Luke Bonham                     
-      * (c) 2013, Rman                            
-                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2013, Luke Bonham
+      * (c) 2013, Rman
+
 --]]
 
 local helpers        = require("lain.helpers")
@@ -107,7 +106,7 @@ local function factory(args)
     function alsabar.notify()
         alsabar.update(function()
             local preset = alsabar.notification_preset
-            
+
             preset.title = string.format("%s - %s%%", alsabar.channel, alsabar._current_level)
 
             if alsabar._playback == "off" then
