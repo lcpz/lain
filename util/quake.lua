@@ -33,7 +33,7 @@ function quake:display()
     for c in awful.client.iterate(function (c)
         -- c.name may be changed!
         return c.instance == self.name
-    end, nil, self.screen)
+    end)
     do
         i = i + 1
         if i == 1 then
