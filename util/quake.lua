@@ -26,8 +26,6 @@ local quake = {}
 
 function quake:display()
     if self.followtag then self.screen = awful.screen.focused() end
-    local toscan = self.screen
-    if self.onlyone then toscan = nil end
 
     -- First, we locate the client
     local client = nil
@@ -35,7 +33,7 @@ function quake:display()
     for c in awful.client.iterate(function (c)
         -- c.name may be changed!
         return c.instance == self.name
-    end, nil, toscan)
+    end, nil, self.screen)
     do
         i = i + 1
         if i == 1 then
@@ -129,7 +127,6 @@ function quake:new(config)
     conf.border     = conf.border    or 1          -- client border width
     conf.visible    = conf.visible   or false      -- initially not visible
     conf.followtag  = conf.followtag or false      -- spawn on currently focused screen
-    conf.onlyone    = conf.onlyone   or false      -- one instance for all screens
     conf.overlap    = conf.overlap   or false      -- overlap wibox
     conf.screen     = conf.screen    or awful.screen.focused()
     conf.settings   = conf.settings
