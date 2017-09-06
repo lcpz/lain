@@ -121,14 +121,25 @@ local function factory(args)
                 local icon    = weather_now["weather"][1]["icon"]
                 local now     = os.time()
                 local loc_m   = os.time { year = os.date("%Y"), month = os.date("%m"), day = os.date("%d"), hour = 0 }
-                local offset  = utc_offset()
+                local offset  = now - os.time(os.date("!*t", now))
                 local utc_m   = loc_m - offset
 
-                -- if we are 1 day after the GMT, return 1 day back, and viceversa
-                if offset > 0 and (now - utc_m) >= 86400 then
-                    utc_m = utc_m + 86400
-                elseif offset < 0 and (utc_m - now) >= 86400 then
-                    utc_m = utc_m - 86400
+                if offset > 0 then 
+                    if now - utc_m >= 86400 then
+                        utc_m = utc_m + 86400
+                    end
+                    if loc_m >= utc_m then
+                        sunrise = sunrise + 86400
+                        sunset  = sunset  + 86400
+                    end
+                elseif offset < 0 then
+                    if utc_m - now >= 86400 then
+                        utc_m = utc_m - 86400
+                    end
+                    if loc_m <= utc_m then
+                        sunrise = sunrise - 86400
+                        sunset  = sunset  - 86400
+                    end
                 end
 
                 if sunrise <= now and now <= sunset then
