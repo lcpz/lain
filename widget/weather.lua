@@ -4,7 +4,7 @@
       * (c) 2015, Luke Bonham
 
 --]]
-
+local gears = require("gears")
 local helpers  = require("lain.helpers")
 local json     = require("lain.util").dkjson
 local focused  = require("awful.screen").focused
@@ -147,6 +147,8 @@ local function factory(args)
                 else
                     icon = string.gsub(icon, "d", "n")
                 end
+gears.debug.print_warning("Times:" .. now .." " .. offset .." ".. sunrise .. " " .. sunset .. " " .. loc_m .. " " .. utc_m)
+gears.debug.print_warning("Weather icon:" .. icon)
 
                 weather.icon_path = icons_path .. icon .. ".png"
                 widget = weather.widget
@@ -155,7 +157,6 @@ local function factory(args)
                 weather.icon_path = icons_path .. "na.png"
                 weather.widget:set_markup(weather_na_markup)
             end
-
             weather.icon:set_image(weather.icon_path)
         end)
     end
