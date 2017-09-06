@@ -1,39 +1,37 @@
-
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013, Luke Bonham                     
-      * (c) 2013, Rman                            
-                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2013, Luke Bonham
+      * (c) 2013, Rman
+
 --]]
 
-local helpers      = require("lain.helpers")
-local awful        = require("awful")
-local naughty      = require("naughty")
-local wibox        = require("wibox")
-local math         = { modf   = math.modf }
-local string       = { format = string.format,
-                       gmatch = string.gmatch,
-                       match  = string.match,
-                       rep    = string.rep }
-local type         = type
-local tonumber     = tonumber
-local setmetatable = setmetatable
+local helpers        = require("lain.helpers")
+local awful          = require("awful")
+local naughty        = require("naughty")
+local wibox          = require("wibox")
+local math           = { modf   = math.modf }
+local string         = { format = string.format,
+                         match  = string.match,
+                         gmatch = string.gmatch,
+                         rep    = string.rep }
+local type, tonumber = type, tonumber
 
 -- Pulseaudio volume bar
--- lain.widgets.pulsebar
-local pulsebar = {
-    colors = {
-        background = "#000000",
-        mute       = "#EB8F8F",
-        unmute     = "#A4CE8A"
-    },
+-- lain.widget.pulsebar
 
-    _current_level = 0,
-    _muted         = false
-}
+local function factory(args)
+    local pulsebar = {
+        colors = {
+            background = "#000000",
+            mute       = "#EB8F8F",
+            unmute     = "#A4CE8A"
+        },
 
-local function worker(args)
+        _current_level = 0,
+        _mute          = "no",
+    }
+
     local args       = args or {}
     local timeout    = args.timeout or 5
     local settings   = args.settings or function() end
@@ -41,14 +39,14 @@ local function worker(args)
     local height     = args.heigth or 1
     local ticks      = args.ticks or false
     local ticks_size = args.ticks_size or 7
-    local vertical   = args.vertical or false
     local scallback  = args.scallback
 
-    pulsebar.cmd           = args.cmd or "pacmd list-sinks | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'"
-    pulsebar.sink          = args.sink or 0
-    pulsebar.colors        = args.colors or pulsebar.colors
-    pulsebar.followtag     = args.followtag or false
-    pulsebar.notifications = args.notification_preset
+    pulsebar.cmd                 = args.cmd or "pacmd list-sinks | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'"
+    pulsebar.sink                = args.sink or 0
+    pulsebar.colors              = args.colors or pulsebar.colors
+    pulsebar.followtag           = args.followtag or false
+    pulsebar.notification_preset = args.notification_preset
+    pulsebar.device              = "N/A"
 
     if not pulsebar.notification_preset then
         pulsebar.notification_preset      = {}
@@ -65,13 +63,12 @@ local function worker(args)
         ticks            = ticks,
         ticks_size       = ticks_size,
         widget           = wibox.widget.progressbar,
-        layout           = vertical and wibox.container.rotate
     }
 
     pulsebar.tooltip = awful.tooltip({ objects = { pulsebar.bar } })
 
     function pulsebar.update(callback)
-        if scallback then pulseaudio.cmd = scallback() end
+        if scallback then pulsebar.cmd = scallback() end
 
         helpers.async({ awful.util.shell, "-c", pulsebar.cmd }, function(s)
             volume_now = {
@@ -79,6 +76,8 @@ local function worker(args)
                 sink  = string.match(s, "device.string = \"(%S+)\"") or "N/A",
                 muted = string.match(s, "muted: (%S+)") or "N/A"
             }
+
+            pulsebar.device = volume_now.index
 
             local ch = 1
             volume_now.channel = {}
@@ -93,15 +92,17 @@ local function worker(args)
             local volu = volume_now.left
             local mute = volume_now.muted
 
-            if (volu and volu ~= pulsebar._current_level) or (mute and mute ~= pulsebar._muted) then
-                pulsebar._current_level = volu
+            if volu:match("N/A") or mute:match("N/A") then return end
+
+            if volu ~= pulsebar._current_level or mute ~= pulsebar._mute then
+                pulsebar._current_level = tonumber(volu)
                 pulsebar.bar:set_value(pulsebar._current_level / 100)
-                if (not mute and volu == 0) or mute == "yes" then
-                    pulsebar._muted = true
+                if pulsebar._current_level == 0 or mute == "yes" then
+                    pulsebar._mute = mute
                     pulsebar.tooltip:set_text ("[Muted]")
                     pulsebar.bar.color = pulsebar.colors.mute
                 else
-                    pulsebar._muted = false
+                    pulsebar._mute = "no"
                     pulsebar.tooltip:set_text(string.format("%s: %s", pulsebar.sink, volu))
                     pulsebar.bar.color = pulsebar.colors.unmute
                 end
@@ -117,10 +118,10 @@ local function worker(args)
         pulsebar.update(function()
             local preset = pulsebar.notification_preset
 
-            if pulsebar._muted then
-                preset.title = string.format("Sink %s - Muted", pulsebar.sink)
-            else
-                preset.title = string.format("%s - %s%%", pulsebar.sink, pulsebar._current_level)
+            preset.title = string.format("Sink %s - %s%%", pulsebar.sink, pulsebar._current_level)
+
+            if pulsebar._mute == "yes" then
+                preset.title = preset.title .. " Muted"
             end
 
             int = math.modf((pulsebar._current_level / 100) * awful.screen.focused().mywibox.height)
@@ -145,4 +146,4 @@ local function worker(args)
     return pulsebar
 end
 
-return setmetatable(pulsebar, { __call = function(_, ...) return worker(...) end })
+return factory

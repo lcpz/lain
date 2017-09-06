@@ -1,12 +1,11 @@
-
 --[[
-                                                  
-     smapi.lua                                    
-     Interface with thinkpad battery information  
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013, Conor Heine                     
-                                                  
+
+     smapi.lua
+     Interface with thinkpad battery information
+
+     Licensed under GNU General Public License v2
+      * (c) 2013, Conor Heine
+
 --]]
 
 local first_line   = require("lain.helpers").first_line
@@ -55,7 +54,7 @@ local readable = {
     state                      = true,
     stop_charge_thresh         = false,
     temperature                = true,
-    voltage                    = true,
+    voltage                    = true
 }
 
 function smapi:battery(name)

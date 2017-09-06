@@ -1,51 +1,46 @@
-
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013, Luke Bonham                     
-                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2013, Luke Bonham
+
 --]]
 
-local helpers      = require("lain.helpers")
-
-local shell        = require("awful.util").shell
-local focused      = require("awful.screen").focused
-local wibox        = require("wibox")
-local naughty      = require("naughty")
-
-local string       = string
-local tonumber     = tonumber
-
-local setmetatable = setmetatable
+local helpers  = require("lain.helpers")
+local shell    = require("awful.util").shell
+local focused  = require("awful.screen").focused
+local wibox    = require("wibox")
+local naughty  = require("naughty")
+local string   = string
+local tonumber = tonumber
 
 -- File system disk space usage
--- lain.widgets.fs
-local fs = { unit  = { ["mb"] = 1024, ["gb"] = 1024^2 } }
+-- lain.widget.fs
 
-function fs.hide()
-    if not fs.notification then return end
-    naughty.destroy(fs.notification)
-    fs.notification = nil
-end
+local function factory(args)
+    local fs = { unit  = { ["mb"] = 1024, ["gb"] = 1024^2 }, widget = wibox.widget.textbox() }
 
-function fs.show(seconds, scr)
-    fs.update()
-
-    fs.hide()
-
-    if fs.followtag then
-        fs.notification_preset.screen = focused()
-    elseif scr then
-        fs.notification_preset.screen = scr or 1
+    function fs.hide()
+        if not fs.notification then return end
+        naughty.destroy(fs.notification)
+        fs.notification = nil
     end
 
-    fs.notification = naughty.notify({
-        preset      = fs.notification_preset,
-        timeout     = seconds or 5
-    })
-end
+    function fs.show(seconds, scr)
+        fs.update()
+        fs.hide()
 
-local function worker(args)
+        if fs.followtag then
+            fs.notification_preset.screen = focused()
+        else
+            fs.notification_preset.screen = scr or 1
+        end
+
+        fs.notification = naughty.notify({
+            preset  = fs.notification_preset,
+            timeout = seconds or 5
+        })
+    end
+
     local args             = args or {}
     local timeout          = args.timeout or 600
     local partition        = args.partition or "/"
@@ -64,8 +59,6 @@ local function worker(args)
             bg   = "#000000"
         }
     end
-
-    fs.widget = wibox.widget.textbox()
 
     helpers.set_map(partition, false)
 
@@ -99,11 +92,11 @@ local function worker(args)
             widget = fs.widget
             settings()
 
-            if notify == "on" and #fs_now.used > 0 and tonumber(fs_now.used) >= 99 and not helpers.get_map(partition) then
+            if notify == "on" and tonumber(fs_now.used) and tonumber(fs_now.used) >= 99 and not helpers.get_map(partition) then
                 naughty.notify({
                     preset = naughty.config.presets.critical,
                     title  = "Warning",
-                    text   = partition .. " is empty",
+                    text   = partition .. " is full",
                 })
                 helpers.set_map(partition, true)
             else
@@ -127,4 +120,4 @@ local function worker(args)
     return fs
 end
 
-return setmetatable(fs, { __call = function(_, ...) return worker(...) end })
+return factory

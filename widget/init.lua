@@ -3,7 +3,7 @@
      Lain
      Layouts, widgets and utilities for Awesome WM
 
-     Layouts section
+     Widgets section
 
      Licensed under GNU General Public License v2
       * (c) 2013,      Luke Bonham
@@ -14,6 +14,6 @@
 local wrequire     = require("lain.helpers").wrequire
 local setmetatable = setmetatable
 
-local layout       = { _NAME = "lain.layout" }
+local widget = { _NAME = "lain.widget" }
 
-return setmetatable(layout, { __index = wrequire })
+return setmetatable(widget, { __index = wrequire })

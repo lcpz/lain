@@ -1,30 +1,26 @@
-
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013,      Luke Bonham                
-      * (c) 2010-2012, Peter Hofmann              
-                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2013,      Luke Bonham
+      * (c) 2010-2012, Peter Hofmann
+
 --]]
 
-local helpers      = require("lain.helpers")
-local wibox        = require("wibox")
-local math         = { ceil   = math.ceil }
-local string       = { format = string.format,
-                       gmatch = string.gmatch }
-local tostring     = tostring
-local setmetatable = setmetatable
+local helpers  = require("lain.helpers")
+local wibox    = require("wibox")
+local math     = { ceil   = math.ceil }
+local string   = { format = string.format,
+                   gmatch = string.gmatch }
+local tostring = tostring
 
 -- CPU usage
--- lain.widgets.cpu
-local cpu = { core = {} }
+-- lain.widget.cpu
 
-local function worker(args)
+local function factory(args)
+    local cpu      = { core = {}, widget = wibox.widget.textbox() }
     local args     = args or {}
     local timeout  = args.timeout or 2
     local settings = args.settings or function() end
-
-    cpu.widget = wibox.widget.textbox()
 
     function cpu.update()
         -- Read the amount of time the CPUs have spent performing
@@ -79,4 +75,4 @@ local function worker(args)
     return cpu
 end
 
-return setmetatable(cpu, { __call = function(_, ...) return worker(...) end })
+return factory

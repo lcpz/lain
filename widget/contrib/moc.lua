@@ -1,9 +1,8 @@
-
 --[[
-                                                                  
-     Licensed under GNU General Public License v2                 
-      * (c) 2014, anticlockwise <http://github.com/anticlockwise> 
-                                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2014, anticlockwise <http://github.com/anticlockwise>
+
 --]]
 
 local helpers      = require("lain.helpers")
@@ -15,13 +14,12 @@ local wibox        = require("wibox")
 local os           = { getenv = os.getenv }
 local string       = { format = string.format,
                        gmatch = string.gmatch }
-local setmetatable = setmetatable
 
 -- MOC audio player
--- lain.widgets.contrib.moc
-local moc = {}
+-- lain.widget.contrib.moc
 
-local function worker(args)
+local function factory(args)
+    local moc           = { widget = wibox.widget.textbox() }
     local args          = args or {}
     local timeout       = args.timeout or 2
     local music_dir     = args.music_dir or os.getenv("HOME") .. "/Music"
@@ -30,8 +28,6 @@ local function worker(args)
     local default_art   = args.default_art or ""
     local followtag     = args.followtag or false
     local settings      = args.settings or function() end
-
-    moc.widget = wibox.widget.textbox()
 
     moc_notification_preset = { title = "Now playing", timeout = 6 }
 
@@ -98,4 +94,4 @@ local function worker(args)
     return moc
 end
 
-return setmetatable(moc, { __call = function(_, ...) return worker(...) end })
+return factory

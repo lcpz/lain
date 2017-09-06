@@ -1,11 +1,9 @@
-
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013, Luke Bonham                     
-                                                  
---]]
 
+     Licensed under GNU General Public License v2
+      * (c) 2013, Luke Bonham
+
+--]]
 
 local easy_async = require("awful.spawn").easy_async
 local timer      = require("gears.timer")

@@ -1,10 +1,9 @@
-
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013, Luke Bonham                     
-      * (c) 2010, Adrian C. <anrxc@sysphere.org>  
-                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2013, Luke Bonham
+      * (c) 2010, Adrian C. <anrxc@sysphere.org>
+
 --]]
 
 local helpers      = require("lain.helpers")
@@ -17,18 +16,17 @@ local os           = { getenv = os.getenv }
 local string       = { format = string.format,
                        gmatch = string.gmatch,
                        match  = string.match }
-local setmetatable = setmetatable
 
 -- MPD infos
--- lain.widgets.mpd
-local mpd = {}
+-- lain.widget.mpd
 
-local function worker(args)
+local function factory(args)
+    local mpd           = { widget = wibox.widget.textbox() }
     local args          = args or {}
     local timeout       = args.timeout or 2
     local password      = (args.password and #args.password > 0 and string.format("password %s\\n", args.password)) or ""
-    local host          = args.host or "127.0.0.1"
-    local port          = args.port or "6600"
+    local host          = args.host or os.getenv("MPD_HOST") or "127.0.0.1"
+    local port          = args.port or os.getenv("MPD_PORT") or "6600"
     local music_dir     = args.music_dir or os.getenv("HOME") .. "/Music"
     local cover_pattern = args.cover_pattern or "*\\.(jpg|jpeg|png|gif)$"
     local cover_size    = args.cover_size or 100
@@ -40,8 +38,6 @@ local function worker(args)
     local mpdh = string.format("telnet://%s:%s", host, port)
     local echo = string.format("printf \"%sstatus\\ncurrentsong\\nclose\\n\"", password)
     local cmd  = string.format("%s | curl --connect-timeout 1 -fsm 3 %s", echo, mpdh)
-
-    mpd.widget = wibox.widget.textbox()
 
     mpd_notification_preset = { title = "Now playing", timeout = 6 }
 
@@ -112,7 +108,8 @@ local function worker(args)
 
                     if not string.match(mpd_now.file, "http.*://") then -- local file instead of http stream
                         local path   = string.format("%s/%s", music_dir, string.match(mpd_now.file, ".*/"))
-                        local cover  = string.format("find '%s' -maxdepth 1 -type f | egrep -i -m1 '%s'", path:gsub("'", "'\\''"), cover_pattern)
+                        local cover  = string.format("find '%s' -maxdepth 1 -type f | egrep -i -m1 '%s'",
+                                       path:gsub("'", "'\\''"), cover_pattern)
                         helpers.async({ shell, "-c", cover }, function(current_icon)
                             common.icon = current_icon:gsub("\n", "")
                             if #common.icon == 0 then common.icon = nil end
@@ -134,4 +131,4 @@ local function worker(args)
     return mpd
 end
 
-return setmetatable(mpd, { __call = function(_, ...) return worker(...) end })
+return factory

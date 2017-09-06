@@ -1,35 +1,28 @@
-
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2015, Luke Bonham                     
-                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2015, Luke Bonham
+
 --]]
 
-local helpers      = require("lain.helpers")
-local json         = require("lain.util").dkjson
-local focused      = require("awful.screen").focused
-local naughty      = require("naughty")
-local wibox        = require("wibox")
-local math         = { floor    = math.floor }
-local os           = { time     = os.time,
-                       date     = os.date,
-                       difftime = os.difftime }
-local string       = { format   = string.format,
-                       gsub     = string.gsub }
-local tonumber     = tonumber
-local setmetatable = setmetatable
+local helpers  = require("lain.helpers")
+local json     = require("lain.util").dkjson
+local focused  = require("awful.screen").focused
+local naughty  = require("naughty")
+local wibox    = require("wibox")
+
+local math, os, string, tonumber = math, os, string, tonumber
 
 -- OpenWeatherMap
 -- current weather and X-days forecast
--- lain.widgets.weather
+-- lain.widget.weather
 
-local function worker(args)
+local function factory(args)
     local weather               = { widget = wibox.widget.textbox() }
     local args                  = args or {}
     local APPID                 = args.APPID or "3e321f9414eaedbfab34983bda77a66e" -- lain default
-    local timeout               = args.timeout or 900   -- 15 min
-    local timeout_forecast      = args.timeout or 86400 -- 24 hrs
+    local timeout               = args.timeout or 60 * 15 -- 15 min
+    local timeout_forecast      = args.timeout or 60 * 60 * 24 -- 24 hrs
     local current_call          = args.current_call  or "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
     local forecast_call         = args.forecast_call or "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s&APPID=%s'"
     local city_id               = args.city_id or 0 -- placeholder
@@ -54,6 +47,7 @@ local function worker(args)
                                   end
     local weather_na_markup     = args.weather_na_markup or " N/A "
     local followtag             = args.followtag or false
+    local showpopup             = args.showpopup or "on"
     local settings              = args.settings or function() end
 
     weather.widget:set_markup(weather_na_markup)
@@ -103,11 +97,10 @@ local function worker(args)
             weather_now, pos, err = json.decode(f, 1, nil)
 
             if not err and type(weather_now) == "table" and tonumber(weather_now["cod"]) == 200 then
-                weather.notification_text = ''
+                weather.notification_text = ""
                 for i = 1, weather_now["cnt"] do
                     weather.notification_text = weather.notification_text ..
                                                 notification_text_fun(weather_now["list"][i])
-
                     if i < weather_now["cnt"] then
                         weather.notification_text = weather.notification_text .. "\n"
                     end
@@ -123,26 +116,19 @@ local function worker(args)
             weather_now, pos, err = json.decode(f, 1, nil)
 
             if not err and type(weather_now) == "table" and tonumber(weather_now["cod"]) == 200 then
-                -- weather icon based on localtime
-                local now     = os.time()
                 local sunrise = tonumber(weather_now["sys"]["sunrise"])
                 local sunset  = tonumber(weather_now["sys"]["sunset"])
                 local icon    = weather_now["weather"][1]["icon"]
+                local now     = os.time()
                 local loc_m   = os.time { year = os.date("%Y"), month = os.date("%m"), day = os.date("%d"), hour = 0 }
                 local offset  = utc_offset()
                 local utc_m   = loc_m - offset
 
-                if offset > 0 and (now - utc_m)>=86400 then
-                    utc_m = utc_m + 86400
-                elseif offset < 0 and (utc_m - now)>=86400 then
-                    utc_m = utc_m - 86400
-                end
-
                 -- if we are 1 day after the GMT, return 1 day back, and viceversa
-                if offset > 0 and loc_m >= utc_m then
-                    now = now - 86400
-                elseif offset < 0 and loc_m <= utc_m then
-                    now = now + 86400
+                if offset > 0 and (now - utc_m) >= 86400 then
+                    utc_m = utc_m + 86400
+                elseif offset < 0 and (utc_m - now) >= 86400 then
+                    utc_m = utc_m - 86400
                 end
 
                 if sunrise <= now and now <= sunset then
@@ -163,7 +149,7 @@ local function worker(args)
         end)
     end
 
-    weather.attach(weather.widget)
+    if showpopup == "on" then weather.attach(weather.widget) end
 
     weather.timer = helpers.newtimer("weather-" .. city_id, timeout, weather.update, false, true)
     weather.timer_forecast = helpers.newtimer("weather_forecast-" .. city_id, timeout, weather.forecast_update, false, true)
@@ -171,4 +157,4 @@ local function worker(args)
     return weather
 end
 
-return setmetatable({}, { __call = function(_, ...) return worker(...) end })
+return factory

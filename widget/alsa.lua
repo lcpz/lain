@@ -1,23 +1,21 @@
-
 --[[
-                                                  
-     Licensed under GNU General Public License v2 
-      * (c) 2013, Luke Bonham                     
-      * (c) 2010, Adrian C. <anrxc@sysphere.org>  
-                                                  
+
+     Licensed under GNU General Public License v2
+      * (c) 2013, Luke Bonham
+      * (c) 2010, Adrian C. <anrxc@sysphere.org>
+
 --]]
 
-local helpers      = require("lain.helpers")
-local shell        = require("awful.util").shell
-local wibox        = require("wibox")
-local string       = { match  = string.match,
-                       format = string.format }
-local setmetatable = setmetatable
+local helpers = require("lain.helpers")
+local shell   = require("awful.util").shell
+local wibox   = require("wibox")
+local string  = { match  = string.match,
+                  format = string.format }
 
 -- ALSA volume
--- lain.widgets.alsa
+-- lain.widget.alsa
 
-local function worker(args)
+local function factory(args)
     local alsa     = { widget = wibox.widget.textbox() }
     local args     = args or {}
     local timeout  = args.timeout or 5
@@ -53,4 +51,4 @@ local function worker(args)
     return alsa
 end
 
-return setmetatable({}, { __call = function(_, ...) return worker(...) end })
+return factory

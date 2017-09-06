@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 #
 #   Adapted from Eridan's "fs" (cleanup, enhancements and switch to bash/Linux)
 #   JM,  10/12/2004
@@ -224,7 +224,7 @@ echo "$SORTED_FILE_SYSTEMS_INFO" | $AWK_COMMAND -v DEBUG=$DEBUG -v PATTERN=$PATT
 							 printf ("%-*s", LEFT_COLUMN + 2, "");
 					 print "                                                    Used     Free       Total ";
 					 if (! NARROW_MODE)
-						 print "";
+						 print " ";
 				 }
 			 }
 

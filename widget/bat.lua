@@ -1,45 +1,35 @@
-
 --[[
-												                        
-	 Licensed under GNU General Public License v2 
-	  * (c) 2013,      Luke Bonham                
-	  * (c) 2010-2012, Peter Hofmann              
-												                        
+
+	 Licensed under GNU General Public License v2
+	  * (c) 2013,      Luke Bonham
+	  * (c) 2010-2012, Peter Hofmann
+
 --]]
 
-local first_line   = require("lain.helpers").first_line
-local newtimer     = require("lain.helpers").newtimer
-local naughty      = require("naughty")
-local wibox        = require("wibox")
-local math         = { abs    = math.abs,
-                       floor  = math.floor,
-                       log10  = math.log10,
-                       min    = math.min }
-local string       = { format = string.format }
-local ipairs       = ipairs
-local type         = type
-local tonumber     = tonumber
-local setmetatable = setmetatable
+local first_line = require("lain.helpers").first_line
+local newtimer   = require("lain.helpers").newtimer
+local naughty    = require("naughty")
+local wibox      = require("wibox")
+local math       = { abs    = math.abs,
+                     floor  = math.floor,
+                     log10  = math.log10,
+                     min    = math.min }
+local string     = { format = string.format }
+local ipairs     = ipairs
+local tonumber   = tonumber
 
 -- Battery infos
--- lain.widgets.bat
+-- lain.widget.bat
 
-local function worker(args)
+local function factory(args)
     local bat       = { widget = wibox.widget.textbox() }
     local args      = args or {}
     local timeout   = args.timeout or 30
     local batteries = args.batteries or (args.battery and {args.battery}) or {"BAT0"}
     local ac        = args.ac or "AC0"
     local notify    = args.notify or "on"
+    local n_perc    = args.n_perc or { 5, 15 }
     local settings  = args.settings or function() end
-
-    bat_notification_low_preset = {
-        title   = "Battery low",
-        text    = "Plug the cable!",
-        timeout = 15,
-        fg      = "#202020",
-        bg      = "#CDCDCD"
-    }
 
     bat_notification_critical_preset = {
         title   = "Battery exhausted",
@@ -47,6 +37,14 @@ local function worker(args)
         timeout = 15,
         fg      = "#000000",
         bg      = "#FFFFFF"
+    }
+
+    bat_notification_low_preset = {
+        title   = "Battery low",
+        text    = "Plug the cable!",
+        timeout = 15,
+        fg      = "#202020",
+        bg      = "#CDCDCD"
     }
 
     bat_now = {
@@ -120,9 +118,9 @@ local function worker(args)
 
         if bat_now.status ~= "N/A" then
             if bat_now.status ~= "Full" and sum_rate_power == 0 and bat_now.ac_status == 1 then
-								bat_now.perc  = math.floor(math.min(100, (sum_energy_now / sum_energy_full) * 100))
-								bat_now.time  = "00:00"
-								bat_now.watt  = 0
+                bat_now.perc  = math.floor(math.min(100, (sum_energy_now / sum_energy_full) * 100))
+                bat_now.time  = "00:00"
+                bat_now.watt  = 0
 
             -- update {perc,time,watt} iff battery not full and rate > 0
             elseif bat_now.status ~= "Full" then
@@ -158,14 +156,14 @@ local function worker(args)
         widget = bat.widget
         settings()
 
-        -- notifications for low and critical states
-        if notify == "on" and type(bat_now.perc) == "number" and bat_now.status == "Discharging" then
-            if bat_now.perc <= 5 then
+        -- notifications for critical and low levels
+        if notify == "on" and bat_now.status == "Discharging" then
+            if tonumber(bat_now.perc) <= n_perc[1] then
                 bat.id = naughty.notify({
                     preset = bat_notification_critical_preset,
                     replaces_id = bat.id
                 }).id
-            elseif bat_now.perc <= 15 then
+            elseif tonumber(bat_now.perc) <= n_perc[2] then
                 bat.id = naughty.notify({
                     preset = bat_notification_low_preset,
                     replaces_id = bat.id
@@ -179,4 +177,4 @@ local function worker(args)
     return bat
 end
 
-return setmetatable({}, { __call = function(_, ...) return worker(...) end })
+return factory

@@ -1,10 +1,9 @@
-
 --[[
-                                                   
-     Licensed under GNU General Public License v2  
-      * (c) 2016, Luke Bonham                      
-      * (c) 2015, unknown                          
-                                                   
+
+     Licensed under GNU General Public License v2
+      * (c) 2016, Luke Bonham
+      * (c) 2015, unknown
+
 --]]
 
 local awful        = require("awful")
@@ -34,7 +33,7 @@ function quake:display()
     for c in awful.client.iterate(function (c)
         -- c.name may be changed!
         return c.instance == self.name
-    end, nil, self.screen)
+    end)
     do
         i = i + 1
         if i == 1 then
@@ -64,7 +63,7 @@ function quake:display()
     client.floating = true
     client.border_width = self.border
     client.size_hints_honor = false
-    client:geometry(self:compute_size())
+    client:geometry(self.geometry[self.screen] or self:compute_size())
 
     -- Set not sticky and on top
     client.sticky = false
