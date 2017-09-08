@@ -4,7 +4,8 @@
       * (c) 2015, Luke Bonham
 
 --]]
-local gears = require("gears")
+
+local gears = require("gears") -- <-- To Remove: for debug printing
 local helpers  = require("lain.helpers")
 local json     = require("lain.util").dkjson
 local focused  = require("awful.screen").focused
@@ -26,11 +27,6 @@ local function factory(args)
     local current_call          = args.current_call  or "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
     local forecast_call         = args.forecast_call or "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s&APPID=%s'"
     local city_id               = args.city_id or 0 -- placeholder
-    local utc_offset            = args.utc_offset or
-                                  function ()
-                                      local now = os.time()
-                                      return os.difftime(now, os.time(os.date("!*t", now))) + ((os.date("*t").isdst and 1 or 0) * 3600)
-                                  end
     local units                 = args.units or "metric"
     local lang                  = args.lang or "en"
     local cnt                   = args.cnt or 5
@@ -116,38 +112,40 @@ local function factory(args)
             weather_now, pos, err = json.decode(f, 1, nil)
 
             if not err and type(weather_now) == "table" and tonumber(weather_now["cod"]) == 200 then
+                -- sunrise and sunset time in UTC reported by OWM
                 local sunrise = tonumber(weather_now["sys"]["sunrise"])
                 local sunset  = tonumber(weather_now["sys"]["sunset"])
                 local icon    = weather_now["weather"][1]["icon"]
-                local now     = os.time()
+                -- Current time in local TZ
+                local loc_now     = os.time()
+                -- Local midnight time
                 local loc_m   = os.time { year = os.date("%Y"), month = os.date("%m"), day = os.date("%d"), hour = 0 }
-                local offset  = now - os.time(os.date("!*t", now))
-                local utc_m   = loc_m - offset
+                -- Time since local midnight
+                local loc_t   = os.difftime(loc_now, loc_m)
+                local loc_d   = os.date("*t",  loc_now)
+                local utc_d   = os.date("!*t", loc_now)
+                local utc_now = os.time(utc_d)
+                -- Daylight saving time offset: daylight saving time + diff for a part-hour TZ
+                local offdt   = (loc_d.isdst and 1 or 0) * 3600 + 100 * (loc_d.min  - utc_d.min) / 60
+                local offset  = os.difftime(loc_now, utc_now) + offdt
+                local offday  = (offset<0 and -86400) or 86400
 
-                if offset > 0 then 
-                    if now - utc_m >= 86400 then
-                        utc_m = utc_m + 86400
-                    end
-                    if loc_m >= utc_m then
-                        sunrise = sunrise + 86400
-                        sunset  = sunset  + 86400
-                    end
-                elseif offset < 0 then
-                    if utc_m - now >= 86400 then
-                        utc_m = utc_m - 86400
-                    end
-                    if loc_m <= utc_m then
-                        sunrise = sunrise - 86400
-                        sunset  = sunset  - 86400
-                    end
+                if math.abs(loc_now - utc_now - offdt + loc_t) >= 86400 then
+                    utc_now = utc_now + offday
                 end
 
-                if sunrise <= now and now <= sunset then
+                -- if we are still 1 day before (or after) the GMT, go 1 day forward, and viceversa
+                if offday * (loc_now - utc_now - offdt) > 0 then
+                    sunrise = sunrise + offday
+                    sunset  = sunset  + offday
+                end
+
+                if sunrise <= loc_now and loc_now <= sunset then
                     icon = string.gsub(icon, "n", "d")
                 else
                     icon = string.gsub(icon, "d", "n")
                 end
-gears.debug.print_warning("Times:" .. now .." " .. offset .." ".. sunrise .. " " .. sunset .. " " .. loc_m .. " " .. utc_m)
+gears.debug.print_warning("Times:" .. loc_now .." " .. offset .." ".. sunrise .. " " .. sunset .. " " .. loc_m .. " " .. offdt)
 gears.debug.print_warning("Weather icon:" .. icon)
 
                 weather.icon_path = icons_path .. icon .. ".png"
