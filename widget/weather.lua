@@ -26,11 +26,6 @@ local function factory(args)
     local current_call          = args.current_call  or "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
     local forecast_call         = args.forecast_call or "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s&APPID=%s'"
     local city_id               = args.city_id or 0 -- placeholder
-    local utc_offset            = args.utc_offset or
-                                  function ()
-                                      local now = os.time()
-                                      return os.difftime(now, os.time(os.date("!*t", now))) + ((os.date("*t").isdst and 1 or 0) * 3600)
-                                  end
     local units                 = args.units or "metric"
     local lang                  = args.lang or "en"
     local cnt                   = args.cnt or 5
@@ -119,30 +114,26 @@ local function factory(args)
                 local sunrise = tonumber(weather_now["sys"]["sunrise"])
                 local sunset  = tonumber(weather_now["sys"]["sunset"])
                 local icon    = weather_now["weather"][1]["icon"]
-                local now     = os.time()
+                local loc_now = os.time()
                 local loc_m   = os.time { year = os.date("%Y"), month = os.date("%m"), day = os.date("%d"), hour = 0 }
-                local offset  = now - os.time(os.date("!*t", now))
-                local utc_m   = loc_m - offset
+                local loc_t   = os.difftime(loc_now, loc_m)
+                local loc_d   = os.date("*t",  loc_now)
+                local utc_d   = os.date("!*t", loc_now)
+                local utc_now = os.time(utc_d)
+                local offdt   = (loc_d.isdst and 1 or 0) * 3600 + 100 * (loc_d.min  - utc_d.min) / 60
+                local offset  = os.difftime(loc_now, utc_now) + offdt
+                local offday  = (offset<0 and -86400) or 86400
 
-                if offset > 0 then 
-                    if now - utc_m >= 86400 then
-                        utc_m = utc_m + 86400
-                    end
-                    if loc_m >= utc_m then
-                        sunrise = sunrise + 86400
-                        sunset  = sunset  + 86400
-                    end
-                elseif offset < 0 then
-                    if utc_m - now >= 86400 then
-                        utc_m = utc_m - 86400
-                    end
-                    if loc_m <= utc_m then
-                        sunrise = sunrise - 86400
-                        sunset  = sunset  - 86400
-                    end
+                if math.abs(loc_now - utc_now - offdt + loc_t) >= 86400 then
+                    utc_now = utc_now + offday
                 end
 
-                if sunrise <= now and now <= sunset then
+                if offday * (loc_now - utc_now - offdt) > 0 then
+                    sunrise = sunrise + offday
+                    sunset  = sunset  + offday
+                end
+
+                if sunrise <= loc_now and loc_now <= sunset then
                     icon = string.gsub(icon, "n", "d")
                 else
                     icon = string.gsub(icon, "d", "n")
@@ -155,7 +146,6 @@ local function factory(args)
                 weather.icon_path = icons_path .. "na.png"
                 weather.widget:set_markup(weather_na_markup)
             end
-
             weather.icon:set_image(weather.icon_path)
         end)
     end
