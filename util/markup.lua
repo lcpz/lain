@@ -1,7 +1,7 @@
 --[[
 
      Licensed under MIT License
-      * (c) 2013, Luke Bonham
+      * (c) 2013, Luca CPZ
       * (c) 2009, Uli Schlachter
       * (c) 2009, Majic
 

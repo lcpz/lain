@@ -4,7 +4,7 @@
       * (c) 2016,      Henrik Antonsson
       * (c) 2015,      Joerg Jaspert
       * (c) 2014,      projektile
-      * (c) 2013,      Luke Bonham
+      * (c) 2013,      Luca CPZ
       * (c) 2010-2012, Peter Hofmann
 
 --]]

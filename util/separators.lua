@@ -1,7 +1,7 @@
 --[[
 
      Licensed under GNU General Public License v2
-      * (c) 2015, Luke Bonham
+      * (c) 2015, Luca CPZ
       * (c) 2015, plotnikovanton
 
 --]]
