@@ -42,11 +42,13 @@ local function factory(args)
     local scallback  = args.scallback
 
     pulsebar.cmd                 = args.cmd or "pacmd list-sinks | sed -n -e '0,/*/d' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'"
-    pulsebar.sink                = args.sink or 0
+    pulsebar.sink                = args.sink or 0 -- Legacy, does nothing
     pulsebar.colors              = args.colors or pulsebar.colors
     pulsebar.followtag           = args.followtag or false
     pulsebar.notification_preset = args.notification_preset
     pulsebar.device              = "N/A"
+    pulsebar.devicetype          = args.devicetype or "sink"
+    pulsebar.cmd                 = args.cmd or "pacmd list-" .. pulsebar.devicetype .. "s | sed -n -e '/*/,$!d' -e '/index/p' -e '/base volume/d' -e '/volume:/p' -e '/muted:/p' -e '/device\\.string/p'"
 
     if not pulsebar.notification_preset then
         pulsebar.notification_preset      = {}
@@ -73,7 +75,8 @@ local function factory(args)
         helpers.async({ awful.util.shell, "-c", pulsebar.cmd }, function(s)
             volume_now = {
                 index = string.match(s, "index: (%S+)") or "N/A",
-                sink  = string.match(s, "device.string = \"(%S+)\"") or "N/A",
+                device = string.match(s, "device.string = \"(%S+)\"") or "N/A",
+                sink   = device, -- legacy API
                 muted = string.match(s, "muted: (%S+)") or "N/A"
             }
 
@@ -103,7 +106,7 @@ local function factory(args)
                     pulsebar.bar.color = pulsebar.colors.mute
                 else
                     pulsebar._mute = "no"
-                    pulsebar.tooltip:set_text(string.format("%s: %s", pulsebar.sink, volu))
+                    pulsebar.tooltip:set_text(string.format("%s: %s", pulsebar.device, volu))
                     pulsebar.bar.color = pulsebar.colors.unmute
                 end
 
@@ -118,7 +121,7 @@ local function factory(args)
         pulsebar.update(function()
             local preset = pulsebar.notification_preset
 
-            preset.title = string.format("Sink %s - %s%%", pulsebar.sink, pulsebar._current_level)
+            preset.title = string.format("Sink %s - %s%%", pulsebar.device, pulsebar._current_level)
 
             if pulsebar._mute == "yes" then
                 preset.title = preset.title .. " Muted"
