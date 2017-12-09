@@ -8,6 +8,7 @@
 local helpers  = require("lain.helpers")
 local naughty  = require("naughty")
 local wibox    = require("wibox")
+local awful    = require("awful")
 local string   = { format = string.format,
                    gsub   = string.gsub }
 local type     = type
