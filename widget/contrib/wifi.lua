@@ -8,8 +8,8 @@ function factory(args)
     local settings  = args.settings or function() end
          
     function wifi.is_connected()
-        conn_flag = io.popen("[[ ! -z `ping -c 1 -w 3 www.duckduckgo.com` ]] && echo true"):read()
-        if conn_flag == "true" then
+        conn_flag = io.popen("[[ ! -z `ping -c 1 -w 3 46.51.218.82` ]] && echo 1"):read()
+        if conn_flag == "1" then
             return true
         end
         return false
@@ -18,18 +18,13 @@ function factory(args)
     function wifi.update()
         wifi_now = {
             ssid = "N/A",
-            signal = "/NA",
-            enable_signal = true,
+            signal = "N/A",
             connected = false
         }
 
         if wifi.is_connected() then
-            wifi_now.ssid = io.popen("nmcli -t -f SSID dev wifi list"):read()
-
-            if wifi_now.enable_signal then
-                wifi_now.signal = io.popen("nmcli -t -f SIGNAL dev wifi list"):read()
-            end
-
+            wifi_now.ssid = io.popen("iwgetid -r"):read()
+            wifi_now.signal = io.popen("nmcli -t -f SIGNAL dev wifi"):read()
             wifi_now.connected = true
         end
 
