@@ -15,16 +15,27 @@ function factory(args)
         return false
     end
 
+    function wifi.get_device()
+        return io.popen("nmcli -t -f DEVICE dev"):read()
+    end
+
     function wifi.update()
         wifi_now = {
-            ssid = "N/A",
-            signal = "N/A",
+            device = args.device or wifi.get_device(),
+            ssid = args.ssid_placeholder or "N/A",
+            signal = args.signal_placeholder or "N/A",
             connected = false
         }
 
         if wifi.is_connected() then
-            wifi_now.ssid = io.popen("nmcli -t -f SSID dev wifi"):read()
-            wifi_now.signal = io.popen("nmcli -t -f SIGNAL dev wifi"):read()
+            cmd_ssid = "nmcli -t -f SSID dev wifi list ifname " .. wifi_now.device
+            cmd_sigl = "nmcli -t -f SIGNAL dev wifi list ifname " .. wifi_now.device
+            ssid_out = io.popen(cmd_ssid):read()
+            signal_out = io.popen(cmd_sigl):read()
+            if not ssid_out == nil and not signal_out == nil then
+                wifi_now.ssid = ssid_out
+                wifi_now.signal = signal_out
+            end
             wifi_now.connected = true
         end
 
