@@ -23,7 +23,7 @@ function factory(args)
         }
 
         if wifi.is_connected() then
-            wifi_now.ssid = io.popen("iwgetid -r"):read()
+            wifi_now.ssid = io.popen("nmcli -t -f SSID dev wifi"):read()
             wifi_now.signal = io.popen("nmcli -t -f SIGNAL dev wifi"):read()
             wifi_now.connected = true
         end
