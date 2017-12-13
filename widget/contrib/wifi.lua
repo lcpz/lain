@@ -32,7 +32,7 @@ function factory(args)
             cmd_sigl = "nmcli -t -f SIGNAL dev wifi list ifname " .. wifi_now.device
             ssid_out = io.popen(cmd_ssid):read()
             signal_out = io.popen(cmd_sigl):read()
-            if not ssid_out == nil and not signal_out == nil then
+            if not (ssid_out == nil or signal_out == nil) then
                 wifi_now.ssid = ssid_out
                 wifi_now.signal = signal_out
             end
