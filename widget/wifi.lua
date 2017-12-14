@@ -5,8 +5,6 @@ local tonumber = tonumber
 
 -- wifi link info
 -- lain.widget.wifi
--- most code copied from awesome-copycats lain
--- plagiarized by vlad-tdot (kvantum)
 
 local function factory(args)
     local wifi	   = { widget = wibox.widget.textbox() }
