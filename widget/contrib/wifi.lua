@@ -1,3 +1,5 @@
+local awful     = require("awful")
+local naughty   = require("naughty")
 local wibox     = require("wibox")
 local helpers   = require("lain.helpers")
 
@@ -7,36 +9,54 @@ function factory(args)
     local timeout   = args.timeout or 2
     local settings  = args.settings or function() end
          
-    function wifi.is_connected()
-        conn_flag = io.popen("[[ ! -z `ping -c 1 -w 3 46.51.218.82` ]] && echo 1"):read()
-        if conn_flag == "1" then
-            return true
-        end
-        return false
-    end
+    local command = {
+        check_conn = "[ ! -z \"`ping -c1 -w3 www.duckduckgo.com`\" ] && echo -n 1",
+        nmcli_dev = "nmcli -t dev | grep -E ^wl",
+        nmcli_wifi = "nmcli -g IN-USE,SSID,SIGNAL dev wifi list | grep -F \"*\"",
+    }
 
-    function wifi.get_device()
-        return io.popen("nmcli -t -f DEVICE dev"):read()
+    wifi_now = {
+        device = args.device or "N/A",
+        connected = false,
+        ssid = args.ssid_placeholder or "N/A",
+        signal = args.signal_placeholder or "N/A",
+    }
+
+    function wifi.shell_cmd(cmd)
+        return awful.util.shell .. " -c '" .. cmd .. "'"
     end
 
     function wifi.update()
-        wifi_now = {
-            device = args.device or wifi.get_device(),
-            ssid = args.ssid_placeholder or "N/A",
-            signal = args.signal_placeholder or "N/A",
-            connected = false
-        }
 
-        if wifi.is_connected() then
-            cmd_ssid = "nmcli -t -f SSID dev wifi list ifname " .. wifi_now.device
-            cmd_sigl = "nmcli -t -f SIGNAL dev wifi list ifname " .. wifi_now.device
-            ssid_out = io.popen(cmd_ssid):read()
-            signal_out = io.popen(cmd_sigl):read()
-            if not (ssid_out == nil or signal_out == nil) then
-                wifi_now.ssid = ssid_out
-                wifi_now.signal = signal_out
+        awful.spawn.easy_async(wifi.shell_cmd(command.check_conn),
+            function(stdout, stderr, reason, exit_code)
+                -- sub(1,1) because of trailing new line in stdout.
+                if stdout:sub(1, 1) == "1" then
+                    wifi_now.connected = true
+                end
             end
-            wifi_now.connected = true
+        )
+
+        -- Only update wifi information if connected to internet.
+        if wifi_now.connected then
+            if not args.device then
+                awful.spawn.easy_async(wifi.shell_cmd(command.nmcli_dev),
+                    function(stdout, stderr, reason, exit_code)
+                        local dev = string.match(stdout, "^(wl.-):")
+                        wifi_now.device = dev
+                    end
+                )
+            else
+                wifi_now.device = args.device
+            end
+
+            awful.spawn.easy_async(wifi.shell_cmd(command.nmcli_wifi),
+                function(stdout, stderr, reason, exit_code)
+                    local ssid, signal = string.match(stdout, ":(.-):(.*)$")
+                    wifi_now.ssid = ssid
+                    wifi_now.signal = signal
+                end
+            )
         end
 
         widget = wifi.widget
