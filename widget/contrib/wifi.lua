@@ -1,5 +1,4 @@
 local awful     = require("awful")
-local naughty   = require("naughty")
 local wibox     = require("wibox")
 local helpers   = require("lain.helpers")
 
