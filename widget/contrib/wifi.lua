@@ -51,7 +51,7 @@ function factory(args)
 
             awful.spawn.easy_async(wifi.shell_cmd(command.nmcli_wifi),
                 function(stdout, stderr, reason, exit_code)
-                    local ssid, signal = string.match(stdout, ":(.-):(.*)$")
+                    local ssid, signal = string.match(stdout, ":(.-):(%d+)")
                     wifi_now.ssid = ssid
                     wifi_now.signal = signal
                 end
