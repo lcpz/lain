@@ -19,34 +19,37 @@ local string        = { format = string.format,
 -- lain.widget.contrib.updates
 
 local function factory(args)
-    local updates          = { widget = wibox.widget.textbox() }
+    local updates         = { widget = wibox.widget.textbox() }
     local args            = args or {}
     local timeout         = args.timeout or 900
-
-    local notify          = args.notify or false
-    local notify_title    = args.notify_title or "Updates"
-    local notify_timeout  = args.notify_timeout or 15
-
     local settings        = args.settings or function() end
-    local package_manager = args.package_manager
     local command         = args.command or ""
+    local notify          = args.notify or "on"
 
-    local commands = {
-        pacman        = "checkupdates | sed 's/->/→/' | column -t",
-        pacaur        = "pacaur -k --color never | sed 's/:: [a-zA-Z0-9]\\+ //' | sed 's/->/→/' | column -t",
-        pacman_pacaur = "( checkupdates & pacaur -k --color never | sed 's/:: [a-zA-Z0-9]\\+ //' ) | sed 's/->/→/' | sort | column -t",
-        dnf           = "dnf check-update --quiet",
-        apt           = "apt-show-versions -u"
-    }
+    -- Example commands:
+    -- pacman:          "checkupdates | sed 's/->/→/' | column -t",
+    -- pacaur:          "pacaur -k --color never | sed 's/:: [a-zA-Z0-9]\\+ //' | sed 's/->/→/' | column -t",
+    -- pacman & pacaur: "( checkupdates & pacaur -k --color never | sed 's/:: [a-zA-Z0-9]\\+ //' ) | sed 's/->/→/' | sort | column -t",
+    -- dnf:             "dnf check-update --quiet",
+    -- apt:             "apt-show-versions -u"
+    -- pip:             "pip list --outdated --format=legacy"
+
+    local notification_preset = args.notification_preset
+    if not notification_preset then
+        notification_preset = {
+            title    = "Updates",
+            timeout  = 15
+        }
+    end
 
     local update_count = 0
 
     function updates.update(notify)
-        helpers.async({ shell, "-c", commands[package_manager] or command }, function(update_text)
+        helpers.async({ shell, "-c", command }, function(update_text)
             available  = tonumber((update_text:gsub('[^\n]', '')):len())
             widget = updates.widget
 
-            if available > update_count and notify then
+            if available > update_count and notify == "on" then
                 updates.show_notification(update_text)
             end
             update_count = available
@@ -54,29 +57,30 @@ local function factory(args)
         end)
     end
 
-    function updates.automatic_update()
-        -- Notify if set and update_count has increased
-        updates.update(notify)
-    end
-
     function updates.manual_update()
         -- Allways show notification
         update_count = -1
-        updates.update(true)
+        updates.update("on")
     end
 
     function updates.show_notification(update_text)
         if not update_text or update_text == "" then
-            update_text = "None."
+            notification_preset.text = "None."
+        else
+            notification_preset.text = string.gsub(update_text, '[\n%s]*$', '')
         end
-        naughty.notify({
-            title = notify_title,
-            text = string.gsub(update_text, '[\n%s]*$', ''),
-            timeout = notify_timeout
+        notification_preset.screen = scr or (updates.followtag and awful.screen.focused()) or 1
+
+        if updates.notification then
+            naughty.destroy(updates.notification)
+        end
+        updates.notification = naughty.notify({
+            preset = notification_preset,
+            timeout = notification_preset.timeout or 15
         })
     end
 
-    helpers.newtimer("updates", timeout, updates.automatic_update)
+    helpers.newtimer("updates", timeout, function() updates.update(notify) end)
 
     return updates
 end
