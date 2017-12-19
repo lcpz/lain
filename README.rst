@@ -5,7 +5,7 @@ Lain
 Layouts, widgets and utilities for Awesome WM 4.x
 -------------------------------------------------
 
-:Author: Luca CPZ <dada [at] archlinux [dot] info>
+:Author: Luca CPZ
 :Version: git
 :License: GNU-GPL2_
 :Source: https://github.com/lcpz/lain
@@ -13,7 +13,7 @@ Layouts, widgets and utilities for Awesome WM 4.x
 Description
 -----------
 
-Successor of awesome-vain_, this module provides alternative layouts, asynchronous widgets and utility functions for Awesome_ WM. Read the wiki_ for all the info.
+Successor of awesome-vain_, this module provides alternative layouts, asynchronous widgets and utility functions for Awesome_. Read the wiki_ for all the info.
 
 Contributions
 -------------

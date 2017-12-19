@@ -12,7 +12,7 @@ description = {
         Optional dependency: curl (for IMAP, MPD and weather widgets).
     ]],
    homepage = "https://github.com/lcpz/lain",
-   license = "GPL v2"
+   license = "GPL-2.0"
 }
 dependencies = {
    "lua >= 5.1",
