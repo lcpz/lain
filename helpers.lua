@@ -5,7 +5,7 @@
 
 --]]
 
-local spawn = require("awful.spawn")
+local spawn      = require("awful.spawn")
 local timer      = require("gears.timer")
 local debug      = require("debug")
 local io         = { lines = io.lines,
@@ -112,7 +112,7 @@ end
 function helpers.async(cmd, callback)
     return spawn.easy_async(cmd,
     function (stdout, stderr, reason, exit_code)
-        callback(stdout)
+        callback(stdout, exit_code)
     end)
 end
 
@@ -120,8 +120,17 @@ end
 function helpers.async_with_shell(cmd, callback)
     return spawn.easy_async_with_shell(cmd,
     function (stdout, stderr, reason, exit_code)
-        callback(stdout)
+        callback(stdout, exit_code)
     end)
+end
+
+-- run a command and execute a function on its output line by line
+function helpers.line_callback(cmd, callback)
+    return spawn.with_line_callback(cmd, {
+        stdout = function (line)
+            callback(line)
+        end,
+    })
 end
 
 -- }}}
