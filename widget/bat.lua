@@ -47,6 +47,14 @@ local function factory(args)
         bg      = "#CDCDCD"
     }
 
+    bat_notification_charged_preset = {
+        title = "Battery full",
+        text  = "You can unplug the cable",
+        timeout = 15,
+        fg      = "#202020",
+        bg      = "#CDCDCD"
+    }
+
     bat_now = {
         status    = "N/A",
         ac_status = "N/A",
@@ -156,16 +164,23 @@ local function factory(args)
         widget = bat.widget
         settings()
 
-        -- notifications for critical and low levels
-        if notify == "on" and bat_now.status == "Discharging" then
-            if tonumber(bat_now.perc) <= n_perc[1] then
+        -- notifications for critical, low, and full levels
+        if notify == "on" then
+            if bat_now.status == "Discharging" then
+                if tonumber(bat_now.perc) <= n_perc[1] then
+                    bat.id = naughty.notify({
+                        preset = bat_notification_critical_preset,
+			            replaces_id = bat.id
+                    }).id
+                elseif tonumber(bat_now.perc) <= n_perc[2] then
+                    bat.id = naughty.notify({
+                        preset = bat_notification_low_preset,
+                        replaces_id = bat.id
+                    }).id
+                end
+            elseif bat_now.status == "Full" then
                 bat.id = naughty.notify({
-                    preset = bat_notification_critical_preset,
-                    replaces_id = bat.id
-                }).id
-            elseif tonumber(bat_now.perc) <= n_perc[2] then
-                bat.id = naughty.notify({
-                    preset = bat_notification_low_preset,
+                    preset = bat_notification_charged_preset,
                     replaces_id = bat.id
                 }).id
             end
