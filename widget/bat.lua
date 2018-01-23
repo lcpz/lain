@@ -48,8 +48,8 @@ local function factory(args)
     }
 
     bat_notification_charged_preset = {
-        title = "Battery full",
-        text  = "You can unplug the cable",
+        title   = "Battery full",
+        text    = "You can unplug the cable",
         timeout = 15,
         fg      = "#202020",
         bg      = "#CDCDCD"
@@ -69,6 +69,9 @@ local function factory(args)
         bat_now.n_status[i] = "N/A"
         bat_now.n_perc[i] = 0
     end
+
+    -- used to notify full charge only once before discharging
+    local fullnotification = false
 
     function bat.update()
         local sum_rate_current = 0
@@ -170,7 +173,7 @@ local function factory(args)
                 if tonumber(bat_now.perc) <= n_perc[1] then
                     bat.id = naughty.notify({
                         preset = bat_notification_critical_preset,
-			            replaces_id = bat.id
+                        replaces_id = bat.id
                     }).id
                 elseif tonumber(bat_now.perc) <= n_perc[2] then
                     bat.id = naughty.notify({
@@ -178,11 +181,13 @@ local function factory(args)
                         replaces_id = bat.id
                     }).id
                 end
-            elseif bat_now.status == "Full" then
+                fullnotification = false
+            elseif bat_now.status == "Full" and not fullnotification then
                 bat.id = naughty.notify({
                     preset = bat_notification_charged_preset,
                     replaces_id = bat.id
                 }).id
+                fullnotification = true
             end
         end
     end
