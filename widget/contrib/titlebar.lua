@@ -5,8 +5,9 @@
 
 --]]
 
-local layout = require("wibox.layout.fixed")
+local layout = require("wibox.layout").fixed
 local widget = require("wibox.widget")
+local rotate = require("wibox.container").rotate
 local button = require("awful.button")
 local join   = require("gears.table").join
 local markup = require("lain.util").markup.fontfg
@@ -20,7 +21,7 @@ local function factory(args)
     local order    = args.order or {"close", "max", "ontop", "sticky", "floating", "separator", "title"}
 
     local titlebar
-    if args.orientation == "vertical" then
+    if args.rotation == "left" or args.rotation == "right" then
         titlebar = layout.vertical()
     else
         titlebar = layout.horizontal()
@@ -191,36 +192,46 @@ local function factory(args)
             client.connect_signal("unfocus", function() max_button:set_image() end)
 
         elseif part == "title" then
-            local title       = widget.textbox()
-            local font        = args.title_font or nil
-            local color       = args.title_color or "#FFFFFF"
-            local placeholder = escape(args.title_placeholder) or ""
+            local title_rotation
+
+            if args.rotation == "left" then
+                title_rotation = "east"
+            elseif args.rotation == "right" then
+                title_rotation = "west"
+            else
+                title_rotation = "north"
+            end
+
+            local title = rotate(widget.textbox(), title_rotation)
+            local font  = args.title_font or nil
+            local color = args.title_color or "#FFFFFF"
 
             function update_title(c)
                 if c == client.focus then
                     if c.name then
-                        title.markup = markup(font, color, escape(c.name))
+                        title.widget.markup = markup(font, color, escape(c.name))
                     elseif c.class then
-                        title.markup = markup(font, color, escape(c.class))
+                        title.widget.markup = markup(font, color, escape(c.class))
                     end
                 end
             end
 
             titlebar:add(title)
-            title.markup = markup(font, color, placeholder)
 
             client.connect_signal("focus", update_title)
             client.connect_signal("property::name", update_title)
-            client.connect_signal("unfocus", function() title.markup = markup(font, color, placeholder) end)
+            client.connect_signal("unfocus", function() title.widget.text = "" end)
 
         elseif part == "separator" then
             local separator = widget.textbox()
-            local text      = args.separator or " "
+            local font      = args.separator_font or args.title_font or nil
+            local color     = args.separator_color or args.title_color or "#FFFFFF"
+            local text      = escape(args.separator) or " "
 
             titlebar:add(separator)
 
-            client.connect_signal("focus", function() separator.markup = text end)
-            client.connect_signal("unfocus", function() separator.markup = "" end)
+            client.connect_signal("focus", function() separator.markup = markup(font, color, text) end)
+            client.connect_signal("unfocus", function() separator.text = "" end)
         end
     end
 
