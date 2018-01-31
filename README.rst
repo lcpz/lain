@@ -5,15 +5,15 @@ Lain
 Layouts, widgets and utilities for Awesome WM 4.x
 -------------------------------------------------
 
-:Author: Luke Bonham <dada [at] archlinux [dot] info>
+:Author: Luca CPZ
 :Version: git
 :License: GNU-GPL2_
-:Source: https://github.com/copycat-killer/lain
+:Source: https://github.com/lcpz/lain
 
 Description
 -----------
 
-Successor of awesome-vain_, this module provides alternative layouts, asynchronous widgets and utility functions for Awesome_ WM. Read the wiki_ for all the info.
+Successor of awesome-vain_, this module provides alternative layouts, asynchronous widgets and utility functions for Awesome_. Read the wiki_ for all the info.
 
 Contributions
 -------------
@@ -35,5 +35,5 @@ Contributed widgets have to be put in ``widget/contrib``.
 .. _GNU-GPL2: http://www.gnu.org/licenses/gpl-2.0.html
 .. _awesome-vain: https://github.com/vain/awesome-vain
 .. _Awesome: https://github.com/awesomeWM/awesome
-.. _wiki: https://github.com/copycat-killer/lain/wiki
-.. _lain.helpers: https://github.com/copycat-killer/lain/blob/master/helpers.lua
+.. _wiki: https://github.com/lcpz/lain/wiki
+.. _lain.helpers: https://github.com/lcpz/lain/blob/master/helpers.lua

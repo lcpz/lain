@@ -122,7 +122,7 @@ local function factory(args)
                 local utc_now = os.time(utc_d)
                 local offdt   = (loc_d.isdst and 1 or 0) * 3600 + 100 * (loc_d.min  - utc_d.min) / 60
                 local offset  = os.difftime(loc_now, utc_now) + offdt
-                local offday  = (offset<0 and -86400) or 86400
+                local offday  = (offset < 0 and -86400) or 86400
 
                 if math.abs(loc_now - utc_now - offdt + loc_t) >= 86400 then
                     utc_now = utc_now + offday
