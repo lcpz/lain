@@ -1,7 +1,7 @@
 package = "lain"
 version = "git"
 source = {
-   url = "https://github.com/copycat-killer/lain",
+   url = "https://github.com/lcpz/lain",
    tag = "git"
 }
 description = {
@@ -11,8 +11,8 @@ description = {
 
         Optional dependency: curl (for IMAP, MPD and weather widgets).
     ]],
-   homepage = "https://github.com/copycat-killer/lain",
-   license = "GPL v2"
+   homepage = "https://github.com/lcpz/lain",
+   license = "GPL-2.0"
 }
 dependencies = {
    "lua >= 5.1",

@@ -62,7 +62,7 @@ function calendar.show(t_out, inc_offset, scr)
     helpers.async(f, function(ws)
         local fg, bg = calendar.notification_preset.fg, calendar.notification_preset.bg
         calendar.notification_preset.text = ws:gsub("%c%[%d+[m]?%s?%d+%c%[%d+[m]?",
-        markup.bold(markup.color(bg, fg, os.date("%e")))):gsub("\n*$", "")
+        markup.bold(markup.color(bg, fg, os.date("%e")))):gsub("[\n%s]*$", "")
 
         local widget_focused = true
 
