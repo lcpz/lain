@@ -10,6 +10,7 @@ local json     = require("lain.util").dkjson
 local focused  = require("awful.screen").focused
 local naughty  = require("naughty")
 local wibox    = require("wibox")
+local gears = require("gears")
 
 local math, os, string, tonumber = math, os, string, tonumber
 
@@ -114,23 +115,23 @@ local function factory(args)
                 local sunrise = tonumber(weather_now["sys"]["sunrise"])
                 local sunset  = tonumber(weather_now["sys"]["sunset"])
                 local icon    = weather_now["weather"][1]["icon"]
-                local loc_now = os.time()
-                local loc_m   = os.time { year = os.date("%Y"), month = os.date("%m"), day = os.date("%d"), hour = 0 }
-                local loc_t   = os.difftime(loc_now, loc_m)
-                local loc_d   = os.date("*t",  loc_now)
-                local utc_d   = os.date("!*t", loc_now)
-                local utc_now = os.time(utc_d)
-                local offdt   = (loc_d.isdst and 1 or 0) * 3600 + 100 * (loc_d.min  - utc_d.min) / 60
-                local offset  = os.difftime(loc_now, utc_now) + offdt
-                local offday  = (offset < 0 and -86400) or 86400
+                local loc_now = os.time() -- local time
+                local loc_m   = os.time { year = os.date("%Y"), month = os.date("%m"), day = os.date("%d"), hour = 0 } -- local time of past midnight
+                local loc_t   = os.difftime(loc_now, loc_m) -- time passed since the last midnight
+                local loc_d   = os.date("*t",  loc_now) -- table YMDHMS for current local time (for TZ calculation)
+                local utc_d   = os.date("!*t", loc_now) -- table YMDHMS for current UTC time
+                local utc_now = os.time(utc_d) -- UTC time now
+                local offdt   = (loc_d.isdst and 1 or 0) * 3600 + 100 * (loc_d.min  - utc_d.min) / 60 -- DST offset
+                local offset  = os.difftime(loc_now, utc_now) + offdt -- TZ offset (including DST)
+                local offday  = (offset<0 and -86400) or 86400 -- 24 hour correction value (+86400 or -86400)
 
-                if math.abs(loc_now - utc_now - offdt + loc_t) >= 86400 then
-                    utc_now = utc_now + offday
+                if math.abs(loc_now - loc_m + offset) >= 86400 then -- Test if we more then 24 hour away from last UTC midnight [utc_midnight = local_midnight - offset]
+                    offset = offset - offday -- if yes, shift offset value by 24 hours
                 end
 
-                if offday * (loc_now - utc_now - offdt) > 0 then
-                    sunrise = sunrise + offday
-                    sunset  = sunset  + offday
+                if offday * offset > 0 then -- If local midnight is still after UTC midnight for positive TZ (and vv) 
+                    sunrise = sunrise - offday -- Shift sunset and sunrise times by 24 hours
+                    sunset  = sunset  - offday
                 end
 
                 if sunrise <= loc_now and loc_now <= sunset then
@@ -138,6 +139,8 @@ local function factory(args)
                 else
                     icon = string.gsub(icon, "d", "n")
                 end
+
+                gears.debug.print_warning("Sunrise/set:" .. sunrise .. " " .. sunset .. " Time now:" .. loc_now .. " Icon:" .. icon )
 
                 weather.icon_path = icons_path .. icon .. ".png"
                 widget = weather.widget
