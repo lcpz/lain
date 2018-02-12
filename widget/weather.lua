@@ -10,7 +10,6 @@ local json     = require("lain.util").dkjson
 local focused  = require("awful.screen").focused
 local naughty  = require("naughty")
 local wibox    = require("wibox")
-local gears = require("gears")
 
 local math, os, string, tonumber = math, os, string, tonumber
 
@@ -117,7 +116,6 @@ local function factory(args)
                 local icon    = weather_now["weather"][1]["icon"]
                 local loc_now = os.time() -- local time
                 local loc_m   = os.time { year = os.date("%Y"), month = os.date("%m"), day = os.date("%d"), hour = 0 } -- local time of past midnight
-                -- local loc_t   = os.difftime(loc_now, loc_m) -- time passed since the last midnight
                 local loc_d   = os.date("*t",  loc_now) -- table YMDHMS for current local time (for TZ calculation)
                 local utc_d   = os.date("!*t", loc_now) -- table YMDHMS for current UTC time
                 local utc_now = os.time(utc_d) -- UTC time now
@@ -136,8 +134,6 @@ local function factory(args)
                     icon = string.gsub(icon, "d", "n")
                 end
 
-                gears.debug.print_warning("Sunrise/set:" .. sunrise .. " " .. sunset .. " Time now:" .. loc_now .. " Icon:" .. icon )
-
                 weather.icon_path = icons_path .. icon .. ".png"
                 widget = weather.widget
                 settings()
@@ -145,6 +141,7 @@ local function factory(args)
                 weather.icon_path = icons_path .. "na.png"
                 weather.widget:set_markup(weather_na_markup)
             end
+
             weather.icon:set_image(weather.icon_path)
         end)
     end
