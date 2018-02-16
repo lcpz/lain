@@ -123,9 +123,16 @@ local function factory(args)
                 preset.title = preset.title .. " muted"
             end
 
-            int = math.modf((pulsebar._current_level / 100) * awful.screen.focused().mywibox.height)
+            local wib = awful.screen.focused().mywibox
+
+            local tot = wib.height
+            if wib.position == "left" or wib.position == "right" then
+                tot = wib.width
+            end
+
+            int = math.modf((pulsebar._current_level / 100) * tot)
             preset.text = string.format("[%s%s]", string.rep("|", int),
-                          string.rep(" ", awful.screen.focused().mywibox.height - int))
+                          string.rep(" ", tot - int))
 
             if pulsebar.followtag then preset.screen = awful.screen.focused() end
 
