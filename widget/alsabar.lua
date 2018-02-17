@@ -113,11 +113,18 @@ local function factory(args)
                 preset.title = preset.title .. " Muted"
             end
 
-            local wib = awful.screen.focused().mywibox
+            -- tot is the maximum number of ticks to display in the notification
+            -- fallback: default horizontal wibox height
+            local wib, tot = awful.screen.focused().mywibox, 20
 
-            local tot = wib.height
-            if wib.position == "left" or wib.position == "right" then
-                tot = wib.width
+            -- if we can grab mywibox, tot is defined as its height if
+            -- horizontal, or width otherwise
+            if wib then
+                if wib.position == "left" or wib.position == "right" then
+                    tot = wib.width
+                else
+                    tot = wib.height
+                end
             end
 
             int = math.modf((alsabar._current_level / 100) * tot)
