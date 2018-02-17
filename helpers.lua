@@ -179,6 +179,29 @@ function helpers.spairs(t)
     end
 end
 
+-- create trivial partition of a set. The trivial partition set is the simplest
+-- partition of a set. For e.g., the trivial partition set of {a, b, c}, is
+-- simply {{a}, {b}, {c}}.
+function helpers.trivial_partition_set(set)
+    local ss = {}
+    for _,e in pairs(set) do
+        ss[#ss+1] = {e}
+    end
+    return ss
+end
+
+-- creates the powerset of a given set
+function helpers.powerset(s)
+    if not s then return {} end
+    local t = {{}}
+    for i = 1, #s do
+        for j = 1, #t do
+            t[#t+1] = {s[i],unpack(t[j])}
+        end
+    end
+    return t
+end
+
 -- }}}
 
 return helpers
