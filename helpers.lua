@@ -10,6 +10,7 @@ local timer      = require("gears.timer")
 local debug      = require("debug")
 local io         = { lines = io.lines,
                      open  = io.open }
+local pairs      = pairs
 local rawget     = rawget
 local table      = { sort  = table.sort }
 
@@ -179,9 +180,8 @@ function helpers.spairs(t)
     end
 end
 
--- create trivial partition of a set. The trivial partition set is the simplest
--- partition of a set. For e.g., the trivial partition set of {a, b, c}, is
--- simply {{a}, {b}, {c}}.
+-- create the partition of singletons of a given set
+-- example: the trivial partition set of {a, b, c}, is {{a}, {b}, {c}}
 function helpers.trivial_partition_set(set)
     local ss = {}
     for _,e in pairs(set) do
