@@ -33,53 +33,49 @@ end
 
 -- {{{ File operations
 
--- see if the file exists and is readable
-function helpers.file_exists(file)
-  local f = io.open(file)
-  if f then
-      local s = f:read()
-      f:close()
-      f = s
-  end
-  return f ~= nil
+-- check if the file exists and is readable
+function helpers.file_exists(path)
+    local file = io.open(path, "rb")
+    if file then file:close() end
+    return file ~= nil
 end
 
--- get all lines from a file, returns an empty
--- list/table if the file does not exist
-function helpers.lines_from(file)
-  if not helpers.file_exists(file) then return {} end
-  local lines = {}
-  for line in io.lines(file) do
-    lines[#lines + 1] = line
-  end
-  return lines
+-- get a table with all lines from a file
+function helpers.lines_from(path)
+    local lines = {}
+    for line in io.lines(path) do
+        lines[#lines + 1] = line
+    end
+    return lines
 end
 
--- match all lines from a file, returns an empty
--- list/table if the file or match does not exist
-function helpers.lines_match(regexp, file)
-	local lines = {}
-	for index,line in pairs(helpers.lines_from(file)) do
-		if string.match(line, regexp) then
-			lines[index] = line
-		end
-	end
-	return lines
+-- get a table with all lines from a file matching regexp
+function helpers.lines_match(regexp, path)
+    local lines = {}
+    for line in io.lines(path) do
+        if string.match(line, regexp) then
+            lines[#lines + 1] = line
+        end
+    end
+    return lines
 end
 
--- get first line of a file, return nil if
--- the file does not exist
-function helpers.first_line(file)
-    return helpers.lines_from(file)[1]
+-- get first line of a file
+function helpers.first_line(path)
+    local file, first = io.open(path, "rb"), nil
+    if file then
+        first = file:read("*l")
+        file:close()
+    end
+    return first
 end
 
--- get first non empty line from a file,
--- returns nil otherwise
-function helpers.first_nonempty_line(file)
-  for k,v in pairs(helpers.lines_from(file)) do
-    if #v then return v end
-  end
-  return nil
+-- get first non empty line from a file
+function helpers.first_nonempty_line(path)
+    for line in io.lines(path) do
+        if #line then return line end
+    end
+    return nil
 end
 
 -- }}}
