@@ -74,26 +74,28 @@ local function factory(args)
             local path = Gio.unix_mount_get_mount_path(mount)
             local root = Gio.File.new_for_path(path)
             local info = root:query_filesystem_info(query)
-            local size = info:get_attribute_uint64(query_size)
-            local used = info:get_attribute_uint64(query_used)
-            local free = info:get_attribute_uint64(query_free)
 
-            if size > 0 then
-                local units = math.floor(math.log(size)/math.log(1024))
+            if info then
+                local size = info:get_attribute_uint64(query_size)
+                local used = info:get_attribute_uint64(query_used)
+                local free = info:get_attribute_uint64(query_free)
 
-                fs_now[path] = {
-                    units      = fs.units[units],
-                    percentage = math.floor(100 * used / size), -- used percentage
-                    size       = size / math.pow(1024, math.floor(units)),
-                    used       = used / math.pow(1024, math.floor(units)),
-                    free       = free / math.pow(1024, math.floor(units))
-                }
+                if size > 0 then
+                    local units = math.floor(math.log(size)/math.log(1024))
 
-                -- don't notify unused file systems
-                if fs_now[path].percentage > 0 then
-                    notifytable[#notifytable+1] = sformat("\n%-10s %-5s %3.2f\t%3.2f\t%s", path,
-                    fs_now[path].percentage .. "%", fs_now[path].free, fs_now[path].size,
-                    fs_now[path].units)
+                    fs_now[path] = {
+                        units      = fs.units[units],
+                        percentage = math.floor(100 * used / size), -- used percentage
+                        size       = size / math.pow(1024, math.floor(units)),
+                        used       = used / math.pow(1024, math.floor(units)),
+                        free       = free / math.pow(1024, math.floor(units))
+                    }
+
+                    if fs_now[path].percentage > 0 then -- don't notify unused file systems
+                        notifytable[#notifytable+1] = sformat("\n%-10s %-5s %3.2f\t%3.2f\t%s", path,
+                        fs_now[path].percentage .. "%", fs_now[path].free, fs_now[path].size,
+                        fs_now[path].units)
+                    end
                 end
             end
         end
