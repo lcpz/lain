@@ -13,7 +13,7 @@ local focused    = require("awful.screen").focused
 local wibox      = require("wibox")
 local naughty    = require("naughty")
 local math       = math
-local sformat    = string.format
+local string     = string
 local tconcat    = table.concat
 local tonumber   = tonumber
 local query_size = Gio.FILE_ATTRIBUTE_FILESYSTEM_SIZE
@@ -67,7 +67,8 @@ local function factory(args)
     end
 
     function fs.update()
-        local notifytable = { [1] = sformat("%-10s %-5s %s\t%s\t\n", "fs", "used", "free", "size") }
+        local notifytable = { [1] = string.format("%-10s %-5s %s\t%s\t\n", "path", "used", "free", "size") }
+        local pathlen = 10
         fs_now = {}
 
         for _, mount in ipairs(Gio.unix_mounts_get()) do
@@ -92,9 +93,11 @@ local function factory(args)
                     }
 
                     if fs_now[path].percentage > 0 then -- don't notify unused file systems
-                        notifytable[#notifytable+1] = sformat("\n%-10s %-5s %3.2f\t%3.2f\t%s", path,
+                        notifytable[#notifytable+1] = string.format("\n%-10s %-5s %.2f\t%.2f\t%s", path,
                         fs_now[path].percentage .. "%", fs_now[path].free, fs_now[path].size,
                         fs_now[path].units)
+
+                        pathlen = math.max(pathlen, #path)
                     end
                 end
             end
@@ -113,6 +116,13 @@ local function factory(args)
                 helpers.set_map(partition, true)
             else
                 helpers.set_map(partition, false)
+            end
+        end
+
+        if pathlen > 10 then -- formatting aesthetics
+            for i = 1, #notifytable do
+                local pathspaces = notifytable[i]:match("/%w*[/%w*]*%s*") or notifytable[i]:match("path%s*")
+                notifytable[i] = notifytable[i]:gsub(pathspaces, pathspaces .. string.rep(" ", pathlen - 10) .. "\t")
             end
         end
 
