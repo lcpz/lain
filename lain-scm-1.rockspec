@@ -1,8 +1,8 @@
 package = "lain"
-version = "git"
+version = "scm-1"
 source = {
    url = "https://github.com/lcpz/lain",
-   tag = "git"
+   tag = "scm-1`"
 }
 description = {
    summary = "Layout, widgets and utilities for Awesome WM",
