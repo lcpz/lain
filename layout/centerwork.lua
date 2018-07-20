@@ -10,7 +10,7 @@
 
 --]]
 
-local capi, floor, max, screen = capi, math.floor, math.max, screen
+local floor, max, mouse, mousegrabber, screen = math.floor, math.max, mouse, mousegrabber, screen
 
 local centerwork = {
     name       = "centerwork",
@@ -152,11 +152,11 @@ local function mouse_resize_handler(c, corner, x, y, orientation)
         corner_coords = { y = wa.y + wa.height * (1 - mwfact) / 2, x = g.x + offset }
     end
 
-    capi.mouse.coords(corner_coords)
+    mouse.coords(corner_coords)
 
     local prev_coords = {}
 
-    capi.mousegrabber.run(function(_mouse)
+    mousegrabber.run(function(_mouse)
         if not c.valid then return false end
         for _, v in ipairs(_mouse.buttons) do
             if v then
