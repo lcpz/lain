@@ -1,6 +1,7 @@
 --[[
 
      Licensed under GNU General Public License v2
+      * (c) 2018,      Eugene Pakhomov
       * (c) 2016,      Henrik Antonsson
       * (c) 2015,      Joerg Jaspert
       * (c) 2014,      projektile
@@ -9,7 +10,7 @@
 
 --]]
 
-local floor, max, screen = math.floor, math.max, screen
+local capi, floor, max, screen = capi, math.floor, math.max, screen
 
 local centerwork = {
     name       = "centerwork",
@@ -124,12 +125,70 @@ local function arrange(p, layout)
     end
 end
 
+local function mouse_resize_handler(c, corner, x, y, orientation)
+    local wa     = c.screen.workarea
+    local mwfact = c.screen.selected_tag.master_width_factor
+    local g      = c:geometry()
+    local offset = 0
+    local cursor = "cross"
+
+    local corner_coords
+
+    if orientation == 'vertical' then
+        if g.height + 15 >= wa.height then
+            offset = g.height * .5
+            cursor = "sb_h_double_arrow"
+        elseif not (g.y + g.height + 15 > wa.y + wa.height) then
+            offset = g.height
+        end
+        corner_coords = { x = wa.x + wa.width * (1 - mwfact) / 2, y = g.y + offset }
+    else
+        if g.width + 15 >= wa.width then
+            offset = g.width * .5
+            cursor = "sb_v_double_arrow"
+        elseif not (g.x + g.width + 15 > wa.x + wa.width) then
+            offset = g.width
+        end
+        corner_coords = { y = wa.y + wa.height * (1 - mwfact) / 2, x = g.x + offset }
+    end
+
+    capi.mouse.coords(corner_coords)
+
+    local prev_coords = {}
+
+    capi.mousegrabber.run(function(_mouse)
+        if not c.valid then return false end
+        for _, v in ipairs(_mouse.buttons) do
+            if v then
+                prev_coords = { x = _mouse.x, y = _mouse.y }
+                local new_mwfact
+                if orientation == 'vertical' then
+                    new_mwfact = 1 - (_mouse.x - wa.x) / wa.width * 2
+                else
+                    new_mwfact = 1 - (_mouse.y - wa.y) / wa.height * 2
+                end
+                c.screen.selected_tag.master_width_factor = math.min(math.max(new_mwfact, 0.01), 0.99)
+                return true
+            end
+        end
+        return prev_coords.x == _mouse.x and prev_coords.y == _mouse.y
+    end, cursor)
+end
+
 function centerwork.arrange(p)
     return arrange(p, centerwork)
 end
 
 function centerwork.horizontal.arrange(p)
     return arrange(p, centerwork.horizontal)
+end
+
+function centerwork.mouse_resize_handler(c, corner, x, y)
+    return mouse_resize_handler(c, corner, x, y, 'vertical')
+end
+
+function centerwork.horizontal.mouse_resize_handler(c, corner, x, y)
+    return mouse_resize_handler(c, corner, x, y, 'horizontal')
 end
 
 return centerwork

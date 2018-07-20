@@ -23,7 +23,6 @@ function task.hide()
 end
 
 function task.show(scr)
-
     if task.followtag then
         task.notification_preset.screen = awful.screen.focused()
     elseif scr then
