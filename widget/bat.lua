@@ -33,7 +33,7 @@ local function factory(args)
     end
 
     bat.batteries = args.batteries or (args.battery and {args.battery}) or {}
-    bat.ac        = args.ac or "AC0"
+    bat.ac        = args.ac
 
     function bat.get_batteries()
         helpers.line_callback("ls -1 " .. pspath, function(line)
@@ -41,7 +41,7 @@ local function factory(args)
             if bstr then
                 bat.batteries[#bat.batteries + 1] = bstr
             else
-                bat.ac = string.match(line, "AC%w+") -- fallback one might be wrong
+                bat.ac = string.match(line, "AC%w+") or "AC0"
             end
         end)
     end
