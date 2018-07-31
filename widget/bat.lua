@@ -33,7 +33,7 @@ local function factory(args)
     end
 
     bat.batteries = args.batteries or (args.battery and {args.battery}) or {}
-    bat.ac        = args.ac
+    bat.ac        = args.ac or "AC0"
 
     function bat.get_batteries()
         helpers.line_callback("ls -1 " .. pspath, function(line)
@@ -109,12 +109,12 @@ local function factory(args)
                 local rate_power   = tonumber(helpers.first_line(bstr .. "/power_now"))
 
                 -- energy_now(P)[uWh], charge_now(I)[uAh]
-                local energy_now        = tonumber(helpers.first_line(bstr .. "/energy_now") or
-                                          helpers.first_line(bstr .. "/charge_now"))
+                local energy_now = tonumber(helpers.first_line(bstr .. "/energy_now") or
+                                   helpers.first_line(bstr .. "/charge_now"))
 
                 -- energy_full(P)[uWh], charge_full(I)[uAh]
-                local energy_full       = tonumber(helpers.first_line(bstr .. "/energy_full") or
-                                          helpers.first_line(bstr .. "/charge_full"))
+                local energy_full = tonumber(helpers.first_line(bstr .. "/energy_full") or
+                                    helpers.first_line(bstr .. "/charge_full"))
 
                 local energy_percentage = tonumber(helpers.first_line(bstr .. "/capacity")) or
                                           math.floor((energy_now / energy_full) * 100)
