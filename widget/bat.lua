@@ -41,7 +41,7 @@ local function factory(args)
             if bstr then
                 bat.batteries[#bat.batteries + 1] = bstr
             else
-                bat.ac = string.match(line, "AC%w+") or "AC0"
+                bat.ac = string.match(line, "A%w+") or "AC0"
             end
         end)
     end
@@ -141,7 +141,7 @@ local function factory(args)
                 bat_now.status = status
             end
         end
-        bat_now.ac_status = tonumber(helpers.first_line(string.format("%s%s/online", pspath, ac))) or "N/A"
+        bat_now.ac_status = tonumber(helpers.first_line(string.format("%s%s/online", pspath, bat.ac))) or "N/A"
 
         if bat_now.status ~= "N/A" then
             if bat_now.status ~= "Full" and sum_rate_power == 0 and bat_now.ac_status == 1 then
