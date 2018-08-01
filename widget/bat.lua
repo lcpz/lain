@@ -19,34 +19,34 @@ local tonumber   = tonumber
 -- lain.widget.bat
 
 local function factory(args)
-    local bat       = { widget = wibox.widget.textbox() }
-    local args      = args or {}
-    local timeout   = args.timeout or 30
-    local notify    = args.notify or "on"
-    local n_perc    = args.n_perc or { 5, 15 }
-    local pspath    = args.pspath or "/sys/class/power_supply/"
-    local settings  = args.settings or function() end
+    local pspath = args.pspath or "/sys/class/power_supply/"
 
     if not fs.is_dir(pspath) then
         naughty.notify { text = "lain.widget.bat: invalid power supply path", timeout = 0 }
         return
     end
 
-    bat.batteries = args.batteries or (args.battery and {args.battery}) or {}
-    bat.ac        = args.ac or "AC0"
+    local bat       = { widget = wibox.widget.textbox() }
+    local args      = args or {}
+    local timeout   = args.timeout or 30
+    local notify    = args.notify or "on"
+    local n_perc    = args.n_perc or { 5, 15 }
+    local batteries = args.batteries or (args.battery and {args.battery}) or {}
+    local ac        = args.ac or "AC0"
+    local settings  = args.settings or function() end
 
     function bat.get_batteries()
         helpers.line_callback("ls -1 " .. pspath, function(line)
             local bstr =  string.match(line, "BAT%w+")
             if bstr then
-                bat.batteries[#bat.batteries + 1] = bstr
+                batteries[#batteries + 1] = bstr
             else
-                bat.ac = string.match(line, "A%w+") or "AC0"
+                ac = string.match(line, "A%w+") or "AC0"
             end
         end)
     end
 
-    if #bat.batteries == 0 then bat.get_batteries() end
+    if #batteries == 0 then bat.get_batteries() end
 
     bat_notification_critical_preset = {
         title   = "Battery exhausted",
@@ -82,7 +82,7 @@ local function factory(args)
 
     bat_now.n_status = {}
     bat_now.n_perc   = {}
-    for i = 1, #bat.batteries do
+    for i = 1, #batteries do
         bat_now.n_status[i] = "N/A"
         bat_now.n_perc[i] = 0
     end
@@ -98,7 +98,7 @@ local function factory(args)
         local sum_energy_now   = 0
         local sum_energy_full  = 0
 
-        for i, battery in ipairs(bat.batteries) do
+        for i, battery in ipairs(batteries) do
             local bstr    = pspath .. battery
             local present = helpers.first_line(bstr .. "/present")
 
@@ -141,7 +141,7 @@ local function factory(args)
                 bat_now.status = status
             end
         end
-        bat_now.ac_status = tonumber(helpers.first_line(string.format("%s%s/online", pspath, bat.ac))) or "N/A"
+        bat_now.ac_status = tonumber(helpers.first_line(string.format("%s%s/online", pspath, ac))) or "N/A"
 
         if bat_now.status ~= "N/A" then
             if bat_now.status ~= "Full" and sum_rate_power == 0 and bat_now.ac_status == 1 then
