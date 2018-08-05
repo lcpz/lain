@@ -74,6 +74,8 @@ function tpbat.register(args)
     local args = args or {}
     local timeout = args.timeout or 30
     local battery = args.battery or "BAT0"
+    local bat_low_perc = args.bat_low_perc or 15
+    local bat_critical_perc = args.bat_critical_perc or 5
     local settings = args.settings or function() end
 
     tpbat.bat = smapi:battery(battery) -- Create a new battery
@@ -125,14 +127,14 @@ function tpbat.register(args)
             -- notifications for low and critical states (when discharging)
             if bat_now.status == "discharging"
             then
-                if bat_now.perc <= 5
+                if bat_now.perc <= bat_critical_perc
                 then
                     tpbat.id = naughty.notify({
                         preset = bat_notification_critical_preset,
                         replaces_id = tpbat.id,
                         screen = client.focus and client.focus.screen or 1
                     }).id
-                elseif bat_now.perc <= 15
+                elseif bat_now.perc <= bat_low_perc
                 then
                     tpbat.id = naughty.notify({
                         preset = bat_notification_low_preset,
