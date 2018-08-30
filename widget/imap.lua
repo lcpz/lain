@@ -9,8 +9,7 @@ local helpers  = require("lain.helpers")
 local naughty  = require("naughty")
 local wibox    = require("wibox")
 local awful    = require("awful")
-local string   = { format = string.format,
-                   gsub   = string.gsub }
+local string   = string
 local type     = type
 local tonumber = tonumber
 
@@ -59,7 +58,7 @@ local function factory(args)
                head_command, server, port, mail, password, request)
 
         helpers.async(curl, function(f)
-            _, mailcount = string.gsub(f, "%d+", "")
+            mailcount = tonumber(f:match("UNSEEN (%d+)"))
             widget = imap.widget
             settings()
 
