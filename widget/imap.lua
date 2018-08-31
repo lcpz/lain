@@ -54,20 +54,17 @@ local function factory(args)
             mail_notification_preset.screen = awful.screen.focused()
         end
 
-        curl = string.format("%s --url imaps://%s:%s/INBOX -u %s:%q %s -k",
-               head_command, server, port, mail, password, request)
+        local curl = string.format("%s --url imaps://%s:%s/INBOX -u %s:%q %s -k",
+                     head_command, server, port, mail, password, request)
 
         helpers.async(curl, function(f)
             mailcount = tonumber(f:match("UNSEEN (%d+)"))
             widget = imap.widget
             settings()
 
-            if notify == "on" and mailcount >= 1 and mailcount > helpers.get_map(mail) then
-                if mailcount == 1 then
-                    nt = mail .. " has one new message"
-                else
-                    nt = mail .. " has <b>" .. mailcount .. "</b> new messages"
-                end
+            if notify == "on" and mailcount and mailcount >= 1 and mailcount > helpers.get_map(mail) then
+                local nt = mail .. " has <b>" .. mailcount .. "</b> new message"
+                if mailcount >= 1 then nt = nt .. "s" end
                 naughty.notify { preset = mail_notification_preset, text = nt }
             end
 
