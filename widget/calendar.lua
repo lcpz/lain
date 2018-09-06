@@ -10,9 +10,8 @@ local markup       = require("lain.util.markup")
 local awful        = require("awful")
 local naughty      = require("naughty")
 local mouse        = mouse
-local os           = { date   = os.date }
-local string       = { format = string.format,
-                       gsub   = string.gsub }
+local os           = os
+local string       = string
 local ipairs       = ipairs
 local tonumber     = tonumber
 local setmetatable = setmetatable
@@ -40,10 +39,8 @@ function calendar.show(t_out, inc_offset, scr)
         calendar.icon   = calendar.icons:len() > 0 and string.format("%s%s.png", calendar.icons, tonumber(os.date("%d")))
         f               = calendar.cal
     else -- no current month showing, no day to highlight
-       local month = tonumber(os.date("%m"))
        local year  = tonumber(os.date("%Y"))
-
-       month = month + calendar.offset
+       local month = tonumber(os.date("%m")) + calendar.offset
 
        while month > 12 do
            month = month - 12
