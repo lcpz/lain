@@ -7,55 +7,55 @@
 
 --]]
 
-local string       = { format = string.format }
+local format = string.format
 local setmetatable = setmetatable
 
 -- Lain markup util submodule
 -- lain.util.markup
 local markup = { fg = {}, bg = {} }
 
--- Convenience tags.
-function markup.bold(text)      return '<b>'     .. text .. '</b>'     end
-function markup.italic(text)    return '<i>'     .. text .. '</i>'     end
-function markup.strike(text)    return '<s>'     .. text .. '</s>'     end
-function markup.underline(text) return '<u>'     .. text .. '</u>'     end
-function markup.monospace(text) return '<tt>'    .. text .. '</tt>'    end
-function markup.big(text)       return '<big>'   .. text .. '</big>'   end
-function markup.small(text)     return '<small>' .. text .. '</small>' end
+-- Convenience tags
+function markup.bold(text)      return format("<b>%s</b>",         text) end
+function markup.italic(text)    return format("<i>%s</i>",         text) end
+function markup.strike(text)    return format("<s>%s</s>",         text) end
+function markup.underline(text) return format("<u>%s</u>",         text) end
+function markup.monospace(text) return format("<tt>%s</tt>",       text) end
+function markup.big(text)       return format("<big>%s</big>",     text) end
+function markup.small(text)     return format("<small>%s</small>", text) end
 
--- Set the font.
+-- Set the font
 function markup.font(font, text)
-  return '<span font="'  .. font  .. '">' .. text ..'</span>'
+  return format("<span font='%s'>%s</span>", font, text)
 end
 
--- Set the foreground.
+-- Set the foreground
 function markup.fg.color(color, text)
-  return '<span foreground="' .. color .. '">' .. text .. '</span>'
+  return format("<span foreground='%s'>%s</span>", fg, bg, text)
 end
 
--- Set the background.
+-- Set the background
 function markup.bg.color(color, text)
-  return '<span background="' .. color .. '">' .. text .. '</span>'
+  return format("<span background='%s'>%s</span>", fg, bg, text)
 end
 
--- Set foreground and background.
+-- Set foreground and background
 function markup.color(fg, bg, text)
-  return string.format('<span foreground="%s" background="%s">%s</span>', fg, bg, text)
+  return format("<span foreground='%s' background='%s'>%s</span>", fg, bg, text)
 end
 
--- Set font and foreground.
+-- Set font and foreground
 function markup.fontfg(font, fg, text)
-  return string.format('<span font="%s" foreground="%s">%s</span>', font, fg, text)
+  return format("<span font='%s' foreground='%s'>%s</span>", font, fg, text)
 end
 
--- Set font and background.
+-- Set font and background
 function markup.fontbg(font, bg, text)
-  return string.format('<span font="%s" background="%s">%s</span>', font, bg, text)
+  return format("<span font='%s' background='%s'>%s</span>", font, bg, text)
 end
 
--- Set font, foreground and background.
+-- Set font, foreground and background
 function markup.fontcolor(font, fg, bg, text)
-  return string.format('<span font="%s" foreground="%s" background="%s">%s</span>', font, fg, bg, text)
+  return format("<span font='%s' foreground='%s' background='%s'>%s</span>", font, fg, bg, text)
 end
 
 -- link markup.{fg,bg}(...) calls to markup.{fg,bg}.color(...)
