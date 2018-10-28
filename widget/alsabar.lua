@@ -6,15 +6,12 @@
 
 --]]
 
-local helpers        = require("lain.helpers")
-local awful          = require("awful")
-local naughty        = require("naughty")
-local wibox          = require("wibox")
-local math           = { modf   = math.modf }
-local string         = { format = string.format,
-                         match  = string.match,
-                         rep    = string.rep }
-local type, tonumber = type, tonumber
+local helpers = require("lain.helpers")
+local awful   = require("awful")
+local naughty = require("naughty")
+local wibox   = require("wibox")
+
+local math, string, type, tonumber = math, string, type, tonumber
 
 -- ALSA volume bar
 -- lain.widget.alsabar
@@ -40,7 +37,6 @@ local function factory(args)
     local paddings   = args.paddings or 1
     local ticks      = args.ticks or false
     local ticks_size = args.ticks_size or 7
-    local step       = args.step or '5%'
 
     alsabar.cmd                 = args.cmd or "amixer"
     alsabar.channel             = args.channel or "Master"
@@ -54,23 +50,20 @@ local function factory(args)
         alsabar.notification_preset.font = "Monospace 10"
     end
 
-    local format_get_cmd = string.format("%s get %s", alsabar.cmd, alsabar.channel)
-    local format_inc_cmd = string.format("%s sset %s %s+", alsabar.cmd, alsabar.channel, step)
-    local format_dec_cmd = string.format("%s sset %s %s-" , alsabar.cmd, alsabar.channel, step)
-    local format_tog_cmd = string.format("%s sset %s toggle", alsabar.cmd, alsabar.channel)
+    local format_cmd = string.format("%s get %s", alsabar.cmd, alsabar.channel)
 
     if alsabar.togglechannel then
-        format_get_cmd = { awful.util.shell, "-c", string.format("%s get %s; %s get %s",
+        format_cmd = { awful.util.shell, "-c", string.format("%s get %s; %s get %s",
         alsabar.cmd, alsabar.channel, alsabar.cmd, alsabar.togglechannel) }
     end
 
     alsabar.bar = wibox.widget {
-        forced_height    = height,
-        forced_width     = width,
         color            = alsabar.colors.unmute,
         background_color = alsabar.colors.background,
+        forced_height    = height,
+        forced_width     = width,
         margins          = margins,
-        paddings         = paddings,
+        paddings         = margins,
         ticks            = ticks,
         ticks_size       = ticks_size,
         widget           = wibox.widget.progressbar
@@ -79,7 +72,7 @@ local function factory(args)
     alsabar.tooltip = awful.tooltip({ objects = { alsabar.bar } })
 
     function alsabar.update(callback)
-        helpers.async(format_get_cmd, function(mixer)
+        helpers.async(format_cmd, function(mixer)
             local vol, playback = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
 
             if not vol or not playback then return end
@@ -151,14 +144,6 @@ local function factory(args)
     end
 
     helpers.newtimer(string.format("alsabar-%s-%s", alsabar.cmd, alsabar.channel), timeout, alsabar.update)
-
-    alsabar.bar:connect_signal("button::press", function(_,_,_,button)
-    if (button == 4)     then awful.spawn(format_inc_cmd)
-    elseif (button == 5) then awful.spawn(format_dec_cmd)
-    elseif (button == 1) then awful.spawn(format_tog_cmd)
-    end
-    alsabar.update()
-end)
 
     return alsabar
 end
