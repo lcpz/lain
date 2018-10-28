@@ -33,7 +33,7 @@ local function factory(args)
     local timeout    = args.timeout or 5
     local settings   = args.settings or function() end
     local width      = args.width or 63
-    local height     = args.heigth or 1
+    local height     = args.height or 1
     local margins    = args.margins or 1
     local paddings   = args.paddings or 1
     local ticks      = args.ticks or false
