@@ -6,15 +6,12 @@
 
 --]]
 
-local helpers        = require("lain.helpers")
-local awful          = require("awful")
-local naughty        = require("naughty")
-local wibox          = require("wibox")
-local math           = { modf   = math.modf }
-local string         = { format = string.format,
-                         match  = string.match,
-                         rep    = string.rep }
-local type, tonumber = type, tonumber
+local helpers = require("lain.helpers")
+local awful   = require("awful")
+local naughty = require("naughty")
+local wibox   = require("wibox")
+
+local math, string, type, tonumber = math, string, type, tonumber
 
 -- ALSA volume bar
 -- lain.widget.alsabar
@@ -66,10 +63,10 @@ local function factory(args)
     end
 
     alsabar.bar = wibox.widget {
-        forced_height    = height,
-        forced_width     = width,
         color            = alsabar.colors.unmute,
         background_color = alsabar.colors.background,
+        forced_height    = height,
+        forced_width     = width,
         margins          = margins,
         paddings         = paddings,
         ticks            = ticks,
