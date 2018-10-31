@@ -25,8 +25,7 @@ local function factory(args)
         },
 
         _current_level = 0,
-        _playback      = "off",
-        cmds           = {}
+        _playback      = "off"
     }
 
     local args       = args or {}
@@ -38,9 +37,8 @@ local function factory(args)
     local paddings   = args.paddings or 1
     local ticks      = args.ticks or false
     local ticks_size = args.ticks_size or 7
-    local step       = args.step or '5%'
 
-    alsabar.alsa_bin            = args.cmd or "amixer"
+    alsabar.cmd                 = args.cmd or "amixer"
     alsabar.channel             = args.channel or "Master"
     alsabar.togglechannel       = args.togglechannel
     alsabar.colors              = args.colors or alsabar.colors
@@ -52,14 +50,11 @@ local function factory(args)
         alsabar.notification_preset.font = "Monospace 10"
     end
 
-    alsabar.cmds.get_cmd = string.format("%s get %s", alsabar.alsa_bin, alsabar.channel)
-    alsabar.cmds.inc_cmd = string.format("%s sset %s %s+", alsabar.alsa_bin, alsabar.channel, step)
-    alsabar.cmds.dec_cmd = string.format("%s sset %s %s-" , alsabar.alsa_bin, alsabar.channel, step)
-    alsabar.cmds.tog_cmd = string.format("%s sset %s toggle", alsabar.alsa_bin, alsabar.channel)
+    local format_cmd = string.format("%s get %s", alsabar.cmd, alsabar.channel)
 
     if alsabar.togglechannel then
-        alsabar.cmds.get_cmd = { awful.util.shell, "-c", string.format("%s get %s; %s get %s",
-        alsabar.alsa_bin, alsabar.channel, alsabar.alsa_bin, alsabar.togglechannel) }
+        format_cmd = { awful.util.shell, "-c", string.format("%s get %s; %s get %s",
+        alsabar.cmd, alsabar.channel, alsabar.cmd, alsabar.togglechannel) }
     end
 
     alsabar.bar = wibox.widget {
@@ -77,7 +72,7 @@ local function factory(args)
     alsabar.tooltip = awful.tooltip({ objects = { alsabar.bar } })
 
     function alsabar.update(callback)
-        helpers.async(alsabar.cmds.get_cmd, function(mixer)
+        helpers.async(format_cmd, function(mixer)
             local vol, playback = string.match(mixer, "([%d]+)%%.*%[([%l]*)")
 
             if not vol or not playback then return end
@@ -148,7 +143,7 @@ local function factory(args)
         end)
     end
 
-    helpers.newtimer(string.format("alsabar-%s-%s", alsabar.alsa_bin, alsabar.channel), timeout, alsabar.update)
+    helpers.newtimer(string.format("alsabar-%s-%s", alsabar.cmd, alsabar.channel), timeout, alsabar.update)
 
     return alsabar
 end
