@@ -57,7 +57,7 @@ local function factory(args)
         forced_height    = height,
         forced_width     = width,
         margins          = margins,
-        paddings         = margins,
+        paddings         = paddings,
         ticks            = ticks,
         ticks_size       = ticks_size,
         widget           = wibox.widget.progressbar,
