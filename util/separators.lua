@@ -28,9 +28,7 @@ function separators.arrow_right(col1, col2)
     widget.update = function(col1, col2)
         widget.col1 = col1
         widget.col2 = col2
-        local vis = widget:get_visible()
-        widget:set_visible(not vis)
-        widget:set_visible(vis)
+        widget:emit_signal("widget::redraw_needed")
     end
 
     widget.draw = function(mycross, wibox, cr, width, height)
@@ -78,9 +76,7 @@ function separators.arrow_left(col1, col2)
     widget.update = function(col1, col2)
         widget.col1 = col1
         widget.col2 = col2
-        local vis = widget:get_visible()
-        widget:set_visible(not vis)
-        widget:set_visible(vis)
+        widget:emit_signal("widget::redraw_needed")
     end
 
     widget.draw = function(mycross, wibox, cr, width, height)
