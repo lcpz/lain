@@ -18,14 +18,22 @@ local separators = { height = 0, width = 9 }
 -- Right
 function separators.arrow_right(col1, col2)
     local widget = wibox.widget.base.make_widget()
+    widget.col1 = col1
+    widget.col2 = col2
 
     widget.fit = function(m, w, h)
         return separators.width, separators.height
     end
 
+    widget.update = function(col1, col2)
+        widget.col1 = col1
+        widget.col2 = col2
+        widget:emit_signal("widget::redraw_needed")
+    end
+
     widget.draw = function(mycross, wibox, cr, width, height)
-        if col2 ~= "alpha" then
-            cr:set_source_rgb(gears.color.parse_color(col2))
+        if widget.col2 ~= "alpha" then
+            cr:set_source_rgb(gears.color.parse_color(widget.col2))
             cr:new_path()
             cr:move_to(0, 0)
             cr:line_to(width, height/2)
@@ -41,8 +49,8 @@ function separators.arrow_right(col1, col2)
             cr:fill()
         end
 
-        if col1 ~= "alpha" then
-            cr:set_source_rgb(gears.color.parse_color(col1))
+        if widget.col1 ~= "alpha" then
+            cr:set_source_rgb(gears.color.parse_color(widget.col1))
             cr:new_path()
             cr:move_to(0, 0)
             cr:line_to(width, height/2)
@@ -58,14 +66,22 @@ end
 -- Left
 function separators.arrow_left(col1, col2)
     local widget = wibox.widget.base.make_widget()
+    widget.col1 = col1
+    widget.col2 = col2
 
     widget.fit = function(m, w, h)
         return separators.width, separators.height
     end
 
+    widget.update = function(col1, col2)
+        widget.col1 = col1
+        widget.col2 = col2
+        widget:emit_signal("widget::redraw_needed")
+    end
+
     widget.draw = function(mycross, wibox, cr, width, height)
-        if col1 ~= "alpha" then
-            cr:set_source_rgb(gears.color.parse_color(col1))
+        if widget.col1 ~= "alpha" then
+            cr:set_source_rgb(gears.color.parse_color(widget.col1))
             cr:new_path()
             cr:move_to(width, 0)
             cr:line_to(0, height/2)
@@ -81,14 +97,14 @@ function separators.arrow_left(col1, col2)
             cr:fill()
         end
 
-        if col2 ~= "alpha" then
+        if widget.col2 ~= "alpha" then
             cr:new_path()
             cr:move_to(width, 0)
             cr:line_to(0, height/2)
             cr:line_to(width, height)
             cr:close_path()
 
-            cr:set_source_rgb(gears.color.parse_color(col2))
+            cr:set_source_rgb(gears.color.parse_color(widget.col2))
             cr:fill()
         end
    end
