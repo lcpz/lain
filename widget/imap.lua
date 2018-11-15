@@ -30,7 +30,7 @@ local function factory(args)
     local settings  = args.settings or function() end
 
     local head_command = "curl --connect-timeout 3 -fsm 3"
-    local request = "-X 'SEARCH (UNSEEN)'"
+    local request = "-X 'STATUS INBOX (MESSAGES RECENT UNSEEN)'"
 
     if not server or not mail or not password then return end
 
@@ -53,12 +53,19 @@ local function factory(args)
         if followtag then
             mail_notification_preset.screen = awful.screen.focused()
         end
-
-        local curl = string.format("%s --url imaps://%s:%s/INBOX -u %s:%q %s -k",
+        local curl = string.format("%s --url imaps://%s:%s/INBOX -u %s:'%s' %s -k",
                      head_command, server, port, mail, password, request)
 
         helpers.async(curl, function(f)
-            mailcount = tonumber(f:match("UNSEEN (%d+)"))
+            local messages = 0
+            local recent = 0
+            local unseen = 0
+            for s, d in f:gmatch("(%w+)%s+(%d+)") do
+                if s == "RECENT" then recent = tonumber(d) end
+                if s == "UNSEEN" then unseen = tonumber(d) end
+                if s == "MESSAGES" then messages = tonumber(d) end
+            end
+            mailcount = unseen -- for settings compatability
             widget = imap.widget
             settings()
 
