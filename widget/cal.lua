@@ -47,6 +47,7 @@ local function factory(args)
             strx = string.format("%s%s", string.rep(" ", 3 - tostring(x):len()), strx)
             notifytable[#notifytable+1] = string.format("%-4s%s", strx, (x+st_day)%7==0 and x ~= mth_days and "\n" or "")
         end
+        if string.len(cal.icons or "") > 0 and today then cal.icon = cal.icons .. today .. ".png" end
         cal.month, cal.year = d.month, d.year
         return notifytable
     end
