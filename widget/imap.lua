@@ -40,11 +40,24 @@ local function factory(args)
         if type(password) == "string" or type(password) == "table" then
             helpers.async(password, function(f) password = f:gsub("\n", "") end)
         elseif type(password) == "function" then
-            local p = password()
+            imap.functimer = helpers.newtimer(mail .. "-pass", timeout/2, function() end, true, true)
+            helpers.newtimer(
+                mail .. "-pass",
+                timeout/2,
+                function()
+                    local pass, try_again = password()
+                    if not try_again then
+                        imap.functimer:stop()
+                        password = pass or ""
+                    end
+                end,
+                false,
+                true)
         end
     end
 
     function update()
+        if type(password) ~= "string" then return end
         mail_notification_preset = {
             icon     = helpers.icons_dir .. "mail.png",
             position = "top_left"
