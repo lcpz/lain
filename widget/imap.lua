@@ -93,6 +93,7 @@ local function factory(args)
 
     end
 
+    imap.update = update
     imap.timer = helpers.newtimer(mail, timeout, update, true, true)
 
     return imap
