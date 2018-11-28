@@ -68,7 +68,6 @@ local function factory(args)
 
             for s, d in f:gmatch("(%w+)%s+(%d+)") do imap_now[s] = tonumber(d) end
             mailcount = imap_now["UNSEEN"] -- backwards compatibility
-            helpers.set_map(mail, mailcount)
             widget = imap.widget
 
             settings()
@@ -80,6 +79,7 @@ local function factory(args)
                     text   = string.format("%s has <b>%d</b> new message%s", mail, mailcount, mailcount == 1 and "" or "s")
                 }
             end
+            helpers.set_map(mail, mailcount)
         end)
 
     end
