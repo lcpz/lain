@@ -8,9 +8,8 @@
 
 local helpers  = require("lain.helpers")
 local wibox    = require("wibox")
-local math     = { ceil   = math.ceil }
-local string   = { format = string.format,
-                   gmatch = string.gmatch }
+local math     = math
+local string   = string
 local tostring = tostring
 
 -- CPU usage

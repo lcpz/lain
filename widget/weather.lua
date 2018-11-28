@@ -10,8 +10,10 @@ local json     = require("lain.util").dkjson
 local focused  = require("awful.screen").focused
 local naughty  = require("naughty")
 local wibox    = require("wibox")
-
-local math, os, string, tonumber = math, os, string, tonumber
+local math     = math
+local os       = os
+local string   = string
+local tonumber = tonumber
 
 -- OpenWeatherMap
 -- current weather and X-days forecast

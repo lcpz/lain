@@ -9,8 +9,7 @@
 local helpers = require("lain.helpers")
 local shell   = require("awful.util").shell
 local wibox   = require("wibox")
-local string  = { match  = string.match,
-                  format = string.format }
+local string  = string
 
 -- ALSA volume
 -- lain.widget.alsa

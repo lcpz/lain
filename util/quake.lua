@@ -7,14 +7,11 @@
 --]]
 
 local awful        = require("awful")
-local capi         = { client = client }
-
-local math         = { floor  = math.floor }
-local string       = { format = string.format }
-
+local client       = client
+local math         = math
+local string       = string
 local pairs        = pairs
 local screen       = screen
-
 local setmetatable = setmetatable
 
 -- Quake-like Dropdown application spawn
@@ -80,7 +77,7 @@ function quake:display()
         client:raise()
         self.last_tag = self.screen.selected_tag
         client:tags({self.screen.selected_tag})
-        capi.client.focus = client
+        client.focus = client
    else
         client.hidden = true
         local ctags = client:tags()
@@ -140,12 +137,12 @@ function quake:new(config)
 
     local dropdown = setmetatable(conf, { __index = quake })
 
-    capi.client.connect_signal("manage", function(c)
+    client.connect_signal("manage", function(c)
         if c.instance == dropdown.name and c.screen == dropdown.screen then
             dropdown:display()
         end
     end)
-    capi.client.connect_signal("unmanage", function(c)
+    client.connect_signal("unmanage", function(c)
         if c.instance == dropdown.name and c.screen == dropdown.screen then
             dropdown.visible = false
         end

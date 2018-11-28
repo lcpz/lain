@@ -79,7 +79,7 @@ local function factory(args)
         cal.notification = nil
     end
 
-    function cal.show(timeout, month, year)
+    function cal.show(timeout, month, year, scr)
         cal.notification_preset.text = tconcat(cal.build(month, year))
 
         if cal.three then
@@ -95,6 +95,7 @@ local function factory(args)
         cal.hide()
         cal.notification = naughty.notify {
             preset  = cal.notification_preset,
+            screen  = cal.followtag and awful.screen.focused() or scr or 1,
             icon    = cal.icon,
             timeout = timeout or cal.notification_preset.timeout or 5
         }

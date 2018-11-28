@@ -6,12 +6,14 @@
 
 --]]
 
-local helpers = require("lain.helpers")
-local awful   = require("awful")
-local naughty = require("naughty")
-local wibox   = require("wibox")
-
-local math, string, type, tonumber = math, string, type, tonumber
+local helpers  = require("lain.helpers")
+local awful    = require("awful")
+local naughty  = require("naughty")
+local wibox    = require("wibox")
+local math     = math
+local string   = string
+local type     = type
+local tonumber = tonumber
 
 -- PulseAudio volume bar
 -- lain.widget.pulsebar

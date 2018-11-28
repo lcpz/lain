@@ -6,8 +6,8 @@
 
 --]]
 
-local wibox     = require("wibox")
-local gears     = require("gears")
+local wibox = require("wibox")
+local gears = require("gears")
 
 -- Lain Cairo separators util submodule
 -- lain.util.separators

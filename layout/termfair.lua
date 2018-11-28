@@ -8,9 +8,7 @@
 
 --]]
 
-local math     = { ceil  = math.ceil,
-                   floor = math.floor,
-                   max   = math.max }
+local math     = math
 local screen   = screen
 local tonumber = tonumber
 

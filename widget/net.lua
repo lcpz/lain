@@ -9,7 +9,7 @@
 local helpers = require("lain.helpers")
 local naughty = require("naughty")
 local wibox   = require("wibox")
-local string  = { format = string.format, match = string.match }
+local string  = string
 
 -- Network infos
 -- lain.widget.net

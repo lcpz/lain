@@ -8,10 +8,8 @@
 local helpers = require("lain.helpers")
 local shell   = require("awful.util").shell
 local wibox   = require("wibox")
-local string  = { gmatch = string.gmatch,
-                  match  = string.match,
-                  format = string.format }
-local type = type
+local string  = string
+local type    = type
 
 -- PulseAudio volume
 -- lain.widget.pulse
