@@ -15,7 +15,8 @@ local wibox        = require("wibox")
 local os           = { getenv = os.getenv }
 local string       = { format = string.format,
                        gmatch = string.gmatch,
-                       match  = string.match }
+                       match  = string.match,
+                       sub    = string.sub }
 
 -- MPD infos
 -- lain.widget.mpd
@@ -35,16 +36,15 @@ local function factory(args)
     local followtag     = args.followtag or false
     local settings      = args.settings or function() end
 
-    local mpdh = string.format("telnet://%s:%s", host, port)
-    local echo = string.format("printf \"%sstatus\\ncurrentsong\\nclose\\n\"", password)
-    local cmd  = string.format("%s | curl --connect-timeout 1 -fsm 3 %s", echo, mpdh)
-
+    local mpdh          = ""
+    local cmd           = ""
+    local echo = string.format("%sstatus\ncurrentsong\nclose\n", password)
+   
     mpd_notification_preset = { title = "Now playing", timeout = 6 }
 
     helpers.set_map("current mpd track", nil)
-
     function mpd.update()
-        helpers.async({ shell, "-c", cmd }, function(f)
+        helpers.send_to_address(host, port, echo, 10000, function(f)
             mpd_now = {
                 random_mode  = false,
                 single_mode  = false,

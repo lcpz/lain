@@ -14,6 +14,8 @@ local pairs      = pairs
 local rawget     = rawget
 local table      = { sort  = table.sort }
 
+local Gio = require("lgi").Gio
+
 -- Lain helper functions for internal use
 -- lain.helpers
 local helpers = {}
@@ -145,6 +147,61 @@ function helpers.get_map(element)
 end
 
 -- }}}
+
+
+-- {{{ Network functions
+
+-- Create a recieving buffer
+-- NOTE: Not sure whether to export this with helpers or not
+-- Probably just gonna leave it local for now
+function generate_buffer(buffer_length)
+    -- First, create an output buffer to recieve from
+    local recv_buffer = " "
+    -- We'll need to allocate `buffer_length` bytes to it
+    for i=1,buffer_length do
+        recv_buffer = recv_buffer .. " "
+    end
+
+    return recv_buffer
+end
+
+-- Wrapper function to send to any sort of address
+function helpers.send_to_address(host, port, data, buffer_length, callback)
+    -- Have a default buffer length of 1000
+    if not buffer_length then
+      buffer_length = 1000
+    end
+
+    -- Generate a buffer to store our result in
+    local recv_buffer = generate_buffer(buffer_length)
+
+    -- Check if we should be sending to a socket or an IP
+    local is_socket = (string.sub(host, 1, 1) == "/")
+
+    -- Create a client to listen and send with
+    local client = Gio.SocketClient()
+
+    local addr
+
+    if is_socket then
+        addr = Gio.UnixSocketAddress.new(host)
+    else
+        local inet_addr = gio.InetAddress.new_from_string(host)
+        addr = Gio.InetSocketAddress.new(inet_addr, port)
+    end
+
+    local conn = client:connect(addr)
+
+    local input_stream = conn:get_output_stream()
+    local output_stream = conn:get_input_stream()
+
+    input_stream:write(data)
+    output_stream:read(recv_buffer)
+    output_stream:read(recv_buffer)
+
+    callback(recv_buffer)
+end
+-- }}} 
 
 -- {{{ Misc
 
