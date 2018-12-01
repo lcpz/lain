@@ -35,7 +35,7 @@ local function factory(apipath)
     end
 
     function tp_smapi.percentage(batid)
-        return tp_smapi.get("remaining_percent")
+        return tp_smapi.get(batid, "remaining_percent")
     end
 
     -- either running or charging time
