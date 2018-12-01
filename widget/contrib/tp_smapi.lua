@@ -10,6 +10,7 @@ local helpers = require("lain.helpers")
 local focused = require("awful.screen").focused
 local gears   = require("gears")
 local naughty = require("naughty")
+local wibox   = require("wibox")
 local string  = string
 
 -- ThinkPad battery infos and widget creator
