@@ -19,7 +19,7 @@ local string  = string
 
 local function factory(apipath)
     local tp_smapi = {
-        path = apipath or "/sys/devices/platform/tp_smapi"
+        path = apipath or "/sys/devices/platform/smapi"
     }
 
     function tp_smapi.get(batid, feature)
