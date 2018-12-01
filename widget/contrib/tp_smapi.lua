@@ -10,6 +10,7 @@ local helpers = require("lain.helpers")
 local focused = require("awful.screen").focused
 local gears   = require("gears")
 local naughty = require("naughty")
+local wibox   = require("wibox")
 local string  = string
 
 -- ThinkPad battery infos and widget creator
@@ -34,7 +35,7 @@ local function factory(apipath)
     end
 
     function tp_smapi.percentage(batid)
-        return tp_smapi.get("remaining_percent")
+        return tp_smapi.get(batid, "remaining_percent")
     end
 
     -- either running or charging time
