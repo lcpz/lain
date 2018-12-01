@@ -7,7 +7,7 @@
 --]]
 
 local awful        = require("awful")
-local client       = client
+local capi         = { client = client }
 local math         = math
 local string       = string
 local pairs        = pairs
@@ -77,7 +77,7 @@ function quake:display()
         client:raise()
         self.last_tag = self.screen.selected_tag
         client:tags({self.screen.selected_tag})
-        client.focus = client
+        capi.client.focus = client
    else
         client.hidden = true
         local ctags = client:tags()
@@ -137,12 +137,12 @@ function quake:new(config)
 
     local dropdown = setmetatable(conf, { __index = quake })
 
-    client.connect_signal("manage", function(c)
+    capi.client.connect_signal("manage", function(c)
         if c.instance == dropdown.name and c.screen == dropdown.screen then
             dropdown:display()
         end
     end)
-    client.connect_signal("unmanage", function(c)
+    capi.client.connect_signal("unmanage", function(c)
         if c.instance == dropdown.name and c.screen == dropdown.screen then
             dropdown.visible = false
         end
