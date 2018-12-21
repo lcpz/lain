@@ -47,6 +47,7 @@ local function factory(args)
             strx = string.format("%s%s", string.rep(" ", 3 - tostring(x):len()), strx)
             notifytable[#notifytable+1] = string.format("%-4s%s", strx, (x+st_day)%7==0 and x ~= mth_days and "\n" or "")
         end
+        if string.len(cal.icons or "") > 0 and today then cal.icon = cal.icons .. today .. ".png" end
         cal.month, cal.year = d.month, d.year
         return notifytable
     end
@@ -78,7 +79,7 @@ local function factory(args)
         cal.notification = nil
     end
 
-    function cal.show(timeout, month, year)
+    function cal.show(timeout, month, year, scr)
         cal.notification_preset.text = tconcat(cal.build(month, year))
 
         if cal.three then
@@ -94,6 +95,7 @@ local function factory(args)
         cal.hide()
         cal.notification = naughty.notify {
             preset  = cal.notification_preset,
+            screen  = cal.followtag and awful.screen.focused() or scr or 1,
             icon    = cal.icon,
             timeout = timeout or cal.notification_preset.timeout or 5
         }

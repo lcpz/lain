@@ -6,16 +6,14 @@
 
 --]]
 
-local helpers        = require("lain.helpers")
-local awful          = require("awful")
-local naughty        = require("naughty")
-local wibox          = require("wibox")
-local math           = { modf   = math.modf }
-local string         = { format = string.format,
-                         match  = string.match,
-                         gmatch = string.gmatch,
-                         rep    = string.rep }
-local type, tonumber = type, tonumber
+local helpers  = require("lain.helpers")
+local awful    = require("awful")
+local naughty  = require("naughty")
+local wibox    = require("wibox")
+local math     = math
+local string   = string
+local type     = type
+local tonumber = tonumber
 
 -- PulseAudio volume bar
 -- lain.widget.pulsebar
@@ -37,7 +35,9 @@ local function factory(args)
     local timeout    = args.timeout or 5
     local settings   = args.settings or function() end
     local width      = args.width or 63
-    local height     = args.heigth or 1
+    local height     = args.height or 1
+    local margins    = args.margins or 1
+    local paddings   = args.paddings or 1
     local ticks      = args.ticks or false
     local ticks_size = args.ticks_size or 7
 
@@ -54,12 +54,12 @@ local function factory(args)
     end
 
     pulsebar.bar = wibox.widget {
-        forced_height    = height,
-        forced_width     = width,
         color            = pulsebar.colors.unmute,
         background_color = pulsebar.colors.background,
-        margins          = 1,
-        paddings         = 1,
+        forced_height    = height,
+        forced_width     = width,
+        margins          = margins,
+        paddings         = paddings,
         ticks            = ticks,
         ticks_size       = ticks_size,
         widget           = wibox.widget.progressbar,

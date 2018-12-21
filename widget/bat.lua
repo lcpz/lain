@@ -6,14 +6,14 @@
 
 --]]
 
-local helpers    = require("lain.helpers")
-local fs         = require("gears.filesystem")
-local naughty    = require("naughty")
-local wibox      = require("wibox")
-local math       = math
-local string     = string
-local ipairs     = ipairs
-local tonumber   = tonumber
+local helpers  = require("lain.helpers")
+local fs       = require("gears.filesystem")
+local naughty  = require("naughty")
+local wibox    = require("wibox")
+local math     = math
+local string   = string
+local ipairs   = ipairs
+local tonumber = tonumber
 
 -- Battery infos
 -- lain.widget.bat

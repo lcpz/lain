@@ -8,13 +8,10 @@
 
 local awful        = require("awful")
 local capi         = { client = client }
-
-local math         = { floor  = math.floor }
-local string       = { format = string.format }
-
+local math         = math
+local string       = string
 local pairs        = pairs
 local screen       = screen
-
 local setmetatable = setmetatable
 
 -- Quake-like Dropdown application spawn
