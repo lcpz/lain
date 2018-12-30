@@ -52,6 +52,7 @@ local function factory(args)
     local args      = args or {}
     local timeout   = args.timeout or 600
     local partition = args.partition
+    local threshold = args.threshold or 99
     local showpopup = args.showpopup or "on"
     local settings  = args.settings or function() end
 
@@ -106,12 +107,12 @@ local function factory(args)
         widget = fs.widget
         settings()
 
-        if partition and fs_now[partition] and fs_now[partition].used >= 99 then
+        if partition and fs_now[partition] and fs_now[partition].percentage >= threshold then
             if not helpers.get_map(partition) then
                 naughty.notify {
                     preset = naughty.config.presets.critical,
                     title  = "Warning",
-                    text   = partition .. " is full",
+                    text   = string.format("%s is above %d%% (%d%%)", partition, threshold, fs_now[partition].percentage)
                 }
                 helpers.set_map(partition, true)
             else

@@ -19,6 +19,7 @@ local tostring = tostring
 
 -- Calendar notification
 -- lain.widget.cal
+
 local function factory(args)
     args = args or {}
     local cal = {
