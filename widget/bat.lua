@@ -26,14 +26,15 @@ local function factory(args)
         return
     end
 
-    local bat       = { widget = wibox.widget.textbox() }
-    local args      = args or {}
-    local timeout   = args.timeout or 30
-    local notify    = args.notify or "on"
-    local n_perc    = args.n_perc or { 5, 15 }
-    local batteries = args.batteries or (args.battery and {args.battery}) or {}
-    local ac        = args.ac or "AC0"
-    local settings  = args.settings or function() end
+    local bat         = { widget = wibox.widget.textbox() }
+    local args        = args or {}
+    local timeout     = args.timeout or 30
+    local notify      = args.notify or "on"
+    local full_notify = args.full_notify or notify
+    local n_perc      = args.n_perc or { 5, 15 }
+    local batteries   = args.batteries or (args.battery and {args.battery}) or {}
+    local ac          = args.ac or "AC0"
+    local settings    = args.settings or function() end
 
     function bat.get_batteries()
         helpers.line_callback("ls -1 " .. pspath, function(line)
@@ -198,7 +199,7 @@ local function factory(args)
                     }).id
                 end
                 fullnotification = false
-            elseif bat_now.status == "Full" and not fullnotification then
+            elseif bat_now.status == "Full" and full_notify == "on" and not fullnotification then
                 bat.id = naughty.notify({
                     preset = bat_notification_charged_preset,
                     replaces_id = bat.id
