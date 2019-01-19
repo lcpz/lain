@@ -7,6 +7,7 @@
 
 --]]
 
+local gears    = require("gears")
 local helpers  = require("lain.helpers")
 local shell    = require("awful.util").shell
 local escape_f = require("awful.util").escape
@@ -30,8 +31,12 @@ local function factory(args)
     local followtag     = args.followtag or false
     local settings      = args.settings or function() end
 
+    local default_icon_cache = gears.filesystem.get_cache_dir()
+    local default_icon_file = string.format("%s%s", default_icon_cache, 'playctrl_icon.jpg')
+
     local metadata = string.format("playerctl metadata")
     local status = string.format("playerctl status")
+    local icon_cmd = string.format("curl -o %s ", default_icon_file)
 
     playerctl_notification_preset = { title = "Now playing", timeout = 6 }
 
@@ -71,17 +76,25 @@ local function factory(args)
                 
 
                 if state == "Playing" then
+
                     if notify == "on" and playerctl_now.title ~= helpers.get_map("current playerctl track") then
-                        helpers.set_map("current playerctl track", playerctl_now.title)
+                       local icon_cmd_full = string.format("%s%s", icon_cmd, playerctl_now.artUrl)
 
-                        if followtag then playerctl_notification_preset.screen = focused() end
-                        
-                        local common =  {
-                            preset      = playerctl_notification_preset,
-                            replaces_id = playerctl.id
-                        }
+			helpers.set_map("current playerctl track", playerctl_now.title)
 
-                        playerctl.id = naughty.notify(common).id
+			helpers.async({ shell, "-c", icon_cmd_full }, function(cover_art)
+			end)
+
+			if followtag then playerctl_notification_preset.screen = focused() end
+
+			local common =  {
+				preset      = playerctl_notification_preset,
+				replaces_id = playerctl.id,
+				icon        = default_icon_file,
+				icon_size   = cover_size
+			}
+
+			playerctl.id = naughty.notify(common).id
                     end
                 elseif state ~= "Paused" then
                     helpers.set_map("current playerctl track", nil)
