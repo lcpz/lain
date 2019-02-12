@@ -12,7 +12,8 @@ local io         = { lines = io.lines,
                      open  = io.open }
 local pairs      = pairs
 local rawget     = rawget
-local table      = { sort  = table.sort }
+local table      = { sort  = table.sort, unpack = table.unpack }
+local unpack     = unpack or table.unpack -- lua 5.1 retro-compatibility
 
 -- Lain helper functions for internal use
 -- lain.helpers

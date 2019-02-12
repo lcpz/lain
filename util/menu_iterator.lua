@@ -11,12 +11,13 @@
 -- lain.util.menu_iterator
 
 local naughty = require("naughty")
+local helpers = require("lain.helpers")
 local util    = require("lain.util")
 local atable  = require("awful.util").table
 local assert  = assert
 local pairs   = pairs
 local tconcat = table.concat
-local unpack  = unpack
+local unpack = unpack or table.unpack -- lua 5.1 retro-compatibility
 
 local state = { cid = nil }
 
