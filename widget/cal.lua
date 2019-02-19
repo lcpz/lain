@@ -45,26 +45,28 @@ local function factory(args)
         local head_prepend = string.rep(" ", cal.week_number and 5 or 0)
         local cal_prepend = string.rep(" ", cal.week_number and 3 or 0)
         local notifytable = { [1] = string.format(
-          "%s%s\n%s",
-          string.rep(" ", floor((28 - this_month:len())/2)) .. head_prepend,
-          markup.bold(this_month),
-          head_prepend
+            "%s%s\n%s",
+            string.rep(" ", floor((28 - this_month:len())/2)) .. head_prepend,
+            markup.bold(this_month),
+            head_prepend
         ) }
         for x = 0,6 do notifytable[#notifytable+1] = os.date("%a ", os.time { year=2006, month=1, day=x+cal.week_start }) end
         notifytable[#notifytable] = string.format(
-          "%s\n%s%s",
-          notifytable[#notifytable]:sub(1, -2),
-          cal.week_number and os.date("%V", m) .. cal_prepend or "",
-          string.rep(" ", st_day*4)
+            "%s\n%s%s",
+            notifytable[#notifytable]:sub(1, -2),
+            cal.week_number and os.date("%V", m) .. cal_prepend or "",
+            string.rep(" ", st_day*4)
         )
         for x = 1,mth_days do
             local strx = x ~= today and x or markup.bold(markup.color(cal.notification_preset.bg, cal.notification_preset.fg, x) .. " ")
             strx = string.format("%s%s", string.rep(" ", 3 - tostring(x):len()), strx)
             notifytable[#notifytable+1] = string.format(
-              "%s%-4s%s",
-              (cal.week_number and (x+st_day)%7==1 and x ~= 1) and string.format("%02d" .. cal_prepend, os.date("%V", m)+floor((x+st_day)/7)) or "",
-              strx,
-              (x+st_day)%7==0 and x ~= mth_days and "\n" or ""
+                "%s%-4s%s",
+                (cal.week_number and (x+st_day)%7==1 and x ~= 1)
+                    and string.format("%02d" .. cal_prepend, os.date("%V", m)+floor((x+st_day)/7))
+                    or "",
+                strx,
+                (x+st_day)%7==0 and x ~= mth_days and "\n" or ""
             )
         end
         if string.len(cal.icons or "") > 0 and today then cal.icon = cal.icons .. today .. ".png" end
