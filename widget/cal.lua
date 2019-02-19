@@ -28,11 +28,21 @@ local function factory(args)
         week_start          = args.week_start or 2,
         three               = args.three or false,
         followtag           = args.followtag or false,
+        week_number         = args.week_number or "none",
+        week_number_format  = args.week_number_format or args.week_number == "left" and "%3d | " or "| %-3d",
         icons               = args.icons or helpers.icons_dir .. "cal/white/",
         notification_preset = args.notification_preset or {
             font = "Monospace 10", fg = "#FFFFFF", bg = "#000000"
         }
     }
+
+    function cal.get_week_number(m, st_day, x)
+        return string.format(cal.week_number_format, os.date("%V", m) + (x ~= 0 and floor((x + st_day) / 7) - 1 or 0))
+    end
+
+    function cal.sum_week_days(x, y)
+        return (x + y) % 7
+    end
 
     function cal.build(month, year)
         local current_month, current_year = tonumber(os.date("%m")), tonumber(os.date("%Y"))
@@ -44,13 +54,47 @@ local function factory(args)
         local notifytable = { [1] = string.format("%s%s\n", string.rep(" ", floor((28 - this_month:len())/2)), markup.bold(this_month)) }
         for x = 0,6 do notifytable[#notifytable+1] = os.date("%a ", os.time { year=2006, month=1, day=x+cal.week_start }) end
         notifytable[#notifytable] = string.format("%s\n%s", notifytable[#notifytable]:sub(1, -2), string.rep(" ", st_day*4))
+        local strx
         for x = 1,mth_days do
-            local strx = x ~= today and x or markup.bold(markup.color(cal.notification_preset.bg, cal.notification_preset.fg, x) .. " ")
+            strx = x
+            if x == today then
+                if x < 10 then x = " " .. x end
+                strx = markup.bold(markup.color(cal.notification_preset.bg, cal.notification_preset.fg, x) .. " ")
+            end
             strx = string.format("%s%s", string.rep(" ", 3 - tostring(x):len()), strx)
             notifytable[#notifytable+1] = string.format("%-4s%s", strx, (x+st_day)%7==0 and x ~= mth_days and "\n" or "")
         end
         if string.len(cal.icons or "") > 0 and today then cal.icon = cal.icons .. today .. ".png" end
         cal.month, cal.year = d.month, d.year
+
+        if cal.week_number ~= "none" then
+            local m = os.time { year = year or current_year, month = month and month or current_month, day = 0 }
+            local head_prepend = string.rep(" ", tostring(string.format(cal.week_number_format, 0)):len())
+
+            if cal.week_number == "left" then
+                notifytable[1] = head_prepend .. notifytable[1] -- month-year row
+                notifytable[2] = head_prepend .. notifytable[2] -- weekdays row
+                notifytable[8] = notifytable[8]:gsub("\n", "\n" .. cal.get_week_number(m, st_day, 0)) -- first week of the month
+
+                for x = 10,#notifytable do
+                    if cal.sum_week_days(st_day, x) == 2 then
+                        notifytable[x] = cal.get_week_number(m, st_day, x) .. notifytable[x]
+                    end
+                end
+            elseif cal.week_number == "right" then
+                notifytable[8] = notifytable[8]:gsub("\n", head_prepend .. "\n") -- weekdays row
+                for x = 9,#notifytable do
+                    if cal.sum_week_days(st_day, x) == 1 then
+                        notifytable[x] = notifytable[x]:gsub("\n", cal.get_week_number(m, st_day, x - 7) .. "\n")
+                    end
+                end
+                -- last week of the month
+                local end_days = cal.sum_week_days(st_day, mth_days)
+                if end_days ~= 0 then end_days = 7 - end_days end
+                notifytable[#notifytable] = notifytable[#notifytable] .. string.rep(" ", 4 * end_days) .. cal.get_week_number(m, st_day, mth_days + end_days)
+            end
+        end
+
         return notifytable
     end
 
