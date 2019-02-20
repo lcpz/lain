@@ -28,7 +28,7 @@ local function factory(args)
         three               = args.three or false,
         followtag           = args.followtag or false,
         week_number         = args.week_number or false,
-        week_number_format  = args.week_number_format or args.week_number_left and "%3d | " or " | %-3d",
+        week_number_format  = args.week_number_format or args.week_number_left and "%3d | " or "| %-3d",
         week_number_left    = args.week_number_left or false,
         icons               = args.icons or helpers.icons_dir .. "cal/white/",
         notification_preset = args.notification_preset or {
