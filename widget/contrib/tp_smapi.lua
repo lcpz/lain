@@ -12,6 +12,7 @@ local gears   = require("gears")
 local naughty = require("naughty")
 local wibox   = require("wibox")
 local string  = string
+local type    = type
 
 -- ThinkPad battery infos and widget creator
 -- http://www.thinkwiki.org/wiki/Tp_smapi
@@ -73,7 +74,7 @@ local function factory(apipath)
         tp_smapi.notification = naughty.notify {
             title   = string.format("%s: %s %s (%s)", batid, mfgr, model, chem),
             text    = msg,
-            timeout = seconds or 0,
+            timeout = type(seconds) == "number" and seconds or 0,
             screen  = scr or focused()
         }
     end

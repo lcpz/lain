@@ -15,6 +15,7 @@ local naughty    = require("naughty")
 local math       = math
 local string     = string
 local tconcat    = table.concat
+local type       = type
 local tonumber   = tonumber
 local query_size = Gio.FILE_ATTRIBUTE_FILESYSTEM_SIZE
 local query_free = Gio.FILE_ATTRIBUTE_FILESYSTEM_FREE
@@ -45,7 +46,7 @@ local function factory(args)
         fs.notification_preset.screen = fs.followtag and focused() or scr or 1
         fs.notification = naughty.notify {
             preset  = fs.notification_preset,
-            timeout = seconds or 5
+            timeout = type(seconds) == "number" and seconds or 5
         }
     end
 

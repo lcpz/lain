@@ -14,6 +14,7 @@ local os       = os
 local pairs    = pairs
 local string   = string
 local tconcat  = table.concat
+local type     = type
 local tonumber = tonumber
 local tostring = tostring
 
@@ -80,7 +81,7 @@ local function factory(args)
         cal.notification = nil
     end
 
-    function cal.show(timeout, month, year, scr)
+    function cal.show(seconds, month, year, scr)
         cal.notification_preset.text = tconcat(cal.build(month, year))
 
         if cal.three then
@@ -98,7 +99,7 @@ local function factory(args)
             preset  = cal.notification_preset,
             screen  = cal.followtag and awful.screen.focused() or scr or 1,
             icon    = cal.icon,
-            timeout = timeout or cal.notification_preset.timeout or 5
+            timeout = type(seconds) == "number" and seconds or cal.notification_preset.timeout or 5
         }
     end
 
