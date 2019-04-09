@@ -71,6 +71,7 @@ local function factory(args)
     function fs.update()
         local notifytable = { [1] = string.format("%-10s %-5s %s\t%s\t\n", "path", "used", "free", "size") }
         local pathlen = 10
+        local maxpathidx = 1
         fs_now = {}
 
         for _, mount in ipairs(Gio.unix_mounts_get()) do
@@ -95,11 +96,14 @@ local function factory(args)
                     }
 
                     if fs_now[path].percentage > 0 then -- don't notify unused file systems
-                        notifytable[#notifytable+1] = string.format("\n%-10s %-5s %.2f\t%.2f\t%s", path,
-                        fs_now[path].percentage .. "%", fs_now[path].free, fs_now[path].size,
+                        notifytable[#notifytable+1] = string.format("\n%-10s %-3s\t%.2f\t%.2f\t%s", path,
+                        math.floor(fs_now[path].percentage) .. "%", fs_now[path].free, fs_now[path].size,
                         fs_now[path].units)
 
-                        pathlen = math.max(pathlen, #path)
+                        if #path > pathlen then
+                            pathlen = #path
+                            maxpathidx = #notifytable
+                        end
                     end
                 end
             end
@@ -122,9 +126,12 @@ local function factory(args)
         end
 
         if pathlen > 10 then -- formatting aesthetics
+            local pathspaces
             for i = 1, #notifytable do
-                local pathspaces = notifytable[i]:match("/%w*[/%w*]*%s*") or notifytable[i]:match("path%s*")
-                notifytable[i] = notifytable[i]:gsub(pathspaces, pathspaces .. string.rep(" ", pathlen - 10) .. "\t")
+                pathspaces = notifytable[i]:match("[ ]+")
+                if i ~= maxpathidx and pathspaces then
+                    notifytable[i] = notifytable[i]:gsub(pathspaces, pathspaces .. string.rep(" ", pathlen - 10))
+                end
             end
         end
 
