@@ -69,7 +69,7 @@ local function factory(args)
     end
 
     function fs.update()
-        local notifytable = { [1] = string.format("%-10s %-5s %s\t%s\t\n", "path", "used", "free", "size") }
+        local notifytable = { [1] = string.format("%-10s %4s\t%6s\t%6s\t\n", "path", "used", "free", "size") }
         local pathlen = 10
         local maxpathidx = 1
         fs_now = {}
@@ -96,8 +96,8 @@ local function factory(args)
                     }
 
                     if fs_now[path].percentage > 0 then -- don't notify unused file systems
-                        notifytable[#notifytable+1] = string.format("\n%-10s %-3s\t%.2f\t%.2f\t%s", path,
-                        math.floor(fs_now[path].percentage) .. "%", fs_now[path].free, fs_now[path].size,
+                        notifytable[#notifytable+1] = string.format("\n%-10s %3s%%\t%6.2f\t%6.2f\t%s", path,
+                        math.floor(fs_now[path].percentage), fs_now[path].free, fs_now[path].size,
                         fs_now[path].units)
 
                         if #path > pathlen then
@@ -125,7 +125,7 @@ local function factory(args)
             end
         end
 
-        if pathlen > 10 then -- formatting aesthetics
+        if pathlen > 10 then -- if are there paths longer than 10 chars, reformat first column accordingly
             local pathspaces
             for i = 1, #notifytable do
                 pathspaces = notifytable[i]:match("[ ]+")
