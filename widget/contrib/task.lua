@@ -41,10 +41,11 @@ function task.show(scr)
         if widget_focused then
             task.hide()
             task.notification = naughty.notify {
-                preset = task.notification_preset,
-                title  = "task next",
-                text   = markup.font(task.notification_preset.font,
-                         awful.util.escape(f:gsub("\n*$", "")))
+                preset  = task.notification_preset,
+                title   = "task next",
+                text    = markup.font(task.notification_preset.font,
+                          awful.util.escape(f:gsub("\n*$", ""))),
+                timeout = task.notification_preset.timeout or 5
             }
         end
     end)
