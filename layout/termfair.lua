@@ -2,15 +2,13 @@
 
      Licensed under GNU General Public License v2
       * (c) 2014,      projektile
-      * (c) 2013,      Luke Bonham
+      * (c) 2013,      Luca CPZ
       * (c) 2010,      Nicolas Estibals
       * (c) 2010-2012, Peter Hofmann
 
 --]]
 
-local math     = { ceil  = math.ceil,
-                   floor = math.floor,
-                   max   = math.max }
+local math     = math
 local screen   = screen
 local tonumber = tonumber
 

@@ -1,7 +1,7 @@
 --[[
 
      Licensed under GNU General Public License v2
-      * (c) 2013, Luke Bonham
+      * (c) 2013, Luca CPZ
 
 --]]
 
@@ -10,8 +10,10 @@ local timer      = require("gears.timer")
 local debug      = require("debug")
 local io         = { lines = io.lines,
                      open  = io.open }
+local pairs      = pairs
 local rawget     = rawget
-local table      = { sort  = table.sort }
+local table      = { sort  = table.sort, unpack = table.unpack }
+local unpack     = unpack or table.unpack -- lua 5.1 retro-compatibility
 
 -- Lain helper functions for internal use
 -- lain.helpers
@@ -32,53 +34,49 @@ end
 
 -- {{{ File operations
 
--- see if the file exists and is readable
-function helpers.file_exists(file)
-  local f = io.open(file)
-  if f then
-      local s = f:read()
-      f:close()
-      f = s
-  end
-  return f ~= nil
+-- check if the file exists and is readable
+function helpers.file_exists(path)
+    local file = io.open(path, "rb")
+    if file then file:close() end
+    return file ~= nil
 end
 
--- get all lines from a file, returns an empty
--- list/table if the file does not exist
-function helpers.lines_from(file)
-  if not helpers.file_exists(file) then return {} end
-  local lines = {}
-  for line in io.lines(file) do
-    lines[#lines + 1] = line
-  end
-  return lines
+-- get a table with all lines from a file
+function helpers.lines_from(path)
+    local lines = {}
+    for line in io.lines(path) do
+        lines[#lines + 1] = line
+    end
+    return lines
 end
 
--- match all lines from a file, returns an empty
--- list/table if the file or match does not exist
-function helpers.lines_match(regexp, file)
-	local lines = {}
-	for index,line in pairs(helpers.lines_from(file)) do
-		if string.match(line, regexp) then
-			lines[index] = line
-		end
-	end
-	return lines
+-- get a table with all lines from a file matching regexp
+function helpers.lines_match(regexp, path)
+    local lines = {}
+    for line in io.lines(path) do
+        if string.match(line, regexp) then
+            lines[#lines + 1] = line
+        end
+    end
+    return lines
 end
 
--- get first line of a file, return nil if
--- the file does not exist
-function helpers.first_line(file)
-    return helpers.lines_from(file)[1]
+-- get first line of a file
+function helpers.first_line(path)
+    local file, first = io.open(path, "rb"), nil
+    if file then
+        first = file:read("*l")
+        file:close()
+    end
+    return first
 end
 
--- get first non empty line from a file,
--- returns nil otherwise
-function helpers.first_nonempty_line(file)
-  for k,v in pairs(helpers.lines_from(file)) do
-    if #v then return v end
-  end
-  return nil
+-- get first non empty line from a file
+function helpers.first_nonempty_line(path)
+    for line in io.lines(path) do
+        if #line then return line end
+    end
+    return nil
 end
 
 -- }}}
@@ -177,6 +175,28 @@ function helpers.spairs(t)
             return keys[i], t[keys[i]]
         end
     end
+end
+
+-- create the partition of singletons of a given set
+-- example: the trivial partition set of {a, b, c}, is {{a}, {b}, {c}}
+function helpers.trivial_partition_set(set)
+    local ss = {}
+    for _,e in pairs(set) do
+        ss[#ss+1] = {e}
+    end
+    return ss
+end
+
+-- creates the powerset of a given set
+function helpers.powerset(s)
+    if not s then return {} end
+    local t = {{}}
+    for i = 1, #s do
+        for j = 1, #t do
+            t[#t+1] = {s[i],unpack(t[j])}
+        end
+    end
+    return t
 end
 
 -- }}}

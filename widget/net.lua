@@ -1,7 +1,7 @@
 --[[
 
      Licensed under GNU General Public License v2
-      * (c) 2013,      Luke Bonham
+      * (c) 2013,      Luca CPZ
       * (c) 2010-2012, Peter Hofmann
 
 --]]
@@ -9,7 +9,7 @@
 local helpers = require("lain.helpers")
 local naughty = require("naughty")
 local wibox   = require("wibox")
-local string  = { format = string.format, match = string.match }
+local string  = string
 
 -- Network infos
 -- lain.widget.net

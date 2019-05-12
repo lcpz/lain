@@ -1,35 +1,53 @@
 --[[
 
 	 Licensed under GNU General Public License v2
-	  * (c) 2013,      Luke Bonham
+	  * (c) 2013,      Luca CPZ
 	  * (c) 2010-2012, Peter Hofmann
 
 --]]
 
-local first_line = require("lain.helpers").first_line
-local newtimer   = require("lain.helpers").newtimer
-local naughty    = require("naughty")
-local wibox      = require("wibox")
-local math       = { abs    = math.abs,
-                     floor  = math.floor,
-                     log10  = math.log10,
-                     min    = math.min }
-local string     = { format = string.format }
-local ipairs     = ipairs
-local tonumber   = tonumber
+local helpers  = require("lain.helpers")
+local fs       = require("gears.filesystem")
+local naughty  = require("naughty")
+local wibox    = require("wibox")
+local math     = math
+local string   = string
+local ipairs   = ipairs
+local tonumber = tonumber
 
 -- Battery infos
 -- lain.widget.bat
 
 local function factory(args)
-    local bat       = { widget = wibox.widget.textbox() }
-    local args      = args or {}
-    local timeout   = args.timeout or 30
-    local batteries = args.batteries or (args.battery and {args.battery}) or {"BAT0"}
-    local ac        = args.ac or "AC0"
-    local notify    = args.notify or "on"
-    local n_perc    = args.n_perc or { 5, 15 }
-    local settings  = args.settings or function() end
+    local pspath = args.pspath or "/sys/class/power_supply/"
+
+    if not fs.is_dir(pspath) then
+        naughty.notify { text = "lain.widget.bat: invalid power supply path", timeout = 0 }
+        return
+    end
+
+    local bat         = { widget = wibox.widget.textbox() }
+    local args        = args or {}
+    local timeout     = args.timeout or 30
+    local notify      = args.notify or "on"
+    local full_notify = args.full_notify or notify
+    local n_perc      = args.n_perc or { 5, 15 }
+    local batteries   = args.batteries or (args.battery and {args.battery}) or {}
+    local ac          = args.ac or "AC0"
+    local settings    = args.settings or function() end
+
+    function bat.get_batteries()
+        helpers.line_callback("ls -1 " .. pspath, function(line)
+            local bstr =  string.match(line, "BAT%w+")
+            if bstr then
+                batteries[#batteries + 1] = bstr
+            else
+                ac = string.match(line, "A%w+") or "AC0"
+            end
+        end)
+    end
+
+    if #batteries == 0 then bat.get_batteries() end
 
     bat_notification_critical_preset = {
         title   = "Battery exhausted",
@@ -80,30 +98,29 @@ local function factory(args)
         local sum_rate_energy  = 0
         local sum_energy_now   = 0
         local sum_energy_full  = 0
-        local pspath           = "/sys/class/power_supply/"
 
         for i, battery in ipairs(batteries) do
             local bstr    = pspath .. battery
-            local present = first_line(bstr .. "/present")
+            local present = helpers.first_line(bstr .. "/present")
 
             if tonumber(present) == 1 then
                 -- current_now(I)[uA], voltage_now(U)[uV], power_now(P)[uW]
-                local rate_current = tonumber(first_line(bstr .. "/current_now"))
-                local rate_voltage = tonumber(first_line(bstr .. "/voltage_now"))
-                local rate_power   = tonumber(first_line(bstr .. "/power_now"))
+                local rate_current = tonumber(helpers.first_line(bstr .. "/current_now"))
+                local rate_voltage = tonumber(helpers.first_line(bstr .. "/voltage_now"))
+                local rate_power   = tonumber(helpers.first_line(bstr .. "/power_now"))
 
                 -- energy_now(P)[uWh], charge_now(I)[uAh]
-                local energy_now        = tonumber(first_line(bstr .. "/energy_now") or
-                                          first_line(bstr .. "/charge_now"))
+                local energy_now = tonumber(helpers.first_line(bstr .. "/energy_now") or
+                                   helpers.first_line(bstr .. "/charge_now"))
 
                 -- energy_full(P)[uWh], charge_full(I)[uAh]
-                local energy_full       = tonumber(first_line(bstr .. "/energy_full") or
-                                          first_line(bstr .. "/charge_full"))
+                local energy_full = tonumber(helpers.first_line(bstr .. "/energy_full") or
+                                    helpers.first_line(bstr .. "/charge_full"))
 
-                local energy_percentage = tonumber(first_line(bstr .. "/capacity")) or
+                local energy_percentage = tonumber(helpers.first_line(bstr .. "/capacity")) or
                                           math.floor((energy_now / energy_full) * 100)
 
-                bat_now.n_status[i] = first_line(bstr .. "/status") or "N/A"
+                bat_now.n_status[i] = helpers.first_line(bstr .. "/status") or "N/A"
                 bat_now.n_perc[i]   = energy_percentage or bat_now.n_perc[i]
 
                 sum_rate_current = sum_rate_current + (rate_current or 0)
@@ -125,7 +142,7 @@ local function factory(args)
                 bat_now.status = status
             end
         end
-        bat_now.ac_status = tonumber(first_line(string.format("%s%s/online", pspath, ac))) or "N/A"
+        bat_now.ac_status = tonumber(helpers.first_line(string.format("%s%s/online", pspath, ac))) or "N/A"
 
         if bat_now.status ~= "N/A" then
             if bat_now.status ~= "Full" and sum_rate_power == 0 and bat_now.ac_status == 1 then
@@ -182,7 +199,7 @@ local function factory(args)
                     }).id
                 end
                 fullnotification = false
-            elseif bat_now.status == "Full" and not fullnotification then
+            elseif bat_now.status == "Full" and full_notify == "on" and not fullnotification then
                 bat.id = naughty.notify({
                     preset = bat_notification_charged_preset,
                     replaces_id = bat.id
@@ -192,7 +209,7 @@ local function factory(args)
         end
     end
 
-    newtimer("batteries", timeout, bat.update)
+    helpers.newtimer("batteries", timeout, bat.update)
 
     return bat
 end

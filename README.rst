@@ -24,11 +24,11 @@ If you want to create a pull request, make sure that:
 
 - Your code fits with the general style of the module. In particular, you should use the same indentation pattern that the code uses, and also avoid adding space at the ends of lines.
 
-- Your code its easy to understand, maintainable, and modularized. You should also avoid code duplication wherever possible by adding functions to or using lain.helpers_. If something is unclear, or you can't write it in such a way that it will be clear, explain it with a comment.
+- Your code its easy to understand, maintainable, and modularized. You should also avoid code duplication wherever possible by adding functions to or using lain.helpers_. If something is unclear, or you can not write it in such a way that it will be clear, explain it with a comment.
 
 - You test your changes before submitting to make sure that you code works and does not break other parts of the module.
 
-- You eventually update ``wiki`` submodule with a thorough section.
+- You update ``wiki`` submodule with a thorough section, if necessary.
 
 Contributed widgets have to be put in ``widget/contrib``.
 

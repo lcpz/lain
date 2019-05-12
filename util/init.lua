@@ -6,7 +6,7 @@
      Utilities section
 
      Licensed under GNU General Public License v2
-      * (c) 2013,      Luke Bonham
+      * (c) 2013,      Luca CPZ
       * (c) 2010-2012, Peter Hofmann
 
 --]]
@@ -158,9 +158,10 @@ end
 -- }}}
 
 -- On the fly useless gaps change
-function util.useless_gaps_resize(thatmuch)
-    local scr = awful.screen.focused()
-    scr.selected_tag.gap = scr.selected_tag.gap + tonumber(thatmuch)
+function util.useless_gaps_resize(thatmuch, s, t)
+    local scr = s or awful.screen.focused()
+    local tag = t or scr.selected_tag
+    tag.gap = tag.gap + tonumber(thatmuch)
     awful.layout.arrange(scr)
 end
 
