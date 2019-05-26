@@ -17,8 +17,24 @@ local function factory(args)
     local temp     = { widget = wibox.widget.textbox() }
     local args     = args or {}
     local timeout  = args.timeout or 2
-    local tempfile = args.tempfile or "/sys/class/thermal/thermal_zone0/temp"
     local settings = args.settings or function() end
+
+    local tempfile
+    if args.tempfile then
+      tempfile = args.tempfile
+    else
+      local base_dir, f, content
+      for filename in io.popen('ls /sys/class/thermal/'):lines() do
+        base_dir = "/sys/class/thermal/" .. filename
+        f = io.open(base_dir .. "/type")
+        content = f:read("*all"):gsub("^%s*(.-)%s*$", "%1")
+        f:close()
+        if content == "x86_pkg_temp" then
+          tempfile = base_dir .. "/temp"
+          break
+        end
+      end
+    end
 
     function temp.update()
         local f = open(tempfile)
