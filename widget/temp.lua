@@ -7,33 +7,34 @@
 
 local helpers  = require("lain.helpers")
 local wibox    = require("wibox")
-local open     = io.open
 local tonumber = tonumber
 
 -- coretemp
 -- lain.widget.temp
 
 local function factory(args)
-    local temp     = { widget = wibox.widget.textbox() }
-    local args     = args or {}
-    local timeout  = args.timeout or 2
-    local tempfile = args.tempfile or "/sys/class/thermal/thermal_zone0/temp"
-    local settings = args.settings or function() end
+    local temp         = { widget = wibox.widget.textbox() }
+    local args         = args or {}
+    local timeout      = args.timeout or 30
+    local settings     = args.settings or function() end
 
     function temp.update()
-        local f = open(tempfile)
-        if f then
-            coretemp_now = tonumber(f:read("*all")) / 1000
-            f:close()
-        else
-            coretemp_now = "N/A"
-        end
-
-        widget = temp.widget
-        settings()
+        helpers.async({"find", "/sys/devices", "-name", "temp"}, function(f)
+            temp_now = {}
+            local temp_value
+            for t in f:gmatch("[^\n]+") do
+                temp_value = helpers.first_line(t)
+                if temp_value then
+                    temp_now[tonumber(t:match("%d+"))] = temp_value / 1e3
+                end
+            end
+            coretemp_now = temp_now[0] or "N/A"
+            widget = temp.widget
+            settings()
+        end)
     end
 
-    helpers.newtimer("coretemp", timeout, temp.update)
+    helpers.newtimer("thermal", timeout, temp.update)
 
     return temp
 end

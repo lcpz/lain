@@ -187,7 +187,7 @@ function helpers.trivial_partition_set(set)
     return ss
 end
 
--- creates the powerset of a given set
+-- create the powerset of a given set
 function helpers.powerset(s)
     if not s then return {} end
     local t = {{}}
