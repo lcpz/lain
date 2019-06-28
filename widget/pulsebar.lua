@@ -154,7 +154,7 @@ local function factory(args)
         end)
     end
 
-    helpers.newtimer(string.format("pulsebar-%s", pulsebar.sink), timeout, pulsebar.update)
+    helpers.newtimer(string.format("pulsebar-%s-%s", pulsebar.devicetype, pulsebar.device), timeout, pulsebar.update)
 
     return pulsebar
 end
