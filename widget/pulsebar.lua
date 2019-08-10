@@ -43,6 +43,7 @@ local function factory(args)
     local tick       = args.tick or "|"
     local tick_pre   = args.tick_pre or "["
     local tick_post  = args.tick_post or "]"
+    local tick_none  = args.tick_none or " "
 
     pulsebar.colors              = args.colors or pulsebar.colors
     pulsebar.followtag           = args.followtag or false
@@ -145,7 +146,7 @@ local function factory(args)
                 "%s%s%s%s",
                 tick_pre,
                 string.rep(tick, int),
-                string.rep(" ", tot - int),
+                string.rep(tick_none, tot - int),
                 tick_post
             )
 
