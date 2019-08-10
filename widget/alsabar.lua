@@ -118,13 +118,13 @@ local function factory(args)
             -- tot is the maximum number of ticks to display in the notification
             -- fallback: default horizontal wibox height
             local wib, tot = awful.screen.focused().mywibox, 20
-	          local notwidth = beautiful.notification_width
+            local notwidth = beautiful.notification_width
             --calculate tot based on notification width and icon presense
-	          if preset.icon == nil then
-	          	  tot = notwidth / 10
-	          else
-	          	  tot = notwidth / 12
-	          end
+            if preset.icon == nil then
+              	  tot = notwidth / 10
+	    else
+	      	  tot = notwidth / 12
+	    end
 
             int = math.modf((alsabar._current_level / 100) * tot)
             preset.text = string.format("[%s%s]", string.rep("|", int),
