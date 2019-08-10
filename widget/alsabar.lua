@@ -10,6 +10,7 @@ local helpers  = require("lain.helpers")
 local awful    = require("awful")
 local naughty  = require("naughty")
 local wibox    = require("wibox")
+local beautiful    = require("beautiful")
 local math     = math
 local string   = string
 local type     = type
@@ -117,16 +118,13 @@ local function factory(args)
             -- tot is the maximum number of ticks to display in the notification
             -- fallback: default horizontal wibox height
             local wib, tot = awful.screen.focused().mywibox, 20
-
-            -- if we can grab mywibox, tot is defined as its height if
-            -- horizontal, or width otherwise
-            if wib then
-                if wib.position == "left" or wib.position == "right" then
-                    tot = wib.width
-                else
-                    tot = wib.height
-                end
-            end
+	          local notwidth = beautiful.notification_width
+            --calculate tot based on notification width and icon presense
+	          if preset.icon == nil then
+	          	  tot = notwidth / 10
+	          else
+	          	  tot = notwidth / 12
+	          end
 
             int = math.modf((alsabar._current_level / 100) * tot)
             preset.text = string.format("[%s%s]", string.rep("|", int),
