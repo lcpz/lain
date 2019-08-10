@@ -122,9 +122,9 @@ local function factory(args)
             --calculate tot based on notification width and icon presense
             if preset.icon == nil then
               	  tot = notwidth / 10
-	    else
-	      	  tot = notwidth / 12
-	    end
+            else
+                  tot = notwidth / 12
+            end
 
             int = math.modf((alsabar._current_level / 100) * tot)
             preset.text = string.format("[%s%s]", string.rep("|", int),
