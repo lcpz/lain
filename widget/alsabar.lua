@@ -48,8 +48,7 @@ local function factory(args)
     alsabar.notification_preset = args.notification_preset
 
     if not alsabar.notification_preset then
-        alsabar.notification_preset      = {}
-        alsabar.notification_preset.font = "Monospace 10"
+        alsabar.notification_preset = { font = "Monospace 10" }
     end
 
     local format_cmd = string.format("%s get %s", alsabar.cmd, alsabar.channel)
@@ -115,16 +114,21 @@ local function factory(args)
             end
 
             -- tot is the maximum number of ticks to display in the notification
-            -- fallback: default horizontal wibox height
-            local wib, tot = awful.screen.focused().mywibox, 20
+            local tot = alsabar.notification_preset.max_ticks
 
-            -- if we can grab mywibox, tot is defined as its height if
-            -- horizontal, or width otherwise
-            if wib then
-                if wib.position == "left" or wib.position == "right" then
-                    tot = wib.width
+            if not tot then
+                local wib = awful.screen.focused().mywibox
+                -- if we can grab mywibox, tot is defined as its height if
+                -- horizontal, or width otherwise
+                if wib then
+                    if wib.position == "left" or wib.position == "right" then
+                        tot = wib.width
+                    else
+                        tot = wib.height
+                    end
+                -- fallback: default horizontal wibox height
                 else
-                    tot = wib.height
+                    tot = 20
                 end
             end
 
