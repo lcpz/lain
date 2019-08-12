@@ -39,6 +39,10 @@ local function factory(args)
     local paddings   = args.paddings or 1
     local ticks      = args.ticks or false
     local ticks_size = args.ticks_size or 7
+    local tick       = args.tick or "|"
+    local tick_pre   = args.tick_pre or "["
+    local tick_post  = args.tick_post or "]"
+    local tick_none  = args.tick_none or " "
 
     alsabar.cmd                 = args.cmd or "amixer"
     alsabar.channel             = args.channel or "Master"
@@ -133,8 +137,13 @@ local function factory(args)
             end
 
             int = math.modf((alsabar._current_level / 100) * tot)
-            preset.text = string.format("[%s%s]", string.rep("|", int),
-                          string.rep(" ", tot - int))
+            preset.text = string.format(
+                "%s%s%s%s",
+                tick_pre,
+                string.rep(tick, int),
+                string.rep(tick_none, tot - int),
+                tick_post
+            )
 
             if alsabar.followtag then preset.screen = awful.screen.focused() end
 
