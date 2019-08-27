@@ -20,7 +20,7 @@ local function factory(args)
     local settings = args.settings or function() end
 
     function temp.update()
-        helpers.async({"find", "/sys/devices/virtual/thermal", "-type", "f", "-name", "*temp*"}, function(f)
+        helpers.async({"find", "/sys/devices", "-type", "f", "-name", "*temp*"}, function(f)
             temp_now = {}
             local temp_fl, temp_value
             for t in f:gmatch("[^\n]+") do
