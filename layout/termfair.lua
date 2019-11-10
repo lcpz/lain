@@ -14,6 +14,7 @@ local tonumber = tonumber
 
 local termfair  = { name = "termfair" }
 termfair.center = { name = "centerfair" }
+termfair.stable = { name = "stablefair" }
 
 local function do_fair(p, orientation)
     local t = p.tag or screen[p.screen].selected_tag
@@ -105,6 +106,56 @@ local function do_fair(p, orientation)
                     cur_num_x = remaining_clients
                 end
             end
+        end
+    elseif orientation == "stable" then
+        -- Layout with fixed number of vertical columns (read from nmaster).
+        -- New windows align from left to right. When a row is full, a new
+        -- one below it is created. Like this:
+
+        --        (1)                (2)                (3)
+        --   +---+---+---+      +---+---+---+      +---+---+---+
+        --   |   |   |   |      |   |   |   |      |   |   |   |
+        --   | 1 |   |   |  ->  | 1 | 2 |   |  ->  | 1 | 2 | 3 |  ->
+        --   |   |   |   |      |   |   |   |      |   |   |   |
+        --   +---+---+---+      +---+---+---+      +---+---+---+
+
+        --        (4)                (5)                (6)
+        --   +---+---+---+      +---+---+---+      +---+---+---+
+        --   | 1 | 2 | 3 |      | 1 | 2 | 3 |      | 1 | 2 | 3 |
+        --   +---+---+---+      +---+---+---+      +---+---+---+
+        --   | 4 |   |   |      | 4 | 5 |   |      | 4 | 5 | 6 |
+        --   +---+---+---+  ->  +---+---+---+  ->  +---+---+---+
+
+        local num_y     = math.max(math.ceil(#cls / num_x), ncol)
+        local height    = math.floor(wa.height/num_y)
+
+        for i = #cls,1,-1 do
+            -- Get x and y position.
+            local c = cls[i]
+            local this_x = (i - 1) % num_x
+            local this_y = math.floor((i - this_x - 1) / num_x)
+
+            -- Calculate geometry.
+            local g = {}
+            if this_x == (num_x - 1) then
+                g.width = wa.width - (num_x - 1)*width
+            else
+                g.width = width
+            end
+
+            if this_y == (num_y - 1) then
+                g.height = wa.height - (num_y - 1)*height
+            else
+                g.height = height
+            end
+
+            g.x = wa.x + this_x*width
+            g.y = wa.y + this_y*height
+
+            if g.width  < 1 then g.width  = 1 end
+            if g.height < 1 then g.height = 1 end
+
+            p.geometries[c] = g
         end
     elseif orientation == "center" then
         -- Layout with fixed number of vertical columns (read from nmaster).
@@ -218,6 +269,10 @@ end
 
 function termfair.center.arrange(p)
     return do_fair(p, "center")
+end
+
+function termfair.stable.arrange(p)
+    return do_fair(p, "stable")
 end
 
 function termfair.arrange(p)
