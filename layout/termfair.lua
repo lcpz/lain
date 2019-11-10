@@ -24,21 +24,21 @@ local function do_fair(p, orientation)
 
     if orientation == "west" then
         -- Layout with fixed number of vertical columns (read from nmaster).
-        -- New windows align from left to right. When a row is full, a now
+        -- New windows align from left to right. When a row is full, a new
         -- one above it is created. Like this:
 
         --        (1)                (2)                (3)
         --   +---+---+---+      +---+---+---+      +---+---+---+
         --   |   |   |   |      |   |   |   |      |   |   |   |
-        --   | 1 |   |   |  ->  | 2 | 1 |   |  ->  | 3 | 2 | 1 |  ->
+        --   | 1 |   |   |  ->  | 1 | 2 |   |  ->  | 1 | 2 | 3 |  ->
         --   |   |   |   |      |   |   |   |      |   |   |   |
         --   +---+---+---+      +---+---+---+      +---+---+---+
 
         --        (4)                (5)                (6)
         --   +---+---+---+      +---+---+---+      +---+---+---+
-        --   | 4 |   |   |      | 5 | 4 |   |      | 6 | 5 | 4 |
+        --   | 1 |   |   |      | 1 | 2 |   |      | 1 | 2 | 3 |
         --   +---+---+---+  ->  +---+---+---+  ->  +---+---+---+
-        --   | 3 | 2 | 1 |      | 3 | 2 | 1 |      | 3 | 2 | 1 |
+        --   | 2 | 3 | 4 |      | 3 | 4 | 5 |      | 4 | 5 | 6 |
         --   +---+---+---+      +---+---+---+      +---+---+---+
 
         -- How many vertical columns? Read from nmaster on the tag.
