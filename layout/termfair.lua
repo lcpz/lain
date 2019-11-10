@@ -22,6 +22,13 @@ local function do_fair(p, orientation)
 
     if #cls == 0 then return end
 
+    -- How many vertical columns? Read from nmaster on the tag.
+    local num_x = tonumber(termfair.nmaster) or t.master_count
+    local ncol  = tonumber(termfair.ncol) or t.column_count
+    if num_x <= 2 then num_x = 2 end
+    if ncol  <= 1 then ncol  = 1 end
+    local width = math.floor(wa.width/num_x)
+
     if orientation == "west" then
         -- Layout with fixed number of vertical columns (read from nmaster).
         -- New windows align from left to right. When a row is full, a new
@@ -40,14 +47,6 @@ local function do_fair(p, orientation)
         --   +---+---+---+  ->  +---+---+---+  ->  +---+---+---+
         --   | 2 | 3 | 4 |      | 3 | 4 | 5 |      | 4 | 5 | 6 |
         --   +---+---+---+      +---+---+---+      +---+---+---+
-
-        -- How many vertical columns? Read from nmaster on the tag.
-        local num_x = tonumber(termfair.nmaster) or t.master_count
-        local ncol  = tonumber(termfair.ncol) or t.column_count
-
-        if num_x <= 2 then num_x = 2 end
-        if ncol  <= 1 then ncol  = 1 end
-        local width = math.floor(wa.width/num_x)
 
         local num_y     = math.max(math.ceil(#cls / num_x), ncol)
         local height    = math.floor(wa.height/num_y)
@@ -127,15 +126,6 @@ local function do_fair(p, orientation)
         --   + 1 + 2 +---+  ->  + 1 +---+---+
         --   |   |   | 4 |      |   | 3 | 5 |
         --   +---+---+---+      +---+---+---+
-
-        -- How many vertical columns? Read from nmaster on the tag.
-        local num_x = tonumber(termfair.center.nmaster) or t.master_count
-        local ncol  = tonumber(termfair.center.ncol) or t.column_count
-
-        if num_x <= 2 then num_x = 2 end
-        if ncol  <= 1 then ncol  = 1 end
-
-        local width = math.floor(wa.width / num_x)
 
         if #cls < num_x then
             -- Less clients than the number of columns, let's center it!
