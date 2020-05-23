@@ -121,7 +121,7 @@ local function factory(args)
             end
         end
 
-        local fmt = "%-" .. tostring(pathlen) .. "s %4s\t%6s\t%6s\t\n"
+        local fmt = "%-" .. tostring(pathlen) .. "s %4s\t%6s\t%6s\n"
         local notifytable = { [1] = string.format(fmt, "path", "used", "free", "size") }
         fmt = "\n%-" .. tostring(pathlen) .. "s %3s%%\t%6.2f\t%6.2f %s"
         for _, path in ipairs(notifypaths) do
