@@ -21,8 +21,8 @@ local tonumber = tonumber
 -- lain.widget.weather
 
 local function factory(args)
-    local weather               = { widget = wibox.widget.textbox() }
     local args                  = args or {}
+    local weather               = { widget = args.widget or wibox.widget.textbox() }
     local APPID                 = args.APPID or "3e321f9414eaedbfab34983bda77a66e" -- lain's default
     local timeout               = args.timeout or 60 * 15 -- 15 min
     local timeout_forecast      = args.timeout or 60 * 60 * 24 -- 24 hrs

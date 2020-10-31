@@ -17,8 +17,8 @@ local tonumber = tonumber
 -- lain.widget.imap
 
 local function factory(args)
-    local imap       = { widget = wibox.widget.textbox() }
     local args       = args or {}
+    local imap       = { widget = args.widget or wibox.widget.textbox() }
     local server     = args.server
     local mail       = args.mail
     local password   = args.password

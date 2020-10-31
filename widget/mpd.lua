@@ -19,8 +19,8 @@ local string   = string
 -- lain.widget.mpd
 
 local function factory(args)
-    local mpd           = { widget = wibox.widget.textbox() }
     local args          = args or {}
+    local mpd           = { widget = args.widget or wibox.widget.textbox() }
     local timeout       = args.timeout or 2
     local password      = (args.password and #args.password > 0 and string.format("password %s\\n", args.password)) or ""
     local host          = args.host or os.getenv("MPD_HOST") or "127.0.0.1"
