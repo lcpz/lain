@@ -26,8 +26,8 @@ local function factory(args)
         return
     end
 
-    local bat         = { widget = wibox.widget.textbox() }
     local args        = args or {}
+    local bat         = { widget = args.widget or wibox.widget.textbox() }
     local timeout     = args.timeout or 30
     local notify      = args.notify or "on"
     local full_notify = args.full_notify or notify

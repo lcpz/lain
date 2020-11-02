@@ -26,8 +26,9 @@ local query      = query_size .. "," .. query_free .. "," .. query_used
 -- lain.widget.fs
 
 local function factory(args)
+    local args      = args or {}
     local fs = {
-        widget = wibox.widget.textbox(),
+        widget = args.widget or wibox.widget.textbox(),
         units = {
             [1] = "Kb", [2] = "Mb", [3] = "Gb",
             [4] = "Tb", [5] = "Pb", [6] = "Eb",
@@ -50,7 +51,6 @@ local function factory(args)
         }
     end
 
-    local args      = args or {}
     local timeout   = args.timeout or 600
     local partition = args.partition
     local threshold = args.threshold or 99

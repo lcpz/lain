@@ -15,8 +15,8 @@ local string  = string
 -- lain.widget.net
 
 local function factory(args)
-    local net        = { widget = wibox.widget.textbox(), devices = {} }
     local args       = args or {}
+    local net        = { widget = args.widget or wibox.widget.textbox(), devices = {} }
     local timeout    = args.timeout or 2
     local units      = args.units or 1024 -- KB
     local notify     = args.notify or "on"
