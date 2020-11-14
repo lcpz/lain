@@ -68,7 +68,7 @@ local function factory(args)
         }
     end
 
-    function fs.update()
+    local function update_synced()
         local pathlen = 10
         fs_now = {}
 
@@ -129,6 +129,10 @@ local function factory(args)
         end
 
         fs.notification_preset.text = tconcat(notifytable)
+    end
+
+    function fs.update()
+        Gio.Async.start(update_synced)()
     end
 
     if showpopup == "on" then
