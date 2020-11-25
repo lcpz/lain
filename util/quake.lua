@@ -85,6 +85,7 @@ function quake:display()
     else
         self.maximized = maximized
         self.fullscreen = fullscreen
+        client.maximized = false
         client.fullscreen = false
         client.hidden = true
         local ctags = client:tags()
