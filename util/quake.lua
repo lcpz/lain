@@ -60,6 +60,8 @@ function quake:display()
     client.floating = true
     client.border_width = self.border
     client.size_hints_honor = false
+    local maximized = client.maximized
+    local fullscreen = client.fullscreen
     client:geometry(self.geometry[self.screen.index] or self:compute_size())
 
     -- Set not sticky and on top
@@ -74,11 +76,16 @@ function quake:display()
     -- Toggle display
     if self.visible then
         client.hidden = false
+        client.maximized = self.maximized
+        client.fullscreen = self.fullscreen
         client:raise()
         self.last_tag = self.screen.selected_tag
         client:tags({self.screen.selected_tag})
         capi.client.focus = client
-   else
+    else
+        self.maximized = maximized
+        self.fullscreen = fullscreen
+        client.fullscreen = false
         client.hidden = true
         local ctags = client:tags()
         for i, t in pairs(ctags) do
@@ -134,6 +141,9 @@ function quake:new(config)
     conf.vert       = conf.vert      or "top"      -- top, bottom or center
     conf.horiz      = conf.horiz     or "left"     -- left, right or center
     conf.geometry   = {}                           -- internal use
+
+    conf.maximized = false
+    conf.fullscreen = false
 
     local dropdown = setmetatable(conf, { __index = quake })
 
