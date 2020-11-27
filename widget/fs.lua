@@ -26,8 +26,9 @@ local query      = query_size .. "," .. query_free .. "," .. query_used
 -- lain.widget.fs
 
 local function factory(args)
+    local args      = args or {}
     local fs = {
-        widget = wibox.widget.textbox(),
+        widget = args.widget or wibox.widget.textbox(),
         units = {
             [1] = "Kb", [2] = "Mb", [3] = "Gb",
             [4] = "Tb", [5] = "Pb", [6] = "Eb",
@@ -50,7 +51,6 @@ local function factory(args)
         }
     end
 
-    local args      = args or {}
     local timeout   = args.timeout or 600
     local partition = args.partition
     local threshold = args.threshold or 99
@@ -69,11 +69,10 @@ local function factory(args)
     end
 
     function fs.update()
-        local notifytable = { [1] = string.format("%-10s %4s\t%6s\t%6s\t\n", "path", "used", "free", "size") }
         local pathlen = 10
-        local maxpathidx = 1
         fs_now = {}
 
+        local notifypaths = {}
         for _, mount in ipairs(Gio.unix_mounts_get()) do
             local path = Gio.unix_mount_get_mount_path(mount)
             local root = Gio.File.new_for_path(path)
@@ -90,19 +89,16 @@ local function factory(args)
                     fs_now[path] = {
                         units      = fs.units[units],
                         percentage = math.floor(100 * used / size), -- used percentage
-                        size       = size / math.pow(1024, math.floor(units)),
-                        used       = used / math.pow(1024, math.floor(units)),
-                        free       = free / math.pow(1024, math.floor(units))
+                        size       = size / math.pow(1024, units),
+                        used       = used / math.pow(1024, units),
+                        free       = free / math.pow(1024, units)
                     }
 
                     if fs_now[path].percentage > 0 then -- don't notify unused file systems
-                        notifytable[#notifytable+1] = string.format("\n%-10s %3s%%\t%6.2f\t%6.2f\t%s", path,
-                        math.floor(fs_now[path].percentage), fs_now[path].free, fs_now[path].size,
-                        fs_now[path].units)
+                        notifypaths[#notifypaths+1] = path
 
                         if #path > pathlen then
                             pathlen = #path
-                            maxpathidx = #notifytable
                         end
                     end
                 end
@@ -125,14 +121,11 @@ local function factory(args)
             end
         end
 
-        if pathlen > 10 then -- if are there paths longer than 10 chars, reformat first column accordingly
-            local pathspaces
-            for i = 1, #notifytable do
-                pathspaces = notifytable[i]:match("[ ]+")
-                if i ~= maxpathidx and pathspaces then
-                    notifytable[i] = notifytable[i]:gsub(pathspaces, pathspaces .. string.rep(" ", pathlen - 10))
-                end
-            end
+        local fmt = "%-" .. tostring(pathlen) .. "s %4s\t%6s\t%6s\n"
+        local notifytable = { [1] = string.format(fmt, "path", "used", "free", "size") }
+        fmt = "\n%-" .. tostring(pathlen) .. "s %3s%%\t%6.2f\t%6.2f %s"
+        for _, path in ipairs(notifypaths) do
+            notifytable[#notifytable+1] = string.format(fmt, path, fs_now[path].percentage, fs_now[path].free, fs_now[path].size, fs_now[path].units)
         end
 
         fs.notification_preset.text = tconcat(notifytable)

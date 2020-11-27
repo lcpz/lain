@@ -21,13 +21,13 @@ local tonumber = tonumber
 -- lain.widget.weather
 
 local function factory(args)
-    local weather               = { widget = wibox.widget.textbox() }
     local args                  = args or {}
+    local weather               = { widget = args.widget or wibox.widget.textbox() }
     local APPID                 = args.APPID or "3e321f9414eaedbfab34983bda77a66e" -- lain's default
     local timeout               = args.timeout or 60 * 15 -- 15 min
     local timeout_forecast      = args.timeout or 60 * 60 * 24 -- 24 hrs
-    local current_call          = args.current_call  or "curl -s 'http://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
-    local forecast_call         = args.forecast_call or "curl -s 'http://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s&APPID=%s'"
+    local current_call          = args.current_call  or "curl -s 'https://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
+    local forecast_call         = args.forecast_call or "curl -s 'https://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s&APPID=%s'"
     local city_id               = args.city_id or 0 -- placeholder
     local units                 = args.units or "metric"
     local lang                  = args.lang or "en"
