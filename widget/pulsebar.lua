@@ -21,9 +21,10 @@ local tonumber = tonumber
 local function factory(args)
     local pulsebar = {
         colors = {
-            background = "#000000",
-            mute       = "#EB8F8F",
-            unmute     = "#A4CE8A"
+            background      = "#000000",
+            mute_background = "#000000",
+            mute            = "#EB8F8F",
+            unmute          = "#A4CE8A"
         },
 
         _current_level = 0,
@@ -104,10 +105,12 @@ local function factory(args)
                     pulsebar._mute = mute
                     pulsebar.tooltip:set_text ("[muted]")
                     pulsebar.bar.color = pulsebar.colors.mute
+                    pulsebar.bar.background_color = pulsebar.colors.mute_background
                 else
                     pulsebar._mute = "no"
                     pulsebar.tooltip:set_text(string.format("%s %s: %s", pulsebar.devicetype, pulsebar.device, volu))
                     pulsebar.bar.color = pulsebar.colors.unmute
+                    pulsebar.bar.background_color = pulsebar.colors.background
                 end
 
                 settings()
