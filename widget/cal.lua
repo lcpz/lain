@@ -150,7 +150,7 @@ local function factory(args)
 
     function cal.hover_on() cal.show(0) end
     function cal.move(offset)
-        local offset = offset or 0
+        offset = offset or 0
         cal.month, cal.year = cal.getdate(cal.month, cal.year, offset)
         cal.show(0, cal.month, cal.year)
     end

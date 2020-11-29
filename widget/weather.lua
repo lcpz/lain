@@ -21,18 +21,17 @@ local tonumber = tonumber
 -- lain.widget.weather
 
 local function factory(args)
-    local args                  = args or {}
+    args                        = args or {}
+
     local weather               = { widget = args.widget or wibox.widget.textbox() }
     local APPID                 = args.APPID or "3e321f9414eaedbfab34983bda77a66e" -- lain's default
     local timeout               = args.timeout or 60 * 15 -- 15 min
-    local timeout_forecast      = args.timeout or 60 * 60 * 24 -- 24 hrs
     local current_call          = args.current_call  or "curl -s 'https://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
     local forecast_call         = args.forecast_call or "curl -s 'https://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s&APPID=%s'"
     local city_id               = args.city_id or 0 -- placeholder
     local units                 = args.units or "metric"
     local lang                  = args.lang or "en"
     local cnt                   = args.cnt or 5
-    local date_cmd              = args.date_cmd or "date -u -d @%d +'%%a %%d'"
     local icons_path            = args.icons_path or helpers.icons_dir .. "openweathermap/"
     local notification_preset   = args.notification_preset or {}
     local notification_text_fun = args.notification_text_fun or
@@ -91,8 +90,8 @@ local function factory(args)
     function weather.forecast_update()
         local cmd = string.format(forecast_call, city_id, units, lang, cnt, APPID)
         helpers.async(cmd, function(f)
-            local pos, err
-            weather_now, pos, err = json.decode(f, 1, nil)
+            local err
+            weather_now, _, err = json.decode(f, 1, nil)
 
             if not err and type(weather_now) == "table" and tonumber(weather_now["cod"]) == 200 then
                 weather.notification_text = ""
@@ -110,8 +109,8 @@ local function factory(args)
     function weather.update()
         local cmd = string.format(current_call, city_id, units, lang, APPID)
         helpers.async(cmd, function(f)
-            local pos, err, icon
-            weather_now, pos, err = json.decode(f, 1, nil)
+            local err
+            weather_now, _, err = json.decode(f, 1, nil)
 
             if not err and type(weather_now) == "table" and tonumber(weather_now["cod"]) == 200 then
                 local sunrise = tonumber(weather_now["sys"]["sunrise"])

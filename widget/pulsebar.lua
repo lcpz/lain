@@ -32,7 +32,8 @@ local function factory(args)
         device         = "N/A"
     }
 
-    local args       = args or {}
+    args             = args or {}
+
     local timeout    = args.timeout or 5
     local settings   = args.settings or function() end
     local width      = args.width or 63
@@ -144,7 +145,7 @@ local function factory(args)
                 end
             end
 
-            int = math.modf((pulsebar._current_level / 100) * tot)
+            local int = math.modf((pulsebar._current_level / 100) * tot)
             preset.text = string.format(
                 "%s%s%s%s",
                 tick_pre,

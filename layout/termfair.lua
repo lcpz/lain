@@ -240,7 +240,7 @@ local function do_fair(p, orientation)
             for i = 1, (num_x-1) do
                 local height = math.floor(wa.height / num_y[i])
                 local wy = wa.y
-                for j = 0, (num_y[i]-2) do
+                for _ = 0, (num_y[i]-2) do
                     local g = {}
                     g.x = wx
                     g.y = wy

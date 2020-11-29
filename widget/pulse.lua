@@ -15,7 +15,8 @@ local type    = type
 -- lain.widget.pulse
 
 local function factory(args)
-    local args     = args or {}
+    args           = args or {}
+
     local pulse    = { widget = args.widget or wibox.widget.textbox(), device = "N/A" }
     local timeout  = args.timeout or 5
     local settings = args.settings or function() end
