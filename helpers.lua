@@ -109,7 +109,7 @@ end
 -- @return cmd PID
 function helpers.async(cmd, callback)
     return spawn.easy_async(cmd,
-    function (stdout, stderr, reason, exit_code)
+    function (stdout, _, _, exit_code)
         callback(stdout, exit_code)
     end)
 end
@@ -117,7 +117,7 @@ end
 -- like above, but call spawn.easy_async with a shell
 function helpers.async_with_shell(cmd, callback)
     return spawn.easy_async_with_shell(cmd,
-    function (stdout, stderr, reason, exit_code)
+    function (stdout, _, _, exit_code)
         callback(stdout, exit_code)
     end)
 end

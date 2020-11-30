@@ -21,17 +21,17 @@ function separators.arrow_right(col1, col2)
     widget.col1 = col1
     widget.col2 = col2
 
-    widget.fit = function(m, w, h)
+    widget.fit = function(_, _, _)
         return separators.width, separators.height
     end
 
-    widget.update = function(col1, col2)
+    widget.update = function(_, _)
         widget.col1 = col1
         widget.col2 = col2
         widget:emit_signal("widget::redraw_needed")
     end
 
-    widget.draw = function(mycross, wibox, cr, width, height)
+    widget.draw = function(_, _, cr, width, height)
         if widget.col2 ~= "alpha" then
             cr:set_source_rgb(gears.color.parse_color(widget.col2))
             cr:new_path()
@@ -69,7 +69,7 @@ function separators.arrow_left(col1, col2)
     widget.col1 = col1
     widget.col2 = col2
 
-    widget.fit = function(m, w, h)
+    widget.fit = function(_, _, _)
         return separators.width, separators.height
     end
 
@@ -79,7 +79,7 @@ function separators.arrow_left(col1, col2)
         widget:emit_signal("widget::redraw_needed")
     end
 
-    widget.draw = function(mycross, wibox, cr, width, height)
+    widget.draw = function(_, _, cr, width, height)
         if widget.col1 ~= "alpha" then
             cr:set_source_rgb(gears.color.parse_color(widget.col1))
             cr:new_path()

@@ -30,13 +30,13 @@ local function factory(args)
         _playback      = "off"
     }
 
-    local args       = args or {}
+    args             = args or {}
+
     local timeout    = args.timeout or 5
     local settings   = args.settings or function() end
     local width      = args.width or 63
     local height     = args.height or 1
     local margins    = args.margins or 1
-    local paddings   = args.paddings or 1
     local ticks      = args.ticks or false
     local ticks_size = args.ticks_size or 7
     local tick       = args.tick or "|"
@@ -136,7 +136,7 @@ local function factory(args)
                 end
             end
 
-            int = math.modf((alsabar._current_level / 100) * tot)
+            local int = math.modf((alsabar._current_level / 100) * tot)
             preset.text = string.format(
                 "%s%s%s%s",
                 tick_pre,

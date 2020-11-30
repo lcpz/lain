@@ -14,7 +14,8 @@ local open, match = io.open, string.match
 -- lain.widget.sysload
 
 local function factory(args)
-    local args     = args or {}
+    args           = args or {}
+
     local sysload  = { widget = args.widget or wibox.widget.textbox() }
     local timeout  = args.timeout or 2
     local settings = args.settings or function() end

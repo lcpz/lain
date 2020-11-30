@@ -15,7 +15,7 @@ local type    = type
 -- lain.widget.contrib.redshift
 local redshift = { active = false, pid = nil }
 
-function redshift:start()
+function redshift.start()
     execute("pkill redshift")
     awful.spawn.with_shell("redshift -x") -- clear adjustments
     redshift.pid = awful.spawn.with_shell("redshift")
@@ -25,14 +25,14 @@ function redshift:start()
     end
 end
 
-function redshift:toggle()
+function redshift.toggle()
     async({ awful.util.shell, "-c", string.format("ps -p %d -o pid=", redshift.pid) }, function(f)
         if f and #f > 0 then -- redshift is running
             -- Sending -USR1 toggles redshift (See project website)
             execute("pkill -USR1 redshift")
             redshift.active = not redshift.active
         else -- not started or killed, (re)start it
-            redshift:start()
+            redshift.start()
         end
         redshift.update_fun(redshift.active)
     end)
@@ -43,11 +43,11 @@ end
 -- @param widget:  Widget to attach to.
 -- @param fun:     Function to be run each time redshift is toggled (optional).
 --                 Use it to update widget text or icons on status change.
-function redshift:attach(widget, fun)
+function redshift.attach(widget, fun)
     redshift.update_fun = fun or function() end
-    if not redshift.pid then redshift:start() end
+    if not redshift.pid then redshift.start() end
     if widget then
-        widget:buttons(awful.util.table.join(awful.button({}, 1, function () redshift:toggle() end)))
+        widget:buttons(awful.util.table.join(awful.button({}, 1, function () redshift.toggle() end)))
     end
 end
 

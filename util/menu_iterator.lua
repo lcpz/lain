@@ -12,7 +12,6 @@
 
 local naughty = require("naughty")
 local helpers = require("lain.helpers")
-local util    = require("lain.util")
 local atable  = require("awful.util").table
 local assert  = assert
 local pairs   = pairs
@@ -42,8 +41,8 @@ end
 -- * timeout: time to wait before confirming the menu selection
 -- * icon:    icon to display in the notification of the chosen label
 local function iterate(menu, timeout, icon)
-    local timeout = timeout or 4 -- default timeout for each menu entry
-    local icon    = icon or nil  -- icon to display on the menu
+    timeout = timeout or 4 -- default timeout for each menu entry
+    icon    = icon or nil  -- icon to display on the menu
 
     -- Build the list of choices
     if not state.index then
@@ -104,7 +103,7 @@ local function menu(args)
 
     local ch_combinations = args.combination == "powerset" and helpers.powerset(choices) or helpers.trivial_partition_set(choices)
 
-    for _,c in pairs(extra_choices) do
+    for _, c in pairs(extra_choices) do
         ch_combinations = atable.join(ch_combinations, {{c[1]}})
     end
 
