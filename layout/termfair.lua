@@ -241,7 +241,7 @@ local function do_fair(p, orientation)
                 local height = math.floor(wa.height / num_y[i])
                 local wy = wa.y
                 for _ = 0, (num_y[i]-2) do
-                    local g = {}
+                    g = {}
                     g.x = wx
                     g.y = wy
                     g.height = height
@@ -252,7 +252,7 @@ local function do_fair(p, orientation)
                     nclient = nclient + 1
                     wy = wy + height
                 end
-                local g = {}
+                g = {}
                 g.x = wx
                 g.y = wy
                 g.height = wa.height - (num_y[i] - 1)*height

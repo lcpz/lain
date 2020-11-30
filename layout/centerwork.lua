@@ -24,7 +24,7 @@ local function arrange(p, layout)
 
     if #cls == 0 then return end
 
-    local c, g = cls[1], {}
+    local g = {}
 
     -- Main column, fixed width and height
     local mwfact          = t.master_width_factor
@@ -64,12 +64,12 @@ local function arrange(p, layout)
     g.width  = max(g.width, 1)
     g.height = max(g.height, 1)
 
-    p.geometries[c] = g
+    p.geometries[cls[1]] = g
 
     -- Auxiliary clients
     if #cls <= 1 then return end
     for i = 2, #cls do
-        local c, g = cls[i], {}
+        g = {}
         local idxChecker, dimToAssign
 
         local rowIndex = floor(i/2)
@@ -121,7 +121,7 @@ local function arrange(p, layout)
         g.width  = max(g.width, 1)
         g.height = max(g.height, 1)
 
-        p.geometries[c] = g
+        p.geometries[cls[i]] = g
     end
 end
 

@@ -69,13 +69,13 @@ function separators.arrow_left(col1, col2)
     widget.col1 = col1
     widget.col2 = col2
 
-    widget.fit = function(_, _, _)
+    widget.fit = function(_,  _, _)
         return separators.width, separators.height
     end
 
-    widget.update = function(col1, col2)
-        widget.col1 = col1
-        widget.col2 = col2
+    widget.update = function(c1, c2)
+        widget.col1 = c1
+        widget.col2 = c2
         widget:emit_signal("widget::redraw_needed")
     end
 

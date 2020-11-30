@@ -25,9 +25,8 @@ helpers.scripts_dir = helpers.lain_dir .. 'scripts/'
 
 -- {{{ Modules loader
 
-function helpers.wrequire(table, key)
-    local module = rawget(table, key)
-    return module or require(table._NAME .. '.' .. key)
+function helpers.wrequire(t, k)
+    return rawget(t, k) or require(t._NAME .. '.' .. k)
 end
 
 -- }}}

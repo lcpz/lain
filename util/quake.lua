@@ -122,8 +122,22 @@ function quake:compute_size()
     return self.geometry[self.screen.index]
 end
 
-function quake:new(config)
-    local conf = config or {}
+function quake:toggle()
+     if self.followtag then self.screen = awful.screen.focused() end
+     local current_tag = self.screen.selected_tag
+     if current_tag and self.last_tag ~= current_tag and self.visible then
+         local c=self:display()
+         if c then
+            c:move_to_tag(current_tag)
+        end
+     else
+         self.visible = not self.visible
+         self:display()
+     end
+end
+
+function quake.new(conf)
+    conf = conf or {}
 
     conf.app        = conf.app       or "xterm"    -- application to spawn
     conf.name       = conf.name      or "QuakeDD"  -- window name
@@ -162,18 +176,4 @@ function quake:new(config)
     return dropdown
 end
 
-function quake:toggle()
-     if self.followtag then self.screen = awful.screen.focused() end
-     local current_tag = self.screen.selected_tag
-     if current_tag and self.last_tag ~= current_tag and self.visible then
-         local c=self:display()
-         if c then
-            c:move_to_tag(current_tag)
-        end
-     else
-         self.visible = not self.visible
-         self:display()
-     end
-end
-
-return setmetatable(quake, { __call = function(_, ...) return quake:new(...) end })
+return setmetatable(quake, { __call = function(_, ...) return quake.new(...) end })
