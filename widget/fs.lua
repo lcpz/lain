@@ -12,6 +12,7 @@ local Gio        = require("lgi").Gio
 local focused    = require("awful.screen").focused
 local wibox      = require("wibox")
 local naughty    = require("naughty")
+local gears      = require("gears")
 local math       = math
 local string     = string
 local tconcat    = table.concat
@@ -43,12 +44,14 @@ local function factory(args)
     end
 
     function fs.show(seconds, scr)
-        fs.hide(); fs.update()
-        fs.notification_preset.screen = fs.followtag and focused() or scr or 1
-        fs.notification = naughty.notify {
-            preset  = fs.notification_preset,
-            timeout = type(seconds) == "number" and seconds or 5
-        }
+        fs.hide()
+        fs.update(function()
+            fs.notification_preset.screen = fs.followtag and focused() or scr or 1
+            fs.notification = naughty.notify {
+                preset  = fs.notification_preset,
+                timeout = type(seconds) == "number" and seconds or 5
+            }
+        end)
     end
 
     local timeout   = args.timeout or 600
@@ -131,8 +134,13 @@ local function factory(args)
         fs.notification_preset.text = tconcat(notifytable)
     end
 
-    function fs.update()
-        Gio.Async.start(update_synced)()
+    function fs.update(callback)
+        Gio.Async.start(gears.protected_call.call)(function()
+            update_synced()
+            if callback then
+                callback()
+            end
+        end)
     end
 
     if showpopup == "on" then
