@@ -125,7 +125,7 @@ local function arrange(p, layout)
     end
 end
 
-local function mouse_resize_handler(c, corner, x, y, orientation)
+local function mouse_resize_handler(c, _, _, _, orientation)
     local wa     = c.screen.workarea
     local mwfact = c.screen.selected_tag.master_width_factor
     local g      = c:geometry()
@@ -208,7 +208,7 @@ end
 local function clients_by_position()
     local this = client.focus
     if this then
-        sorted = client.focus.first_tag:clients()
+        local sorted = client.focus.first_tag:clients()
         table.sort(sorted, compare_position)
 
         local idx = 0

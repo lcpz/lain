@@ -50,7 +50,7 @@ function quake:display()
 
     if not client then
         -- The client does not exist, we spawn it
-        cmd = string.format("%s %s %s", self.app,
+        local cmd = string.format("%s %s %s", self.app,
               string.format(self.argname, self.name), self.extra)
         awful.spawn(cmd, { tag = self.screen.selected_tag })
         return
@@ -89,8 +89,8 @@ function quake:display()
         client.fullscreen = false
         client.hidden = true
         local ctags = client:tags()
-        for i, t in pairs(ctags) do
-            ctags[i] = nil
+        for j, _ in pairs(ctags) do
+            ctags[j] = nil
         end
         client:tags(ctags)
     end

@@ -10,13 +10,13 @@ local helpers  = require("lain.helpers")
 local wibox    = require("wibox")
 local math     = math
 local string   = string
-local tostring = tostring
 
 -- CPU usage
 -- lain.widget.cpu
 
 local function factory(args)
-    local args     = args or {}
+    args           = args or {}
+
     local cpu      = { core = {}, widget = args.widget or wibox.widget.textbox() }
     local timeout  = args.timeout or 2
     local settings = args.settings or function() end

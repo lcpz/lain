@@ -18,7 +18,8 @@ local string       = string
 -- lain.widget.contrib.moc
 
 local function factory(args)
-    local args          = args or {}
+    args                = args or {}
+
     local moc           = { widget = args.widget or wibox.widget.textbox() }
     local timeout       = args.timeout or 2
     local music_dir     = args.music_dir or os.getenv("HOME") .. "/Music"

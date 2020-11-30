@@ -17,7 +17,6 @@ local math       = math
 local string     = string
 local tconcat    = table.concat
 local type       = type
-local tonumber   = tonumber
 local query_size = Gio.FILE_ATTRIBUTE_FILESYSTEM_SIZE
 local query_free = Gio.FILE_ATTRIBUTE_FILESYSTEM_FREE
 local query_used = Gio.FILE_ATTRIBUTE_FILESYSTEM_USED
@@ -27,7 +26,8 @@ local query      = query_size .. "," .. query_free .. "," .. query_used
 -- lain.widget.fs
 
 local function factory(args)
-    local args      = args or {}
+    args     = args or {}
+
     local fs = {
         widget = args.widget or wibox.widget.textbox(),
         units = {

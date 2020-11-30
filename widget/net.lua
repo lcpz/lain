@@ -15,7 +15,8 @@ local string  = string
 -- lain.widget.net
 
 local function factory(args)
-    local args       = args or {}
+    args             = args or {}
+
     local net        = { widget = args.widget or wibox.widget.textbox(), devices = {} }
     local timeout    = args.timeout or 2
     local units      = args.units or 1024 -- KB
@@ -70,16 +71,16 @@ local function factory(args)
 
             if wifi_state == "on" and helpers.first_line(string.format("/sys/class/net/%s/uevent", dev)) == "DEVTYPE=wlan" then
                 dev_now.wifi   = true
-								if string.match(dev_now.carrier, "1") then
-	              		dev_now.signal = tonumber(string.match(helpers.lines_from("/proc/net/wireless")[3], "(%-%d+%.)")) or nil
-								end
-						else
+                if string.match(dev_now.carrier, "1") then
+                        dev_now.signal = tonumber(string.match(helpers.lines_from("/proc/net/wireless")[3], "(%-%d+%.)")) or nil
+                end
+            else
                 dev_now.wifi   = false
             end
 
             if eth_state == "on" and helpers.first_line(string.format("/sys/class/net/%s/uevent", dev)) ~= "DEVTYPE=wlan" then
                 dev_now.ethernet = true
-						else
+            else
                 dev_now.ethernet = false
             end
 
