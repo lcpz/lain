@@ -40,7 +40,6 @@ local function factory(args)
         mem_now.swapused = mem_now.swap - mem_now.swapf
         mem_now.perc = math.floor(mem_now.used / mem_now.total * 100)
 
-        widget = mem.widget
         mem.settings()
     end
 
