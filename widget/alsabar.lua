@@ -95,11 +95,6 @@ local function factory(args)
                     alsabar.bar.color = alsabar.colors.unmute
                 end
 
-                volume_now = {
-                    level  = alsabar._current_level,
-                    status = alsabar._playback
-                }
-
                 settings()
 
                 if type(callback) == "function" then callback() end
