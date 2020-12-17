@@ -17,8 +17,9 @@ local function factory(args)
     args           = args or {}
 
     local mem      = { widget = args.widget or wibox.widget.textbox() }
-    local timeout  = args.timeout or 2
-    local settings = args.settings or function() end
+
+    mem.timeout    = args.timeout or 2
+    mem.settings   = args.settings or function() end
 
     function mem.update()
         mem_now = {}
@@ -40,10 +41,10 @@ local function factory(args)
         mem_now.perc = math.floor(mem_now.used / mem_now.total * 100)
 
         widget = mem.widget
-        settings()
+        mem.settings()
     end
 
-    helpers.newtimer("mem", timeout, mem.update)
+    helpers.newtimer("mem", mem.timeout, mem.update)
 
     return mem
 end
