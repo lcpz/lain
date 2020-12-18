@@ -6,10 +6,10 @@
 
 --]]
 
-local helpers  = require("lain.helpers")
-local wibox    = require("wibox")
 local math     = math
 local string   = string
+local wibox    = require("wibox")
+local helpers  = require("lain.helpers")
 
 -- CPU usage
 -- lain.widget.cpu
@@ -19,20 +19,21 @@ local function factory(args)
 
     local cpu      = { core = {}, widget = args.widget or wibox.widget.textbox() }
 
-    cpu.timeout  = args.timeout or 2
     cpu.settings = args.settings or function() end
+    cpu.timeout  = args.timeout or 2
 
     function cpu.update()
         -- Read the amount of time the CPUs have spent performing
         -- different kinds of work. Read the first line of /proc/stat
         -- which is the sum of all CPUs.
-        for index,time in pairs(helpers.lines_match("cpu","/proc/stat")) do
-            local coreid = index - 1
-            local core   = cpu.core[coreid] or
-                           { last_active = 0 , last_total = 0, usage = 0 }
+        for index, time in pairs(helpers.lines_match("cpu","/proc/stat")) do
             local at     = 1
+            local coreid = index - 1
             local idle   = 0
             local total  = 0
+
+            local core   = cpu.core[coreid] or
+                           { last_active = 0 , last_total = 0, usage = 0 }
 
             for field in string.gmatch(time, "[%s]+([^%s]+)") do
                 -- 4 = idle, 5 = ioWait. Essentially, the CPUs have done
@@ -40,8 +41,8 @@ local function factory(args)
                 if at == 4 or at == 5 then
                     idle = idle + field
                 end
-                total = total + field
                 at = at + 1
+                total = total + field
             end
 
             local active = total - idle
