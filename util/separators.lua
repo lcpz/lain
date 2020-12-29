@@ -33,7 +33,7 @@ function separators.arrow_right(col1, col2)
 
     widget.draw = function(_, _, cr, width, height)
         if widget.col2 ~= "alpha" then
-            cr:set_source_rgb(gears.color.parse_color(widget.col2))
+            cr:set_source_rgba(gears.color.parse_color(widget.col2))
             cr:new_path()
             cr:move_to(0, 0)
             cr:line_to(width, height/2)
@@ -50,7 +50,7 @@ function separators.arrow_right(col1, col2)
         end
 
         if widget.col1 ~= "alpha" then
-            cr:set_source_rgb(gears.color.parse_color(widget.col1))
+            cr:set_source_rgba(gears.color.parse_color(widget.col1))
             cr:new_path()
             cr:move_to(0, 0)
             cr:line_to(width, height/2)
@@ -81,7 +81,7 @@ function separators.arrow_left(col1, col2)
 
     widget.draw = function(_, _, cr, width, height)
         if widget.col1 ~= "alpha" then
-            cr:set_source_rgb(gears.color.parse_color(widget.col1))
+            cr:set_source_rgba(gears.color.parse_color(widget.col1))
             cr:new_path()
             cr:move_to(width, 0)
             cr:line_to(0, height/2)
@@ -104,7 +104,7 @@ function separators.arrow_left(col1, col2)
             cr:line_to(width, height)
             cr:close_path()
 
-            cr:set_source_rgb(gears.color.parse_color(widget.col2))
+            cr:set_source_rgba(gears.color.parse_color(widget.col2))
             cr:fill()
         end
    end
