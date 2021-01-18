@@ -43,7 +43,7 @@ local function factory(args)
             if bstr then
                 batteries[#batteries + 1] = bstr
             else
-                ac = string.match(line, "A%w+") or "AC0"
+                ac = string.match(line, "A%w+") or ac
             end
         end)
     end
