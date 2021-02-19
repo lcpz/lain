@@ -137,7 +137,7 @@ local function factory(args)
     function fs.update(callback)
         Gio.Async.start(gears.protected_call.call)(function()
             update_synced()
-            if callback then
+            if type(callback) == "function" and callback then
                 callback()
             end
         end)
