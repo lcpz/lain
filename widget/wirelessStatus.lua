@@ -18,7 +18,10 @@ local naughty  = require("naughty")
 local function factory(args)
     local args     = args or {}
 
-    local wirelessStatus = { widget = args.widget or wibox.widget.imagebox() }
+    local wirelessStatus = {
+        widget = args.widget or wibox.widget.imagebox(),
+        pressed   = args.pressed or function(button) end
+    }
     local timeout   = args.timeout or 2
     local followtag = args.followtag or false
     local notification_preset = args.notification_preset or {}
@@ -120,6 +123,10 @@ local function factory(args)
 
     -- Show notification popup while hovering above widget
     if showpopup == "on" then wirelessStatus.attach(wirelessStatus.widget) end
+
+    wirelessStatus.widget:connect_signal("button::press", function(c, _, _, button)
+        wirelessStatus.pressed(button)
+    end)
 
     helpers.newtimer("wirelessStatus", timeout, wirelessStatus.update)
 
