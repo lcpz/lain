@@ -24,6 +24,13 @@ local function factory(args)
         state = "unmute"
     }
 
+    function mic.pressed(button)
+        if button == 1 then
+            helpers.async("amixer set Capture toggle")
+            mic.update()
+        end
+    end
+
     function mic.update()
         local current_micState = "error"
 
@@ -62,6 +69,10 @@ local function factory(args)
     end
 
     helpers.newtimer("mic", timeout, mic.update)
+
+    mic.widget:connect_signal("button::press", function(c, _, _, button)
+        mic.pressed(button)
+    end)
 
     return mic
 end
