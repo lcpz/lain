@@ -39,7 +39,7 @@ function util.menu_clients_current_tags(menu, args)
         local t   = cls_tags[i]
         local cls = t:clients()
 
-        for k, c in pairs(cls) do
+        for _, c in pairs(cls) do
             cls_t[#cls_t + 1] = { awful.util.escape(c.name) or "",
                                   function ()
                                       c.minimized = false
@@ -99,7 +99,7 @@ end
 function util.tag_view_nonempty(direction, sc)
    local s = sc or awful.screen.focused()
 
-   for i = 1, #s.tags do
+   for _ = 1, #s.tags do
        awful.tag.viewidx(direction, s)
        if #s.clients > 0 then
            return

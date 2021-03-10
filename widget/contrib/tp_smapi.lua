@@ -8,7 +8,6 @@
 
 local helpers = require("lain.helpers")
 local focused = require("awful.screen").focused
-local gears   = require("gears")
 local naughty = require("naughty")
 local wibox   = require("wibox")
 local string  = string
@@ -61,7 +60,7 @@ local function factory(apipath)
         local chem   = tp_smapi.get(batid, "chemistry") or "no_chem"
         local status = tp_smapi.get(batid, "state")
         local time   = tp_smapi.time(batid)
-        local msg    = ""
+        local msg
 
         if status and status ~= "idle" then
             msg = string.format("[%s] %s %s", status, time ~= "N/A" and time or "unknown remaining time",
@@ -80,7 +79,8 @@ local function factory(apipath)
     end
 
     function tp_smapi.create_widget(args)
-        local args      = args or {}
+        args            = args or {}
+
         local pspath    = args.pspath or "/sys/class/power_supply/"
         local batteries = args.batteries or (args.battery and {args.battery}) or {}
         local timeout   = args.timeout or 30
@@ -95,7 +95,7 @@ local function factory(apipath)
 
         local all_batteries_installed = true
 
-        for i, battery in ipairs(batteries) do
+        for _, battery in ipairs(batteries) do
             if not tp_smapi.installed(battery) then
                 naughty.notify {
                     preset = naughty.config.critical,

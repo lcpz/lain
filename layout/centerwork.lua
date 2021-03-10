@@ -24,7 +24,7 @@ local function arrange(p, layout)
 
     if #cls == 0 then return end
 
-    local c, g = cls[1], {}
+    local g = {}
 
     -- Main column, fixed width and height
     local mwfact          = t.master_width_factor
@@ -64,12 +64,12 @@ local function arrange(p, layout)
     g.width  = max(g.width, 1)
     g.height = max(g.height, 1)
 
-    p.geometries[c] = g
+    p.geometries[cls[1]] = g
 
     -- Auxiliary clients
     if #cls <= 1 then return end
     for i = 2, #cls do
-        local c, g = cls[i], {}
+        g = {}
         local idxChecker, dimToAssign
 
         local rowIndex = floor(i/2)
@@ -121,11 +121,11 @@ local function arrange(p, layout)
         g.width  = max(g.width, 1)
         g.height = max(g.height, 1)
 
-        p.geometries[c] = g
+        p.geometries[cls[i]] = g
     end
 end
 
-local function mouse_resize_handler(c, corner, x, y, orientation)
+local function mouse_resize_handler(c, _, _, _, orientation)
     local wa     = c.screen.workarea
     local mwfact = c.screen.selected_tag.master_width_factor
     local g      = c:geometry()
@@ -189,6 +189,79 @@ end
 
 function centerwork.horizontal.mouse_resize_handler(c, corner, x, y)
     return mouse_resize_handler(c, corner, x, y, 'horizontal')
+end
+
+-------------------------------------------------------------------------------
+-- make focus.byidx and swap.byidx behave more consistently with other layouts
+
+local awful = require("awful")
+local gears = require("gears")
+
+local function compare_position(a, b)
+    if a.x == b.x then
+        return a.y < b.y
+    else
+        return a.x < b.x
+    end
+end
+
+local function clients_by_position()
+    local this = client.focus
+    if this then
+        local sorted = client.focus.first_tag:clients()
+        table.sort(sorted, compare_position)
+
+        local idx = 0
+        for i, that in ipairs(sorted) do
+            if this.window == that.window then
+                idx = i
+            end
+        end
+
+        if idx > 0 then
+            return { sorted = sorted, idx = idx }
+        end
+    end
+    return {}
+end
+
+local function in_centerwork()
+    return client.focus and client.focus.first_tag.layout.name == "centerwork"
+end
+
+centerwork.focus = {}
+
+
+--[[
+Drop in replacements for awful.client.focus.byidx and awful.client.swap.byidx
+that behaves consistently with other layouts
+--]]
+
+
+function centerwork.focus.byidx(i)
+    if in_centerwork() then
+        local cls = clients_by_position()
+        if cls.idx then
+            local target = cls.sorted[gears.math.cycle(#cls.sorted, cls.idx + i)]
+            awful.client.focus.byidx(0, target)
+        end
+    else
+        awful.client.focus.byidx(i)
+    end
+end
+
+centerwork.swap = {}
+
+function centerwork.swap.byidx(i)
+    if in_centerwork() then
+        local cls = clients_by_position()
+        if cls.idx then
+            local target = cls.sorted[gears.math.cycle(#cls.sorted, cls.idx + i)]
+            client.focus:swap(target)
+        end
+    else
+        awful.client.swap.byidx(i)
+    end
 end
 
 return centerwork

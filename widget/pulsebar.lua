@@ -21,9 +21,10 @@ local tonumber = tonumber
 local function factory(args)
     local pulsebar = {
         colors = {
-            background = "#000000",
-            mute       = "#EB8F8F",
-            unmute     = "#A4CE8A"
+            background      = "#000000",
+            mute_background = "#000000",
+            mute            = "#EB8F8F",
+            unmute          = "#A4CE8A"
         },
 
         _current_level = 0,
@@ -31,7 +32,8 @@ local function factory(args)
         device         = "N/A"
     }
 
-    local args       = args or {}
+    args             = args or {}
+
     local timeout    = args.timeout or 5
     local settings   = args.settings or function() end
     local width      = args.width or 63
@@ -40,6 +42,10 @@ local function factory(args)
     local paddings   = args.paddings or 1
     local ticks      = args.ticks or false
     local ticks_size = args.ticks_size or 7
+    local tick       = args.tick or "|"
+    local tick_pre   = args.tick_pre or "["
+    local tick_post  = args.tick_post or "]"
+    local tick_none  = args.tick_none or " "
 
     pulsebar.colors              = args.colors or pulsebar.colors
     pulsebar.followtag           = args.followtag or false
@@ -100,10 +106,12 @@ local function factory(args)
                     pulsebar._mute = mute
                     pulsebar.tooltip:set_text ("[muted]")
                     pulsebar.bar.color = pulsebar.colors.mute
+                    pulsebar.bar.background_color = pulsebar.colors.mute_background
                 else
                     pulsebar._mute = "no"
                     pulsebar.tooltip:set_text(string.format("%s %s: %s", pulsebar.devicetype, pulsebar.device, volu))
                     pulsebar.bar.color = pulsebar.colors.unmute
+                    pulsebar.bar.background_color = pulsebar.colors.background
                 end
 
                 settings()
@@ -137,9 +145,14 @@ local function factory(args)
                 end
             end
 
-            int = math.modf((pulsebar._current_level / 100) * tot)
-            preset.text = string.format("[%s%s]", string.rep("|", int),
-                          string.rep(" ", tot - int))
+            local int = math.modf((pulsebar._current_level / 100) * tot)
+            preset.text = string.format(
+                "%s%s%s%s",
+                tick_pre,
+                string.rep(tick, int),
+                string.rep(tick_none, tot - int),
+                tick_post
+            )
 
             if pulsebar.followtag then preset.screen = awful.screen.focused() end
 
@@ -154,7 +167,7 @@ local function factory(args)
         end)
     end
 
-    helpers.newtimer(string.format("pulsebar-%s", pulsebar.sink), timeout, pulsebar.update)
+    helpers.newtimer(string.format("pulsebar-%s-%s", pulsebar.devicetype, pulsebar.device), timeout, pulsebar.update)
 
     return pulsebar
 end

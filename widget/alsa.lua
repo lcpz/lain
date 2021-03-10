@@ -15,8 +15,8 @@ local string  = string
 -- lain.widget.alsa
 
 local function factory(args)
-    local alsa     = { widget = wibox.widget.textbox() }
-    local args     = args or {}
+    args           = args or {}
+    local alsa     = { widget = args.widget or wibox.widget.textbox() }
     local timeout  = args.timeout or 5
     local settings = args.settings or function() end
 

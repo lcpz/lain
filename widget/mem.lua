@@ -14,8 +14,9 @@ local gmatch, lines, floor = string.gmatch, io.lines, math.floor
 -- lain.widget.mem
 
 local function factory(args)
-    local mem      = { widget = wibox.widget.textbox() }
-    local args     = args or {}
+    args           = args or {}
+
+    local mem      = { widget = args.widget or wibox.widget.textbox() }
     local timeout  = args.timeout or 2
     local settings = args.settings or function() end
 

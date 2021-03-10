@@ -50,7 +50,7 @@ function quake:display()
 
     if not client then
         -- The client does not exist, we spawn it
-        cmd = string.format("%s %s %s", self.app,
+        local cmd = string.format("%s %s %s", self.app,
               string.format(self.argname, self.name), self.extra)
         awful.spawn(cmd, { tag = self.screen.selected_tag })
         return
@@ -60,6 +60,8 @@ function quake:display()
     client.floating = true
     client.border_width = self.border
     client.size_hints_honor = false
+    local maximized = client.maximized
+    local fullscreen = client.fullscreen
     client:geometry(self.geometry[self.screen.index] or self:compute_size())
 
     -- Set not sticky and on top
@@ -74,15 +76,21 @@ function quake:display()
     -- Toggle display
     if self.visible then
         client.hidden = false
+        client.maximized = self.maximized
+        client.fullscreen = self.fullscreen
         client:raise()
         self.last_tag = self.screen.selected_tag
         client:tags({self.screen.selected_tag})
         capi.client.focus = client
-   else
+    else
+        self.maximized = maximized
+        self.fullscreen = fullscreen
+        client.maximized = false
+        client.fullscreen = false
         client.hidden = true
         local ctags = client:tags()
-        for i, t in pairs(ctags) do
-            ctags[i] = nil
+        for j, _ in pairs(ctags) do
+            ctags[j] = nil
         end
         client:tags(ctags)
     end
@@ -114,8 +122,22 @@ function quake:compute_size()
     return self.geometry[self.screen.index]
 end
 
-function quake:new(config)
-    local conf = config or {}
+function quake:toggle()
+     if self.followtag then self.screen = awful.screen.focused() end
+     local current_tag = self.screen.selected_tag
+     if current_tag and self.last_tag ~= current_tag and self.visible then
+         local c=self:display()
+         if c then
+            c:move_to_tag(current_tag)
+        end
+     else
+         self.visible = not self.visible
+         self:display()
+     end
+end
+
+function quake.new(conf)
+    conf = conf or {}
 
     conf.app        = conf.app       or "xterm"    -- application to spawn
     conf.name       = conf.name      or "QuakeDD"  -- window name
@@ -135,6 +157,9 @@ function quake:new(config)
     conf.horiz      = conf.horiz     or "left"     -- left, right or center
     conf.geometry   = {}                           -- internal use
 
+    conf.maximized = false
+    conf.fullscreen = false
+
     local dropdown = setmetatable(conf, { __index = quake })
 
     capi.client.connect_signal("manage", function(c)
@@ -151,18 +176,4 @@ function quake:new(config)
     return dropdown
 end
 
-function quake:toggle()
-     if self.followtag then self.screen = awful.screen.focused() end
-     local current_tag = self.screen.selected_tag
-     if current_tag and self.last_tag ~= current_tag and self.visible then
-         local c=self:display()
-         if c then
-            c:move_to_tag(current_tag)
-        end
-     else
-         self.visible = not self.visible
-         self:display()
-     end
-end
-
-return setmetatable(quake, { __call = function(_, ...) return quake:new(...) end })
+return setmetatable(quake, { __call = function(_, ...) return quake.new(...) end })
