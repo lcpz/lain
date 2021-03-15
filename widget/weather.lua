@@ -27,7 +27,7 @@ local function factory(args)
     local APPID                 = args.APPID or "3e321f9414eaedbfab34983bda77a66e" -- lain's default
     local timeout               = args.timeout or 60 * 15 -- 15 min
     local current_call          = args.current_call  or "curl -s 'https://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
-    local forecast_call         = args.forecast_call or "curl -s 'https://api.openweathermap.org/data/2.5/forecast/daily?id=%s&units=%s&lang=%s&cnt=%s&APPID=%s'"
+    local forecast_call         = args.forecast_call or "curl -s 'https://api.openweathermap.org/data/2.5/forecast?id=%s&units=%s&lang=%s&APPID=%s'"
     local city_id               = args.city_id or 0 -- placeholder
     local units                 = args.units or "metric"
     local lang                  = args.lang or "en"
@@ -37,8 +37,8 @@ local function factory(args)
     local notification_text_fun = args.notification_text_fun or
                                   function (wn)
                                       local day = os.date("%a %d", wn["dt"])
-                                      local tmin = math.floor(wn["temp"]["min"])
-                                      local tmax = math.floor(wn["temp"]["max"])
+                                      local tmin = math.floor(wn["main"]["temp_min"])
+                                      local tmax = math.floor(wn["main"]["temp_max"])
                                       local desc = wn["weather"][1]["description"]
                                       return string.format("<b>%s</b>: %s, %d - %d ", day, desc, tmin, tmax)
                                   end
@@ -88,14 +88,14 @@ local function factory(args)
     end
 
     function weather.forecast_update()
-        local cmd = string.format(forecast_call, city_id, units, lang, cnt, APPID)
+        local cmd = string.format(forecast_call, city_id, units, lang, APPID)
         helpers.async(cmd, function(f)
             local err
             weather_now, _, err = json.decode(f, 1, nil)
 
             if not err and type(weather_now) == "table" and tonumber(weather_now["cod"]) == 200 then
                 weather.notification_text = ""
-                for i = 1, weather_now["cnt"] do
+                for i = 1, weather_now["cnt"], weather_now["cnt"]//cnt do
                     weather.notification_text = weather.notification_text ..
                                                 notification_text_fun(weather_now["list"][i])
                     if i < weather_now["cnt"] then
