@@ -9,6 +9,8 @@
 local helpers  = require("lain.helpers")
 local wibox    = require("wibox")
 local naughty  = require("naughty")
+local awful    = require("awful")
+local gears    = require("gears")
 
 -- Microphone state
 -- lain.widget.mic
@@ -16,12 +18,12 @@ local naughty  = require("naughty")
 local function factory(args)
     local args     = args or {}
 
-    local mic      = { widget = args.widget or wibox.widget.imagebox() }
-    local timeout  = args.timeout or 2
+    local timeout  = args.timeout or 10
     local settings = args.settings or function() end
-
-    mic_now = {
-        state = "unmute"
+    local mic      = {
+        widget_imageBox = wibox.widget.imagebox(),
+        timer = gears.timer,
+        state = "unmute",
     }
 
     function mic.pressed(button)
@@ -32,16 +34,22 @@ local function factory(args)
     end
 
     function mic.update()
-        local current_micState = "error"
+        mic.timer:emit_signal("timeout")
+    end
 
-        -- Read `amixer get Capture` command and try to `grep` all "[on]" lines.
-        --   - If there are lines with "[on]" then assume microphone is "unmuted".
-        --   - If there are NO lines with "[on]" then assume microphone is "muted".
-        helpers.async_with_shell("amixer get Capture | grep '\\[on\\]'", function(stdout, exit_code)
-            if exit_code == 1 then
+    -- Read `amixer get Capture` command and try to `grep` all "[on]" lines.
+    --   - If there are lines with "[on]" then assume microphone is "unmuted".
+    --   - If there are NO lines with "[on]" then assume microphone is "muted".
+    mic, mic.timer = awful.widget.watch(
+        "bash -c \"amixer get Capture | grep '\\[on\\]'\"",
+        timeout,
+        function(widget, stdout, stderr, exitreason, exitcode)
+            local current_micState = "error"
+
+            if exitcode == 1 then
                 -- Exit code 1 - no line selected
                 current_micState = "muted"
-            elseif exit_code == 0 then
+            elseif exitcode == 0 then
                 -- Exit code 0 - a line is selected
                 current_micState = "unmuted"
             else
@@ -50,7 +58,7 @@ local function factory(args)
             end
 
             -- Compare new and old state
-            if current_micState ~= mic_now.state then
+            if current_micState ~= widget.state then
                 if current_micState == "muted" then
                     naughty.notify({preset=naughty.config.presets.normal, title="mic widget info", text='muted'})
                 elseif current_micState == "unmuted" then
@@ -60,17 +68,16 @@ local function factory(args)
                 end
 
                 -- Store new microphone state
-                mic_now.state = current_micState
+                widget.state = current_micState
             end
-        end)
 
-        widget = mic.widget
-        settings()
-    end
+            -- Call user/theme defined function
+            settings()
+        end,
+        mic
+    )
 
-    helpers.newtimer("mic", timeout, mic.update)
-
-    mic.widget:connect_signal("button::press", function(c, _, _, button)
+    mic.widget_imageBox:connect_signal("button::press", function(c, _, _, button)
         mic.pressed(button)
     end)
 
