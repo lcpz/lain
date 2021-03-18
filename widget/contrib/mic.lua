@@ -55,7 +55,7 @@ local function factory(args)
 
     function mic.pressed(self, button)
         if button == 1 then
-            awful.spawn.easy_async_with_shell("amixer set Capture toggle")
+            awful.spawn.with_shell("amixer set Capture toggle")
             self:update()
         end
     end
