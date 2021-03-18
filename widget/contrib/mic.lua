@@ -34,9 +34,7 @@ local gears    = require("gears")
 --     -- Toggle microphone state
 --     awful.key({ modkey, "Shift" }, "m",
 --               function ()
---                   os.execute("amixer set Capture toggle")
---                   --lain.widget.mic.update()
---                   beautiful.mic:update()
+--                   beautiful.mic:toggle()
 --               end,
 --               {description = "Toggle microphone (amixer)", group = "Hotkeys"}
 --     ),
@@ -53,10 +51,14 @@ local function factory(args)
         state = "unmute",
     }
 
+    function mic.toggle(self)
+        awful.spawn.with_shell("amixer set Capture toggle")
+        self:update()
+    end
+
     function mic.pressed(self, button)
         if button == 1 then
-            awful.spawn.with_shell("amixer set Capture toggle")
-            self:update()
+            self:toggle()
         end
     end
 
