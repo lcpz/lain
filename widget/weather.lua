@@ -23,7 +23,9 @@ local tonumber = tonumber
 local function factory(args)
     args                        = args or {}
 
-    local weather               = { widget = args.widget or wibox.widget.textbox() }
+    local weather               = { widget = args.widget or wibox.widget.textbox(),
+                                    currentWeather = {},
+                                  }
     local APPID                 = args.APPID -- mandatory
     local timeout               = args.timeout or 60 * 15 -- 15 min
     local current_call          = args.current_call  or "curl -s 'https://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
@@ -42,9 +44,21 @@ local function factory(args)
                                       local desc = wn["weather"][1]["description"]
                                       return string.format("<b>%s</b>: %s, %d - %d ", day, desc, tmin, tmax)
                                   end
+    local notification_text_currentWeather = args.notification_text_currentWeather or
+                                  function (wn)
+                                      return string.format(
+                                          "<b>%s</b>\n- %s\n- Temp: %0.1f°C\n- Feels like: %0.1f°C\n- Pressure: %d\n- Humidity: %d%%\n",
+                                          wn["name"],
+                                          wn["weather"][1]["description"],
+                                          wn["main"]["temp"],
+                                          wn["main"]["feels_like"],
+                                          wn["main"]["pressure"],
+                                          wn["main"]["humidity"])
+                                  end
     local weather_na_markup     = args.weather_na_markup or " N/A "
     local followtag             = args.followtag or false
     local showpopup             = args.showpopup or "on"
+    local showCurrentWeatherNotification = args.showCurrentWeatherNotification or "off"
     local settings              = args.settings or function() end
 
     weather.widget:set_markup(weather_na_markup)
@@ -95,6 +109,12 @@ local function factory(args)
 
             if not err and type(weather_now) == "table" and tonumber(weather_now["cod"]) == 200 then
                 weather.notification_text = ""
+
+                if showCurrentWeatherNotification == "on" then
+                    weather.notification_text = weather.notification_text ..
+                                                notification_text_currentWeather(weather.currentWeather)
+                end
+
                 for i = 1, weather_now["cnt"], weather_now["cnt"]//cnt do
                     weather.notification_text = weather.notification_text ..
                                                 notification_text_fun(weather_now["list"][i])
@@ -126,6 +146,10 @@ local function factory(args)
 
                 weather.icon_path = icons_path .. icon .. ".png"
                 widget = weather.widget
+
+                -- Store current weather for notification popup
+                weather.currentWeather = weather_now
+
                 settings()
             else
                 weather.icon_path = icons_path .. "na.png"
