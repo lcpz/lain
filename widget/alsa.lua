@@ -23,6 +23,8 @@ local function factory(args)
     alsa.cmd           = args.cmd or "amixer"
     alsa.channel       = args.channel or "Master"
     alsa.togglechannel = args.togglechannel
+    alsa.pressed       = args.pressed or function(button) end
+
 
     local format_cmd = string.format("%s get %s", alsa.cmd, alsa.channel)
 
@@ -44,6 +46,10 @@ local function factory(args)
             end
         end)
     end
+
+    alsa.widget:connect_signal("button::press", function(c, _, _, button)
+       alsa.pressed(button)
+    end)
 
     helpers.newtimer(string.format("alsa-%s-%s", alsa.cmd, alsa.channel), timeout, alsa.update)
 
