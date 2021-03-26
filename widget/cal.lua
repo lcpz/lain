@@ -139,10 +139,11 @@ local function factory(args)
         end
 
         if cal.notification then
-            naughty.replace_text(cal.notification, nil, text)
+            local title = cal.notification_preset.title or nil
+            naughty.replace_text(cal.notification, title, text)
             return
         end
-        
+
         cal.notification = naughty.notify {
             preset  = cal.notification_preset,
             screen  = cal.followtag and awful.screen.focused() or scr or 1,
