@@ -138,7 +138,11 @@ local function factory(args)
             cal.month, cal.year = current_month, current_year
         end
 
-        cal.hide()
+        if cal.notification then
+            naughty.replace_text(cal.notification, nil, text)
+            return
+        end
+        
         cal.notification = naughty.notify {
             preset  = cal.notification_preset,
             screen  = cal.followtag and awful.screen.focused() or scr or 1,
