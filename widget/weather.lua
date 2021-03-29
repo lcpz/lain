@@ -24,7 +24,7 @@ local function factory(args)
     args                        = args or {}
 
     local weather               = { widget = args.widget or wibox.widget.textbox() }
-    local APPID                 = args.APPID or "3e321f9414eaedbfab34983bda77a66e" -- lain's default
+    local APPID                 = args.APPID -- mandatory
     local timeout               = args.timeout or 60 * 15 -- 15 min
     local current_call          = args.current_call  or "curl -s 'https://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
     local forecast_call         = args.forecast_call or "curl -s 'https://api.openweathermap.org/data/2.5/forecast?id=%s&units=%s&lang=%s&APPID=%s'"
