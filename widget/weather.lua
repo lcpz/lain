@@ -37,10 +37,9 @@ local function factory(args)
     local notification_text_fun = args.notification_text_fun or
                                   function (wn)
                                       local day = os.date("%a %d", wn["dt"])
-                                      local tmin = math.floor(wn["main"]["temp_min"])
-                                      local tmax = math.floor(wn["main"]["temp_max"])
+                                      local temp = math.floor(wn["main"]["temp"])
                                       local desc = wn["weather"][1]["description"]
-                                      return string.format("<b>%s</b>: %s, %d - %d ", day, desc, tmin, tmax)
+                                      return string.format("<b>%s</b>: %s, %d ", day, desc, temp)
                                   end
     local weather_na_markup     = args.weather_na_markup or " N/A "
     local followtag             = args.followtag or false
