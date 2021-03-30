@@ -77,7 +77,7 @@ local function factory(args)
         cal.month, cal.year = d.month, d.year
 
         if cal.week_number ~= "none" then
-            local m = os.time { year = year or current_year, month = month and month or current_month, day = 0 }
+            local m = os.time { year = year or current_year, month = month and month or current_month, day = 1 }
             local head_prepend = string.rep(" ", tostring(string.format(cal.week_number_format, 0)):len())
 
             if cal.week_number == "left" then
