@@ -38,7 +38,15 @@ local function factory(args)
     }
 
     function cal.get_week_number(m, st_day, x)
-        return string.format(cal.week_number_format, os.date("%V", m) + (x ~= 0 and floor((x + st_day) / 7) - 1 or 0))
+        local date = os.date("*t", m)
+
+        local week_step = (x ~= 0 and floor((x + st_day) / 7) - 1 or 0);
+
+        local display_time = os.time {
+            year = date.year, month = date.month, day = date.day + 7 * week_step
+        }
+
+        return string.format(cal.week_number_format, os.date("%V", display_time))
     end
 
     function cal.sum_week_days(x, y)
@@ -69,7 +77,7 @@ local function factory(args)
         cal.month, cal.year = d.month, d.year
 
         if cal.week_number ~= "none" then
-            local m = os.time { year = year or current_year, month = month and month or current_month, day = 0 }
+            local m = os.time { year = year or current_year, month = month and month or current_month, day = 1 }
             local head_prepend = string.rep(" ", tostring(string.format(cal.week_number_format, 0)):len())
 
             if cal.week_number == "left" then
