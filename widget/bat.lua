@@ -79,26 +79,32 @@ local function factory(args)
         ac_status = "N/A",
         perc      = "N/A",
         time      = "N/A",
-        watt      = "N/A"
+        watt      = "N/A",
+        capacity  = "N/A"
     }
 
-    bat_now.n_status = {}
-    bat_now.n_perc   = {}
+    bat_now.n_status   = {}
+    bat_now.n_perc     = {}
+    bat_now.n_capacity = {}
     for i = 1, #batteries do
         bat_now.n_status[i] = "N/A"
         bat_now.n_perc[i] = 0
+        bat_now.n_capacity[i] = 0
     end
 
     -- used to notify full charge only once before discharging
     local fullnotification = false
 
     function bat.update()
-        local sum_rate_current = 0
-        local sum_rate_voltage = 0
-        local sum_rate_power   = 0
-        local sum_rate_energy  = 0
-        local sum_energy_now   = 0
-        local sum_energy_full  = 0
+        -- luacheck: globals bat_now
+        local sum_rate_current  = 0
+        local sum_rate_voltage  = 0
+        local sum_rate_power    = 0
+        local sum_rate_energy   = 0
+        local sum_energy_now    = 0
+        local sum_energy_full   = 0
+        local sum_charge_full   = 0
+        local sum_charge_design = 0
 
         for i, battery in ipairs(batteries) do
             local bstr    = pspath .. battery
@@ -109,6 +115,8 @@ local function factory(args)
                 local rate_current = tonumber(helpers.first_line(bstr .. "/current_now"))
                 local rate_voltage = tonumber(helpers.first_line(bstr .. "/voltage_now"))
                 local rate_power   = tonumber(helpers.first_line(bstr .. "/power_now"))
+                local charge_full  = tonumber(helpers.first_line(bstr .. "/charge_full"))
+                local charge_design = tonumber(helpers.first_line(bstr .. "/charge_full_design"))
 
                 -- energy_now(P)[uWh], charge_now(I)[uAh]
                 local energy_now = tonumber(helpers.first_line(bstr .. "/energy_now") or
@@ -116,7 +124,7 @@ local function factory(args)
 
                 -- energy_full(P)[uWh], charge_full(I)[uAh]
                 local energy_full = tonumber(helpers.first_line(bstr .. "/energy_full") or
-                                    helpers.first_line(bstr .. "/charge_full"))
+                                    charge_full)
 
                 local energy_percentage = tonumber(helpers.first_line(bstr .. "/capacity")) or
                                           math.floor((energy_now / energy_full) * 100)
@@ -124,14 +132,24 @@ local function factory(args)
                 bat_now.n_status[i] = helpers.first_line(bstr .. "/status") or "N/A"
                 bat_now.n_perc[i]   = energy_percentage or bat_now.n_perc[i]
 
-                sum_rate_current = sum_rate_current + (rate_current or 0)
-                sum_rate_voltage = sum_rate_voltage + (rate_voltage or 0)
-                sum_rate_power   = sum_rate_power + (rate_power or 0)
-                sum_rate_energy  = sum_rate_energy + (rate_power or (((rate_voltage or 0) * (rate_current or 0)) / 1e6))
-                sum_energy_now   = sum_energy_now + (energy_now or 0)
-                sum_energy_full  = sum_energy_full + (energy_full or 0)
+                if not charge_design or charge_design == 0 then
+                    bat_now.n_capacity[i] = 0
+                else
+                    bat_now.n_capacity[i] = math.floor((charge_full / charge_design) * 100)
+                end
+
+                sum_rate_current  = sum_rate_current + (rate_current or 0)
+                sum_rate_voltage  = sum_rate_voltage + (rate_voltage or 0)
+                sum_rate_power    = sum_rate_power + (rate_power or 0)
+                sum_rate_energy   = sum_rate_energy + (rate_power or (((rate_voltage or 0) * (rate_current or 0)) / 1e6))
+                sum_energy_now    = sum_energy_now + (energy_now or 0)
+                sum_energy_full   = sum_energy_full + (energy_full or 0)
+                sum_charge_full   = sum_charge_full + (charge_full or 0)
+                sum_charge_design = sum_charge_design + (charge_design or 0)
             end
         end
+
+        bat_now.capacity = math.floor(math.min(100, (sum_charge_full / sum_charge_design) * 100))
 
         -- When one of the battery is charging, others' status are either
         -- "Full", "Unknown" or "Charging". When the laptop is not plugged in,
