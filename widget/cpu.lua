@@ -49,7 +49,7 @@ local function factory(args)
                 -- Read current data and calculate relative values.
                 local dactive = active - core.last_active
                 local dtotal  = total - core.last_total
-                local usage   = math.ceil((dactive / dtotal) * 100)
+                local usage   = math.ceil(math.abs((dactive / dtotal) * 100))
 
                 core.last_active = active
                 core.last_total  = total
