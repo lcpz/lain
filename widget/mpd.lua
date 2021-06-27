@@ -61,7 +61,8 @@ local function factory(args)
                 track        = "N/A",
                 date         = "N/A",
                 time         = "N/A",
-                elapsed      = "N/A"
+                elapsed      = "N/A",
+                volume       = "N/A"
             }
 
             for line in string.gmatch(f, "[^\n]+") do
@@ -83,6 +84,7 @@ local function factory(args)
                     elseif k == "single"         then mpd_now.single_mode  = v ~= "0"
                     elseif k == "random"         then mpd_now.random_mode  = v ~= "0"
                     elseif k == "consume"        then mpd_now.consume_mode = v ~= "0"
+                    elseif k == "volume"         then mpd_now.volume       = v
                     end
                 end
             end
