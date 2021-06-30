@@ -26,7 +26,7 @@ If you want to create a pull request, make sure that:
 
 - Your code its easy to understand, maintainable, and modularized. You should also avoid code duplication wherever possible by adding functions to or using lain.helpers_. If something is unclear, or you can not write it in such a way that it will be clear, explain it with a comment.
 
-- You test your changes before submitting to make sure that you code works and does not break other parts of the module.
+- You test your changes before submitting to make sure that your code works and does not break other parts of the module.
 
 - You update ``wiki`` submodule with a thorough section, if necessary.
 
