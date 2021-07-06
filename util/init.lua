@@ -96,15 +96,41 @@ end
 
 -- Non-empty tag browsing
 -- direction in {-1, 1} <-> {previous, next} non-empty tag
-function util.tag_view_nonempty(direction, sc)
-   local s = sc or awful.screen.focused()
+function util.tag_view_nonempty(direction,sc)
+	local s = sc or awful.screen.focused()
+	local tags = s.tags
+	local tag = s.selected_tag
+	local idx = awful.tag.getidx()
 
-   for _ = 1, #s.tags do
-       awful.tag.viewidx(direction, s)
-       if #s.clients > 0 then
-           return
-       end
-   end
+	local looputil = function (start,e,inc)
+			for i = start, e, inc do
+				local currentTag = s.tags[i]
+				if currentTag == tag then
+					return
+				end
+				if currentTag ~= nil then
+					if #currentTag:clients() > 0 then
+						currentTag:view_only()
+						return
+					end
+				end
+			end
+			return 1
+	end
+
+	if direction == 1 then
+		local r = looputil(idx+1,#tags,1)
+		if r then
+			looputil(1,idx,1)
+		end
+	end
+
+	if direction == -1 then
+		local r = looputil(idx-1,0,-1)
+		if r then
+			looputil(#tags,idx,-1)
+		end
+	end
 end
 
 -- {{{ Dynamic tagging
