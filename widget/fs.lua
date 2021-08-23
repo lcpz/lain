@@ -74,6 +74,7 @@ local function factory(args)
     local function update_synced()
         local pathlen = 10
         fs_now = {}
+        max_usage = 0
 
         local notifypaths = {}
         for _, mount in ipairs(Gio.unix_mounts_get()) do
@@ -96,6 +97,10 @@ local function factory(args)
                         used       = used / math.pow(1024, units),
                         free       = free / math.pow(1024, units)
                     }
+
+                    if fs_now[path].percentage > max_usage then
+                        max_usage = fs_now[path].percentage
+                    end
 
                     if fs_now[path].percentage > 0 then -- don't notify unused file systems
                         notifypaths[#notifypaths+1] = path
