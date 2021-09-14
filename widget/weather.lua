@@ -17,17 +17,18 @@ local type     = type
 local tonumber = tonumber
 
 -- OpenWeatherMap
--- current weather and X-days forecast
+-- current weather and 5d/3h forecast
 -- lain.widget.weather
 
 local function factory(args)
     args                        = args or {}
 
-    local weather               = { widget = args.widget or wibox.widget.textbox() }
+    -- weather.now will hold the 'current' and 'forecast' state
+    local weather               = { widget = args.widget or wibox.widget.textbox(), now = {} }
     local APPID                 = args.APPID -- mandatory api key
     local timeout               = args.timeout or 900 -- 15 min
-    local current_call          = args.current_call  or "curl -s 'https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&APPID=%s&units=%s&lang=%s'"
-    local forecast_call         = args.forecast_call or "curl -s 'https://api.openweathermap.org/data/2.5/forecast?lat=%s&lon=%s&APPID=%s&cnt=%s&units=%s&lang=%s'"
+    local current_uri           = args.current_uri or "https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&APPID=%s&units=%s&lang=%s"
+    local forecast_uri          = args.forecast_uri or "https://api.openweathermap.org/data/2.5/forecast?lat=%s&lon=%s&APPID=%s&cnt=%s&units=%s&lang=%s"
     local lat                   = args.lat or 0 -- placeholder
     local lon                   = args.lon or 0 -- placeholder
     local units                 = args.units or "metric"
@@ -37,15 +38,15 @@ local function factory(args)
     local notification_preset   = args.notification_preset or {}
     local notification_text_fun = args.notification_text_fun or
                                   function (wn)
-                                      local day = os.date("%a %d", wn["dt"])
+                                      local day = os.date("%a %d %H:%M", wn["dt"])
                                       local temp = math.floor(wn["main"]["temp"])
                                       local desc = wn["weather"][1]["description"]
-                                      return string.format("<b>%s</b>: %s, %d ", day, desc, temp)
+                                      return string.format("<b>%s</b>: %s, %d°", day, desc, temp)
                                   end
     local weather_na_markup     = args.weather_na_markup or " N/A "
     local followtag             = args.followtag or false
     local showpopup             = args.showpopup or "on"
-    local settings              = args.settings or function() end
+    local settings              = args.settings or function(_, _) end
 
     weather.widget:set_markup(weather_na_markup)
     weather.icon_path = icons_path .. "na.png"
@@ -88,18 +89,17 @@ local function factory(args)
     end
 
     function weather.forecast_update()
-        local cmd = string.format(forecast_call, lat, lon, APPID, cnt, units, lang)
+        local uri = string.format(forecast_uri, lat, lon, APPID, cnt, units, lang)
+        helpers.uri(uri, function(f)
+            local forecast, _, err = json.decode(f, 1, nil)
 
-        helpers.async(cmd, function(f)
-            local err
-            weather_now, _, err = json.decode(f, 1, nil)
-
-            if not err and type(weather_now) == "table" and tonumber(weather_now["cod"]) == 200 then
+            if not err and type(weather.forecast) == "table" and tonumber(forecast["cod"]) == 200 then
+                weather.now.forecast = forecast
                 weather.notification_text = ""
-                for i = 1, weather_now["cnt"], math.floor(weather_now["cnt"] / cnt) do
+                for i = 1, forecast["cnt"], math.floor(forecast["cnt"] / cnt) do
                     weather.notification_text = weather.notification_text ..
-                                                notification_text_fun(weather_now["list"][i])
-                    if i < weather_now["cnt"] then
+                                                notification_text_fun(forecast["list"][i])
+                    if i < forecast["cnt"] then
                         weather.notification_text = weather.notification_text .. "\n"
                     end
                 end
@@ -108,17 +108,18 @@ local function factory(args)
     end
 
     function weather.update()
-        local cmd = string.format(current_call, lat, lon, APPID, units, lang)
+        local uri = string.format(current_uri, lat, lon, APPID, units, lang)
+        helpers.uri(uri, function(f)
+            local current, _, err = json.decode(f, 1, nil)
 
-        helpers.async(cmd, function(f)
-            local err
-            weather_now, _, err = json.decode(f, 1, nil)
-
-            if not err and type(weather_now) == "table" and tonumber(weather_now["cod"]) == 200 then
-                local sunrise = tonumber(weather_now["sys"]["sunrise"])
-                local sunset  = tonumber(weather_now["sys"]["sunset"])
-                local icon    = weather_now["weather"][1]["icon"]
+            if not err and type(current) == "table" and tonumber(current["cod"]) == 200 then
+                weather.now.current = current
+                local sunrise = tonumber(current["sys"]["sunrise"])
+                local sunset  = tonumber(current["sys"]["sunset"])
+                local icon    = current["weather"][1]["icon"]
                 local loc_now = os.time()
+                local city    = current["name"]
+                local temp    = current["main"]["temp"]
 
                 if sunrise <= loc_now and loc_now <= sunset then
                     icon = string.gsub(icon, "n", "d")
@@ -127,8 +128,8 @@ local function factory(args)
                 end
 
                 weather.icon_path = icons_path .. icon .. ".png"
-                widget = weather.widget
-                settings()
+                weather.widget:set_markup(string.format(" %s %d° ", city, temp))
+                settings(weather.widget, weather.now)
             else
                 weather.icon_path = icons_path .. "na.png"
                 weather.widget:set_markup(weather_na_markup)
@@ -137,6 +138,7 @@ local function factory(args)
             weather.icon:set_image(weather.icon_path)
         end)
     end
+
 
     if showpopup == "on" then weather.attach(weather.widget) end
 
