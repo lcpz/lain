@@ -5,9 +5,9 @@
 
 --]]
 
-local helpers              = require("lain.helpers")
-local wibox                = require("wibox")
-local match, lines, floor  = string.match, io.lines, math.floor
+local helpers      = require("lain.helpers")
+local wibox        = require("wibox")
+local match, floor = string.match, math.floor
 
 local function factory(args)
     args           = args or {}
@@ -19,21 +19,20 @@ local function factory(args)
     function uptime.update()
         uptime_now = {}
 
-        for line in lines("/proc/uptime") do
-            local secs = floor(match(line, "^[0-9.]+"))
+        local line = helpers.first_line("/proc/uptime")
+        local secs = floor(match(line, "^[0-9.]+"))
 
-            uptime_now.tot_sec = secs
-            uptime_now.tot_min = floor(secs / 60)
-            uptime_now.tot_hr   = floor(uptime_now.tot_min / 60)
-            uptime_now.tot_day    = floor(uptime_now.tot_hr / 24)
+        uptime_now.tot_sec = secs
+        uptime_now.tot_min = floor(secs / 60)
+        uptime_now.tot_hr  = floor(uptime_now.tot_min / 60)
+        uptime_now.tot_day = floor(uptime_now.tot_hr / 24)
 
-            uptime_now.sec = uptime_now.tot_sec % 60
-            uptime_now.min = uptime_now.tot_min % 60
-            uptime_now.hr   = uptime_now.tot_hr   % 24
+        uptime_now.sec = uptime_now.tot_sec % 60
+        uptime_now.min = uptime_now.tot_min % 60
+        uptime_now.hr  = uptime_now.tot_hr   % 24
 
-            widget = uptime.widget
-            settings()
-        end
+        widget = uptime.widget
+        settings()
     end
 
     helpers.newtimer("uptime", timeout, uptime.update)
