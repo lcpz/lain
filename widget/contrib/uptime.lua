@@ -22,14 +22,14 @@ local function factory(args)
         for line in lines("/proc/uptime") do
             local secs = floor(match(line, "^[0-9.]+"))
 
-            uptime_now.total_seconds = secs
-            uptime_now.total_minutes = floor(secs / 60)
-            uptime_now.total_hours   = floor(uptime_now.minutes / 60)
-            uptime_now.total_days    = floor(uptime_now.total_hours / 24)
+            uptime_now.tot_sec = secs
+            uptime_now.tot_min = floor(secs / 60)
+            uptime_now.tot_hr   = floor(uptime_now.tot_min / 60)
+            uptime_now.tot_day    = floor(uptime_now.tot_hr / 24)
 
-            uptime_now.seconds = uptime_now.total_seconds % 60
-            uptime_now.minutes = uptime_now.total_minutes % 60
-            uptime_now.hours   = uptime_now.total_hours   % 24
+            uptime_now.sec = uptime_now.tot_sec % 60
+            uptime_now.min = uptime_now.tot_min % 60
+            uptime_now.hr   = uptime_now.tot_hr   % 24
 
             widget = uptime.widget
             settings()
