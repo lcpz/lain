@@ -24,6 +24,7 @@ local function factory(args)
     local wifi_state = args.wifi_state or "off"
     local eth_state  = args.eth_state or "off"
     local screen     = args.screen or 1
+    local format     = args.format or "%.1f"
     local settings   = args.settings or function() end
 
     -- Compatibility with old API where iface was a string corresponding to 1 interface
@@ -63,8 +64,8 @@ local function factory(args)
             net_now.sent     = net_now.sent + dev_now.sent
             net_now.received = net_now.received + dev_now.received
 
-            dev_now.sent     = string.format("%.1f", dev_now.sent)
-            dev_now.received = string.format("%.1f", dev_now.received)
+            dev_now.sent     = string.format(format, dev_now.sent)
+            dev_now.received = string.format(format, dev_now.received)
 
             dev_now.last_t   = now_t
             dev_now.last_r   = now_r
@@ -106,8 +107,8 @@ local function factory(args)
             -- the totals across all specified devices
         end
 
-        net_now.sent = string.format("%.1f", net_now.sent)
-        net_now.received = string.format("%.1f", net_now.received)
+        net_now.sent = string.format(format, net_now.sent)
+        net_now.received = string.format(format, net_now.received)
 
         widget = net.widget
         settings()
