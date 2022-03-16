@@ -15,7 +15,8 @@ description = {
    license = "GPL-2.0"
 }
 dependencies = {
-   "lua >= 5.1"
+   "lua >= 5.1",
+   "dkjson >= 2.6-1"
 }
 supported_platforms = { "linux" }
 build = {
