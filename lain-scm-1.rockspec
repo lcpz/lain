@@ -1,8 +1,8 @@
 package = "lain"
 version = "scm-1"
 source = {
-   url = "https://github.com/lcpz/lain",
-   tag = "scm-1`"
+   url = "git+https://github.com/lcpz/lain.git",
+   tag = "master"
 }
 description = {
    summary = "Layout, widgets and utilities for Awesome WM",
@@ -15,13 +15,11 @@ description = {
    license = "GPL-2.0"
 }
 dependencies = {
-   "lua >= 5.1",
-   "awesome >= 4.0",
-   "Glib >= 2.54",
-   "curl"
+   "lua >= 5.1"
 }
 supported_platforms = { "linux" }
 build = {
    type = "builtin",
    modules = { lain = "init.lua" }
 }
+
