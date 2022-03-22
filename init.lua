@@ -9,7 +9,7 @@
 --]]
 
 return {
-    layout = require("lain.layout"),
-    util   = require("lain.util"),
-    widget = require("lain.widget")
+    layout = require(tostring(...):match(".*lain") .. ".layout"),
+    util   = require(tostring(...):match(".*lain") .. ".util"),
+    widget = require(tostring(...):match(".*lain") .. ".widget")
 }

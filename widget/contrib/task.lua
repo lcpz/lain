@@ -5,8 +5,8 @@
 
 --]]
 
-local helpers = require("lain.helpers")
-local markup  = require("lain.util").markup
+local helpers = require(tostring(...):match(".*lain") .. ".helpers")
+local markup  = require(tostring(...):match(".*lain") .. ".util").markup
 local awful   = require("awful")
 local naughty = require("naughty")
 local mouse   = mouse

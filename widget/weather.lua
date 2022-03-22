@@ -5,8 +5,8 @@
 
 --]]
 
-local helpers  = require("lain.helpers")
-local json     = require("lain.util").dkjson
+local helpers  = require(tostring(...):match(".*lain") .. ".helpers")
+local json     = require(tostring(...):match(".*lain") .. ".util").dkjson
 local focused  = require("awful.screen").focused
 local naughty  = require("naughty")
 local wibox    = require("wibox")

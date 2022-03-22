@@ -16,12 +16,12 @@ local sqrt         = math.sqrt
 local pairs        = pairs
 local client       = client
 local tonumber     = tonumber
-local wrequire     = require("lain.helpers").wrequire
+local wrequire     = require(tostring(...):match(".*lain") .. ".helpers").wrequire
 local setmetatable = setmetatable
 
 -- Lain utilities submodule
 -- lain.util
-local util = { _NAME = "lain.util" }
+local util = { _NAME = tostring(...):match(".*lain") .. ".util" }
 
 -- Like awful.menu.clients, but only show clients of currently selected tags
 function util.menu_clients_current_tags(menu, args)

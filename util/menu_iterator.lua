@@ -11,7 +11,7 @@
 -- lain.util.menu_iterator
 
 local naughty = require("naughty")
-local helpers = require("lain.helpers")
+local helpers = require(tostring(...):match(".*lain") .. ".helpers")
 local atable  = require("awful.util").table
 local assert  = assert
 local pairs   = pairs

@@ -7,7 +7,7 @@
 
 --]]
 
-local helpers    = require("lain.helpers")
+local helpers    = require(tostring(...):match(".*lain") .. ".helpers")
 local Gio        = require("lgi").Gio
 local focused    = require("awful.screen").focused
 local wibox      = require("wibox")

@@ -6,7 +6,7 @@
 
 --]]
 
-local helpers = require("lain.helpers")
+local helpers = require(tostring(...):match(".*lain") .. ".helpers")
 local focused = require("awful.screen").focused
 local naughty = require("naughty")
 local wibox   = require("wibox")

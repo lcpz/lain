@@ -6,7 +6,7 @@
 
 --]]
 
-local helpers              = require("lain.helpers")
+local helpers              = require(tostring(...):match(".*lain") .. ".helpers")
 local wibox                = require("wibox")
 local gmatch, lines, floor = string.gmatch, io.lines, math.floor
 

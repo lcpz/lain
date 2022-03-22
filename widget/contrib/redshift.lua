@@ -6,7 +6,7 @@
 
 --]]
 
-local async   = require("lain.helpers").async
+local async   = require(tostring(...):match(".*lain") .. ".helpers").async
 local awful   = require("awful")
 local execute = os.execute
 local type    = type

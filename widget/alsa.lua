@@ -6,7 +6,7 @@
 
 --]]
 
-local helpers = require("lain.helpers")
+local helpers = require(tostring(...):match(".*lain") .. ".helpers")
 local shell   = require("awful.util").shell
 local wibox   = require("wibox")
 local string  = string

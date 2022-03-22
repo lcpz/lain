@@ -11,9 +11,9 @@
 
 --]]
 
-local wrequire     = require("lain.helpers").wrequire
+local wrequire     = require(tostring(...):match(".*lain") .. ".helpers").wrequire
 local setmetatable = setmetatable
 
-local layout       = { _NAME = "lain.layout" }
+local layout       = { _NAME = tostring(...):match(".*lain") .. ".layout" }
 
 return setmetatable(layout, { __index = wrequire })

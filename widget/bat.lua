@@ -6,7 +6,7 @@
 
 --]]
 
-local helpers  = require("lain.helpers")
+local helpers  = require(tostring(...):match(".*lain") .. ".helpers")
 local fs       = require("gears.filesystem")
 local naughty  = require("naughty")
 local wibox    = require("wibox")
@@ -22,7 +22,7 @@ local function factory(args)
     local pspath = args.pspath or "/sys/class/power_supply/"
 
     if not fs.is_dir(pspath) then
-        naughty.notify { text = "lain.widget.bat: invalid power supply path", timeout = 0 }
+        naughty.notify { text = tostring(...):match(".*lain") .. ".widget.bat: invalid power supply path", timeout = 0 }
         return
     end
 
