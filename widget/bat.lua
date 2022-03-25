@@ -1,8 +1,8 @@
 --[[
 
-	 Licensed under GNU General Public License v2
-	  * (c) 2013,      Luca CPZ
-	  * (c) 2010-2012, Peter Hofmann
+     Licensed under GNU General Public License v2
+      * (c) 2013,      Luca CPZ
+      * (c) 2010-2012, Peter Hofmann
 
 --]]
 
@@ -22,7 +22,7 @@ local function factory(args)
     local pspath = args.pspath or "/sys/class/power_supply/"
 
     if not fs.is_dir(pspath) then
-        naughty.notify { text = tostring(...):match(".*lain") .. ".widget.bat: invalid power supply path", timeout = 0 }
+        naughty.notify { text = "lain.widget.bat: invalid power supply path", timeout = 0 }
         return
     end
 
