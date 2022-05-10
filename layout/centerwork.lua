@@ -208,7 +208,10 @@ end
 local function clients_by_position()
     local this = client.focus
     if this then
-        local sorted = client.focus.first_tag:clients()
+        local sorted = {}
+        for _, c in ipairs(client.focus.first_tag:clients()) do
+            if not c.minimized then sorted[#sorted+1] = c end
+        end
         table.sort(sorted, compare_position)
 
         local idx = 0
