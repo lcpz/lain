@@ -14,7 +14,7 @@ jobs:
       - run: |
           sudo apt-get install -y xorg-server-xvfb
       - name: List files in the repository
-        run: |
+      - run: |
           ls ${{ github.workspace }}
       - name: copy test file up a directory
       - run: |
