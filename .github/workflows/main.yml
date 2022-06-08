@@ -1,28 +1,15 @@
-name: Lain Tests
+name: Luacheck
 on: [push]
 jobs: 
-  Test-Lain:
+  Luacheck Tests:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Running lain tests triggered by a ${{ github.event_name }} event."
       - run: echo "Running branch ${{ github.ref }} from ${{ github.repository }} on ${{ runner.os }}"
-      - name: Check out repository code
+      - name: Check out code
         uses: actions/checkout@v3
       - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "The workflow is now ready to test your code on the runner."
-      - name: Update and install xvfb and awesome for testing
-        run: |
-          sudo apt-get upgrade -y && sudo apt-get install -y xvfb awesome
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - name: Create AwesomeWM Config Directory
-        run: |
-          mkdir -p  ~/.config/awesome
-      - name: Copy test file up a directory
-        run: |
-          mv ${{ github.workspace }}/.tests/main.lua ~/.config/awesome/rc.lua
-          cp -r ${{ github.workspace }} ~/.config/awesome
-      - name: Run tests
-        run: |
-          xvfb-run awesome
+      - name: Install Luacheck
+        run: sudo apt-get luacheck
+      - name: Run Tests
+        run: luacheck .

@@ -33,7 +33,7 @@ local function factory(args)
                 end
             end
             if temp_now[tempfile] then
-                coretemp_now = string.format(format, temp_now[tempfile]) 
+                coretemp_now = string.format(format, temp_now[tempfile])
             else
                 coretemp_now = "N/A"
             end
