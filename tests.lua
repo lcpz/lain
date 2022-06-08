@@ -560,3 +560,13 @@ end)
 client.connect_signal("mouse::enter", function(c)
     c:activate { context = "mouse_enter", raise = false }
 end)
+
+-- Wait for 15 seconds and quit
+function wait(seconds)
+  local start = os.time()
+  repeat until os.time() > start + seconds
+end
+wait(15)
+awesome.quit()
+
+

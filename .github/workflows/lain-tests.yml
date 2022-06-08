@@ -16,9 +16,12 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
-      - name: copy test file up a directory
+      - name: Create AwesomeWM Config Directory
         run: |
-          mv ${{ github.workspace }}/tests.lua ${{ github.workspace }}/../
+          mkdir -p  ~/.config/awesome
+      - name: Copy test file up a directory
+        run: |
+          mv ${{ github.workspace }}/tests.lua ~/.config/awesome/rc.lua
       - name: Run tests
         run: |
-          xvfb-run awesome -c ${{ github.workspace }}/../tests.lua && wait 15 && kill xvfb-run
+          xvfb-run awesome
