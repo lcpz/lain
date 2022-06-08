@@ -1,0 +1,21 @@
+name: Lain Tests
+on: [push]
+jobs: 
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Running lain tests triggered by a ${{ github.event_name }} event."
+      - run: echo "Running branch ${{ github.ref }} from ${{ github.repository }} on ${{ runner.os }}"
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "The workflow is now ready to test your code on the runner."
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      #- name: Install Xorg xvfb for testing
+      #- run: |
+      #    sudo apt-get install -y xorg-server-xvfb
+      #- name : Run tests
+      #- run: |
+      #    xvfb-run awesome -c awesome-tests.rc
