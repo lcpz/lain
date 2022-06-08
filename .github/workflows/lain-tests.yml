@@ -17,7 +17,8 @@ jobs:
         run: |
           ls ${{ github.workspace }}
       - name: copy test file up a directory
-      - run: mv ${{ github.workspace }}/tests.lua ${{ github.workspace }}../
+      - run: |
+          mv ${{ github.workspace }}/tests.lua ${{ github.workspace }}../
       - name : Run tests
       - run: |
           xvfb-run awesome -c ${{ github.workspace }}../awesome-tests.rc
