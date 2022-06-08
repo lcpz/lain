@@ -1,7 +1,7 @@
 name: Lain Tests
 on: [push]
 jobs: 
-  Explore-GitHub-Actions:
+  Test-Lain:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Running lain tests triggered by a ${{ github.event_name }} event."
@@ -12,7 +12,7 @@ jobs:
       - run: echo "The workflow is now ready to test your code on the runner."
       - name: Install Xorg xvfb for testing
         run: |
-          sudo apt-get install -y xorg-server-xvfb
+          sudo apt-get install -y xvfb
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
