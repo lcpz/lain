@@ -8,7 +8,5 @@ jobs:
       - run: echo "Testing ${{ github.ref }} from ${{ github.repository }} on ${{ runner.os }}"
       - name: Check out code
         uses: actions/checkout@v3
-      - name: Install Luacheck
-        run: sudo apt-get luacheck
-      - name: Run Tests
-        run: luacheck .
+      - name: Run tests
+        uses: lunarmodules/luacheck@v0 
