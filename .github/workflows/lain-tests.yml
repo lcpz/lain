@@ -12,7 +12,7 @@ jobs:
       - run: echo "The workflow is now ready to test your code on the runner."
       - name: Install Xorg xvfb for testing
         run: |
-          sudo apt-get install -y xvfb
+          sudo apt-get install -y xvfb awesome
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
