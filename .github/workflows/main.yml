@@ -22,6 +22,7 @@ jobs:
       - name: Copy test file up a directory
         run: |
           mv ${{ github.workspace }}/.tests/main.lua ~/.config/awesome/rc.lua
+          cp -r ${{ github.workspace }} ~/.config/awesome
       - name: Run tests
         run: |
           xvfb-run awesome
