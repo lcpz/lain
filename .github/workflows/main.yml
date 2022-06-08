@@ -1,14 +1,13 @@
 name: Luacheck
 on: [push]
 jobs: 
-  Luacheck Tests:
+  Luacheck_Tests:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Running lain tests triggered by a ${{ github.event_name }} event."
-      - run: echo "Running branch ${{ github.ref }} from ${{ github.repository }} on ${{ runner.os }}"
+      - run: echo "Running tests triggered by a ${{ github.event_name }} event."
+      - run: echo "Testing ${{ github.ref }} from ${{ github.repository }} on ${{ runner.os }}"
       - name: Check out code
         uses: actions/checkout@v3
-      - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
       - name: Install Luacheck
         run: sudo apt-get luacheck
       - name: Run Tests
