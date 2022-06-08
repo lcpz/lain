@@ -12,7 +12,7 @@ jobs:
       - run: echo "The workflow is now ready to test your code on the runner."
       - name: Update and install xvfb and awesome for testing
         run: |
-          sudo apt-get upprege -y && sudo apt-get install -y xvfb awesome
+          sudo apt-get upgrade -y && sudo apt-get install -y xvfb awesome
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
