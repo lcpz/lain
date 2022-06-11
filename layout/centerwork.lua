@@ -15,7 +15,6 @@ local max = math.max
 local mouse = mouse
 local mousegrabber = mousegrabber
 local screen = screen
-local client = client
 
 local centerwork = {
     name       = "centerwork",
@@ -196,11 +195,14 @@ function centerwork.horizontal.mouse_resize_handler(c, corner, x, y)
     return mouse_resize_handler(c, corner, x, y, 'horizontal')
 end
 
--------------------------------------------------------------------------------
--- make focus.byidx and swap.byidx behave more consistently with other layouts
+
+--[[
+Make focus.byidx and swap.byidx behave more consistently with other layouts.
+--]]
 
 local awful = require("awful")
 local gears = require("gears")
+local client = client
 
 local function compare_position(a, b)
     if a.x == b.x then
@@ -242,9 +244,8 @@ centerwork.focus = {}
 
 --[[
 Drop in replacements for awful.client.focus.byidx and awful.client.swap.byidx
-that behaves consistently with other layouts
+that behaves consistently with other layouts.
 --]]
-
 
 function centerwork.focus.byidx(i)
     if in_centerwork() then
