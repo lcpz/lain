@@ -6,6 +6,8 @@ globals = {
     "client", "screen", "mouse"
 }
 
+-- https://luacheck.readthedocs.io/en/stable/warnings.html
 ignore = {
-    "131",
+    "113",
+    "131"
 }
