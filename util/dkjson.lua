@@ -42,8 +42,8 @@ SOFTWARE.
 --]==]
 
 -- global dependencies:
-local pairs, type, tostring, tonumber, getmetatable, setmetatable, rawset =
-      pairs, type, tostring, tonumber, getmetatable, setmetatable, rawset
+local pairs, type, tostring, tonumber, getmetatable, setmetatable =
+      pairs, type, tostring, tonumber, getmetatable, setmetatable
 local error, require, pcall, select = error, require, pcall, select
 local floor, huge = math.floor, math.huge
 local strrep, gsub, strsub, strbyte, strchar, strfind, strlen, strformat =
@@ -64,7 +64,7 @@ if register_global_module_table then
   end
 end
 
-local _ENV = nil -- blocking globals in Lua 5.2 and later
+_ENV = nil -- blocking globals in Lua 5.2 and later
 
 pcall (function()
   -- Enable access to blocked metatables.
@@ -252,7 +252,7 @@ local function exception(reason, value, state, buffer, buflen, defaultmessage)
   end
 end
 
-function json.encodeexception(reason, value, state, defaultmessage)
+function json.encodeexception(_reason, _value, _state, defaultmessage)
   return quotestring("<" .. defaultmessage .. ">")
 end
 
@@ -327,7 +327,7 @@ encode2 = function (value, indent, level, buffer, buflen, tables, globalorder, s
           local v = value[k]
           if v ~= nil then
             used[k] = true
-            buflen, msg = addpair (k, v, prev, indent, level, buffer, buflen, tables, globalorder, state)
+            buflen, _msg = addpair (k, v, prev, indent, level, buffer, buflen, tables, globalorder, state)
             prev = true -- add a seperator before the next element
           end
         end
@@ -510,7 +510,6 @@ end
 local scanvalue -- forward declaration
 
 local function scantable (what, closechar, str, startpos, nullval, objectmeta, arraymeta)
-  local len = strlen (str)
   local tbl, n = {}, 0
   local pos = startpos + 1
   if what == 'object' then
@@ -640,7 +639,7 @@ function json.use_lpeg ()
   local PlainChar = 1 - S"\"\\\n\r"
   local EscapeSequence = (P"\\" * g.C (S"\"\\/bfnrt" + Err "unsupported escape sequence")) / escapechars
   local HexDigit = R("09", "af", "AF")
-  local function UTF16Surrogate (match, pos, high, low)
+  local function UTF16Surrogate (_match, _pos, high, low)
     high, low = tonumber (high, 16), tonumber (low, 16)
     if 0xD800 <= high and high <= 0xDBff and 0xDC00 <= low and low <= 0xDFFF then
       return true, unichar ((high - 0xD800)  * 0x400 + (low - 0xDC00) + 0x10000)
