@@ -10,7 +10,12 @@
 
 --]]
 
-local floor, max, mouse, mousegrabber, screen = math.floor, math.max, mouse, mousegrabber, screen
+local floor = math.floor
+local max = math.max
+local mouse = mouse
+local mousegrabber = mousegrabber
+local screen = screen
+local client = client
 
 local centerwork = {
     name       = "centerwork",
@@ -138,7 +143,7 @@ local function mouse_resize_handler(c, _, _, _, orientation)
         if g.height + 15 >= wa.height then
             offset = g.height * .5
             cursor = "sb_h_double_arrow"
-        elseif not (g.y + g.height + 15 > wa.y + wa.height) then
+        elseif g.y + g.height + 15 <= wa.y + wa.height then
             offset = g.height
         end
         corner_coords = { x = wa.x + wa.width * (1 - mwfact) / 2, y = g.y + offset }
@@ -146,7 +151,7 @@ local function mouse_resize_handler(c, _, _, _, orientation)
         if g.width + 15 >= wa.width then
             offset = g.width * .5
             cursor = "sb_v_double_arrow"
-        elseif not (g.x + g.width + 15 > wa.x + wa.width) then
+        elseif g.x + g.width + 15 <= wa.x + wa.width then
             offset = g.width
         end
         corner_coords = { y = wa.y + wa.height * (1 - mwfact) / 2, x = g.x + offset }
@@ -156,22 +161,22 @@ local function mouse_resize_handler(c, _, _, _, orientation)
 
     local prev_coords = {}
 
-    mousegrabber.run(function(_mouse)
+    mousegrabber.run(function(m)
         if not c.valid then return false end
-        for _, v in ipairs(_mouse.buttons) do
+        for _, v in ipairs(m.buttons) do
             if v then
-                prev_coords = { x = _mouse.x, y = _mouse.y }
+                prev_coords = { x = m.x, y = m.y }
                 local new_mwfact
                 if orientation == 'vertical' then
-                    new_mwfact = 1 - (_mouse.x - wa.x) / wa.width * 2
+                    new_mwfact = 1 - (m.x - wa.x) / wa.width * 2
                 else
-                    new_mwfact = 1 - (_mouse.y - wa.y) / wa.height * 2
+                    new_mwfact = 1 - (m.y - wa.y) / wa.height * 2
                 end
                 c.screen.selected_tag.master_width_factor = math.min(math.max(new_mwfact, 0.01), 0.99)
                 return true
             end
         end
-        return prev_coords.x == _mouse.x and prev_coords.y == _mouse.y
+        return prev_coords.x == m.x and prev_coords.y == m.y
     end, cursor)
 end
 
