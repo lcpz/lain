@@ -1,6 +1,8 @@
 Lain
 ====
 
+.. image:: https://github.com/lcpz/lain/actions/workflows/main.yml/badge.svg
+
 -------------------------------------------------
 Layouts, widgets and utilities for Awesome WM 4.x
 -------------------------------------------------
