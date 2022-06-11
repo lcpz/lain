@@ -5,15 +5,15 @@
 
 --]]
 
-local spawn      = require("awful.spawn")
-local timer      = require("gears.timer")
-local debug      = require("debug")
-local io         = { lines = io.lines,
-                     open  = io.open }
-local pairs      = pairs
-local rawget     = rawget
-local table      = { sort  = table.sort, unpack = table.unpack }
-local unpack     = unpack or table.unpack -- lua 5.1 retro-compatibility
+local spawn  = require("awful.spawn")
+local timer  = require("gears.timer")
+local debug  = require("debug")
+local io     = { lines = io.lines,
+                 open  = io.open }
+local pairs  = pairs
+local rawget = rawget
+local tsort  = table.sort
+local unpack = unpack or table.unpack -- lua 5.1 retro-compatibility
 
 -- Lain helper functions for internal use
 -- lain.helpers
@@ -164,7 +164,7 @@ function helpers.spairs(t)
     local keys = {}
     for k in pairs(t) do keys[#keys+1] = k end
 
-    table.sort(keys)
+    tsort(keys)
 
     -- return the iterator function
     local i = 0
