@@ -12,7 +12,7 @@ local beautiful = require("beautiful")
 
 -- Lain Cairo separators util submodule
 -- lain.util.separators
-local separators = { height = (beautiful.separators_height or 0), width = (beautiful.separators_width or 9) }
+local separators = { height = beautiful.separators_height or 0, width = beautiful.separators_width or 9 }
 
 -- [[ Arrow
 
