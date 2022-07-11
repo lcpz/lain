@@ -1,0 +1,17 @@
+name: Lain
+
+on: [push]
+
+permissions:
+  contents: read
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Running tests triggered by a ${{ github.event_name }} event."
+      - run: echo "Testing ${{ github.ref }} from ${{ github.repository }} on ${{ runner.os }}"
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Run tests
+        uses: lunarmodules/luacheck@v0
