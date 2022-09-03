@@ -91,6 +91,7 @@ local function factory(args)
 
             mpd_notification_preset.text = string.format("%s (%s) - %s\n%s", mpd_now.artist,
                                            mpd_now.album, mpd_now.date, mpd_now.title)
+
             widget = mpd.widget
             settings()
 
@@ -100,11 +101,12 @@ local function factory(args)
 
                     if followtag then mpd_notification_preset.screen = focused() end
 
-                    local common =  {
+                     common =  {
                         preset      = mpd_notification_preset,
                         icon        = default_art,
                         icon_size   = cover_size,
-                        replaces_id = mpd.id
+                        replaces_id = mpd.id,
+						timeout     = 5
                     }
 
                     if not string.match(mpd_now.file, "http.*://") then -- local file instead of http stream
@@ -114,7 +116,7 @@ local function factory(args)
                         helpers.async({ shell, "-c", cover }, function(current_icon)
                             common.icon = current_icon:gsub("\n", "")
                             if #common.icon == 0 then common.icon = nil end
-                            mpd.id = naughty.notify(common).id
+							mpd.notification = naughty.notify(common)
                         end)
                     else
                         mpd.id = naughty.notify(common).id
@@ -128,6 +130,24 @@ local function factory(args)
     end
 
     mpd.timer = helpers.newtimer("mpd", timeout, mpd.update, true, true)
+
+			function mpd.hide()
+				if not mpd.notification then return end
+				naughty.destroy(mpd.notification)
+				mpd.notification = nil
+				common.timeout = 5
+			end
+
+			function mpd.show(seconds, scr)
+				mpd.hide()
+				common.timeout = 0
+				mpd.notification = naughty.notify(common)
+			end
+
+	if notify == "on" then
+       mpd.widget:connect_signal('mouse::enter', function () mpd.show(0) end)
+       mpd.widget:connect_signal('mouse::leave', function () mpd.hide() end)
+	end
 
     return mpd
 end
