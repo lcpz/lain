@@ -61,7 +61,9 @@ local function factory(args)
         local d = os.date("*t", t)
         local mth_days, st_day, this_month = d.day, (d.wday-d.day-cal.week_start+1)%7, os.date("%B %Y", t)
         local notifytable = { [1] = string.format("%s%s\n", string.rep(" ", floor((28 - this_month:len())/2)), markup.bold(this_month)) }
-        for x = 0,6 do notifytable[#notifytable+1] = os.date("%a", os.time { year=2006, month=1, day=x+cal.week_start }):sub(1, utf8.offset(1, 3)) .. " " end
+        for day_num = 0, 6 do
+            notifytable[#notifytable+1] = string.format("%3s ", os.date("%a", os.time { year = 2006, month = 1, day = day_num + cal.week_start }))
+        end
         notifytable[#notifytable] = string.format("%s\n%s", notifytable[#notifytable]:sub(1, -2), string.rep(" ", st_day*4))
         local strx
         for x = 1,mth_days do
