@@ -17,7 +17,6 @@ local tconcat  = table.concat
 local type     = type
 local tonumber = tonumber
 local tostring = tostring
-local utf8     = utf8
 
 -- Calendar notification
 -- lain.widget.cal
