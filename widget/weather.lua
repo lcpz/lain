@@ -94,7 +94,7 @@ local function factory(args)
 
             if not err and type(weather_now) == "table" and tonumber(weather_now["cod"]) == 200 then
                 weather.notification_text = ""
-                for i = 1, weather_now["cnt"], weather_now["cnt"]//cnt do
+                for i = 1, weather_now["cnt"], math.floor(weather_now["cnt"] / cnt) do
                     weather.notification_text = weather.notification_text ..
                                                 notification_text_fun(weather_now["list"][i])
                     if i < weather_now["cnt"] then
