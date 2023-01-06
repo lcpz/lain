@@ -24,11 +24,12 @@ local function factory(args)
     args                        = args or {}
 
     local weather               = { widget = args.widget or wibox.widget.textbox() }
-    local APPID                 = args.APPID -- mandatory
+    local APPID                 = args.APPID -- mandatory api key
     local timeout               = args.timeout or 60 * 15 -- 15 min
-    local current_call          = args.current_call  or "curl -s 'https://api.openweathermap.org/data/2.5/weather?id=%s&units=%s&lang=%s&APPID=%s'"
-    local forecast_call         = args.forecast_call or "curl -s 'https://api.openweathermap.org/data/2.5/forecast?id=%s&units=%s&lang=%s&APPID=%s'"
-    local city_id               = args.city_id or 0 -- placeholder
+    local current_call          = args.current_call  or "curl -s 'https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&APPID=%s&units=%s&lang=%s'"
+    local forecast_call         = args.forecast_call or "curl -s 'https://api.openweathermap.org/data/2.5/forecast?lat=%s&lon=%s&APPID=%s&cnt=%s&units=%s&lang=%s'"
+    local lat                   = args.lat or 0 -- placeholder
+    local lon                   = args.lon or 0 -- placeholder
     local units                 = args.units or "metric"
     local lang                  = args.lang or "en"
     local cnt                   = args.cnt or 5
@@ -87,7 +88,7 @@ local function factory(args)
     end
 
     function weather.forecast_update()
-        local cmd = string.format(forecast_call, city_id, units, lang, APPID)
+        local cmd = string.format(forecast_call, lat, lon, APPID, cnt, units, lang)
         helpers.async(cmd, function(f)
             local err
             weather_now, _, err = json.decode(f, 1, nil)
@@ -106,11 +107,12 @@ local function factory(args)
     end
 
     function weather.update()
-        local cmd = string.format(current_call, city_id, units, lang, APPID)
+        local cmd = string.format(current_call, lat, lon, APPID, units, lang)
+
         helpers.async(cmd, function(f)
             local err
             weather_now, _, err = json.decode(f, 1, nil)
-
+            
             if not err and type(weather_now) == "table" and tonumber(weather_now["cod"]) == 200 then
                 local sunrise = tonumber(weather_now["sys"]["sunrise"])
                 local sunset  = tonumber(weather_now["sys"]["sunset"])
@@ -130,6 +132,7 @@ local function factory(args)
                 weather.icon_path = icons_path .. "na.png"
                 weather.widget:set_markup(weather_na_markup)
             end
+            
 
             weather.icon:set_image(weather.icon_path)
         end)
@@ -137,8 +140,8 @@ local function factory(args)
 
     if showpopup == "on" then weather.attach(weather.widget) end
 
-    weather.timer = helpers.newtimer("weather-" .. city_id, timeout, weather.update, false, true)
-    weather.timer_forecast = helpers.newtimer("weather_forecast-" .. city_id, timeout, weather.forecast_update, false, true)
+    weather.timer = helpers.newtimer("weather-" .. lat .. ":" .. lon, timeout, weather.update, false, true)
+    weather.timer_forecast = helpers.newtimer("weather_forecast-" .. lat .. ":" .. lon, timeout, weather.forecast_update, false, true)
 
     return weather
 end
