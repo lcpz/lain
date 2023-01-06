@@ -25,7 +25,7 @@ local function factory(args)
 
     local weather               = { widget = args.widget or wibox.widget.textbox() }
     local APPID                 = args.APPID -- mandatory api key
-    local timeout               = args.timeout or 60 * 15 -- 15 min
+    local timeout               = args.timeout or 900 -- 15 min
     local current_call          = args.current_call  or "curl -s 'https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&APPID=%s&units=%s&lang=%s'"
     local forecast_call         = args.forecast_call or "curl -s 'https://api.openweathermap.org/data/2.5/forecast?lat=%s&lon=%s&APPID=%s&cnt=%s&units=%s&lang=%s'"
     local lat                   = args.lat or 0 -- placeholder
@@ -89,6 +89,7 @@ local function factory(args)
 
     function weather.forecast_update()
         local cmd = string.format(forecast_call, lat, lon, APPID, cnt, units, lang)
+
         helpers.async(cmd, function(f)
             local err
             weather_now, _, err = json.decode(f, 1, nil)
@@ -112,7 +113,7 @@ local function factory(args)
         helpers.async(cmd, function(f)
             local err
             weather_now, _, err = json.decode(f, 1, nil)
-            
+
             if not err and type(weather_now) == "table" and tonumber(weather_now["cod"]) == 200 then
                 local sunrise = tonumber(weather_now["sys"]["sunrise"])
                 local sunset  = tonumber(weather_now["sys"]["sunset"])
@@ -132,7 +133,6 @@ local function factory(args)
                 weather.icon_path = icons_path .. "na.png"
                 weather.widget:set_markup(weather_na_markup)
             end
-            
 
             weather.icon:set_image(weather.icon_path)
         end)
