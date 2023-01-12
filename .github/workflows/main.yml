@@ -9,9 +9,28 @@ jobs:
   linting:
     runs-on: ubuntu-latest
     steps:
-      - run: echo "Running tests triggered by a ${{ github.event_name }} event."
-      - run: echo "Testing ${{ github.ref }} from ${{ github.repository }} on ${{ runner.os }}"
-      - name: Check out code
+      - name: Checkout
         uses: actions/checkout@v3
-      - name: Run tests
+
+      - name: Luacheck linter
         uses: lunarmodules/luacheck@v0
+
+  rockspec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: leafo/gh-actions-lua@v9
+      - uses: leafo/gh-actions-luarocks@v4
+
+      - name: Update Rockspec
+        shell: bash
+        env:
+          LUAROCKS_API_KEY: ${{ secrets.LUAROCKS_API_KEY }}
+        run: |
+          if [[ $(git diff *.rockspec | grep "+version") ]]
+          then
+            echo "Rockspec changed, uploading to LuaRocks.org"
+            luarocks upload *.rockspec --api-key "$LUAROCKS_API_KEY"
+          else
+            echo "Rockspec unchanged, nothing to do"
+          fi
