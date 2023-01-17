@@ -1,19 +1,19 @@
-# Please, read me!
+---
+name: Bugs
+about: Bugs and unintended behavior
 
-So that I can help you quickly and without having to redirect you here.
+---
 
-# If you have an issue
+**Please read the [wiki](https://github.com/lcpz/lain/wiki) and browse the [Issues section](https://github.com/lcpz/lain/issues) first.**
 
-**Please read the [wiki](https://github.com/lcpz/lain/wiki) and search the [Issues section](https://github.com/lcpz/lain/issues) first.**
-
-If you can't find a solution there, then go ahead and provide:
+If you can't find a solution, then please provide:
 
 * output of `awesome -v` and `lua -v`
 * expected behavior and actual behavior
 * steps to reproduce the problem
 * X error log
 
-# How to provide X error log
+### How to provide X error log
 
 There are two ways:
 
