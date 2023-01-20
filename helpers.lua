@@ -7,6 +7,7 @@
 
 local spawn  = require("awful.spawn")
 local timer  = require("gears.timer")
+local gdebug = require("gears.debug")
 local debug  = require("debug")
 local io     = { lines = io.lines,
                  open  = io.open }
@@ -14,6 +15,7 @@ local pairs  = pairs
 local rawget = rawget
 local tsort  = table.sort
 local unpack = unpack or table.unpack -- lua 5.1 retro-compatibility
+local lgi    = require("lgi")
 
 -- Lain helper functions for internal use
 -- lain.helpers
@@ -128,6 +130,25 @@ function helpers.line_callback(cmd, callback)
             callback(line)
         end,
     })
+end
+
+-- }}}
+
+-- {{{ Network functions
+
+-- fetch a http uri using lgi.Soup
+function helpers.uri(uri, callback, error_handler)
+    error_handler = error_handler or gdebug.print_error
+    local ss = lgi.Soup.Session()
+    local msg = lgi.Soup.Message.new('GET', uri)
+    ss:send_and_read_async(msg, lgi.GLib.PRIORITY_DEFAULT, nil, function(_, resp, _)
+        local buf, err = ss:send_and_read_finish(resp)
+        if err then
+            error_handler(err)
+        elseif buf then
+            callback(buf:get_data())
+        end
+    end)
 end
 
 -- }}}
