@@ -14,11 +14,11 @@ describe("Test helpers functions", function()
     }
     local timer ={
         start= function () end,
-        connect_signal= function (t,f) end,
-        emit_signal= function (t) end,
+        connect_signal= function () end,
+        emit_signal= function () end,
     }
     local timerMock=mock(timer,true)
-    package.loaded["gears.timer"] =function() return timerMock end 
+    package.loaded["gears.timer"] =function() return timerMock end
 
 
     it("file_exists", function()
