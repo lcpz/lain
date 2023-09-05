@@ -6,7 +6,12 @@
 
 --]]
 
-local helpers  = require("lain.helpers")
+local requirePrefix = tostring(...):match(".*lain") or ""
+if requirePrefix then
+	requirePrefix = requirePrefix .. "."
+end
+
+local helpers  = require(requirePrefix .. "helpers")
 local shell    = require("awful.util").shell
 local escape_f = require("awful.util").escape
 local focused  = require("awful.screen").focused

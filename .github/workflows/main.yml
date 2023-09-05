@@ -34,3 +34,11 @@ jobs:
           else
             echo "Rockspec unchanged, nothing to do"
           fi
+
+  unit_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Run Busted
+        uses: lunarmodules/busted@v2.1.0 

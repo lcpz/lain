@@ -8,8 +8,13 @@
 
 --]]
 
+local requirePrefix= tostring(...):match(".*lain") or ""
+if requirePrefix then
+    requirePrefix=requirePrefix.."."
+end
+
 return {
-    layout = require("lain.layout"),
-    util   = require("lain.util"),
-    widget = require("lain.widget")
+    layout = require(requirePrefix .. "layout"),
+    util   = require(requirePrefix .. "util"),
+    widget = require(requirePrefix .. "widget")
 }

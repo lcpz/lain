@@ -7,7 +7,12 @@
 
 --]]
 
-local helpers    = require("lain.helpers")
+local requirePrefix = tostring(...):match(".*lain") or ""
+if requirePrefix then
+	requirePrefix = requirePrefix .. "."
+end
+
+local helpers    = require(requirePrefix .. "helpers")
 local Gio        = require("lgi").Gio
 local focused    = require("awful.screen").focused
 local wibox      = require("wibox")
