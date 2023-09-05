@@ -11,9 +11,14 @@
 
 --]]
 
-local wrequire     = require(tostring(...):match(".*lain") .. ".helpers").wrequire
+local requirePrefix = tostring(...):match(".*lain") or ""
+if requirePrefix then
+	requirePrefix = requirePrefix .. "."
+end
+
+local wrequire     = require(requirePrefix .. "helpers").wrequire
 local setmetatable = setmetatable
 
-local layout       = { _NAME = tostring(...):match(".*lain") .. ".layout" }
+local layout       = { _NAME = requirePrefix .. "layout" }
 
 return setmetatable(layout, { __index = wrequire })

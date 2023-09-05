@@ -5,7 +5,12 @@
 
 --]]
 
-local helpers = require(tostring(...):match(".*lain") .. ".helpers")
+local requirePrefix = tostring(...):match(".*lain") or ""
+if requirePrefix then
+	requirePrefix = requirePrefix .. "."
+end
+
+local helpers = require(requirePrefix .. "helpers")
 local shell   = require("awful.util").shell
 local wibox   = require("wibox")
 local string  = string

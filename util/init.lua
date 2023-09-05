@@ -11,17 +11,22 @@
 
 --]]
 
+local requirePrefix= tostring(...):match(".*lain") or ""
+if requirePrefix then
+    requirePrefix=requirePrefix.."."
+end
+
 local awful        = require("awful")
 local sqrt         = math.sqrt
 local pairs        = pairs
 local client       = client
 local tonumber     = tonumber
-local wrequire     = require(tostring(...):match(".*lain") .. ".helpers").wrequire
+local wrequire     = require(requirePrefix .. "helpers").wrequire
 local setmetatable = setmetatable
 
 -- Lain utilities submodule
 -- lain.util
-local util = { _NAME = tostring(...):match(".*lain") .. ".util" }
+local util = { _NAME = requirePrefix .. "util" }
 
 -- Like awful.menu.clients, but only show clients of currently selected tags
 function util.menu_clients_current_tags(menu, args)

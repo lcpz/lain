@@ -5,8 +5,13 @@
 
 --]]
 
-local helpers = require(tostring(...):match(".*lain") .. ".helpers")
-local markup  = require(tostring(...):match(".*lain") .. ".util").markup
+local requirePrefix = tostring(...):match(".*lain") or ""
+if requirePrefix then
+	requirePrefix = requirePrefix .. "."
+end
+
+local helpers = require(requirePrefix .. "helpers")
+local markup  = require(requirePrefix .. "util").markup
 local awful   = require("awful")
 local naughty = require("naughty")
 local mouse   = mouse

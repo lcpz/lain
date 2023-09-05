@@ -5,8 +5,13 @@
 
 --]]
 
-local helpers  = require(tostring(...):match(".*lain") .. ".helpers")
-local json     = require(tostring(...):match(".*lain") .. ".util").dkjson
+local requirePrefix = tostring(...):match(".*lain") or ""
+if requirePrefix then
+	requirePrefix = requirePrefix .. "."
+end
+
+local helpers  = require(requirePrefix .. "helpers")
+local json     = require(requirePrefix .. "util").dkjson
 local focused  = require("awful.screen").focused
 local naughty  = require("naughty")
 local wibox    = require("wibox")

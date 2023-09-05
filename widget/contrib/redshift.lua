@@ -6,7 +6,12 @@
 
 --]]
 
-local async   = require(tostring(...):match(".*lain") .. ".helpers").async
+local requirePrefix = tostring(...):match(".*lain") or ""
+if requirePrefix then
+	requirePrefix = requirePrefix .. "."
+end
+
+local async   = require(requirePrefix .. ".helpers").async
 local awful   = require("awful")
 local execute = os.execute
 local type    = type

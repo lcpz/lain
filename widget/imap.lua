@@ -5,7 +5,12 @@
 
 --]]
 
-local helpers  = require(tostring(...):match(".*lain") .. ".helpers")
+local requirePrefix = tostring(...):match(".*lain") or ""
+if requirePrefix then
+	requirePrefix = requirePrefix .. "."
+end
+
+local helpers  = require(requirePrefix .. "helpers")
 local naughty  = require("naughty")
 local wibox    = require("wibox")
 local awful    = require("awful")

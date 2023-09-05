@@ -10,8 +10,13 @@
 -- Menu iterator with Naughty notifications
 -- lain.util.menu_iterator
 
+local requirePrefix = tostring(...):match(".*lain") or ""
+if requirePrefix then
+	requirePrefix = requirePrefix .. "."
+end
+
 local naughty = require("naughty")
-local helpers = require(tostring(...):match(".*lain") .. ".helpers")
+local helpers = require(requirePrefix .. "helpers")
 local atable  = require("awful.util").table
 local assert  = assert
 local pairs   = pairs
