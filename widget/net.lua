@@ -17,7 +17,8 @@ local string  = string
 local function factory(args)
     args             = args or {}
 
-    local net        = { widget = args.widget or wibox.widget.textbox(), devices = {} }
+    local net        = { widget = args.widget or wibox.widget.textbox() }
+    local devices    = {}
     local timeout    = args.timeout or 2
     local units      = args.units or 1024 -- KB
     local notify     = args.notify or "on"
@@ -51,7 +52,7 @@ local function factory(args)
 
         for _, dev in ipairs(net.iface) do
             local dev_now    = {}
-            local dev_before = net.devices[dev] or { last_t = 0, last_r = 0 }
+            local dev_before = devices[dev] or { last_t = 0, last_r = 0 }
             local now_t      = tonumber(helpers.first_line(string.format("/sys/class/net/%s/statistics/tx_bytes", dev)) or 0)
             local now_r      = tonumber(helpers.first_line(string.format("/sys/class/net/%s/statistics/rx_bytes", dev)) or 0)
 
@@ -85,7 +86,7 @@ local function factory(args)
                 dev_now.ethernet = false
             end
 
-            net.devices[dev] = dev_now
+            devices[dev] = dev_now
 
             -- Notify only once when connection is lost
             if string.match(dev_now.carrier, "0") and notify == "on" and helpers.get_map(dev) then
