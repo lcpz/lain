@@ -1,12 +1,17 @@
 --[[
 
-	 Licensed under GNU General Public License v2
-	  * (c) 2013,      Luca CPZ
-	  * (c) 2010-2012, Peter Hofmann
+     Licensed under GNU General Public License v2
+      * (c) 2013,      Luca CPZ
+      * (c) 2010-2012, Peter Hofmann
 
 --]]
 
-local helpers  = require("lain.helpers")
+local requirePrefix = tostring(...):match(".*lain") or ""
+if requirePrefix then
+	requirePrefix = requirePrefix .. "."
+end
+
+local helpers  = require(requirePrefix .. "helpers")
 local fs       = require("gears.filesystem")
 local naughty  = require("naughty")
 local wibox    = require("wibox")

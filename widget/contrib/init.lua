@@ -10,9 +10,14 @@
 
 --]]
 
-local wrequire     = require("lain.helpers").wrequire
+local requirePrefix = tostring(...):match(".*lain") or ""
+if requirePrefix then
+	requirePrefix = requirePrefix .. "."
+end
+
+local wrequire     = require(requirePrefix .. "helpers").wrequire
 local setmetatable = setmetatable
 
-local widget = { _NAME = "lain.widget.contrib" }
+local widget = { _NAME = requirePrefix .. "widget.contrib" }
 
 return setmetatable(widget, { __index = wrequire })
