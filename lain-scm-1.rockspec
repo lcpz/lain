@@ -38,6 +38,7 @@ build = {
       ["lain.widget.contrib.redshift"] = "widget/contrib/redshift.lua",
       ["lain.widget.contrib.task"] = "widget/contrib/task.lua",
       ["lain.widget.contrib.tp_smapi"] = "widget/contrib/tp_smapi.lua",
+      ["lain.widget.contrib.btinfo"] = "widget/contrib/btinfo.lua",
       ["lain.widget.alsa"] = "widget/alsa.lua",
       ["lain.widget.alsabar"] = "widget/alsabar.lua",
       ["lain.widget.bat"] = "widget/bat.lua",
