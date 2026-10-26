@@ -103,9 +103,9 @@ local function factory(args)
                     fs_now[path] = {
                         units      = fs.units[units],
                         percentage = math.floor(100 * used / size), -- used percentage
-                        size       = size / math.pow(1024, units),
-                        used       = used / math.pow(1024, units),
-                        free       = free / math.pow(1024, units)
+                        size       = size / (1024 ^ units),
+                        used       = used / (1024 ^ units),
+                        free       = free / (1024 ^ units)
                     }
 
                     if fs_now[path].percentage > 0 then -- don't notify unused file systems

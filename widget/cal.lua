@@ -64,12 +64,14 @@ local function factory(args)
             notifytable[#notifytable+1] = string.format("%3s ", os.date("%a", os.time { year = 2006, month = 1, day = day_num + cal.week_start }))
         end
         notifytable[#notifytable] = string.format("%s\n%s", notifytable[#notifytable]:sub(1, -2), string.rep(" ", st_day*4))
-        local strx
         for x = 1,mth_days do
-            strx = x
+            local strx
             if x == today then
-                if x < 10 then x = " " .. x end
-                strx = markup.bold(markup.color(cal.notification_preset.bg, cal.notification_preset.fg, x) .. " ")
+                local x_str = x
+                if x < 10 then x_str = " " .. x end
+                strx = markup.bold(markup.color(cal.notification_preset.bg, cal.notification_preset.fg, x_str) .. " ")
+            else
+                strx = x
             end
             strx = string.format("%s%s", string.rep(" ", 3 - tostring(x):len()), strx)
             notifytable[#notifytable+1] = string.format("%-4s%s", strx, (x+st_day)%7==0 and x ~= mth_days and "\n" or "")
